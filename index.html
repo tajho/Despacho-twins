@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SISTEMA TWINS V16</title>
+    <style>
+        /* CONFIGURACIÓN BASE PARA MÓVIL */
+        :root { --blue: #007bff; --green: #28a745; --dark: #000; --card: #121212; --text: #f0f0f0; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background: var(--dark); color: var(--text); margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; }
+
+        /* VENTANAS TIPO APP */
+        .window { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--dark); display: none; padding: 15px; flex-direction: column;
+        }
+        .active { display: flex; }
+
+        /* LOGIN */
+        .login-wrap { margin: auto; width: 100%; max-width: 350px; text-align: center; }
+        .user-btn { 
+            background: var(--card); border: 1px solid #333; color: white; 
+            padding: 25px; margin: 10px 0; border-radius: 12px; font-size: 1.2rem; 
+            font-weight: bold; width: 100%; cursor: pointer;
+        }
+        .user-btn:active { background: var(--blue); }
+
+        /* CABECERA */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; margin-bottom: 15px; }
+        .tag { color: var(--green); font-weight: bold; font-size: 0.9rem; }
+
+        /* INPUTS GRANDES PARA DEDOS */
+        label { font-size: 11px; color: #777; font-weight: bold; margin-top: 10px; display: block; }
+        input, select { 
+            width: 100%; background: #1a1a1a; border: 1px solid #333; color: white;
+            padding: 15px; margin: 5px 0 15px 0; border-radius: 10px; font-size: 16px;
+        }
+        
+        /* BOTONES DE ACCIÓN */
+        .btn { width: 100%; padding: 16px; border-radius: 10px; border: none; font-weight: bold; font-size: 1rem; color: white; cursor: pointer; }
+        .btn-blue { background: var(--blue); }
+        .btn-green { background: var(--green); }
+        .btn-nav { background: #222; border: 1px solid #333; flex: 1; padding: 12px; }
+        .nav-active { background: var(--blue); border-color: var(--blue); }
+
+        /* RESUMEN Y ESTADÍSTICAS */
+        .resumen-caja { background: #080808; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid var(--blue); font-size: 14px; max-height: 120px; overflow-y: auto; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .stat-box { background: var(--card); padding: 10px; border-radius: 8px; text-align: center; }
+        .stat-box b { display: block; font-size: 1.2rem; color: var(--green); }
+        .stat-box small { font-size: 10px; color: #555; }
+
+        /* TABLA MÓVIL */
+        .table-area { flex-grow: 1; overflow-y: auto; background: var(--card); border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #222; }
+        th { background: #1a1a1a; color: var(--blue); position: sticky; top: 0; }
+
+        .nav-bar { display: flex; gap: 10px; padding: 10px 0; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <div id="win-login" class="window active">
+        <div class="login-wrap">
+            <h2 style="color: var(--blue);">SISTEMA TWINS</h2>
+            <p style="color: #555;">Puente Piedra - Android Manager</p>
+            <button class="user-btn" onclick="entrar('TAJHO')">TAJHO</button>
+            <button class="user-btn" onclick="entrar('FRANCESCO')">FRANCESCO</button>
+            <button class="user-btn" onclick="entrar('OSCAR')">OSCAR</button>
+        </div>
+    </div>
+
+    <div id="win-reg" class="window">
+        <div class="header">
+            <span class="tag" id="user-display"></span>
+            <button onclick="location.reload()" style="background:none; border:none; color:#555; font-size:12px;">SALIR</button>
+        </div>
+
+        <label>CLIENTE / DESTINO</label>
+        <input type="text" id="cli" placeholder="Escribe aquí..." autocomplete="off">
+        
+        <label>CANTIDAD DE CAJAS</label>
+        <input type="number" id="can" placeholder="0" inputmode="numeric">
+        
+        <button class="btn btn-blue" onclick="agregarCarga()">+ AÑADIR A LISTA</button>
+
+        <div id="area-previa" style="display:none;">
+            <div id="resumen-lista" class="resumen-caja"></div>
+            <button class="btn btn-green" onclick="cambiar('win-log')">CONTINUAR →</button>
+        </div>
+
+        <div class="nav-bar">
+            <button class="btn btn-nav nav-active">REGISTRO</button>
+            <button class="btn btn-nav" onclick="cambiar('win-his')">HISTORIAL</button>
+        </div>
+    </div>
+
+    <div id="win-log" class="window">
+        <div class="header">
+            <b>DETALLES FINALES</b>
+            <button onclick="cambiar('win-reg')" style="background:none; border:none; color:var(--blue);">ATRÁS</button>
+        </div>
+
+        <label>CONDUCTOR</label>
+        <select id="cho">
+            <option value="">-- Seleccionar --</option>
+            <option value="ROMARIO">ROMARIO</option>
+            <option value="CESAR">CESAR</option>
+        </select>
+
+        <label>AUXILIAR</label>
+        <select id="aux">
+            <option value="">-- Seleccionar --</option>
+            <option value="TAJHO">TAJHO</option>
+            <option value="CRISTOPHER">CRISTOPHER</option>
+        </select>
+
+        <label>PLACA</label>
+        <select id="pla">
+            <option value="">-- Seleccionar --</option>
+            <option value="BUL742">BUL742</option>
+            <option value="BPN104">BPN104</option>
+        </select>
+
+        <button class="btn btn-green" style="margin-top:20px;" onclick="enviarReporte()">💾 GUARDAR Y WHATSAPP</button>
+    </div>
+
+    <div id="win-his" class="window">
+        <div class="header">
+            <b>HISTORIAL / CONTEO</b>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box"><small>Total Cjs</small><b id="st-total">0</b></div>
+            <div class="stat-box"><small>Despachos</small><b id="st-des">0</b></div>
+            <div class="stat-box"><small>Romario</small><b id="st-rom">0</b></div>
+            <div class="stat-box"><small>Cesar</small><b id="st-ces">0</b></div>
+        </div>
+
+        <input type="text" id="bus" onkeyup="filtrarTabla()" placeholder="🔍 Buscar cliente...">
+
+        <div class="table-area">
+            <table>
+                <thead><tr><th>Cliente</th><th>Cjs</th><th>Chofer</th></tr></thead>
+                <tbody id="tabla-body">
+                    <tr><td colspan="3" style="text-align:center; padding:30px; color:#444;">Base de datos en espera...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="nav-bar">
+            <button class="btn btn-nav" onclick="cambiar('win-reg')">REGISTRO</button>
+            <button class="btn btn-nav nav-active">HISTORIAL</button>
+        </div>
+    </div>
+
+<script>
+    let operarioActual = "";
+    let cargaTemporal = [];
+
+    // CAMBIAR DE VENTANA
+    function cambiar(id) {
+        document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    // INICIAR SESIÓN
+    function entrar(nombre) {
+        operarioActual = nombre;
+        document.getElementById('user-display').innerText = "👤 " + nombre;
+        cambiar('win-reg');
+    }
+
+    // AÑADIR ITEM
+    function agregarCarga() {
+        let cli = document.getElementById('cli').value.toUpperCase().trim();
+        let can = document.getElementById('can').value.trim();
+        if(!cli || !can) return alert("Completa Cliente y Cajas");
+
+        cargaTemporal.push({cliente: cli, cajas: can});
+        document.getElementById('resumen-lista').innerHTML += `• <b>${cli}</b>: ${can} CJ<br>`;
+        document.getElementById('cli').value = ""; 
+        document.getElementById('can').value = "";
+        document.getElementById('area-previa').style.display = 'block';
+    }
+
+    // REPORTE WHATSAPP
+    function enviarReporte() {
+        const cho = document.getElementById('cho').value;
+        const aux = document.getElementById('aux').value;
+        const pla = document.getElementById('pla').value;
+        if(!cho || !aux || !pla) return alert("Selecciona Conductor, Auxiliar y Placa");
+
+        let texto = `*REPORTE TWINS*\n👤 *Registró:* ${operarioActual}\n🚚 *Chofer:* ${cho}\n👷 *Auxiliar:* ${aux}\n🚛 *Placa:* ${pla}\n------------------\n`;
+        let total = 0;
+        cargaTemporal.forEach(i => {
+            texto += `• ${i.cliente}: ${i.cajas} CJ\n`;
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SISTEMA TWINS V16</title>
+    <style>
+        /* CONFIGURACIÓN BASE PARA MÓVIL */
+        :root { --blue: #007bff; --green: #28a745; --dark: #000; --card: #121212; --text: #f0f0f0; }
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background: var(--dark); color: var(--text); margin: 0; padding: 0; height: 100vh; width: 100vw; overflow: hidden; }
+
+        /* VENTANAS TIPO APP */
+        .window { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--dark); display: none; padding: 15px; flex-direction: column;
+        }
+        .active { display: flex; }
+
+        /* LOGIN */
+        .login-wrap { margin: auto; width: 100%; max-width: 350px; text-align: center; }
+        .user-btn { 
+            background: var(--card); border: 1px solid #333; color: white; 
+            padding: 25px; margin: 10px 0; border-radius: 12px; font-size: 1.2rem; 
+            font-weight: bold; width: 100%; cursor: pointer;
+        }
+        .user-btn:active { background: var(--blue); }
+
+        /* CABECERA */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #333; margin-bottom: 15px; }
+        .tag { color: var(--green); font-weight: bold; font-size: 0.9rem; }
+
+        /* INPUTS GRANDES PARA DEDOS */
+        label { font-size: 11px; color: #777; font-weight: bold; margin-top: 10px; display: block; }
+        input, select { 
+            width: 100%; background: #1a1a1a; border: 1px solid #333; color: white;
+            padding: 15px; margin: 5px 0 15px 0; border-radius: 10px; font-size: 16px;
+        }
+        
+        /* BOTONES DE ACCIÓN */
+        .btn { width: 100%; padding: 16px; border-radius: 10px; border: none; font-weight: bold; font-size: 1rem; color: white; cursor: pointer; }
+        .btn-blue { background: var(--blue); }
+        .btn-green { background: var(--green); }
+        .btn-nav { background: #222; border: 1px solid #333; flex: 1; padding: 12px; }
+        .nav-active { background: var(--blue); border-color: var(--blue); }
+
+        /* RESUMEN Y ESTADÍSTICAS */
+        .resumen-caja { background: #080808; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid var(--blue); font-size: 14px; max-height: 120px; overflow-y: auto; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .stat-box { background: var(--card); padding: 10px; border-radius: 8px; text-align: center; }
+        .stat-box b { display: block; font-size: 1.2rem; color: var(--green); }
+        .stat-box small { font-size: 10px; color: #555; }
+
+        /* TABLA MÓVIL */
+        .table-area { flex-grow: 1; overflow-y: auto; background: var(--card); border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #222; }
+        th { background: #1a1a1a; color: var(--blue); position: sticky; top: 0; }
+
+        .nav-bar { display: flex; gap: 10px; padding: 10px 0; margin-top: auto; }
+    </style>
+</head>
+<body>
+
+    <div id="win-login" class="window active">
+        <div class="login-wrap">
+            <h2 style="color: var(--blue);">SISTEMA TWINS</h2>
+            <p style="color: #555;">Puente Piedra - Android Manager</p>
+            <button class="user-btn" onclick="entrar('TAJHO')">TAJHO</button>
+            <button class="user-btn" onclick="entrar('FRANCESCO')">FRANCESCO</button>
+            <button class="user-btn" onclick="entrar('OSCAR')">OSCAR</button>
+        </div>
+    </div>
+
+    <div id="win-reg" class="window">
+        <div class="header">
+            <span class="tag" id="user-display"></span>
+            <button onclick="location.reload()" style="background:none; border:none; color:#555; font-size:12px;">SALIR</button>
+        </div>
+
+        <label>CLIENTE / DESTINO</label>
+        <input type="text" id="cli" placeholder="Escribe aquí..." autocomplete="off">
+        
+        <label>CANTIDAD DE CAJAS</label>
+        <input type="number" id="can" placeholder="0" inputmode="numeric">
+        
+        <button class="btn btn-blue" onclick="agregarCarga()">+ AÑADIR A LISTA</button>
+
+        <div id="area-previa" style="display:none;">
+            <div id="resumen-lista" class="resumen-caja"></div>
+            <button class="btn btn-green" onclick="cambiar('win-log')">CONTINUAR →</button>
+        </div>
+
+        <div class="nav-bar">
+            <button class="btn btn-nav nav-active">REGISTRO</button>
+            <button class="btn btn-nav" onclick="cambiar('win-his')">HISTORIAL</button>
+        </div>
+    </div>
+
+    <div id="win-log" class="window">
+        <div class="header">
+            <b>DETALLES FINALES</b>
+            <button onclick="cambiar('win-reg')" style="background:none; border:none; color:var(--blue);">ATRÁS</button>
+        </div>
+
+        <label>CONDUCTOR</label>
+        <select id="cho">
+            <option value="">-- Seleccionar --</option>
+            <option value="ROMARIO">ROMARIO</option>
+            <option value="CESAR">CESAR</option>
+        </select>
+
+        <label>AUXILIAR</label>
+        <select id="aux">
+            <option value="">-- Seleccionar --</option>
+            <option value="TAJHO">TAJHO</option>
+            <option value="CRISTOPHER">CRISTOPHER</option>
+        </select>
+
+        <label>PLACA</label>
+        <select id="pla">
+            <option value="">-- Seleccionar --</option>
+            <option value="BUL742">BUL742</option>
+            <option value="BPN104">BPN104</option>
+        </select>
+
+        <button class="btn btn-green" style="margin-top:20px;" onclick="enviarReporte()">💾 GUARDAR Y WHATSAPP</button>
+    </div>
+
+    <div id="win-his" class="window">
+        <div class="header">
+            <b>HISTORIAL / CONTEO</b>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box"><small>Total Cjs</small><b id="st-total">0</b></div>
+            <div class="stat-box"><small>Despachos</small><b id="st-des">0</b></div>
+            <div class="stat-box"><small>Romario</small><b id="st-rom">0</b></div>
+            <div class="stat-box"><small>Cesar</small><b id="st-ces">0</b></div>
+        </div>
+
+        <input type="text" id="bus" onkeyup="filtrarTabla()" placeholder="🔍 Buscar cliente...">
+
+        <div class="table-area">
+            <table>
+                <thead><tr><th>Cliente</th><th>Cjs</th><th>Chofer</th></tr></thead>
+                <tbody id="tabla-body">
+                    <tr><td colspan="3" style="text-align:center; padding:30px; color:#444;">Base de datos en espera...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="nav-bar">
+            <button class="btn btn-nav" onclick="cambiar('win-reg')">REGISTRO</button>
+            <button class="btn btn-nav nav-active">HISTORIAL</button>
+        </div>
+    </div>
+
+<script>
+    let operarioActual = "";
+    let cargaTemporal = [];
+
+    // CAMBIAR DE VENTANA
+    function cambiar(id) {
+        document.querySelectorAll('.window').forEach(w => w.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    // INICIAR SESIÓN
+    function entrar(nombre) {
+        operarioActual = nombre;
+        document.getElementById('user-display').innerText = "👤 " + nombre;
+        cambiar('win-reg');
+    }
+
+    // AÑADIR ITEM
+    function agregarCarga() {
+        let cli = document.getElementById('cli').value.toUpperCase().trim();
+        let can = document.getElementById('can').value.trim();
+        if(!cli || !can) return alert("Completa Cliente y Cajas");
+
+        cargaTemporal.push({cliente: cli, cajas: can});
+        document.getElementById('resumen-lista').innerHTML += `• <b>${cli}</b>: ${can} CJ<br>`;
+        document.getElementById('cli').value = ""; 
+        document.getElementById('can').value = "";
+        document.getElementById('area-previa').style.display = 'block';
+    }
+
+    // REPORTE WHATSAPP
+    function enviarReporte() {
+        const cho = document.getElementById('cho').value;
+        const aux = document.getElementById('aux').value;
+        const pla = document.getElementById('pla').value;
+        if(!cho || !aux || !pla) return alert("Selecciona Conductor, Auxiliar y Placa");
+
+        let texto = `*REPORTE TWINS*\n👤 *Registró:* ${operarioActual}\n🚚 *Chofer:* ${cho}\n👷 *Auxiliar:* ${aux}\n🚛 *Placa:* ${pla}\n------------------\n`;
+        let total = 0;
+        cargaTemporal.forEach(i => {
+            texto += `• ${i.cliente}: ${i.cajas} CJ\n`;
+            total += parseInt(i.cajas);
+        });
+        texto += `------------------\n📦 *TOTAL:* ${total} CAJAS`;
+
+        window.open("https://wa.me/?text=" + encodeURIComponent(texto), '_blank');
+        
+        if(confirm("¿Limpiar para nuevo registro?")) {
+            location.reload();
+        }
+    }
+
+    // BUSCADOR EN TABLA
+    function filtrarTabla() {
+        let v = document.getElementById('bus').value.toUpperCase();
+        let f = document.getElementById('tabla-body').getElementsByTagName("tr");
+        for (let i = 0; i < f.length; i++) {
+            let t = f[i].getElementsByTagName("td")[0]?.innerText || "";
+            f[i].style.display = t.toUpperCase().indexOf(v) > -1 ? "" : "none";
+        }
+    }
+</script>
+</body>
+</html>
+           total += parseInt(i.cajas);
+        });
+        texto += `------------------\n📦 *TOTAL:* ${total} CAJAS`;
+
+        window.open("https://wa.me/?text=" + encodeURIComponent(texto), '_blank');
+        
+        if(confirm("¿Limpiar para nuevo registro?")) {
+            location.reload();
+        }
+    }
+
+    // BUSCADOR EN TABLA
+    function filtrarTabla() {
+        let v = document.getElementById('bus').value.toUpperCase();
+        let f = document.getElementById('tabla-body').getElementsByTagName("tr");
+        for (let i = 0; i < f.length; i++) {
+            let t = f[i].getElementsByTagName("td")[0]?.innerText || "";
+            f[i].style.display = t.toUpperCase().indexOf(v) > -1 ? "" : "none";
+        }
+    }
+</script>
+</body>
+  </html>
+  
