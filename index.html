@@ -18,35 +18,37 @@
         body { 
             background: var(--bg); color: var(--text); 
             font-family: 'Inter', sans-serif; margin: 0; padding: 0;
-            overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
         /* Pantallas */
-        .page { display: none; padding: 20px; min-height: 100vh; box-sizing: border-box; flex-direction: column; }
-        .active { display: flex; animation: fadeIn 0.4s ease; }
+        .page { display: none; padding: 20px; flex: 1; flex-direction: column; box-sizing: border-box; }
+        .active { display: flex !important; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Pantalla de Inicio Especial */
-        .login-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        /* Pantalla de Inicio */
+        .login-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
         
-        .logo-box { width: 220px; margin-bottom: 10px; }
-        .logo-box img { width: 100%; height: auto; }
+        .logo-box { width: 220px; margin-bottom: 20px; }
+        .logo-box img { width: 100%; height: auto; display: block; margin: 0 auto; }
         
+        h1 { color: var(--twins-blue); font-size: 24px; font-weight: 800; margin-bottom: 30px; }
+
         .creator-tag { 
-            margin-top: auto; padding: 20px; text-align: center; 
+            padding: 20px; text-align: center; 
             font-size: 13px; color: var(--twins-blue); font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 1px; width: 100%;
         }
 
-        /* Botones y Cards */
+        /* Elementos de Interfaz */
         .card { 
             background: var(--card); border-radius: 16px; border: 1px solid var(--border); 
             padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
         .btn { 
-            width: 100%; padding: 16px; border-radius: 12px; border: none; 
-            font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; 
+            width: 100%; max-width: 300px; padding: 16px; border-radius: 12px; border: none; 
+            font-size: 15px; font-weight: 700; cursor: pointer; margin: 8px auto; 
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
         .btn:active { transform: scale(0.96); opacity: 0.8; }
@@ -64,10 +66,10 @@
             border-radius: 20px; padding: 25px; text-align: center; margin-bottom: 20px;
         }
 
-        .driver-chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; }
+        .driver-chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-bottom: 10px; }
         .chip { 
             background: white; border: 1.5px solid var(--border); padding: 8px 15px; 
-            border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap;
+            border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer;
         }
         .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
     </style>
@@ -77,26 +79,24 @@
     <div id="p1" class="page active">
         <div class="login-content">
             <div class="logo-box">
-                <img src="https://tajho.github.io/Despachos/logo.png" alt="Twins Logo" onerror="this.src='https://via.placeholder.com/200x80?text=TWINS+LOGS'">
+                <img src="https://tajho.github.io/Despachos/logo.png" alt="Twins Logo">
             </div>
+            <h1>DESPACHOS</h1>
             
-            <div style="width: 100%; max-width: 300px; margin-top: 30px;">
-                <button class="btn btn-outline" onclick="login('TAJHO')">ENTRAR COMO TAJHO</button>
-                <button class="btn btn-outline" onclick="login('FRANCESCO')">ENTRAR COMO FRANCESCO</button>
-                <button class="btn btn-outline" onclick="login('OSCAR')">ENTRAR COMO OSCAR</button>
-            </div>
+            <button class="btn btn-outline" onclick="login('TAJHO')">ENTRAR COMO TAJHO</button>
+            <button class="btn btn-outline" onclick="login('FRANCESCO')">ENTRAR COMO FRANCESCO</button>
+            <button class="btn btn-outline" onclick="login('OSCAR')">ENTRAR COMO OSCAR</button>
         </div>
         
         <div class="creator-tag">
-            DESPACHOS<br>
-            <span style="font-weight: 400; font-size: 11px; opacity: 0.7;">By Tajho Developer</span>
+            By Tajho Developer
         </div>
     </div>
 
     <div id="p2" class="page">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
             <span id="display-user" style="font-weight: 800; color: var(--twins-blue);"></span>
-            <button onclick="location.reload()" style="background:none; border:none; color:red; font-weight:bold;">SALIR</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; font-weight:bold; cursor:pointer;">SALIR</button>
         </div>
 
         <div class="cajas-banner">
@@ -107,7 +107,7 @@
         <div class="card">
             <input type="text" id="cli" placeholder="Cliente / Destino">
             <input type="number" id="can" placeholder="Cant. Cajas" inputmode="numeric">
-            <button class="btn btn-main" onclick="addDestino()">+ AÑADIR DESTINO</button>
+            <button class="btn btn-main" style="max-width: 100%;" onclick="addDestino()">+ AÑADIR DESTINO</button>
         </div>
 
         <div id="area-envio" style="display:none;">
@@ -119,90 +119,6 @@
                     <option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option>
                     <option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                 </select>
-                <select id="aux" style="font-size: 14px;">
+                <select id="aux">
                     <option value="">Seleccionar Auxiliar...</option>
                     <option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option>
-                    <option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option>
-                    <option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option>
-                </select>
-                <select id="pla"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
-                
-                <button class="btn btn-save" onclick="procesar(true)">💾 GUARDAR Y WHATSAPP</button>
-                <button class="btn btn-outline" onclick="procesar(false)">📌 SOLO GUARDAR</button>
-            </div>
-        </div>
-        <button class="btn btn-outline" style="margin-top:10px;" onclick="showHistory()">📊 REPORTE ESTADÍSTICO</button>
-    </div>
-
-    <div id="p3" class="page">
-        <button class="btn btn-outline" style="width:auto; margin-bottom:15px;" onclick="switchPage('p3', 'p2')">← VOLVER</button>
-        
-        <div class="card">
-            <select id="filter-month" onchange="renderHistory()">
-                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
-                <option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option>
-                <option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option>
-                <option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
-            </select>
-        </div>
-
-        <div class="driver-chips" id="driver-chips-container"></div>
-
-        <div class="card" style="text-align:center; border-top: 5px solid var(--twins-green);">
-            <small id="stat-title" style="font-weight: 700; color: var(--twins-blue);"></small>
-            <div id="stat-total" style="font-size:40px; font-weight:800; color: var(--twins-blue);">0</div>
-        </div>
-
-        <div id="history-list"></div>
-    </div>
-
-    <script>
-        let user = "", route = [], activeFilter = "TODOS";
-        let db = JSON.parse(localStorage.getItem('twins_db_final_v35')) || [];
-        const drivers = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO", "TAJHO"];
-
-        document.getElementById('filter-month').value = new Date().getMonth();
-
-        function switchPage(h, s) { 
-            document.getElementById(h).classList.remove('active'); 
-            document.getElementById(s).classList.add('active'); 
-        }
-
-        function login(n) { 
-            user = n; 
-            document.getElementById('display-user').innerText = "OPERARIO: " + n; 
-            switchPage('p1', 'p2'); 
-        }
-        
-        function addDestino() {
-            const c = document.getElementById('cli').value.toUpperCase().trim(), q = parseInt(document.getElementById('can').value);
-            if(!c || isNaN(q)) return;
-            route.push({id: Date.now(), c, q});
-            renderRoute();
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-        }
-
-        function renderRoute() {
-            const l = document.getElementById('lista-actual'), t = document.getElementById('total-vivo');
-            l.innerHTML = ""; let s = 0;
-            route.forEach(i => { 
-                s += i.q; 
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #eee;"><span><b>${i.c}</b> (${i.q})</span><button onclick="delItem(${i.id})" style="color:red; border:none; background:none; font-weight:bold;">✕</button></div>`; 
-            });
-            t.innerText = s; document.getElementById('area-envio').style.display = route.length > 0 ? 'block' : 'none';
-        }
-
-        function delItem(id) { route = route.filter(i => i.id !== id); renderRoute(); }
-
-        function procesar(wa) {
-            const ch = document.getElementById('cho').value, pl = document.getElementById('pla').value, ax = document.getElementById('aux').value;
-            if(!ch || !pl || !ax) return alert("Complete los datos faltantes");
-            
-            const reg = { id: Date.now(), fecha: new Date().toISOString(), operario: user, chofer: ch, placa: pl, auxiliar: ax, destinos: [...route], total: route.reduce((a,b)=>a+b.q, 0) };
-            db.push(reg);
-            localStorage.setItem('twins_db_final_v35', JSON.stringify(db));
-
-            if(wa) {
-                let msg = `*DESPACHO ÚTILES TWINS*\n👤 Op: ${user}\n🚚 Ch: ${ch}\n🚛 Pl: ${pl}\n🏃 Aux: ${ax}\n----------------\n`;
-                route.forEach(i => msg += `• ${
-                    
