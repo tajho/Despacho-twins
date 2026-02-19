@@ -3,76 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA TWINS V24</title>
+    <title>SISTEMA TWINS | Warehouse Management</title>
     <style>
-        :root { --bg: #000; --card: #121212; --text: #fff; --primary: #3498db; --border: #333; }
-        [data-theme="light"] { --bg: #f4f7f6; --card: #fff; --text: #333; --border: #ddd; }
+        :root {
+            --bg-body: #f0f2f5; --bg-card: #ffffff; --text-main: #1c1e21;
+            --primary: #007bff; --success: #28a745; --danger: #dc3545; --border: #ddd;
+        }
+        [data-theme="dark"] {
+            --bg-body: #0a0a0a; --bg-card: #1a1a1a; --text-main: #e4e6eb;
+            --border: #333;
+        }
+
+        body { 
+            background-color: var(--bg-body); color: var(--text-main); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            margin: 0; transition: all 0.3s ease; 
+        }
+
+        /* Gestión de Ventanas */
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Componentes UI */
+        .card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         
-        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; transition: 0.3s; }
-        .pantalla { display: none; }
-        .activa { display: block !important; }
+        .btn { 
+            width: 100%; padding: 15px; border-radius: 8px; border: none; font-size: 16px; font-weight: 600; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--danger); color: white; padding: 8px; width: auto; margin: 0; }
         
-        .card { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
-        .btn { width: 100%; padding: 18px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin: 8px 0; display: block; text-align: center; text-decoration: none; }
-        .btn-user { background: var(--card); color: var(--primary); border: 1px solid var(--primary); }
-        .btn-main { background: var(--primary); color: #fff; }
-        
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; box-sizing: border-box; }
-        .badge { background: var(--primary); color: #fff; padding: 5px 12px; border-radius: 15px; font-size: 20px; }
+        input, select { 
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--border);
+            background: var(--bg-card); color: var(--text-main); font-size: 16px; box-sizing: border-box;
+        }
+
+        /* Lista de Despachos Editables */
+        .item-despacho {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; border-bottom: 1px solid var(--border);
+        }
+        .item-despacho:last-child { border-bottom: none; }
+
+        .badge-count { background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 20px; }
     </style>
 </head>
 <body data-theme="dark">
 
-    <div id="p1" class="pantalla activa">
-        <h1 style="text-align:center; color:var(--primary);">SISTEMA TWINS</h1>
-        <p style="text-align:center; opacity:0.6;">Seleccione su nombre:</p>
-        
-        <div class="btn btn-user" onclick="window.operario='TAJHO'; document.getElementById('nom-u').innerText='👤 TAJHO'; document.getElementById('p1').style.display='none'; document.getElementById('p2').style.display='block';">TAJHO</div>
-        <div class="btn btn-user" onclick="window.operario='FRANCESCO'; document.getElementById('nom-u').innerText='👤 FRANCESCO'; document.getElementById('p1').style.display='none'; document.getElementById('p2').style.display='block';">FRANCESCO</div>
-        <div class="btn btn-user" onclick="window.operario='OSCAR'; document.getElementById('nom-u').innerText='👤 OSCAR'; document.getElementById('p1').style.display='none'; document.getElementById('p2').style.display='block';">OSCAR</div>
-        
-        <div class="btn" style="background:none; color:var(--primary); font-size:14px;" onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');">🌓 Cambiar Modo Claro/Oscuro</div>
+    <div id="view-login" class="page active">
+        <div style="text-align:center; margin-top: 40px;">
+            <h1 style="color:var(--primary); letter-spacing: -1px;">SISTEMA TWINS</h1>
+            <p style="opacity:0.7;">Panel de Gestión de Inventario</p>
+        </div>
+        <div style="margin-top: 50px;">
+            <button class="btn btn-outline" onclick="initApp('TAJHO')">ACCEDER COMO TAJHO</button>
+            <button class="btn btn-outline" onclick="initApp('FRANCESCO')">ACCEDER COMO FRANCESCO</button>
+            <button class="btn btn-outline" onclick="initApp('OSCAR')">ACCEDER COMO OSCAR</button>
+        </div>
+        <button class="btn" style="background:none; color:var(--text-main); font-size:14px; margin-top:30px;" onclick="toggleTheme()">🌓 Cambiar Tema (Claro/Oscuro)</button>
     </div>
 
-    <div id="p2" class="pantalla">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-            <b id="nom-u"></b>
-            <button onclick="location.reload()" style="background:none; border:none; color:red;">SALIR</button>
+    <div id="view-app" class="page">
+        <div class="header">
+            <b id="user-display" style="color:var(--primary)"></b>
+            <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:bold;">SALIR</button>
         </div>
 
         <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>Cajas en carga:</span>
-            <b id="suma-total" class="badge">0</b>
+            <span>Total Cajas en Ruta:</span>
+            <span id="total-cajas" class="badge-count">0</span>
         </div>
 
         <div class="card">
-            <input type="text" id="cli" placeholder="CLIENTE / DESTINO">
-            <input type="number" id="can" placeholder="CANTIDAD CAJAS" inputmode="numeric">
-            <button class="btn btn-main" onclick="agregar()">+ AÑADIR DESPACHO</button>
+            <h4 style="margin:0 0 10px 0;">Nuevo Despacho</h4>
+            <input type="text" id="input-cliente" placeholder="Nombre del Cliente / Destino">
+            <input type="number" id="input-cajas" placeholder="Cant. Cajas" inputmode="numeric">
+            <button class="btn btn-primary" onclick="addDestino()">+ AGREGAR DESTINO</button>
         </div>
 
-        <div id="area-envio" style="display:none;">
-            <div id="lista" class="card" style="font-size:14px; color:#888;"></div>
-            <select id="cho"><option value="">Seleccione Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
-            <select id="pla"><option value="">Seleccione Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
-            <button class="btn btn-main" style="background:#2ecc71;" onclick="enviar()">✅ ENVIAR WHATSAPP</button>
-            <button class="btn" style="background:#444; color:#fff; font-size:14px;" onclick="anexo()">📦 AGREGAR ANEXO</button>
+        <div id="container-envio" style="display:none;">
+            <div class="card">
+                <h4 style="margin:0 0 10px 0;">Resumen de Ruta (Editable)</h4>
+                <div id="lista-despachos"></div>
+            </div>
+
+            <div class="card">
+                <select id="select-chofer"><option value="">Seleccione Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
+                <select id="select-placa"><option value="">Seleccione Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                <button class="btn btn-primary" style="background:var(--success);" onclick="enviarWhatsapp()">💾 ENVIAR REPORTE</button>
+                <button class="btn btn-outline" style="border-color:#666; color:#666; font-size:14px;" onclick="nuevoAnexo()">📦 MANTENER RUTA (ANEXO)</button>
+            </div>
         </div>
-        
-        <button class="btn" style="border:1px solid var(--border); color:var(--text); font-size:14px;" onclick="document.getElementById('p2').style.display='none'; document.getElementById('p3').style.display='block';">📋 VER HISTORIAL</button>
+
+        <button class="btn btn-outline" style="font-size:14px;" onclick="switchView('view-app', 'view-history')">📋 VER HISTORIAL</button>
     </div>
 
-    <div id="p3" class="pantalla">
-        <button class="btn" onclick="document.getElementById('p3').style.display='none'; document.getElementById('p2').style.display='block';">← VOLVER</button>
-        <input type="text" id="bus" onkeyup="buscar()" placeholder="🔍 Buscar cliente...">
-        <div style="overflow-x:auto; margin-top:10px;">
-            <table style="width:100%; border-collapse:collapse; font-size:12px;">
-                <thead><tr style="background:var(--primary); color:#fff;"><th>Cliente</th><th>Cjs</th><th>Chofer</th></tr></thead>
-                <tbody id="tabla"><tr><td colspan="3" style="text-align:center; padding:20px;">No hay registros</td></tr></tbody>
-            </table>
+    <div id="view-history" class="page">
+        <header class="header">
+            <button class="btn btn-outline" style="width:auto; padding:8px 15px;" onclick="switchView('view-history', 'view-app')">← VOLVER</button>
+            <h3>Historial Hoy</h3>
+        </header>
+        <div class="card">
+            <input type="text" onkeyup="filterHistory(this.value)" placeholder="🔍 Buscar cliente...">
+            <div id="history-content" style="font-size:13px; margin-top:10px;">
+                <p style="text-align:center; opacity:0.5;">No hay registros locales.</p>
+            </div>
         </div>
     </div>
 
     <script>
-        window.items = [];
-        window.totalCajas = 0;
+        // ESTADO GLOBAL
+        let APP_STATE = {
+            user: "",
+            rutaActual: [],
+            total: 0,
+            theme: "dark"
+        };
+
+        // NAVEGACIÓN PROFESIONAL
+        function switchView(hideId, showId) {
+            document.getElementById(hideId).classList.remove('active');
+            document.getElementById(showId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function toggleTheme() {
+            APP_STATE.theme = APP_STATE.theme === "dark" ? "light" : "dark";
+            document.body.setAttribute('data-theme', APP_STATE.theme);
+        }
+
+        function initApp(userName) {
+            APP_STATE.user = userName;
+            document.getElementById('user-display').innerText = "👤 " + userName;
+            switchView('view-login', 'view-app');
+        }
+
+        // LÓGICA DE DESPACHOS
+        function addDestino() {
+            const cli = document.getElementById('input-cliente').value.toUpperCase().trim();
+            const can = parseInt(document.getElementById('input-cajas').value);
+
+            if (!cli || isNaN(can)) return alert("Debe ingresar Cliente y Cantidad");
+
+            const id = Date.now();
+            APP_STATE.rutaActual.push({ id, cli, can });
+            renderRuta();
+
+            document.getElementById('input-cliente').value = "";
+            document.getElementById('input-cajas').value = "";
+        }
+
+        function deleteDestino(id) {
+            APP_STATE.rutaActual = APP_STATE.rutaActual.filter(item => item.id !== id);
+            renderRuta();
+        }
+
+        function renderRuta() {
+            const container = document.getElementById('lista-despachos');
+            const totalDisplay = document.getElementById('total-cajas');
+            const areaEnvio = document.getElementById('container-envio');
+            
+            container.innerHTML = "";
+            let suma = 0;
+
+            APP_STATE.rutaActual.forEach(item => {
+                suma += item.can;
+                container.innerHTML += `
+                    <div class="item-despacho">
+                        <span><b>${item.cli}</b> (${item.can} CJ)</span>
+                        <button class="btn-danger" onclick="deleteDestino(${item.id})">🗑️</button>
+                    </div>
+                `;
+            });
+
+            APP_STATE.total = suma;
+            totalDisplay.innerText = suma;
+            areaEnvio.style.display = APP_STATE.rutaActual.length > 0 ? 'block' : 'none';
+        }
+
+        function nuevoAnexo() {
+            if(confirm("Se limpiará la lista de destinos pero se mantendrá Chofer y Placa. ¿Continuar?")) {
+                APP_STATE.rutaActual = [];
+                renderRuta();
+            }
+        }
+
+        function enviarWhatsapp() {
+            const chofer = document.getElementById('select-chofer').value;
+            const placa = document.getElementById('select-placa').value;
+
+            if (!chofer || !placa) return alert("Seleccione Chofer y Placa");
+
+            let msj = `*REPORTE DE CARGA TWINS*\n`;
+            msj += `👤 *Operario:* ${APP_STATE.user}\n`;
+            msj += `🚚 *Chofer:* ${chofer}\n`;
+            msj += `🚛 *Placa:* ${placa}\n`;
+            msj += `--------------------------\n`;
+            
+            APP_STATE.rutaActual.forEach(i => {
+                msj += `• ${i.cli}: ${i.can} CJ\n`;
+            });
+
+            msj += `--------------------------\n`;
+            msj += `📦 *TOTAL RUTA:* ${APP_STATE.total} CAJAS`;
+
+            window.open(`https://wa.me/?text=${encodeURIComponent(msj)}`, '_blank');
+        }
+
+        function filterHistory(query) {
+            // Lógica para filtrar tabla de historial
+        }
+    </script>
+</body>
+</html>
