@@ -3,74 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA TWINS V22</title>
+    <title>TWINS MANAGER V23</title>
     <style>
-        /* ESTA PARTE EVITA QUE SE VEA TODO JUNTO */
-        body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 15px; }
-        .pantalla { display: none !important; } /* Oculta todo por defecto */
-        .activa { display: block !important; }  /* Solo muestra lo que tenga la clase activa */
+        :root {
+            --bg: #f4f7f6; --card: #ffffff; --text: #333; --primary: #3498db; --secondary: #2ecc71; --border: #ddd;
+        }
+        [data-theme="dark"] {
+            --bg: #000000; --card: #121212; --text: #eee; --primary: #3498db; --secondary: #2ecc71; --border: #333;
+        }
         
-        /* Estilos visuales */
-        .btn { width: 100%; padding: 20px; margin: 10px 0; border-radius: 12px; border: none; font-size: 18px; font-weight: bold; cursor: pointer; text-align: center; }
-        .btn-user { background: #222; color: #3498db; border: 1px solid #333; }
-        .btn-azul { background: #3498db; color: #fff; }
-        .btn-verde { background: #2ecc71; color: #fff; }
-        input, select { width: 100%; padding: 15px; margin: 10px 0; border-radius: 8px; background: #111; color: #fff; border: 1px solid #333; font-size: 16px; }
-        .contador { background: #1a1a1a; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db; margin: 10px 0; display: flex; justify-content: space-between; }
+        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; transition: 0.3s; }
+        
+        /* Layout */
+        .pantalla { display: none; padding: 15px; min-height: 100vh; }
+        .activa { display: block !important; }
+        
+        /* Cabecera */
+        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
+        
+        /* Tarjetas y Contenedores */
+        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        
+        /* Botones Profesionales */
+        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin: 8px 0; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn:active { transform: scale(0.98); opacity: 0.8; }
+        .btn-user { background: var(--card); color: var(--primary); border: 2px solid var(--primary); }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-success { background: var(--secondary); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); font-size: 14px; }
+
+        /* Inputs */
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; box-sizing: border-box; }
+
+        /* Contador */
+        .counter-badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 18px; font-weight: bold; }
+
+        /* Tabla de Historial */
+        .table-container { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+        th { background: var(--primary); color: white; }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
     <div id="p1" class="pantalla activa">
-        <h2 style="text-align:center; color:#3498db;">SISTEMA TWINS</h2>
-        <p style="text-align:center; color:#666;">Selecciona tu nombre:</p>
-        <div class="btn btn-user" onclick="entrar('TAJHO')">TAJHO</div>
-        <div class="btn btn-user" onclick="entrar('FRANCESCO')">FRANCESCO</div>
-        <div class="btn btn-user" onclick="entrar('OSCAR')">OSCAR</div>
+        <div style="text-align:center; margin-top: 50px;">
+            <h1 style="color: var(--primary); margin-bottom: 5px;">SISTEMA TWINS</h1>
+            <p style="opacity: 0.6;">Control de Inventario y Despachos</p>
+        </div>
+        <div style="margin-top: 40px;">
+            <button class="btn btn-user" onclick="entrar('TAJHO')">👤 TAJHO</button>
+            <button class="btn btn-user" onclick="entrar('FRANCESCO')">👤 FRANCESCO</button>
+            <button class="btn btn-user" onclick="entrar('OSCAR')">👤 OSCAR</button>
+        </div>
+        <button class="btn btn-outline" style="margin-top: 50px;" onclick="toggleTheme()">🌓 Cambiar Modo Claro/Oscuro</button>
     </div>
 
     <div id="p2" class="pantalla">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <b id="nom-u" style="color:#2ecc71;"></b>
-            <button onclick="location.reload()" style="color:#555; background:none; border:none;">SALIR</button>
+        <header>
+            <b id="nom-u" style="color: var(--primary);"></b>
+            <button onclick="toggleTheme()" style="background:none; border:none; font-size:20px; cursor:pointer;">🌓</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; font-weight:bold;">SALIR</button>
+        </header>
+
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Cajas cargadas hoy:</span>
+            <div id="suma-total" class="counter-badge">0</div>
         </div>
 
-        <div class="contador">
-            <span>Cajas en carga actual:</span>
-            <b id="suma-total" style="font-size:24px; color:#3498db;">0</b>
+        <div class="card">
+            <input type="text" id="cli" placeholder="CLIENTE / DESTINO">
+            <input type="number" id="can" placeholder="CANTIDAD DE CAJAS" inputmode="numeric">
+            <button class="btn btn-main" onclick="agregar()">➕ AÑADIR A CARGA</button>
         </div>
-
-        <input type="text" id="cli" placeholder="CLIENTE / DESTINO">
-        <input type="number" id="can" placeholder="CANTIDAD" inputmode="numeric">
-        <button class="btn btn-azul" onclick="agregar()">+ AÑADIR DESPACHO</button>
 
         <div id="area-envio" style="display:none;">
-            <div id="lista" style="background:#080808; padding:10px; margin:10px 0; border-radius:8px; font-size:14px; border-left:4px solid #3498db; color:#aaa;"></div>
-            <select id="cho"><option value="">CHOFER...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
-            <select id="pla"><option value="">PLACA...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
-            <button class="btn btn-verde" onclick="enviar()">💾 ENVIAR WHATSAPP</button>
-            <button class="btn btn-user" onclick="anexo()" style="background:#444; color:#fff; font-size:14px;">+ AGREGAR ADICIONAL</button>
+            <div id="lista" class="card" style="font-size: 14px; opacity: 0.8; border-left: 5px solid var(--primary);"></div>
+            
+            <div class="card">
+                <select id="cho"><option value="">Seleccione Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
+                <select id="pla"><option value="">Seleccione Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                <button class="btn btn-success" onclick="enviar()">✅ ENVIAR WHATSAPP</button>
+                <button class="btn btn-outline" onclick="anexo()">📦 AGREGAR ANEXO (Misma ruta)</button>
+            </div>
         </div>
         
-        <button class="btn btn-user" style="font-size:14px;" onclick="irA('p2','p3')">VER HISTORIAL</button>
+        <button class="btn btn-outline" onclick="irA('p2','p3')">📋 VER HISTORIAL DIARIO</button>
     </div>
 
     <div id="p3" class="pantalla">
-        <button class="btn btn-user" onclick="irA('p3','p2')">← VOLVER</button>
-        <h3 style="text-align:center;">HISTORIAL DE DESPACHOS</h3>
-        <input type="text" id="bus" onkeyup="buscar()" placeholder="🔍 Buscar cliente...">
-        <table style="width:100%; border-collapse:collapse; font-size:12px;">
-            <thead><tr style="color:#3498db; border-bottom:1px solid #333;"><th>Cliente</th><th>Cjs</th><th>Chofer</th></tr></thead>
-            <tbody id="tabla">
-                <tr><td colspan="3" style="text-align:center; padding:20px; color:#444;">No hay datos en el historial</td></tr>
-            </tbody>
-        </table>
+        <header>
+            <button onclick="irA('p3','p2')" style="background:none; border:none; color:var(--primary); font-weight:bold;">← VOLVER</button>
+            <h3>HISTORIAL</h3>
+        </header>
+        
+        <input type="text" id="bus" onkeyup="buscar()" placeholder="🔍 Buscar por cliente...">
+        
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Cliente</th><th>Cjs</th><th>Chofer</th></tr></thead>
+                <tbody id="tabla">
+                    <tr><td colspan="3" style="text-align:center; padding:20px;">No hay registros hoy</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
         let operario = "";
         let items = [];
         let totalCajas = 0;
+
+        function toggleTheme() {
+            const body = document.body;
+            const current = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
 
         function irA(ocultar, mostrar) {
             document.getElementById(ocultar).classList.remove('activa');
@@ -86,11 +135,12 @@
         function agregar() {
             let c = document.getElementById('cli').value.toUpperCase().trim();
             let q = parseInt(document.getElementById('can').value);
-            if(!c || isNaN(q)) return alert("Datos incompletos");
+            if(!c || isNaN(q)) return alert("Por favor, llene cliente y cajas");
+
             items.push({c, q});
             totalCajas += q;
             document.getElementById('suma-total').innerText = totalCajas;
-            document.getElementById('lista').innerHTML += `• ${c}: ${q} CJ<br>`;
+            document.getElementById('lista').innerHTML += `<b>${c}</b>: ${q} cj<br>`;
             document.getElementById('area-envio').style.display = 'block';
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
         }
@@ -99,26 +149,16 @@
             items = []; totalCajas = 0;
             document.getElementById('suma-total').innerText = "0";
             document.getElementById('lista').innerHTML = "";
-            alert("Listo para el despacho adicional.");
+            alert("Modo Anexo: Chofer y Placa se mantienen.");
         }
 
         function enviar() {
             let cho = document.getElementById('cho').value;
-            if(!cho) return alert("Selecciona chofer");
-            let txt = `*REPORTE TWINS*\n👤 ${operario}\n🚚 ${cho}\n----------------\n`;
+            if(!cho) return alert("Selecciona un chofer");
+            let txt = `*REPORTE TWINS*\n👤 Operario: ${operario}\n🚚 Chofer: ${cho}\n----------------\n`;
             items.forEach(i => { txt += `• ${i.c}: ${i.q} CJ\n`; });
             txt += `----------------\n📦 TOTAL: ${totalCajas} CAJAS`;
             window.open("https://wa.me/?text=" + encodeURIComponent(txt));
         }
 
-        function buscar() {
-            let v = document.getElementById('bus').value.toUpperCase();
-            let f = document.getElementById('tabla').getElementsByTagName("tr");
-            for (let i = 0; i < f.length; i++) {
-                let t = f[i].getElementsByTagName("td")[0]?.innerText || "";
-                f[i].style.display = t.toUpperCase().indexOf(v) > -1 ? "" : "none";
-            }
-        }
-    </script>
-</body>
-</html>
+        function buscar()
