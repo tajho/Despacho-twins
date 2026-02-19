@@ -3,289 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS PRO | Industrial Logistics</title>
+    <title>SISTEMA TWINS | Reporte Mensual Pro</title>
     <style>
         :root {
-            /* Paleta Moderna: Azul Cobalto e Industrial Gray */
-            --bg: #0f172a; 
-            --card: #1e293b; 
-            --primary: #38bdf8; 
-            --primary-dark: #0284c7;
-            --success: #10b981; 
-            --danger: #f43f5e; 
-            --warning: #fbbf24; 
-            --text: #f8fafc; 
-            --text-dim: #94a3b8;
-            --border: #334155;
+            --bg: #0f172a; --card: #1e293b; --primary: #38bdf8; --primary-dark: #0284c7;
+            --success: #10b981; --danger: #f43f5e; --warning: #fbbf24; --text: #f8fafc; 
+            --text-dim: #94a3b8; --border: #334155;
         }
-
         [data-theme="light"] {
-            --bg: #f1f5f9; 
-            --card: #ffffff; 
-            --primary: #0284c7; 
-            --primary-dark: #0c4a6e;
-            --success: #059669; 
-            --danger: #e11d48; 
-            --warning: #d97706; 
-            --text: #0f172a; 
-            --text-dim: #64748b;
-            --border: #e2e8f0;
+            --bg: #f1f5f9; --card: #ffffff; --primary: #0284c7; --primary-dark: #0c4a6e;
+            --success: #059669; --danger: #e11d48; --warning: #d97706; --text: #0f172a; 
+            --text-dim: #64748b; --border: #e2e8f0;
         }
-
-        body { 
-            background: var(--bg); color: var(--text); 
-            font-family: 'Inter', -apple-system, sans-serif; 
-            margin: 0; transition: background 0.3s; overflow-x: hidden; 
-        }
-
-        .page { display: none; padding: 20px; min-height: 100vh; box-sizing: border-box; }
-        .active { display: block; animation: slideUp 0.4s ease-out; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; transition: 0.3s; }
+        .page { display: none; padding: 20px; animation: slideUp 0.3s ease-out; }
+        .active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Tarjetas con Efecto Moderno */
-        .card { 
-            background: var(--card); border-radius: 16px; 
-            border: 1px solid var(--border); padding: 18px; 
-            margin-bottom: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
-        }
-        
-        /* Botones con Gradientes y Sombras */
-        .btn { 
-            width: 100%; padding: 16px; border-radius: 12px; border: none; 
-            font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; 
-            display: flex; align-items: center; justify-content: center; gap: 10px; 
-            transition: all 0.2s; 
-        }
-        .btn:active { transform: translateY(2px); }
+        .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 18px; margin-bottom: 15px; }
+        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-main { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
         .btn-save { background: var(--success); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
-        .btn-delete { background: var(--danger); color: white; width: 40px; height: 40px; padding: 0; border-radius: 10px; }
-        .btn-edit { background: var(--warning); color: #000; padding: 10px; border-radius: 8px; font-size: 13px; }
-
-        input, select { 
-            width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; 
-            border: 2px solid var(--border); background: var(--bg); 
-            color: var(--text); font-size: 16px; box-sizing: border-box; 
-            outline: none; transition: border-color 0.2s;
-        }
-        input:focus { border-color: var(--primary); }
-        
-        /* Dashboard Stats */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .stat-box { 
-            background: var(--card); padding: 15px; border-radius: 16px; 
-            border-bottom: 4px solid var(--primary); text-align: center; 
-        }
-        .stat-box small { color: var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
-        .stat-box b { font-size: 24px; display: block; color: var(--primary); margin-top: 5px; }
-        
-        .item-row { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px 0; border-bottom: 1px solid var(--border); 
-        }
-        .date-badge { font-size: 11px; color: var(--primary); font-weight: 600; }
+        input, select { width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; border: 2px solid var(--border); background: var(--bg); color: var(--text); font-size: 16px; box-sizing: border-box; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border-bottom: 3px solid var(--primary); text-align: center; }
+        .stat-box b { font-size: 22px; color: var(--primary); display: block; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
     </style>
 </head>
 <body data-theme="dark">
 
     <div id="p1" class="page active">
-        <div style="text-align:center; margin-top: 80px;">
-            <div style="background: var(--primary); width: 60px; height: 60px; border-radius: 15px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
-                <span style="font-size: 30px;">📦</span>
-            </div>
-            <h1 style="margin:0; font-size: 32px; letter-spacing: -1px;">SISTEMA <span style="color:var(--primary)">TWINS</span></h1>
-            <p style="color: var(--text-dim); margin-top:5px;">Warehouse & Logistics Pro</p>
+        <div style="text-align:center; margin-top: 60px;">
+            <h1 style="font-size: 32px;">SISTEMA <span style="color:var(--primary)">TWINS</span></h1>
+            <p style="color:var(--text-dim)">Control de Despachos V29</p>
         </div>
-        <div style="margin-top: 60px;">
+        <div style="margin-top: 50px;">
             <button class="btn btn-outline" onclick="login('TAJHO')">ENTRAR COMO TAJHO</button>
             <button class="btn btn-outline" onclick="login('FRANCESCO')">ENTRAR COMO FRANCESCO</button>
             <button class="btn btn-outline" onclick="login('OSCAR')">ENTRAR COMO OSCAR</button>
         </div>
-        <center><button class="btn" style="background:none; color:var(--text-dim); width:auto; margin-top:40px;" onclick="toggleTheme()">🌓 MODO CLARO / OSCURO</button></center>
     </div>
 
     <div id="p2" class="page">
-        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
-            <div>
-                <small style="color:var(--text-dim); display:block;">Operario activo</small>
-                <b id="display-user" style="color:var(--primary); font-size: 18px;"></b>
-            </div>
-            <button onclick="location.reload()" style="background:var(--danger); border:none; color:white; padding:8px 15px; border-radius:10px; font-weight:bold;">SALIR</button>
-        </header>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <b id="display-user" style="color:var(--primary)"></b>
+            <button onclick="location.reload()" style="background:var(--danger); color:white; border:none; padding:8px; border-radius:8px;">SALIR</button>
+        </div>
 
-        <div id="edit-indicator" style="display:none; background:var(--warning); color:#000; padding:10px; text-align:center; border-radius:12px; margin-bottom:15px; font-weight:bold; font-size:13px;">✏️ EDITANDO RUTA GUARDADA</div>
+        <div id="edit-indicator" style="display:none; background:var(--warning); color:black; padding:8px; border-radius:8px; margin:10px 0; text-align:center; font-weight:bold;">MODO EDICIÓN</div>
 
-        <div class="card" style="text-align:center; background: linear-gradient(180deg, var(--card) 0%, var(--bg) 100%);">
-            <small style="color:var(--text-dim)">CAJAS EN CARGA ACTUAL</small>
-            <div id="total-vivo" style="font-size:48px; font-weight:800; color:var(--primary)">0</div>
+        <div class="card" style="text-align:center; margin-top:15px;">
+            <small style="color:var(--text-dim)">CAJAS ACTUALES</small>
+            <div id="total-vivo" style="font-size:40px; font-weight:800; color:var(--primary)">0</div>
         </div>
 
         <div class="card">
-            <input type="text" id="cli" placeholder="Nombre del Cliente">
+            <input type="text" id="cli" placeholder="Cliente / Destino">
             <input type="number" id="can" placeholder="Cantidad de Cajas" inputmode="numeric">
             <button class="btn btn-main" onclick="addDestino()">+ AÑADIR DESTINO</button>
         </div>
 
         <div id="area-envio" style="display:none;">
             <div class="card" id="lista-actual"></div>
-            
-            <div class="card" style="border-top: 4px solid var(--success);">
-                <select id="cho"><option value="">Seleccionar Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
-                <select id="pla"><option value="">Seleccionar Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
-                
-                <button class="btn btn-save" onclick="procesarRuta(true)">💾 GUARDAR Y ENVIAR WHATSAPP</button>
-                <button class="btn btn-outline" style="border-color:var(--success); color:var(--success);" onclick="procesarRuta(false)">📌 SOLO GUARDAR HISTORIAL</button>
-                <button class="btn" style="background:none; color:var(--danger); font-size:12px;" onclick="cancelarTodo()">CANCELAR RUTA</button>
+            <div class="card">
+                <select id="cho"><option value="">Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
+                <select id="pla"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                <select id="aux"><option value="">Auxiliar...</option><option value="TAJHO">TAJHO</option><option value="CRISTOPHER">CRISTOPHER</option></select>
+                <button class="btn btn-save" onclick="procesar(true)">💾 GUARDAR Y ENVIAR WA</button>
+                <button class="btn btn-outline" onclick="procesar(false)">📌 SOLO GUARDAR</button>
+                <button class="btn" style="color:var(--danger); font-size:12px;" onclick="cancelar()">CANCELAR</button>
             </div>
         </div>
-
-        <button class="btn btn-outline" style="margin-top:10px; border-color: var(--primary); color: var(--primary);" onclick="showHistory()">📊 HISTORIAL Y RENDIMIENTO</button>
+        <button class="btn btn-outline" onclick="showHistory()">📊 REPORTE MENSUAL</button>
     </div>
 
     <div id="p3" class="page">
-        <button class="btn btn-outline" style="width:auto; margin-bottom:20px;" onclick="switchPage('p3', 'p2')">← VOLVER</button>
+        <button class="btn btn-outline" style="width:auto;" onclick="switchPage('p3', 'p2')">← VOLVER</button>
         
-        <div class="stat-grid">
-            <div class="stat-box"><small>Romario</small><b id="stat-romario">0</b></div>
-            <div class="stat-box"><small>Cesar</small><b id="stat-cesar">0</b></div>
+        <div class="card">
+            <label>Filtrar por Mes:</label>
+            <select id="filter-month" onchange="renderHistory()">
+                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+                <option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option>
+                <option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option>
+                <option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
         </div>
 
-        <h3 style="font-size: 18px; margin-bottom: 15px;">Rutas Recientes</h3>
+        <div class="stat-grid">
+            <div class="stat-box"><small>ROMARIO</small><b id="st-rom">0</b></div>
+            <div class="stat-box"><small>CESAR</small><b id="st-ces">0</b></div>
+        </div>
+
         <div id="history-list"></div>
     </div>
 
     <script>
-        let currentUser = "";
-        let currentRoute = [];
-        let editingId = null;
-        let db = JSON.parse(localStorage.getItem('twins_db_v29')) || [];
+        let user = "", route = [], editId = null;
+        let db = JSON.parse(localStorage.getItem('twins_v29')) || [];
 
-        function switchPage(hide, show) {
-            document.getElementById(hide).classList.remove('active');
-            document.getElementById(show).classList.add('active');
-            window.scrollTo(0,0);
-        }
+        // Iniciar mes actual en el filtro
+        document.getElementById('filter-month').value = new Date().getMonth();
 
-        function toggleTheme() {
-            const b = document.body;
-            b.setAttribute('data-theme', b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-        }
-
-        function login(user) {
-            currentUser = user;
-            document.getElementById('display-user').innerText = user;
-            switchPage('p1', 'p2');
-        }
-
+        function switchPage(h, s) { document.getElementById(h).classList.remove('active'); document.getElementById(s).classList.add('active'); }
+        function login(n) { user = n; document.getElementById('display-user').innerText = "👤 "+n; switchPage('p1', 'p2'); }
+        
         function addDestino() {
-            const cli = document.getElementById('cli').value.toUpperCase().trim();
-            const can = parseInt(document.getElementById('can').value);
-            if(!cli || isNaN(can)) return;
-            currentRoute.push({ id: Date.now(), cli, can });
+            const c = document.getElementById('cli').value.toUpperCase(), q = parseInt(document.getElementById('can').value);
+            if(!c || isNaN(q)) return;
+            route.push({id: Date.now(), c, q});
             renderRoute();
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
         }
 
-        function deleteItem(id) {
-            currentRoute = currentRoute.filter(i => i.id !== id);
-            renderRoute();
-        }
-
         function renderRoute() {
-            const list = document.getElementById('lista-actual');
-            const total = document.getElementById('total-vivo');
-            list.innerHTML = "";
-            let suma = 0;
-            currentRoute.forEach(i => {
-                suma += i.can;
-                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b><br><small style="color:var(--text-dim)">${i.can} Cajas</small></span><button class="btn-delete" onclick="deleteItem(${i.id})">🗑️</button></div>`;
-            });
-            total.innerText = suma;
-            document.getElementById('area-envio').style.display = currentRoute.length > 0 ? 'block' : 'none';
+            const l = document.getElementById('lista-actual'), t = document.getElementById('total-vivo');
+            l.innerHTML = ""; let s = 0;
+            route.forEach(i => { s += i.q; l.innerHTML += `<div class="item-row"><span>${i.c} (${i.q})</span><button onclick="delItem(${i.id})" style="background:none; border:none; color:var(--danger)">🗑️</button></div>`; });
+            t.innerText = s; document.getElementById('area-envio').style.display = route.length > 0 ? 'block' : 'none';
         }
 
-        function cancelarTodo() {
-            if(!confirm("¿Deseas limpiar la ruta actual?")) return;
-            currentRoute = []; editingId = null;
-            document.getElementById('edit-indicator').style.display = "none";
-            renderRoute();
+        function delItem(id) { route = route.filter(i => i.id !== id); renderRoute(); }
+        function cancelar() { route = []; editId = null; document.getElementById('edit-indicator').style.display="none"; renderRoute(); }
+
+        function procesar(wa) {
+            const ch = document.getElementById('cho').value, pl = document.getElementById('pla').value, ax = document.getElementById('aux').value;
+            if(!ch || !pl || !ax) return alert("Complete Chofer, Placa y Auxiliar");
+            const reg = { id: editId || Date.now(), fecha: new Date().toISOString(), operario: user, chofer: ch, placa: pl, auxiliar: ax, destinos: [...route], total: route.reduce((a,b)=>a+b.q, 0) };
+            if(editId) db = db.map(r => r.id === editId ? reg : r); else db.push(reg);
+            localStorage.setItem('twins_v29', JSON.stringify(db));
+            if(wa) {
+                let msg = `*REPORTE TWINS*\n👤 Op: ${user}\n🚚 Ch: ${ch}\n🚛 Pl: ${pl}\n🏃 Aux: ${ax}\n----------------\n`;
+                route.forEach(i => msg += `• ${i.c}: ${i.q} CJ\n`);
+                msg += `----------------\n📦 TOTAL: ${reg.total} CAJAS`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+            }
+            cancelar(); alert("Guardado");
         }
 
-        function procesarRuta(enviarWA) {
-            const cho = document.getElementById('cho').value;
-            const pla = document.getElementById('pla').value;
-            if(!cho || !pla) return alert("Seleccione Chofer y Placa");
-
-            const registro = {
-                id: editingId || Date.now(),
-                fecha: editingId ? db.find(r => r.id === editingId).fecha : new Date().toISOString(),
-                operario: currentUser, chofer: cho, placa: pla,
-                destinos: [...currentRoute],
-                total: currentRoute.reduce((s, i) => s + i.can, 0)
-            };
-
-            if(editingId) db = db.map(r => r.id === editingId ? registro : r);
-            else db.push(registro);
-
-            localStorage.setItem('twins_db_v29', JSON.stringify(db));
-
-            if(enviarWA) {
-                let txt = `*REPORTE TWINS*\n👤 Operario: ${currentUser}\n🚚 Chofer: ${cho}\n🚛 Placa: ${pla}\n----------------\n`;
-                currentRoute.forEach(i => txt += `• ${i.cli}: ${i.can} CJ\n`);
-                txt += `----------------\n📦 TOTAL: ${registro.total} CAJAS`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
-            } else alert("✅ Ruta guardada en historial.");
-
-            editingId = null; currentRoute = [];
-            document.getElementById('edit-indicator').style.display = "none";
-            renderRoute();
-        }
-
-        function showHistory() {
-            switchPage('p2', 'p3');
-            renderHistory();
-        }
-
-        function editFromHistory(id) {
-            const r = db.find(reg => reg.id === id);
-            if(!r) return;
-            editingId = id;
-            currentRoute = [...r.destinos];
-            document.getElementById('cho').value = r.chofer;
-            document.getElementById('pla').value = r.placa;
-            document.getElementById('edit-indicator').style.display = "block";
-            renderRoute();
-            switchPage('p3', 'p2');
-        }
+        function showHistory() { renderHistory(); switchPage('p2', 'p3'); }
 
         function renderHistory() {
-            const list = document.getElementById('history-list');
-            const rom = document.getElementById('stat-romario');
-            const ces = document.getElementById('stat-cesar');
-            let tRom = 0, tCes = 0; list.innerHTML = "";
-            const mes = new Date().getMonth();
-
-            db.slice().reverse().forEach(reg => {
-                const f = new Date(reg.fecha);
-                if(f.getMonth() === mes) {
-                    if(reg.chofer === "ROMARIO") tRom += reg.total;
-                    if(reg.chofer === "CESAR") tCes += reg.total;
-                }
-                list.innerHTML += `
-                    <div class="card" style="border-left: 4px solid var(--primary);">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <span class="date-badge">${f.toLocaleDateString()}</span>
-                            <b style="color:var(--primary)">${reg.total} CJ</b>
-                        </div>
-                        <div style="font-size:14px; margin-bottom:12px;">
-                            <b>${reg.chofer}</b> • ${reg.placa}<br>
-                            <small style="color:var(--text-dim)">${reg.destinos.length} paradas registradas</small>
-                        </div>
-                        <button class="btn btn-edit" onclick="editFromHistory(${reg.id})">✏️ EDITAR RUTA</button>
+            const list = document.getElementById('history-list'), m = parseInt(document.getElementById('filter-month').value);
+            let tR = 0, tC = 0; list.innerHTML = "";
+            db.slice().reverse().forEach(r => {
+                const d = new Date(r.fecha);
+                if(d.getMonth() === m) {
+                    if(r.chofer === "ROMARIO") tR += r.total;
+                    if(r.chofer === "CESAR") tC += r.total;
+                    list.innerHTML += `<div class="card">
+                        <small style="color:var(--primary)">${d.toLocaleDateString()} - ${r.auxiliar}</small><br>
+                        <b>${r.chofer}</b> (${r.total} CJ)<br>
+                        <button class="btn btn-outline" style="font-size:12px; padding:5px;" onclick="editH(${r.id})">✏️ EDITAR</button>
                     </div>`;
+                }
             });
-            rom.innerText = tRom; ces.innerText = tCes;
+            document.getElementById('st-rom').innerText = tR; document.getElementById('st-ces').innerText = tC;
+        }
+
+        function editH(id) {
+            const r = db.find(x => x.id === id);
+            editId = id; route = [...r.destinos];
+            document.getElementById('cho').value = r.chofer;
+            document.getElementById('pla').value = r.placa;
+            document.getElementById('aux').value = r.auxiliar;
+            document.getElementById('edit-indicator').style.display = "block";
+            renderRoute(); switchPage('p3', 'p2');
         }
     </script>
 </body>
