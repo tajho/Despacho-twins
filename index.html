@@ -1,105 +1,33 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA TWINS V17</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        :root { --blue: #007bff; --green: #28a745; --dark: #000; --card: #121212; }
-        * { box-sizing: border-box; font-family: sans-serif; }
-        body { background: var(--dark); color: #fff; margin: 0; padding: 0; overflow-x: hidden; }
-
-        /* VISTAS */
-        .page { display: none; padding: 20px; height: 100vh; flex-direction: column; }
-        .active { display: flex !important; }
-
-        /* BOTONES DE INICIO */
-        .user-btn { 
-            background: var(--card); border: 1px solid #333; color: white; 
-            padding: 25px; margin: 10px 0; border-radius: 12px; font-size: 20px; 
-            font-weight: bold; width: 100%; cursor: pointer; text-align: center;
-        }
-
-        /* INPUTS Y BOTONES APP */
-        input, select { 
-            width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; 
-            border: 1px solid #333; background: #1a1a1a; color: white; font-size: 16px; 
-        }
-        .btn-main { background: var(--blue); color: white; padding: 18px; border: none; border-radius: 12px; font-weight: bold; width: 100%; margin-top: 10px; }
-        .btn-green { background: var(--green); }
-
-        /* ELEMENTOS DINÁMICOS */
-        #resumen-items { background: #080808; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid var(--blue); }
+        body { background: #000; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
+        .pantalla { display: none; }
+        .activa { display: block; }
+        button { padding: 20px; width: 100%; margin: 10px 0; font-size: 20px; }
     </style>
 </head>
 <body>
 
-    <div id="p-login" class="page active">
-        <h2 style="color: var(--blue); text-align: center;">SISTEMA TWINS</h2>
-        <p style="color: #666; text-align: center;">Selecciona tu nombre:</p>
-        <div class="user-btn" onclick="entrar('TAJHO')">TAJHO</div>
-        <div class="user-btn" onclick="entrar('FRANCESCO')">FRANCESCO</div>
-        <div class="user-btn" onclick="entrar('OSCAR')">OSCAR</div>
+    <div id="p1" class="activa">
+        <h1>SISTEMA TWINS</h1>
+        <button onclick="ir()">ENTRAR (TOCA AQUÍ)</button>
     </div>
 
-    <div id="p-app" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-            <b id="display-u" style="color: var(--green);"></b>
-            <button onclick="location.reload()" style="background:none; border:none; color:#555;">SALIR</button>
-        </div>
-
-        <input type="text" id="cli" placeholder="CLIENTE / DESTINO">
-        <input type="number" id="can" placeholder="CANTIDAD CAJAS" inputmode="numeric">
-        <button class="btn-main" onclick="add()">+ AÑADIR A CARGA</button>
-
-        <div id="area-envio" style="display:none;">
-            <div id="resumen-items"></div>
-            <select id="cho"><option value="">CHOFER...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
-            <select id="aux"><option value="">AUXILIAR...</option><option value="TAJHO">TAJHO</option><option value="CRISTOPHER">CRISTOPHER</option></select>
-            <select id="pla"><option value="">PLACA...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
-            <button class="btn-main btn-green" onclick="enviar()">💾 ENVIAR WHATSAPP</button>
-        </div>
+    <div id="p2" class="pantalla">
+        <h1>¡FUNCIONA!</h1>
+        <p>Si ves esto, el código ya no está bloqueado.</p>
+        <button onclick="location.reload()">VOLVER</button>
     </div>
 
-<script>
-    let u = "";
-    let carga = [];
-
-    // Función de entrada con respuesta visual inmediata
-    function entrar(nombre) {
-        u = nombre;
-        document.getElementById('display-u').innerText = "👤 " + nombre;
-        document.getElementById('p-login').classList.remove('active');
-        document.getElementById('p-app').classList.add('active');
-    }
-
-    function add() {
-        let c = document.getElementById('cli').value.toUpperCase().trim();
-        let q = document.getElementById('can').value.trim();
-        if(!c || !q) return alert("Falta cliente o cajas");
-
-        carga.push({c, q});
-        document.getElementById('resumen-items').innerHTML += `• ${c} (${q} CJ)<br>`;
-        document.getElementById('cli').value = ""; 
-        document.getElementById('can').value = "";
-        document.getElementById('area-envio').style.display = 'block';
-    }
-
-    function enviar() {
-        const cho = document.getElementById('cho').value;
-        if(!cho) return alert("Elige un chofer");
-
-        let txt = `*REPORTE TWINS*\n👤 *Operario:* ${u}\n🚚 *Chofer:* ${cho}\n------------------\n`;
-        let total = 0;
-        carga.forEach(i => {
-            txt += `• ${i.c}: ${i.q} CJ\n`;
-            total += parseInt(i.q);
-        });
-        txt += `------------------\n📦 *TOTAL:* ${total} CAJAS`;
-
-        window.open("https://wa.me/?text=" + encodeURIComponent(txt), '_blank');
-        location.reload();
-    }
-</script>
+    <script>
+        function ir() {
+            document.getElementById('p1').style.display = 'none';
+            document.getElementById('p2').style.display = 'block';
+        }
+    </script>
 </body>
 </html>
