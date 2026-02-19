@@ -3,128 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA TWINS V20</title>
+    <title>SISTEMA TWINS V18 - MEJORADO</title>
     <style>
         body { background: #000; color: #fff; font-family: sans-serif; margin: 0; padding: 15px; }
         .pantalla { display: none; }
         .activa { display: block; }
         
+        /* Botones e Inputs estilo V18 */
         .btn { width: 100%; padding: 20px; margin: 10px 0; border-radius: 12px; border: none; font-size: 18px; font-weight: bold; cursor: pointer; }
         .btn-user { background: #222; color: #3498db; border: 1px solid #333; }
         .btn-azul { background: #3498db; color: #fff; }
         .btn-verde { background: #2ecc71; color: #fff; }
-        .btn-naranja { background: #e67e22; color: #fff; font-size: 14px; padding: 10px; }
         
         input, select { width: 100%; padding: 15px; margin: 10px 0; border-radius: 8px; background: #111; color: #fff; border: 1px solid #333; box-sizing: border-box; font-size: 16px; }
         
-        .contador-flotante { 
-            background: #1a1a1a; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db;
-            margin: 10px 0; display: flex; justify-content: space-between; align-items: center;
-        }
-        .numero-cjs { font-size: 24px; color: #3498db; font-weight: bold; }
+        /* Contador solicitado */
+        .contador-cajas { background: #1a1a1a; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+        .cajas-numero { font-size: 24px; color: #3498db; font-weight: bold; }
         
-        #aviso-anexo { display: none; background: #e67e22; color: white; padding: 5px; text-align: center; border-radius: 5px; font-size: 11px; margin-bottom: 10px; font-weight: bold; }
+        /* Historial y Stats */
+        .stats { display: flex; gap: 5px; margin: 15px 0; }
+        .box { background: #111; padding: 10px; border-radius: 8px; text-align: center; flex: 1; border: 1px solid #222; }
+        .box b { display: block; color: #2ecc71; font-size: 18px; }
+        .box small { font-size: 10px; color: #666; }
         
-        .resumen-lista { background:#080808; padding:10px; margin:10px 0; border-radius:8px; font-size:14px; color:#aaa; max-height: 150px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+        th, td { border: 1px solid #222; padding: 10px; text-align: left; }
+        th { background: #1a1a1a; color: #3498db; }
     </style>
 </head>
 <body>
 
     <div id="p1" class="activa">
         <h2 style="text-align:center; color:#3498db;">SISTEMA TWINS</h2>
+        <p style="text-align:center; color:#666;">Selecciona tu nombre:</p>
         <button class="btn btn-user" onclick="entrar('TAJHO')">TAJHO</button>
         <button class="btn btn-user" onclick="entrar('FRANCESCO')">FRANCESCO</button>
         <button class="btn btn-user" onclick="entrar('OSCAR')">OSCAR</button>
     </div>
 
     <div id="p2" class="pantalla">
-        <div id="aviso-anexo">MODO ANEXO: AGREGANDO A RUTA ACTUAL</div>
-        
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <b id="nom-u" style="color:#2ecc71;"></b>
-            <button onclick="location.reload()" style="background:none; border:none; color:#555;">CERRAR SESIÓN</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:#555;">SALIR</button>
         </div>
 
-        <div class="contador-flotante">
-            <span>Cajas en carga:</span>
-            <span id="total-vivo" class="numero-cjs">0</span>
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <button class="btn btn-azul" style="padding:10px; font-size:12px;">REGISTRO</button>
+            <button class="btn btn-user" style="padding:10px; font-size:12px;" onclick="verHis()">HISTORIAL</button>
+        </div>
+
+        <div class="contador-cajas">
+            <span>Total en este despacho:</span>
+            <span id="suma-total" class="cajas-numero">0</span>
         </div>
 
         <input type="text" id="cli" placeholder="CLIENTE / DESTINO">
         <input type="number" id="can" placeholder="CANTIDAD CAJAS" inputmode="numeric">
-        <button class="btn btn-azul" onclick="agregar()">+ AÑADIR DESPACHO</button>
+        <button class="btn btn-azul" onclick="agregar()">+ AÑADIR A CARGA</button>
 
         <div id="area-envio" style="display:none;">
-            <div id="lista" class="resumen-lista"></div>
-            
-            <label style="font-size: 10px; color: #666;">DATOS DE LOGÍSTICA:</label>
+            <div id="lista" style="background:#080808; padding:10px; margin:10px 0; border-radius:8px; border-left:4px solid #3498db; font-size:14px;"></div>
             <select id="cho"><option value="">CHOFER...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
             <select id="aux"><option value="">AUXILIAR...</option><option value="TAJHO">TAJHO</option><option value="CRISTOPHER">CRISTOPHER</option></select>
             <select id="pla"><option value="">PLACA...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+            <button class="btn btn-verde" onclick="enviar()">💾 ENVIAR WHATSAPP</button>
             
-            <button class="btn btn-verde" onclick="enviar()">💾 ENVIAR POR WHATSAPP</button>
+            <button class="btn btn-user" style="padding:10px; font-size:14px; background:#c0392b; color:white;" onclick="anexo()">+ AGREGAR ADICIONAL A ESTA RUTA</button>
         </div>
     </div>
 
-    <script>
-        let operario = "";
-        let items = [];
-        let sumaCajas = 0;
-
-        function entrar(n) {
-            operario = n;
-            document.getElementById('nom-u').innerText = "👤 " + n;
-            document.getElementById('p1').style.display = 'none';
-            document.getElementById('p2').style.display = 'block';
-        }
-
-        function agregar() {
-            let c = document.getElementById('cli').value.toUpperCase().trim();
-            let q = parseInt(document.getElementById('can').value);
-            if(!c || isNaN(q)) return alert("Faltan datos");
-
-            items.push({c, q});
-            sumaCajas += q;
-            
-            document.getElementById('total-vivo').innerText = sumaCajas;
-            document.getElementById('lista').innerHTML += `• ${c}: ${q} CJ<br>`;
-            document.getElementById('area-envio').style.display = 'block';
-            
-            document.getElementById('cli').value = ""; 
-            document.getElementById('can').value = "";
-        }
-
-        function enviar() {
-            let cho = document.getElementById('cho').value;
-            let aux = document.getElementById('aux').value;
-            let pla = document.getElementById('pla').value;
-            
-            if(!cho || !aux || !pla) return alert("Completa los datos de la unidad");
-            
-            let esAnexo = document.getElementById('aviso-anexo').style.display === 'block';
-            let titulo = esAnexo ? "*ANEXO DE DESPACHO*" : "*REPORTE DE CARGA TWINS*";
-
-            let txt = `${titulo}\n👤 *Operario:* ${operario}\n🚚 *Chofer:* ${cho}\n👷 *Auxiliar:* ${aux}\n🚛 *Placa:* ${pla}\n----------------\n`;
-            items.forEach(i => { txt += `• ${i.c}: ${i.q} CJ\n`; });
-            txt += `----------------\n📦 *TOTAL:* ${sumaCajas} CAJAS`;
-            
-            window.open("https://wa.me/?text=" + encodeURIComponent(txt));
-            
-            // Lógica de "Agregar adicional"
-            setTimeout(() => {
-                if(confirm("¿Deseas agregar un despacho ADICIONAL a esta misma ruta?")) {
-                    // Limpiar solo la lista y el conteo, mantener chofer/placa
-                    items = [];
-                    sumaCajas = 0;
-                    document.getElementById('total-vivo').innerText = "0";
-                    document.getElementById('lista').innerHTML = "";
-                    document.getElementById('area-envio').style.display = 'none';
-                    document.getElementById('aviso-anexo').style.display = 'block';
-                } else {
-                    location.reload(); // Reiniciar todo
-                }
-            }, 1000);
-        }
-    </script>
-</body>
-</html>
+    <div id="p3" class="pantalla">
+        <button class="btn btn-user" style="padding:10px; font-size:12px;" onclick="verReg()">← VOLVER AL REGISTRO</button>
+        
+        <div class="stats">
+            <div class="box"><small>Romario</small><b id="s1">0</b></div>
+            <div class="box"><small>Cesar</small><b id="s2">0</b></div>
+            <div class="box"><small>Total General</small><b id="s3">0</b></div>
