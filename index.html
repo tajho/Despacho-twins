@@ -3,62 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS PRO | Logistics System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Útiles Twins | Sistema de Despacho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f8fafc;
+            --twins-blue: #004a99;
+            --twins-green: #8cc63f;
+            --bg: #f4f7f6;
             --card: #ffffff;
-            --primary: #2563eb;
-            --primary-light: #dbeafe;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --text: #1e293b;
-            --text-dim: #64748b;
-            --border: #e2e8f0;
+            --text: #1a1a1a;
+            --text-dim: #666666;
+            --border: #e0e0e0;
         }
 
         body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: 'Inter', sans-serif; 
-            margin: 0; 
-            -webkit-tap-highlight-color: transparent; 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Inter', sans-serif; margin: 0; padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .page { display: none; padding: 20px; animation: fadeIn 0.4s ease; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .page { display: none; padding: 15px; min-height: 100vh; box-sizing: border-box; }
+        .active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* HEADER & LOGO */
-        .header-logo { text-align: center; margin-bottom: 30px; margin-top: 20px; }
-        .logo-placeholder { 
-            font-size: 32px; font-weight: 800; color: var(--primary); 
-            letter-spacing: -1px; text-transform: uppercase;
-        }
-        .logo-placeholder span { color: var(--text); }
+        /* Estilo del Logo */
+        .logo-container { text-align: center; margin: 20px 0; }
+        .logo-img { max-width: 180px; height: auto; border-radius: 8px; }
 
         .card { 
-            background: var(--card); border-radius: 20px; 
-            border: 1px solid var(--border); padding: 20px; 
-            margin-bottom: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+            background: var(--card); border-radius: 15px; 
+            border: 1px solid var(--border); padding: 18px; 
+            margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
         }
 
-        /* Botones Estilo Moderno */
+        /* Botones con colores Twins */
         .btn { 
-            width: 100%; padding: 16px; border-radius: 14px; border: none; 
-            font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; 
+            width: 100%; padding: 15px; border-radius: 10px; border: none; 
+            font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; 
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.2s;
         }
-        .btn:active { transform: scale(0.97); }
-        .btn-main { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.2); }
-        .btn-save { background: var(--success); color: white; }
-        .btn-outline { background: white; border: 2px solid var(--border); color: var(--text); }
-        
+        .btn-main { background: var(--twins-blue); color: white; }
+        .btn-save { background: var(--twins-green); color: white; }
+        .btn-outline { background: white; border: 2px solid var(--twins-blue); color: var(--twins-blue); }
+        .btn-danger { background: #ff4d4d; color: white; }
+
         input, select { 
-            width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; 
-            border: 2px solid var(--border); background: #fcfcfc; color: var(--text); 
-            font-size: 15px; box-sizing: border-box; outline: none; transition: 0.2s
-            
+            width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; 
+            border: 1px solid var(--border); background: #fff; color: var(--text); 
+            font-size: 15px; box-sizing: border-box; outline: none;
+        }
+
+        /* Banner de Cajas */
+        .cajas-banner { 
+            background: linear-gradient(135deg, var(--twins-blue), #003366); 
+            color: white; border-radius: 15px; padding: 20px; text-align: center;
+        }
+
+        /* Chips Filtros */
+        .driver-chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .chip { 
+            background: white; border: 1.5px solid var(--border); padding: 8px 15px; 
+            border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; 
+        }
+        .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
+
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+    <div id="p1" class="page active">
+        <div class="logo-container">
+            <div style="font-size: 28px; font-weight: 800; color: var(--twins-blue);">
+                <span style="color: var(--twins-green);">•</span> ÚTILES TWINS
+            </div>
+            <p style="color: var(--text-dim); font-size: 14px;">Logistics System</p>
+        </div>
+        <div style="margin-top: 40px;">
+            <button class="btn btn-outline" onclick="login('TAJHO')">ENTRAR COMO TAJHO</button>
+            <button class="btn btn-outline" onclick="login('FRANCESCO')">ENTRAR COMO FRANCESCO</button>
+            <button class="btn btn-outline" onclick="login('OSCAR')">ENTRAR COMO OSCAR</button>
+        </div>
+    </div>
+
+    <div id="p2" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <b id="display-user" style="color:var(--twins-blue); font-size: 14px;"></b>
+            <button onclick="location.reload()" style="background:none; border:none; color:red; font-weight:bold;">SALIR</button>
+        </div>
+
+        <div class="cajas-banner">
+            <small>CAJAS EN RUTA ACTUAL</small>
+            <div id="total-vivo" style="font-size:45px; font-weight:800;">0</div>
+        </div>
+
+        <div class="card" style="margin-top: 15px;">
+            <input type="text" id="cli" placeholder="Nombre del Cliente">
+            <input type="number" id="can" placeholder="Cantidad de Cajas" inputmode="numeric">
+            <button class="btn btn-main" onclick="addDestino()">+ AÑADIR DESTINO</button>
+        </div>
+
+        <div id="area-envio" style="display:none;">
+            <div class="card" id="lista-actual" style="font-size:14px;"></div>
+            <div class="card">
+                <select id="cho">
+                    <option value="">Chofer...</option>
+                    <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option>
+                    <option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option>
+                    <option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
+                </select>
+                <select id="aux">
+                    <option value="">Auxiliar...</option>
+                    <option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option>
+                    <option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option>
+                    <option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option>
+                </select>
+                <select id="pla"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                
+                <button class="btn btn-save" onclick="procesar(true)">💾 GUARDAR Y WHATSAPP</button>
+                <button class="btn btn-outline" onclick="procesar(false)">📌 SOLO GUARDAR</button>
+            </div>
+        </div>
+        <button class="btn btn-outline" style="margin-top:15px;" onclick="showHistory()">📊 VER REPORTE MENSUAL</button>
+    </div>
+
+    <div id="p3" class="page">
+        <button class="btn btn-outline" style="width:auto; margin-bottom:15px;" onclick="switchPage('p3', 'p2')">← VOLVER</button>
+        
+        <div class="card">
+            <select id="filter-month" onchange="renderHistory()">
+                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+                <option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option>
+                <option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option>
+                <option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+            </select>
+        </div>
+
+        <div class="driver-chips" id="driver-chips-container"></div>
+
+        <div class="card" style="text-align:center; border-top: 5px solid var(--twins-green);">
+            <small id="stat-title">TOTAL MENSUAL</small>
+            <div id="stat-total" style="font-size:35px; font-weight:800; color:var(--twins-blue);">0</div>
+        </div>
+
+        <div id="history-list"></div>
+    </div>
+
+    <script>
+        let user = "", route = [], editId = null, activeFilter = "TODOS";
+        let db = JSON.parse(localStorage.getItem('twins_final_db')) || [];
+        const drivers = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO", "TAJHO"];
+
+        document.getElementById('filter-month').value = new Date().getMonth();
+
+        function switchPage(h, s) { 
+            document.getElementById(h).classList.remove('active'); 
+            document.getElementById(s).classList.add('active'); 
+        }
+
+        function login(n) { 
+            user = n; 
+            document.getElementById('display-user').innerText = "OPERARIO: " + n; 
+            switchPage('p1', 'p2'); 
+        }
+        
+        function addDestino() {
+            const c = document.getElementById('cli').value.toUpperCase().trim(), q = parseInt(document.getElementById('can').value);
+            if(!c || isNaN(q)) return;
+            route.push({id: Date.now(), c, q});
+            renderRoute();
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+        }
+
+        function renderRoute() {
+            const l = document.getElementById('lista-actual'), t = document.getElementById('total-vivo');
+            l.innerHTML = ""; let s = 0;
+            route.forEach(i => { s += i.q; l.innerHTML += `<div class="item-row"><span><b>${i.c}</b> (${i.q} CJ)</span><button onclick="delItem(${i.id})" style="border:none; background:none; color:red; font-size:18px;">✕</button></div>`; });
+            t.innerText = s; document.getElementById('area-envio').style.display = route.length > 0 ? 'block' : 'none';
+        }
+
+        function delItem(id) { route = route.filter(i => i.id !== id); renderRoute(); }
+
+        function procesar(wa) {
+            const ch = document.getElementById('cho').value, pl = document.getElementById('pla').value, ax = document.getElementById('aux').value;
+            if(!ch || !pl || !ax) return alert("Faltan datos");
+            const reg = { id: editId || Date.now(), fecha: new Date().toISOString(), operario:
+        
