@@ -196,7 +196,6 @@
         function delItem(id) { route = route.filter(i => i.id !== id); renderRoute(); validateForm(); }
 
         function validateForm() {
-            // MEJORA: Solo pide Chofer, Placa y que haya Items. Auxiliar ya no bloquea.
             const ok = document.getElementById('cho').value && document.getElementById('pla').value && route.length > 0;
             document.getElementById('btn-save-wa').disabled = !ok;
             document.getElementById('btn-save-only').disabled = !ok;
@@ -213,7 +212,9 @@
             if(editId) db = db.map(x => x.id === editId ? reg : x); else db.push(reg);
             localStorage.setItem('twins_final_v5', JSON.stringify(db));
             if(wa) {
-                let m = `*DESPACHO TWINS*\nOp: ${user}\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
+                // Aquí también incluimos la hora en el mensaje de WhatsApp
+                let ahora = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                let m = `*DESPACHO TWINS*\nHora: ${ahora}\nOp: ${user}\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
                 route.forEach(i => m += `• ${i.cli}: ${i.can} CJ\n`);
                 m += `---\nTOTAL: ${reg.total} CJ`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
@@ -243,17 +244,21 @@
             
             db.slice().reverse().forEach(r => {
                 const d = new Date(r.fecha);
-                const matchMonth = d.getMonth() === month; // Filtro de mes habilitado
+                const matchMonth = d.getMonth() === month;
                 const matchSearch = search === "" || r.items.some(i => i.cli.includes(search));
                 const matchDriver = activeFilter === "TODOS" || r.chofer === activeFilter;
 
                 if(matchMonth && matchSearch && matchDriver) {
                     sum += r.total;
                     let items = r.items.map(i => `<div style="${i.cli.includes(search) && search !== '' ? 'color:#fbbf24;font-weight:bold' : ''}">• ${i.cli}: ${i.can} CJ</div>`).join('');
+                    
+                    // CAMBIO AQUÍ: d.toLocaleString() muestra Fecha + Hora
+                    let fechaConHora = d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
                     list.innerHTML += `
                     <div class="card" style="border-left:5px solid var(--twins-blue)">
                         <div style="display:flex; justify-content:space-between">
-                            <b>${d.toLocaleDateString()}</b><b style="color:var(--twins-blue)">${r.total} CJ</b>
+                            <b>${fechaConHora}</b><b style="color:var(--twins-blue)">${r.total} CJ</b>
                         </div>
                         <div style="font-size:12px; margin:5px 0; opacity:0.8;">Chofer: ${r.chofer} | Placa: ${r.placa}</div>
                         <div class="detail-pane" id="det-${r.id}">${items}</div>
