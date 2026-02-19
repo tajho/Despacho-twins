@@ -13,16 +13,39 @@
             --card: #f8fafc;
             --text: #1e293b;
             --border: #e2e8f0;
+            --input-bg: #ffffff;
             --danger: #ef4444;
         }
 
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        .page { display: none; padding: 20px; flex: 1; flex-direction: column; box-sizing: border-box; }
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --border: #334155;
+            --input-bg: #334155;
+        }
+
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Inter', sans-serif; margin: 0; padding: 0; 
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .theme-toggle {
+            position: fixed; top: 15px; right: 15px; z-index: 1000;
+            background: var(--card); border: 1px solid var(--border);
+            padding: 8px; border-radius: 50%; cursor: pointer; font-size: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .page { display: none; padding: 20px; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
         .active { display: flex !important; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .main-title { font-size: 30px; font-weight: 800; color: var(--twins-blue); text-align: center; margin-top: 50px; }
+        .main-title { font-size: 30px; font-weight: 800; color: var(--twins-blue); text-align: center; margin-top: 60px; }
+        [data-theme="dark"] .main-title { color: #60a5fa; }
         .creator-tag { font-size: 14px; color: var(--twins-blue); font-weight: 700; text-align: center; margin-bottom: 40px; }
+        [data-theme="dark"] .creator-tag { color: #60a5fa; }
 
         .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-bottom: 12px; }
         .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; }
@@ -30,28 +53,38 @@
         .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: 0.2s; }
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; }
-        .btn-save:disabled { background: #cbd5e1; cursor: not-allowed; opacity: 0.7; }
-        .btn-outline { background: white; border: 2px solid var(--twins-blue); color: var(--twins-blue); }
+        .btn-save:disabled { background: #64748b; cursor: not-allowed; opacity: 0.5; }
+        .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); }
+        [data-theme="dark"] .btn-outline { border-color: #60a5fa; color: #60a5fa; }
         
         .action-bar { display: flex; gap: 8px; margin-top: 10px; }
         .btn-action { flex: 1; padding: 10px; border-radius: 8px; border: none; font-size: 11px; font-weight: bold; cursor: pointer; }
         .btn-view { background: #e0f2fe; color: #0369a1; }
+        [data-theme="dark"] .btn-view { background: #0c4a6e; color: #bae6fd; }
         .btn-edit { background: #f1f5f9; color: #475569; }
+        [data-theme="dark"] .btn-edit { background: #334155; color: #e2e8f0; }
 
-        input, select { width: 100%; padding: 13px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: #fff; font-size: 16px; box-sizing: border-box; }
+        input, select { 
+            width: 100%; padding: 13px; margin: 6px 0; border-radius: 10px; 
+            border: 1px solid var(--border); background: var(--input-bg); 
+            color: var(--text); font-size: 16px; box-sizing: border-box; 
+        }
         
         .driver-chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-        .chip { background: white; border: 1.5px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; }
+        .chip { background: var(--card); border: 1.5px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; color: var(--text); }
         .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
 
-        .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #e2e8f0; }
-        .detail-pane { background: #fff; border: 1px dashed var(--twins-blue); border-radius: 10px; margin-top: 10px; padding: 12px; display: none; font-size: 13px; }
+        .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .detail-pane { background: var(--bg); border: 1px dashed var(--twins-blue); border-radius: 10px; margin-top: 10px; padding: 12px; display: none; font-size: 13px; }
         .detail-pane.open { display: block; }
         
-        .search-box { background: #fff; border: 2px solid var(--twins-blue); padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 14px; width: 100%; box-sizing: border-box; }
+        .search-box { background: var(--input-bg); border: 2px solid var(--twins-blue); padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 14px; width: 100%; box-sizing: border-box; color: var(--text); }
+        .op-badge { background: var(--border); color: var(--text); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
+
+    <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙</button>
 
     <div id="p1" class="page active">
         <div class="main-title">TWINS DESPACHOS</div>
@@ -91,7 +124,7 @@
                 <select id="aux" onchange="validateForm()"><option value="">Seleccionar Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option></select>
                 <select id="pla" onchange="validateForm()"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
                 
-                <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR</button>
+                <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
                 <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
             </div>
         </div>
@@ -115,23 +148,43 @@
 
     <script>
         let user = "", route = [], activeFilter = "TODOS", editId = null;
-        let db = JSON.parse(localStorage.getItem('twins_db_final_v3')) || [];
+        let db = JSON.parse(localStorage.getItem('twins_db_vFinal_Final')) || [];
         const drivers = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO", "TAJHO"];
+
+        // MODO OSCURO
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('theme-btn');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.innerText = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.innerText = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Cargar tema guardado
+        if(localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('theme-btn').innerText = '☀️';
+        }
 
         function switchPage(h, s) { 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(s).classList.add('active');
         }
 
-        function login(n) { user = n; document.getElementById('user-display').innerText = "OPERARIO: " + n; switchPage('p1', 'p2'); }
+        function login(n) { user = n; document.getElementById('user-display').innerText = "OP: " + n; switchPage('p1', 'p2'); }
 
         function addItem() {
             const cli = document.getElementById('cli').value.toUpperCase().trim();
             const can = parseInt(document.getElementById('can').value);
             if(!cli || isNaN(can)) return;
             route.push({id: Date.now(), cli, can});
-            renderRoute();
-            validateForm();
+            renderRoute(); validateForm();
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
         }
 
@@ -150,10 +203,10 @@
         function delItem(id) { route = route.filter(i => i.id !== id); renderRoute(); validateForm(); }
 
         function validateForm() {
-            const cho = document.getElementById('cho').value;
-            const aux = document.getElementById('aux').value;
-            const pla = document.getElementById('pla').value;
-            const isValid = cho !== "" && aux !== "" && pla !== "" && route.length > 0;
+            const isValid = document.getElementById('cho').value !== "" && 
+                            document.getElementById('aux').value !== "" && 
+                            document.getElementById('pla').value !== "" && 
+                            route.length > 0;
             document.getElementById('btn-save-wa').disabled = !isValid;
             document.getElementById('btn-save-only').disabled = !isValid;
         }
@@ -165,14 +218,11 @@
                 chofer: document.getElementById('cho').value,
                 placa: document.getElementById('pla').value,
                 auxiliar: document.getElementById('aux').value,
-                operario: user,
-                items: [...route], 
+                operario: user, items: [...route], 
                 total: route.reduce((a,b)=>a+b.can, 0)
             };
-
-            if(editId) { db = db.map(x => x.id === editId ? reg : x); } else { db.push(reg); }
-            localStorage.setItem('twins_db_final_v3', JSON.stringify(db));
-
+            if(editId) db = db.map(x => x.id === editId ? reg : x); else db.push(reg);
+            localStorage.setItem('twins_db_vFinal_Final', JSON.stringify(db));
             if(wa) {
                 let msg = `*DESPACHO TWINS*\n👤 Op: ${user}\n🚚 Ch: ${reg.chofer}\n🚛 Pl: ${reg.placa}\n🏃 Aux: ${reg.auxiliar}\n----------\n`;
                 route.forEach(i => msg += `• ${i.cli}: ${i.can} CJ\n`);
@@ -180,7 +230,7 @@
                 window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
             }
             route = []; editId = null; renderRoute(); validateForm();
-            alert("✅ Registro guardado con éxito");
+            alert("✅ Registro guardado");
         }
 
         function verReportes() { renderChips(); renderHistory(); switchPage('p2', 'p3'); }
@@ -197,40 +247,18 @@
             const list = document.getElementById('history-list');
             const search = document.getElementById('search-cli').value.toUpperCase();
             let total = 0; list.innerHTML = "";
-            
             db.slice().reverse().forEach(r => {
-                // Filtro por chofer Y filtro por búsqueda de cliente
-                const matchesDriver = activeFilter === "TODOS" || r.chofer === activeFilter;
                 const matchesSearch = search === "" || r.items.some(i => i.cli.includes(search));
-
-                if(matchesDriver && matchesSearch) {
+                if((activeFilter === "TODOS" || r.chofer === activeFilter) && matchesSearch) {
                     total += r.total;
                     const date = new Date(r.fecha);
                     const hora = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    let itemsHtml = r.items.map(i => `<div style="display:flex; justify-content:space-between; ${i.cli.includes(search) && search !== '' ? 'background:#fff9c4; font-weight:bold;' : ''}"><span>• ${i.cli}</span><span>${i.can} CJ</span></div>`).join('');
-
-                    list.innerHTML += `
-                    <div class="card" style="border-left:5px solid var(--twins-blue);">
-                        <div style="display:flex; justify-content:space-between; font-size:13px;">
-                            <b>📅 ${date.toLocaleDateString()} - ${hora}</b>
-                            <b style="color:var(--twins-blue)">${r.total} CJ</b>
-                        </div>
-                        <div style="font-size:13px; margin:5px 0;">Chofer: <b>${r.chofer}</b> | Op: ${r.operario}</div>
-                        
-                        <div class="detail-pane" id="detail-${r.id}">
-                            <small>Aux: ${r.auxiliar} | Placa: ${r.placa}</small><hr>
-                            ${itemsHtml}
-                        </div>
-
-                        <div class="action-bar">
-                            <button class="btn-action btn-view" onclick="toggleDetail('${r.id}')">🔍 VER DETALLES</button>
-                            <button class="btn-action btn-edit" onclick="cargarEdicion(${r.id})">✏️ EDITAR</button>
-                        </div>
-                    </div>`;
+                    let itemsHtml = r.items.map(i => `<div style="display:flex; justify-content:space-between; ${i.cli.includes(search) && search !== '' ? 'color:#fbbf24; font-weight:bold;' : ''}"><span>• ${i.cli}</span><span>${i.can} CJ</span></div>`).join('');
+                    list.innerHTML += `<div class="card" style="border-left:5px solid var(--twins-blue);"><div style="display:flex; justify-content:space-between; font-size:13px;"><b>${date.toLocaleDateString()} - ${hora}</b><b style="color:var(--twins-blue)">${r.total} CJ</b></div><div style="font-size:13px; margin:5px 0;">Chofer: <b>${r.chofer}</b> | Op: ${r.operario}</div><div class="detail-pane" id="detail-${r.id}"><small>Aux: ${r.auxiliar} | Placa: ${r.placa}</small><hr>${itemsHtml}</div><div class="action-bar"><button class="btn-action btn-view" onclick="toggleDetail('${r.id}')">🔍 DETALLE</button><button class="btn-action btn-edit" onclick="cargarEdicion(${r.id})">✏️ EDITAR</button></div></div>`;
                 }
             });
             document.getElementById('stat-total').innerText = total;
-            document.getElementById('stat-title').innerText = search !== "" ? `TOTAL PARA "${search}"` : "TOTAL " + activeFilter;
+            document.getElementById('stat-title').innerText = "TOTAL " + activeFilter;
         }
 
         function toggleDetail(id) { document.getElementById('detail-'+id).classList.toggle('open'); }
@@ -242,8 +270,7 @@
             document.getElementById('cho').value = r.chofer;
             document.getElementById('aux').value = r.auxiliar;
             document.getElementById('pla').value = r.placa;
-            renderRoute(); validateForm();
-            switchPage('p3', 'p2');
+            renderRoute(); validateForm(); switchPage('p3', 'p2');
         }
     </script>
 </body>
