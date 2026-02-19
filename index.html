@@ -3,219 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA TWINS | Warehouse Management</title>
+    <title>SISTEMA TWINS PRO V28</title>
     <style>
         :root {
-            --bg-body: #f0f2f5; --bg-card: #ffffff; --text-main: #1c1e21;
-            --primary: #007bff; --success: #28a745; --danger: #dc3545; --border: #ddd;
+            --bg: #0a0a0a; --card: #161616; --primary: #3498db; --success: #2ecc71; 
+            --danger: #e74c3c; --warning: #f1c40f; --text: #ffffff; --border: #2c2c2c;
         }
-        [data-theme="dark"] {
-            --bg-body: #0a0a0a; --bg-card: #1a1a1a; --text-main: #e4e6eb;
-            --border: #333;
-        }
-
-        body { 
-            background-color: var(--bg-body); color: var(--text-main); 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            margin: 0; transition: all 0.3s ease; 
+        [data-theme="light"] {
+            --bg: #f4f7f6; --card: #ffffff; --primary: #2980b9; --success: #27ae60; 
+            --danger: #c0392b; --warning: #d35400; --text: #2d3436; --border: #dfe6e9;
         }
 
-        /* Gestión de Ventanas */
-        .page { display: none; padding: 20px; animation: fadeIn 0.3s; }
-        .page.active { display: block; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; transition: 0.3s; overflow-x: hidden; }
+        .page { display: none; padding: 15px; min-height: 100vh; box-sizing: border-box; }
+        .active { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Componentes UI */
-        .card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         
-        .btn { 
-            width: 100%; padding: 15px; border-radius: 8px; border: none; font-size: 16px; font-weight: 600; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px;
-        }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-danger { background: var(--danger); color: white; padding: 8px; width: auto; margin: 0; }
+        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .btn-main { background: var(--primary); color: white; }
+        .btn-save { background: var(--success); color: white; }
+        .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
+        .btn-delete { background: var(--danger); color: white; width: auto; padding: 8px; border-radius: 6px; }
+        .btn-edit { background: var(--warning); color: #000; font-size: 13px; }
+
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; box-sizing: border-box; }
         
-        input, select { 
-            width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--border);
-            background: var(--bg-card); color: var(--text-main); font-size: 16px; box-sizing: border-box;
-        }
-
-        /* Lista de Despachos Editables */
-        .item-despacho {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; border-bottom: 1px solid var(--border);
-        }
-        .item-despacho:last-child { border-bottom: none; }
-
-        .badge-count { background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 20px; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-box { background: rgba(52, 152, 219, 0.1); padding: 15px; border-radius: 10px; border-top: 3px solid var(--primary); text-align: center; }
+        .stat-box b { font-size: 22px; display: block; color: var(--primary); }
+        
+        .history-card { border-left: 5px solid var(--primary); position: relative; padding-top: 25px; }
+        .date-label { position: absolute; top: 8px; right: 12px; font-size: 10px; opacity: 0.5; font-weight: bold; }
     </style>
 </head>
 <body data-theme="dark">
 
-    <div id="view-login" class="page active">
-        <div style="text-align:center; margin-top: 40px;">
-            <h1 style="color:var(--primary); letter-spacing: -1px;">SISTEMA TWINS</h1>
-            <p style="opacity:0.7;">Panel de Gestión de Inventario</p>
+    <div id="p1" class="page active">
+        <div style="text-align:center; margin-top: 60px;">
+            <h1 style="color:var(--primary); margin:0; font-size: 32px;">TWINS PRO</h1>
+            <p style="opacity:0.5; margin-top:5px;">Warehouse Management V28</p>
         </div>
         <div style="margin-top: 50px;">
-            <button class="btn btn-outline" onclick="initApp('TAJHO')">ACCEDER COMO TAJHO</button>
-            <button class="btn btn-outline" onclick="initApp('FRANCESCO')">ACCEDER COMO FRANCESCO</button>
-            <button class="btn btn-outline" onclick="initApp('OSCAR')">ACCEDER COMO OSCAR</button>
+            <button class="btn btn-outline" onclick="login('TAJHO')">👤 TAJHO</button>
+            <button class="btn btn-outline" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
+            <button class="btn btn-outline" onclick="login('OSCAR')">👤 OSCAR</button>
         </div>
-        <button class="btn" style="background:none; color:var(--text-main); font-size:14px; margin-top:30px;" onclick="toggleTheme()">🌓 Cambiar Tema (Claro/Oscuro)</button>
+        <center><button class="btn" style="background:none; color:var(--text); width:auto; margin-top:40px; font-size:13px;" onclick="toggleTheme()">🌓 CAMBIAR MODO DÍA/NOCHE</button></center>
     </div>
 
-    <div id="view-app" class="page">
-        <div class="header">
-            <b id="user-display" style="color:var(--primary)"></b>
+    <div id="p2" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <b id="display-user" style="color:var(--primary); font-size: 18px;"></b>
             <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:bold;">SALIR</button>
         </div>
 
-        <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>Total Cajas en Ruta:</span>
-            <span id="total-cajas" class="badge-count">0</span>
+        <div id="edit-indicator" style="display:none; background:var(--warning); color:#000; padding:8px; text-align:center; border-radius:8px; margin:15px 0; font-weight:bold;">⚠️ MODO EDICIÓN DE RUTA</div>
+
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; border-bottom: 3px solid var(--primary);">
+            <span style="font-weight:bold;">Cajas Totales:</span>
+            <b id="total-vivo" style="font-size:28px; color:var(--primary)">0</b>
         </div>
 
         <div class="card">
-            <h4 style="margin:0 0 10px 0;">Nuevo Despacho</h4>
-            <input type="text" id="input-cliente" placeholder="Nombre del Cliente / Destino">
-            <input type="number" id="input-cajas" placeholder="Cant. Cajas" inputmode="numeric">
-            <button class="btn btn-primary" onclick="addDestino()">+ AGREGAR DESTINO</button>
+            <input type="text" id="cli" placeholder="Cliente / Destino">
+            <input type="number" id="can" placeholder="Cantidad de Cajas" inputmode="numeric">
+            <button class="btn btn-main" onclick="addDestino()">+ AÑADIR DESTINO</button>
         </div>
 
-        <div id="container-envio" style="display:none;">
+        <div id="area-envio" style="display:none;">
+            <div class="card" id="lista-actual" style="max-height: 200px; overflow-y: auto;"></div>
+            
             <div class="card">
-                <h4 style="margin:0 0 10px 0;">Resumen de Ruta (Editable)</h4>
-                <div id="lista-despachos"></div>
-            </div>
-
-            <div class="card">
-                <select id="select-chofer"><option value="">Seleccione Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
-                <select id="select-placa"><option value="">Seleccione Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
-                <button class="btn btn-primary" style="background:var(--success);" onclick="enviarWhatsapp()">💾 ENVIAR REPORTE</button>
-                <button class="btn btn-outline" style="border-color:#666; color:#666; font-size:14px;" onclick="nuevoAnexo()">📦 MANTENER RUTA (ANEXO)</button>
+                <select id="cho"><option value="">Seleccione Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
+                <select id="pla"><option value="">Seleccione Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                
+                <div style="display:grid; grid-template-columns: 1fr; gap: 5px;">
+                    <button class="btn btn-save" onclick="procesarRuta(true)">💾 GUARDAR Y ENVIAR WHATSAPP</button>
+                    <button class="btn btn-outline" style="border-color:var(--success); color:var(--success);" onclick="procesarRuta(false)">📌 SOLO GUARDAR EN HISTORIAL</button>
+                </div>
+                <button class="btn" style="background:var(--danger); color:white; font-size:12px; padding:8px; margin-top:15px;" onclick="cancelarTodo()">❌ CANCELAR / LIMPIAR</button>
             </div>
         </div>
 
-        <button class="btn btn-outline" style="font-size:14px;" onclick="switchView('view-app', 'view-history')">📋 VER HISTORIAL</button>
+        <button class="btn btn-outline" style="margin-top:20px;" onclick="showHistory()">📊 HISTORIAL Y CONTEO MENSUAL</button>
     </div>
 
-    <div id="view-history" class="page">
-        <header class="header">
-            <button class="btn btn-outline" style="width:auto; padding:8px 15px;" onclick="switchView('view-history', 'view-app')">← VOLVER</button>
-            <h3>Historial Hoy</h3>
-        </header>
-        <div class="card">
-            <input type="text" onkeyup="filterHistory(this.value)" placeholder="🔍 Buscar cliente...">
-            <div id="history-content" style="font-size:13px; margin-top:10px;">
-                <p style="text-align:center; opacity:0.5;">No hay registros locales.</p>
-            </div>
+    <div id="p3" class="page">
+        <button class="btn btn-outline" style="width:auto; margin-bottom:15px;" onclick="switchPage('p3', 'p2')">← VOLVER AL REGISTRO</button>
+        
+        <div class="stat-grid">
+            <div class="stat-box">ROMARIO<b id="stat-romario">0</b><small>cajas</small></div>
+            <div class="stat-box">CESAR<b id="stat-cesar">0</b><small>cajas</small></div>
         </div>
+
+        <h3 style="margin: 20px 0 10px 0; font-size: 18px;">Rutas Recientes</h3>
+        <div id="history-list"></div>
     </div>
 
     <script>
-        // ESTADO GLOBAL
-        let APP_STATE = {
-            user: "",
-            rutaActual: [],
-            total: 0,
-            theme: "dark"
-        };
+        let currentUser = "";
+        let currentRoute = [];
+        let editingId = null;
+        let db = JSON.parse(localStorage.getItem('twins_db_v28')) || [];
 
-        // NAVEGACIÓN PROFESIONAL
-        function switchView(hideId, showId) {
-            document.getElementById(hideId).classList.remove('active');
-            document.getElementById(showId).classList.add('active');
+        function switchPage(hide, show) {
+            document.getElementById(hide).classList.remove('active');
+            document.getElementById(show).classList.add('active');
             window.scrollTo(0,0);
         }
 
         function toggleTheme() {
-            APP_STATE.theme = APP_STATE.theme === "dark" ? "light" : "dark";
-            document.body.setAttribute('data-theme', APP_STATE.theme);
+            const b = document.body;
+            b.setAttribute('data-theme', b.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         }
 
-        function initApp(userName) {
-            APP_STATE.user = userName;
-            document.getElementById('user-display').innerText = "👤 " + userName;
-            switchView('view-login', 'view-app');
+        function login(user) {
+            currentUser = user;
+            document.getElementById('display-user').innerText = "👤 " + user;
+            switchPage('p1', 'p2');
         }
 
-        // LÓGICA DE DESPACHOS
         function addDestino() {
-            const cli = document.getElementById('input-cliente').value.toUpperCase().trim();
-            const can = parseInt(document.getElementById('input-cajas').value);
-
-            if (!cli || isNaN(can)) return alert("Debe ingresar Cliente y Cantidad");
-
-            const id = Date.now();
-            APP_STATE.rutaActual.push({ id, cli, can });
-            renderRuta();
-
-            document.getElementById('input-cliente').value = "";
-            document.getElementById('input-cajas').value = "";
+            const cli = document.getElementById('cli').value.toUpperCase().trim();
+            const can = parseInt(document.getElementById('can').value);
+            if(!cli || isNaN(can)) return;
+            currentRoute.push({ id: Date.now(), cli, can });
+            renderRoute();
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
         }
 
-        function deleteDestino(id) {
-            APP_STATE.rutaActual = APP_STATE.rutaActual.filter(item => item.id !== id);
-            renderRuta();
+        function deleteItem(id) {
+            currentRoute = currentRoute.filter(i => i.id !== id);
+            renderRoute();
         }
 
-        function renderRuta() {
-            const container = document.getElementById('lista-despachos');
-            const totalDisplay = document.getElementById('total-cajas');
-            const areaEnvio = document.getElementById('container-envio');
-            
-            container.innerHTML = "";
+        function renderRoute() {
+            const list = document.getElementById('lista-actual');
+            const total = document.getElementById('total-vivo');
+            list.innerHTML = "";
             let suma = 0;
-
-            APP_STATE.rutaActual.forEach(item => {
-                suma += item.can;
-                container.innerHTML += `
-                    <div class="item-despacho">
-                        <span><b>${item.cli}</b> (${item.can} CJ)</span>
-                        <button class="btn-danger" onclick="deleteDestino(${item.id})">🗑️</button>
-                    </div>
-                `;
+            currentRoute.forEach(i => {
+                suma += i.can;
+                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b> (${i.can} CJ)</span><button class="btn-delete" onclick="deleteItem(${i.id})">🗑️</button></div>`;
             });
-
-            APP_STATE.total = suma;
-            totalDisplay.innerText = suma;
-            areaEnvio.style.display = APP_STATE.rutaActual.length > 0 ? 'block' : 'none';
+            total.innerText = suma;
+            document.getElementById('area-envio').style.display = currentRoute.length > 0 ? 'block' : 'none';
         }
 
-        function nuevoAnexo() {
-            if(confirm("Se limpiará la lista de destinos pero se mantendrá Chofer y Placa. ¿Continuar?")) {
-                APP_STATE.rutaActual = [];
-                renderRuta();
+        function cancelarTodo() {
+            if(currentRoute.length > 0 && !confirm("¿Borrar la ruta actual?")) return;
+            currentRoute = [];
+            editingId = null;
+            document.getElementById('edit-indicator').style.display = "none";
+            document.getElementById('cho').value = "";
+            document.getElementById('pla').value = "";
+            renderRoute();
+        }
+
+        function procesarRuta(enviarWA) {
+            const cho = document.getElementById('cho').value;
+            const pla = document.getElementById('pla').value;
+            if(!cho || !pla) return alert("Seleccione Chofer y Placa");
+
+            const registro = {
+                id: editingId || Date.now(),
+                fecha: editingId ? db.find(r => r.id === editingId).fecha : new Date().toISOString(),
+                operario: currentUser,
+                chofer: cho,
+                placa: pla,
+                destinos: [...currentRoute],
+                total: currentRoute.reduce((s, i) => s + i.can, 0)
+            };
+
+            if(editingId) {
+                db = db.map(r => r.id === editingId ? registro : r);
+            } else {
+                db.push(registro);
             }
+
+            localStorage.setItem('twins_db_v28', JSON.stringify(db));
+
+            if(enviarWA) {
+                let txt = `*REPORTE TWINS*\n👤 Operario: ${currentUser}\n🚚 Chofer: ${cho}\n🚛 Placa: ${pla}\n----------------\n`;
+                currentRoute.forEach(i => txt += `• ${i.cli}: ${i.can} CJ\n`);
+                txt += `----------------\n📦 TOTAL: ${registro.total} CAJAS`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
+            } else {
+                alert("✅ Ruta guardada exitosamente en el historial.");
+            }
+
+            editingId = null;
+            currentRoute = [];
+            document.getElementById('edit-indicator').style.display = "none";
+            renderRoute();
         }
 
-        function enviarWhatsapp() {
-            const chofer = document.getElementById('select-chofer').value;
-            const placa = document.getElementById('select-placa').value;
+        function showHistory() {
+            switchPage('p2', 'p3');
+            renderHistory();
+        }
 
-            if (!chofer || !placa) return alert("Seleccione Chofer y Placa");
+        function editFromHistory(id) {
+            const r = db.find(reg => reg.id === id);
+            if(!r) return;
+            editingId = id;
+            currentRoute = [...r.destinos];
+            document.getElementById('cho').value = r.chofer;
+            document.getElementById('pla').value = r.placa;
+            document.getElementById('edit-indicator').style.display = "block";
+            renderRoute();
+            switchPage('p3', 'p2');
+        }
 
-            let msj = `*REPORTE DE CARGA TWINS*\n`;
-            msj += `👤 *Operario:* ${APP_STATE.user}\n`;
-            msj += `🚚 *Chofer:* ${chofer}\n`;
-            msj += `🚛 *Placa:* ${placa}\n`;
-            msj += `--------------------------\n`;
-            
-            APP_STATE.rutaActual.forEach(i => {
-                msj += `• ${i.cli}: ${i.can} CJ\n`;
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            const rom = document.getElementById('stat-romario');
+            const ces = document.getElementById('stat-cesar');
+            let tRom = 0, tCes = 0;
+            list.innerHTML = "";
+            const mes = new Date().getMonth();
+
+            db.slice().reverse().forEach(reg => {
+                const f = new Date(reg.fecha);
+                if(f.getMonth() === mes) {
+                    if(reg.chofer === "ROMARIO") tRom += reg.total;
+                    if(reg.chofer === "CESAR") tCes += reg.total;
+                }
+                list.innerHTML += `
+                    <div class="card history-card">
+                        <span class="date-label">${f.toLocaleDateString()} ${f.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                        <b>🚚 ${reg.chofer}</b> | ${reg.placa}<br>
+                        <small style="opacity:0.7">${reg.total} cajas en ${reg.destinos.length} puntos</small>
+                        <button class="btn btn-edit" onclick="editFromHistory(${reg.id})">✏️ EDITAR RUTA</button>
+                    </div>`;
             });
-
-            msj += `--------------------------\n`;
-            msj += `📦 *TOTAL RUTA:* ${APP_STATE.total} CAJAS`;
-
-            window.open(`https://wa.me/?text=${encodeURIComponent(msj)}`, '_blank');
-        }
-
-        function filterHistory(query) {
-            // Lógica para filtrar tabla de historial
+            rom.innerText = tRom;
+            ces.innerText = tCes;
         }
     </script>
 </body>
