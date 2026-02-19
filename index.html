@@ -3,104 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA TWINS PRO V28</title>
+    <title>TWINS PRO | Industrial Logistics</title>
     <style>
         :root {
-            --bg: #0a0a0a; --card: #161616; --primary: #3498db; --success: #2ecc71; 
-            --danger: #e74c3c; --warning: #f1c40f; --text: #ffffff; --border: #2c2c2c;
+            /* Paleta Moderna: Azul Cobalto e Industrial Gray */
+            --bg: #0f172a; 
+            --card: #1e293b; 
+            --primary: #38bdf8; 
+            --primary-dark: #0284c7;
+            --success: #10b981; 
+            --danger: #f43f5e; 
+            --warning: #fbbf24; 
+            --text: #f8fafc; 
+            --text-dim: #94a3b8;
+            --border: #334155;
         }
+
         [data-theme="light"] {
-            --bg: #f4f7f6; --card: #ffffff; --primary: #2980b9; --success: #27ae60; 
-            --danger: #c0392b; --warning: #d35400; --text: #2d3436; --border: #dfe6e9;
+            --bg: #f1f5f9; 
+            --card: #ffffff; 
+            --primary: #0284c7; 
+            --primary-dark: #0c4a6e;
+            --success: #059669; 
+            --danger: #e11d48; 
+            --warning: #d97706; 
+            --text: #0f172a; 
+            --text-dim: #64748b;
+            --border: #e2e8f0;
         }
 
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; transition: 0.3s; overflow-x: hidden; }
-        .page { display: none; padding: 15px; min-height: 100vh; box-sizing: border-box; }
-        .active { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            margin: 0; transition: background 0.3s; overflow-x: hidden; 
+        }
 
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .page { display: none; padding: 20px; min-height: 100vh; box-sizing: border-box; }
+        .active { display: block; animation: slideUp 0.4s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tarjetas con Efecto Moderno */
+        .card { 
+            background: var(--card); border-radius: 16px; 
+            border: 1px solid var(--border); padding: 18px; 
+            margin-bottom: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); 
+        }
         
-        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
-        .btn-main { background: var(--primary); color: white; }
+        /* Botones con Gradientes y Sombras */
+        .btn { 
+            width: 100%; padding: 16px; border-radius: 12px; border: none; 
+            font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; 
+            display: flex; align-items: center; justify-content: center; gap: 10px; 
+            transition: all 0.2s; 
+        }
+        .btn:active { transform: translateY(2px); }
+        .btn-main { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; }
         .btn-save { background: var(--success); color: white; }
-        .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
-        .btn-delete { background: var(--danger); color: white; width: auto; padding: 8px; border-radius: 6px; }
-        .btn-edit { background: var(--warning); color: #000; font-size: 13px; }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
+        .btn-delete { background: var(--danger); color: white; width: 40px; height: 40px; padding: 0; border-radius: 10px; }
+        .btn-edit { background: var(--warning); color: #000; padding: 10px; border-radius: 8px; font-size: 13px; }
 
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; box-sizing: border-box; }
+        input, select { 
+            width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px; 
+            border: 2px solid var(--border); background: var(--bg); 
+            color: var(--text); font-size: 16px; box-sizing: border-box; 
+            outline: none; transition: border-color 0.2s;
+        }
+        input:focus { border-color: var(--primary); }
         
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-box { background: rgba(52, 152, 219, 0.1); padding: 15px; border-radius: 10px; border-top: 3px solid var(--primary); text-align: center; }
-        .stat-box b { font-size: 22px; display: block; color: var(--primary); }
+        /* Dashboard Stats */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-box { 
+            background: var(--card); padding: 15px; border-radius: 16px; 
+            border-bottom: 4px solid var(--primary); text-align: center; 
+        }
+        .stat-box small { color: var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: 1px; }
+        .stat-box b { font-size: 24px; display: block; color: var(--primary); margin-top: 5px; }
         
-        .history-card { border-left: 5px solid var(--primary); position: relative; padding-top: 25px; }
-        .date-label { position: absolute; top: 8px; right: 12px; font-size: 10px; opacity: 0.5; font-weight: bold; }
+        .item-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 0; border-bottom: 1px solid var(--border); 
+        }
+        .date-badge { font-size: 11px; color: var(--primary); font-weight: 600; }
     </style>
 </head>
 <body data-theme="dark">
 
     <div id="p1" class="page active">
-        <div style="text-align:center; margin-top: 60px;">
-            <h1 style="color:var(--primary); margin:0; font-size: 32px;">TWINS PRO</h1>
-            <p style="opacity:0.5; margin-top:5px;">Warehouse Management V28</p>
+        <div style="text-align:center; margin-top: 80px;">
+            <div style="background: var(--primary); width: 60px; height: 60px; border-radius: 15px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 30px;">📦</span>
+            </div>
+            <h1 style="margin:0; font-size: 32px; letter-spacing: -1px;">SISTEMA <span style="color:var(--primary)">TWINS</span></h1>
+            <p style="color: var(--text-dim); margin-top:5px;">Warehouse & Logistics Pro</p>
         </div>
-        <div style="margin-top: 50px;">
-            <button class="btn btn-outline" onclick="login('TAJHO')">👤 TAJHO</button>
-            <button class="btn btn-outline" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
-            <button class="btn btn-outline" onclick="login('OSCAR')">👤 OSCAR</button>
+        <div style="margin-top: 60px;">
+            <button class="btn btn-outline" onclick="login('TAJHO')">ENTRAR COMO TAJHO</button>
+            <button class="btn btn-outline" onclick="login('FRANCESCO')">ENTRAR COMO FRANCESCO</button>
+            <button class="btn btn-outline" onclick="login('OSCAR')">ENTRAR COMO OSCAR</button>
         </div>
-        <center><button class="btn" style="background:none; color:var(--text); width:auto; margin-top:40px; font-size:13px;" onclick="toggleTheme()">🌓 CAMBIAR MODO DÍA/NOCHE</button></center>
+        <center><button class="btn" style="background:none; color:var(--text-dim); width:auto; margin-top:40px;" onclick="toggleTheme()">🌓 MODO CLARO / OSCURO</button></center>
     </div>
 
     <div id="p2" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <b id="display-user" style="color:var(--primary); font-size: 18px;"></b>
-            <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:bold;">SALIR</button>
-        </div>
+        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <div>
+                <small style="color:var(--text-dim); display:block;">Operario activo</small>
+                <b id="display-user" style="color:var(--primary); font-size: 18px;"></b>
+            </div>
+            <button onclick="location.reload()" style="background:var(--danger); border:none; color:white; padding:8px 15px; border-radius:10px; font-weight:bold;">SALIR</button>
+        </header>
 
-        <div id="edit-indicator" style="display:none; background:var(--warning); color:#000; padding:8px; text-align:center; border-radius:8px; margin:15px 0; font-weight:bold;">⚠️ MODO EDICIÓN DE RUTA</div>
+        <div id="edit-indicator" style="display:none; background:var(--warning); color:#000; padding:10px; text-align:center; border-radius:12px; margin-bottom:15px; font-weight:bold; font-size:13px;">✏️ EDITANDO RUTA GUARDADA</div>
 
-        <div class="card" style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; border-bottom: 3px solid var(--primary);">
-            <span style="font-weight:bold;">Cajas Totales:</span>
-            <b id="total-vivo" style="font-size:28px; color:var(--primary)">0</b>
+        <div class="card" style="text-align:center; background: linear-gradient(180deg, var(--card) 0%, var(--bg) 100%);">
+            <small style="color:var(--text-dim)">CAJAS EN CARGA ACTUAL</small>
+            <div id="total-vivo" style="font-size:48px; font-weight:800; color:var(--primary)">0</div>
         </div>
 
         <div class="card">
-            <input type="text" id="cli" placeholder="Cliente / Destino">
+            <input type="text" id="cli" placeholder="Nombre del Cliente">
             <input type="number" id="can" placeholder="Cantidad de Cajas" inputmode="numeric">
             <button class="btn btn-main" onclick="addDestino()">+ AÑADIR DESTINO</button>
         </div>
 
         <div id="area-envio" style="display:none;">
-            <div class="card" id="lista-actual" style="max-height: 200px; overflow-y: auto;"></div>
+            <div class="card" id="lista-actual"></div>
             
-            <div class="card">
-                <select id="cho"><option value="">Seleccione Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
-                <select id="pla"><option value="">Seleccione Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+            <div class="card" style="border-top: 4px solid var(--success);">
+                <select id="cho"><option value="">Seleccionar Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
+                <select id="pla"><option value="">Seleccionar Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
                 
-                <div style="display:grid; grid-template-columns: 1fr; gap: 5px;">
-                    <button class="btn btn-save" onclick="procesarRuta(true)">💾 GUARDAR Y ENVIAR WHATSAPP</button>
-                    <button class="btn btn-outline" style="border-color:var(--success); color:var(--success);" onclick="procesarRuta(false)">📌 SOLO GUARDAR EN HISTORIAL</button>
-                </div>
-                <button class="btn" style="background:var(--danger); color:white; font-size:12px; padding:8px; margin-top:15px;" onclick="cancelarTodo()">❌ CANCELAR / LIMPIAR</button>
+                <button class="btn btn-save" onclick="procesarRuta(true)">💾 GUARDAR Y ENVIAR WHATSAPP</button>
+                <button class="btn btn-outline" style="border-color:var(--success); color:var(--success);" onclick="procesarRuta(false)">📌 SOLO GUARDAR HISTORIAL</button>
+                <button class="btn" style="background:none; color:var(--danger); font-size:12px;" onclick="cancelarTodo()">CANCELAR RUTA</button>
             </div>
         </div>
 
-        <button class="btn btn-outline" style="margin-top:20px;" onclick="showHistory()">📊 HISTORIAL Y CONTEO MENSUAL</button>
+        <button class="btn btn-outline" style="margin-top:10px; border-color: var(--primary); color: var(--primary);" onclick="showHistory()">📊 HISTORIAL Y RENDIMIENTO</button>
     </div>
 
     <div id="p3" class="page">
-        <button class="btn btn-outline" style="width:auto; margin-bottom:15px;" onclick="switchPage('p3', 'p2')">← VOLVER AL REGISTRO</button>
+        <button class="btn btn-outline" style="width:auto; margin-bottom:20px;" onclick="switchPage('p3', 'p2')">← VOLVER</button>
         
         <div class="stat-grid">
-            <div class="stat-box">ROMARIO<b id="stat-romario">0</b><small>cajas</small></div>
-            <div class="stat-box">CESAR<b id="stat-cesar">0</b><small>cajas</small></div>
+            <div class="stat-box"><small>Romario</small><b id="stat-romario">0</b></div>
+            <div class="stat-box"><small>Cesar</small><b id="stat-cesar">0</b></div>
         </div>
 
-        <h3 style="margin: 20px 0 10px 0; font-size: 18px;">Rutas Recientes</h3>
+        <h3 style="font-size: 18px; margin-bottom: 15px;">Rutas Recientes</h3>
         <div id="history-list"></div>
     </div>
 
@@ -108,7 +159,7 @@
         let currentUser = "";
         let currentRoute = [];
         let editingId = null;
-        let db = JSON.parse(localStorage.getItem('twins_db_v28')) || [];
+        let db = JSON.parse(localStorage.getItem('twins_db_v29')) || [];
 
         function switchPage(hide, show) {
             document.getElementById(hide).classList.remove('active');
@@ -123,7 +174,7 @@
 
         function login(user) {
             currentUser = user;
-            document.getElementById('display-user').innerText = "👤 " + user;
+            document.getElementById('display-user').innerText = user;
             switchPage('p1', 'p2');
         }
 
@@ -148,19 +199,16 @@
             let suma = 0;
             currentRoute.forEach(i => {
                 suma += i.can;
-                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b> (${i.can} CJ)</span><button class="btn-delete" onclick="deleteItem(${i.id})">🗑️</button></div>`;
+                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b><br><small style="color:var(--text-dim)">${i.can} Cajas</small></span><button class="btn-delete" onclick="deleteItem(${i.id})">🗑️</button></div>`;
             });
             total.innerText = suma;
             document.getElementById('area-envio').style.display = currentRoute.length > 0 ? 'block' : 'none';
         }
 
         function cancelarTodo() {
-            if(currentRoute.length > 0 && !confirm("¿Borrar la ruta actual?")) return;
-            currentRoute = [];
-            editingId = null;
+            if(!confirm("¿Deseas limpiar la ruta actual?")) return;
+            currentRoute = []; editingId = null;
             document.getElementById('edit-indicator').style.display = "none";
-            document.getElementById('cho').value = "";
-            document.getElementById('pla').value = "";
             renderRoute();
         }
 
@@ -172,32 +220,24 @@
             const registro = {
                 id: editingId || Date.now(),
                 fecha: editingId ? db.find(r => r.id === editingId).fecha : new Date().toISOString(),
-                operario: currentUser,
-                chofer: cho,
-                placa: pla,
+                operario: currentUser, chofer: cho, placa: pla,
                 destinos: [...currentRoute],
                 total: currentRoute.reduce((s, i) => s + i.can, 0)
             };
 
-            if(editingId) {
-                db = db.map(r => r.id === editingId ? registro : r);
-            } else {
-                db.push(registro);
-            }
+            if(editingId) db = db.map(r => r.id === editingId ? registro : r);
+            else db.push(registro);
 
-            localStorage.setItem('twins_db_v28', JSON.stringify(db));
+            localStorage.setItem('twins_db_v29', JSON.stringify(db));
 
             if(enviarWA) {
                 let txt = `*REPORTE TWINS*\n👤 Operario: ${currentUser}\n🚚 Chofer: ${cho}\n🚛 Placa: ${pla}\n----------------\n`;
                 currentRoute.forEach(i => txt += `• ${i.cli}: ${i.can} CJ\n`);
                 txt += `----------------\n📦 TOTAL: ${registro.total} CAJAS`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`);
-            } else {
-                alert("✅ Ruta guardada exitosamente en el historial.");
-            }
+            } else alert("✅ Ruta guardada en historial.");
 
-            editingId = null;
-            currentRoute = [];
+            editingId = null; currentRoute = [];
             document.getElementById('edit-indicator').style.display = "none";
             renderRoute();
         }
@@ -223,8 +263,7 @@
             const list = document.getElementById('history-list');
             const rom = document.getElementById('stat-romario');
             const ces = document.getElementById('stat-cesar');
-            let tRom = 0, tCes = 0;
-            list.innerHTML = "";
+            let tRom = 0, tCes = 0; list.innerHTML = "";
             const mes = new Date().getMonth();
 
             db.slice().reverse().forEach(reg => {
@@ -234,15 +273,19 @@
                     if(reg.chofer === "CESAR") tCes += reg.total;
                 }
                 list.innerHTML += `
-                    <div class="card history-card">
-                        <span class="date-label">${f.toLocaleDateString()} ${f.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
-                        <b>🚚 ${reg.chofer}</b> | ${reg.placa}<br>
-                        <small style="opacity:0.7">${reg.total} cajas en ${reg.destinos.length} puntos</small>
+                    <div class="card" style="border-left: 4px solid var(--primary);">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span class="date-badge">${f.toLocaleDateString()}</span>
+                            <b style="color:var(--primary)">${reg.total} CJ</b>
+                        </div>
+                        <div style="font-size:14px; margin-bottom:12px;">
+                            <b>${reg.chofer}</b> • ${reg.placa}<br>
+                            <small style="color:var(--text-dim)">${reg.destinos.length} paradas registradas</small>
+                        </div>
                         <button class="btn btn-edit" onclick="editFromHistory(${reg.id})">✏️ EDITAR RUTA</button>
                     </div>`;
             });
-            rom.innerText = tRom;
-            ces.innerText = tCes;
+            rom.innerText = tRom; ces.innerText = tCes;
         }
     </script>
 </body>
