@@ -3,82 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DESPACHOS Twins | Tajho Dev</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Twins Despachos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --twins-blue: #004a99;
-            --twins-green: #8cc63f;
-            --bg: #ffffff;
-            --card: #f8fafc;
-            --text: #1e293b;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-        }
-
-        body { 
-            background: var(--bg); color: var(--text); 
-            font-family: 'Inter', sans-serif; margin: 0; padding: 0;
-            display: flex; flex-direction: column; min-height: 100vh;
-        }
-
-        .page { display: none; padding: 20px; flex: 1; flex-direction: column; box-sizing: border-box; }
+        :root { --blue: #004a99; --green: #8cc63f; --bg: #ffffff; --text: #1e293b; --border: #e2e8f0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+        
+        .page { display: none; padding: 15px; flex-direction: column; height: 100vh; box-sizing: border-box; }
         .active { display: flex !important; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Pantalla de Inicio */
-        .login-container { flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 0; }
-        .logo-box { width: 180px; text-align: center; }
-        .logo-box img { width: 100%; height: auto; }
+        /* Pantalla 1: Login Compacto */
+        .login-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
+        .logo-box { width: 140px; margin-bottom: 5px; }
+        .logo-box img { width: 100%; height: auto; display: block; }
+        .app-title { font-weight: 900; color: var(--blue); font-size: 18px; letter-spacing: 1px; margin-bottom: 25px; }
         
-        .creator-tag { 
-            margin-bottom: 40px; text-align: center; font-size: 14px; 
-            color: var(--twins-blue); font-weight: 700; letter-spacing: 0.5px;
-        }
+        .btn-group { width: 100%; max-width: 260px; }
+        .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: 0.2s; }
+        .btn-outline { background: white; border: 2px solid var(--blue); color: var(--blue); }
+        .btn-outline:active { background: var(--blue); color: white; }
+        
+        .creator-tag { margin-top: 30px; font-size: 12px; color: var(--blue); font-weight: 700; opacity: 0.8; }
 
-        /* UI Elements */
-        .card { 
-            background: var(--card); border-radius: 16px; border: 1px solid var(--border); 
-            padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
+        /* Pantalla 2 y 3: Interfaz */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; }
+        .banner { background: var(--blue); color: white; border-radius: 15px; padding: 15px; text-align: center; margin-bottom: 10px; }
+        .card { background: #f8fafc; border-radius: 12px; border: 1px solid var(--border); padding: 12px; margin-bottom: 10px; }
+        
+        input, select { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid var(--border); font-size: 15px; box-sizing: border-box; }
+        .btn-main { background: var(--blue); color: white; }
+        .btn-save { background: var(--green); color: white; }
 
-        .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; }
-
-        .btn { 
-            width: 100%; padding: 15px; border-radius: 12px; border: none; 
-            font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; 
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .btn-main { background: var(--twins-blue); color: white; }
-        .btn-save { background: var(--twins-green); color: white; }
-        .btn-outline { background: white; border: 2px solid var(--twins-blue); color: var(--twins-blue); }
-        .btn-edit { background: #e2e8f0; color: var(--twins-blue); font-size: 11px; padding: 8px; border-radius: 8px; }
-
-        input, select { 
-            width: 100%; padding: 13px; margin: 6px 0; border-radius: 10px; 
-            border: 1px solid var(--border); background: #fff; font-size: 16px; box-sizing: border-box;
-        }
-
-        .driver-chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-        .chip { background: white; border: 1.5px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; }
-        .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
-
-        .item-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
-        .op-badge { background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        #edit-tag { display: none; background: #fbbf24; color: #000; padding: 8px; border-radius: 8px; font-size: 12px; text-align: center; font-weight: bold; margin-bottom: 10px; }
+        .history-item { border-left: 4px solid var(--blue); padding: 8px; font-size: 12px; margin-bottom: 8px; background: white; border-radius: 5px; }
+        .chip-container { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .chip { background: #eee; padding: 6px 12px; border-radius: 15px; font-size: 11px; white-space: nowrap; font-weight: bold; }
+        .chip.active { background: var(--blue); color: white; }
     </style>
 </head>
 <body>
 
     <div id="p1" class="page active">
-        <div class="login-container">
+        <div class="login-wrap">
             <div class="logo-box">
-                <img src="https://tajho.github.io/Despachos/logo.png" alt="Logo Twins">
-                <div style="font-weight: 800; color: var(--twins-blue); font-size: 20px; margin-top: 5px; letter-spacing: 2px;">DESPACHOS</div>
+                <img src="logo.png" alt="Twins" onerror="this.src='https://tajho.github.io/Despachos/logo.png'">
+            </div>
+            <div class="app-title">DESPACHOS Twins</div>
+
+            <div class="btn-group">
+                <button class="btn btn-outline" onclick="login('TAJHO')">TAJHO</button>
+                <button class="btn btn-outline" onclick="login('FRANCESCO')">FRANCESCO</button>
+                <button class="btn btn-outline" onclick="login('OSCAR')">OSCAR</button>
+                <button class="btn btn-outline" onclick="login('LUIS HERBER')">LUIS HERBER</button>
             </div>
 
-            <div style="width: 100%; max-width: 280px;">
-                <button class="btn btn-outline" onclick="login('TAJHO')">ENTRAR COMO TAJHO</button>
-                <button class="btn btn-outline" onclick="login('FRANCESCO')">ENTRAR COMO FRANCESCO</button>
-                <button class="btn btn-outline" onclick="login('OSCAR')">ENTRAR COMO OSCAR</button>
-                <button class="btn btn-outline" onclick="login('LUIS HERBER')">ENTRAR COMO LUIS HERBER</button>
+            <div class="creator-tag">By Tajho Developer</div>
+        </div>
+    </div>
+
+    <div id="p2" class="page">
+        <div class="header">
+            <b id="user-name" style="color: var(--blue)"></b>
+            <button onclick="location.reload()" style="border:none; color:red; background:none; font-weight:bold;">SALIR</button>
+        </div>
+        
+        <div class="banner">
+            <small>TOTAL CAJAS</small>
+            <div id="total-vivo" style="font-size:35px; font-weight:900;">0</div>
+        </div>
+
+        <div class="card">
+            <input type="text" id="cli" placeholder="Cliente">
+            <input type="number" id="can" placeholder="Cant." inputmode="numeric">
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR</button>
+        </div>
+
+        <div id="area-envio" style="display:none; flex:1; overflow-y:auto;">
+            <div id="lista-actual" class="card"></div>
+            <div class="card">
+                <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                <select id="aux"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option></select>
+                <select id="pla"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                <button class="btn btn-save" onclick="guardar(true)">GUARDAR Y WHATSAPP</button>
+                <button class="btn btn-outline" style="font-size:11px;" onclick="guardar(false)">SOLO GUARDAR</button>
+            </div>
+        </div>
+        <button class="btn btn-outline" onclick="verReportes()">VER REPORTES</button>
+    </div>
+
+    <div id="p3" class="page">
+        <button class="btn btn-outline" style="width:80px; padding:5px; margin-bottom:10px;" onclick="switchPage('p3','p2')">ATRÁS</button>
+        <div class="chip-container" id="chips"></div>
+        <div class="banner" style="padding:10px;">
+            <small id="stat-title">TOTAL</small>
+            <div id="stat-total" style="font-size:25px; font-weight:900;">0</div>
+        </div>
+        <div id="history-list" style="flex:1; overflow-y:auto;"></div>
+    </div>
+
+    <script>
+        let user="", route=[], db=JSON.parse(localStorage.getItem('twins_db_vFinal')) || [], activeFilter="TODOS";
+
+        function switchPage(h, s) { document.getElementById(h).classList.remove('active'); document.getElementById(s).classList.add('active'); }
+        
+        function login(n) { user=n; document.getElementById('user-name').innerText="OP: "+n; switchPage('p1','p2'); }
+
+        function addItem() {
+            const c=document.getElementById('cli').value.toUpperCase(), q=parseInt(document.getElementById('can').value);
+            if(!c || !q) return;
+            route.push({cli:c, can:q, id:Date.now()});
+            renderRoute();
+            document.getElementById('cli').value=""; document.getElementById('can').value="";
+        }
+
+        function renderRoute() {
+            const l=document.getElementById('lista-actual'); let s=0; l.innerHTML="";
+            route.forEach(i=>{ s+=i.can; l.innerHTML+=`<div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px;"><span>${i.cli} (${i.can})</span><b onclick="delItem(${i.id})" style="color:red">✕</b></div>`; });
+            document.getElementById('total-vivo').innerText=s;
+            document.getElementById('area-envio').style.display=route.length>0?'block':'none';
+        }
+
+        function delItem(id) { route=route.filter(i=>i.id!==id); renderRoute(); }
+
+        function guardar(wa) {
+            const cho=document.getElementById('cho').value, pla=document.getElementById('pla').value, aux=document.getElementById('aux').value;
+            if(!cho || !pla || !aux) return alert("Completa los datos");
+            const reg = { id:Date.now(), fecha:new Date().toISOString(), chofer:cho, placa:pla, auxiliar:aux, operario:user, items:[...route], total:route.reduce((a,b)=>a+b.can,0) };
+            db.push(reg); localStorage.setItem('twins_db_vFinal', JSON.stringify(db));
+            if(wa){
+                let m=`*DESPACHO TWINS*\nOp: ${user}\nCh: ${cho}\nPl: ${pla}\nAx: ${aux}\n---\n`;
+                route.forEach(i=>m+=`• ${i.cli}: ${i.can} CJ\n`);
+                m+=`---\nTOTAL: ${reg.total} CJ`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+            }
+            route=[]; renderRoute(); alert("Guardado");
+        }
+
+        function verReportes() {
+            const container=document.getElementById('chips'); 
+            container.innerHTML=`<div class="chip ${activeFilter=='TODOS'?'active':''}" onclick="setF('TODOS')">TODOS</div>`;
+            ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d=>{
+                container.innerHTML+=`<div class="chip ${activeFilter==d?'active':''}" onclick="setF('${d}')">${d}</div>`;
+            });
+            renderHistory(); switchPage('p2','p3');
+        }
+
+        function setF(d) { activeFilter=d; verReportes(); }
+
+        function renderHistory() {
+            const list=document.getElementById('history-list'); let t=0; list.innerHTML="";
+            db.slice().reverse().forEach(r=>{
+                if(activeFilter=="TODOS" || r.chofer==activeFilter) {
+                    t+=r.total; const d=new Date(r.fecha);
+                    list.innerHTML+=`<div class="history-item">
+                        <b>${d.toLocaleDateString()} ${d.getHours()}:${d.getMinutes()}</b> - ${r.total} CJ<br>
+                        ${r.chofer} | ${r.placa} | <small>Por: ${r.operario}</small>
+                    </div>`;
+                }
+            });
+            document.getElementById('stat-total').innerText=t;
+            document.getElementById('stat-title').innerText="TOTAL " + activeFilter;
+        }
+    </script>
+</body>
+</html>
