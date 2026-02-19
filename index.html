@@ -3,162 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS MANAGER V23</title>
+    <title>SISTEMA TWINS V24</title>
     <style>
-        :root {
-            --bg: #f4f7f6; --card: #ffffff; --text: #333; --primary: #3498db; --secondary: #2ecc71; --border: #ddd;
-        }
-        [data-theme="dark"] {
-            --bg: #000000; --card: #121212; --text: #eee; --primary: #3498db; --secondary: #2ecc71; --border: #333;
-        }
+        :root { --bg: #000; --card: #121212; --text: #fff; --primary: #3498db; --border: #333; }
+        [data-theme="light"] { --bg: #f4f7f6; --card: #fff; --text: #333; --border: #ddd; }
         
-        body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; transition: 0.3s; }
-        
-        /* Layout */
-        .pantalla { display: none; padding: 15px; min-height: 100vh; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; transition: 0.3s; }
+        .pantalla { display: none; }
         .activa { display: block !important; }
         
-        /* Cabecera */
-        header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 15px; }
+        .card { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .btn { width: 100%; padding: 18px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin: 8px 0; display: block; text-align: center; text-decoration: none; }
+        .btn-user { background: var(--card); color: var(--primary); border: 1px solid var(--primary); }
+        .btn-main { background: var(--primary); color: #fff; }
         
-        /* Tarjetas y Contenedores */
-        .card { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        
-        /* Botones Profesionales */
-        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; margin: 8px 0; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn:active { transform: scale(0.98); opacity: 0.8; }
-        .btn-user { background: var(--card); color: var(--primary); border: 2px solid var(--primary); }
-        .btn-main { background: var(--primary); color: white; }
-        .btn-success { background: var(--secondary); color: white; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); font-size: 14px; }
-
-        /* Inputs */
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; box-sizing: border-box; }
-
-        /* Contador */
-        .counter-badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 18px; font-weight: bold; }
-
-        /* Tabla de Historial */
-        .table-container { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
-        th { background: var(--primary); color: white; }
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 16px; box-sizing: border-box; }
+        .badge { background: var(--primary); color: #fff; padding: 5px 12px; border-radius: 15px; font-size: 20px; }
     </style>
 </head>
 <body data-theme="dark">
 
     <div id="p1" class="pantalla activa">
-        <div style="text-align:center; margin-top: 50px;">
-            <h1 style="color: var(--primary); margin-bottom: 5px;">SISTEMA TWINS</h1>
-            <p style="opacity: 0.6;">Control de Inventario y Despachos</p>
-        </div>
-        <div style="margin-top: 40px;">
-            <button class="btn btn-user" onclick="entrar('TAJHO')">👤 TAJHO</button>
-            <button class="btn btn-user" onclick="entrar('FRANCESCO')">👤 FRANCESCO</button>
-            <button class="btn btn-user" onclick="entrar('OSCAR')">👤 OSCAR</button>
-        </div>
-        <button class="btn btn-outline" style="margin-top: 50px;" onclick="toggleTheme()">🌓 Cambiar Modo Claro/Oscuro</button>
+        <h1 style="text-align:center; color:var(--primary);">SISTEMA TWINS</h1>
+        <p style="text-align:center; opacity:0.6;">Seleccione su nombre:</p>
+        
+        <div class="btn btn-user" onclick="window.operario='TAJHO'; document.getElementById('nom-u').innerText='👤 TAJHO'; document.getElementById('p1').style.display='none'; document.getElementById('p2').style.display='block';">TAJHO</div>
+        <div class="btn btn-user" onclick="window.operario='FRANCESCO'; document.getElementById('nom-u').innerText='👤 FRANCESCO'; document.getElementById('p1').style.display='none'; document.getElementById('p2').style.display='block';">FRANCESCO</div>
+        <div class="btn btn-user" onclick="window.operario='OSCAR'; document.getElementById('nom-u').innerText='👤 OSCAR'; document.getElementById('p1').style.display='none'; document.getElementById('p2').style.display='block';">OSCAR</div>
+        
+        <div class="btn" style="background:none; color:var(--primary); font-size:14px;" onclick="document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');">🌓 Cambiar Modo Claro/Oscuro</div>
     </div>
 
     <div id="p2" class="pantalla">
-        <header>
-            <b id="nom-u" style="color: var(--primary);"></b>
-            <button onclick="toggleTheme()" style="background:none; border:none; font-size:20px; cursor:pointer;">🌓</button>
-            <button onclick="location.reload()" style="background:none; border:none; color:red; font-weight:bold;">SALIR</button>
-        </header>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <b id="nom-u"></b>
+            <button onclick="location.reload()" style="background:none; border:none; color:red;">SALIR</button>
+        </div>
 
         <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>Cajas cargadas hoy:</span>
-            <div id="suma-total" class="counter-badge">0</div>
+            <span>Cajas en carga:</span>
+            <b id="suma-total" class="badge">0</b>
         </div>
 
         <div class="card">
             <input type="text" id="cli" placeholder="CLIENTE / DESTINO">
-            <input type="number" id="can" placeholder="CANTIDAD DE CAJAS" inputmode="numeric">
-            <button class="btn btn-main" onclick="agregar()">➕ AÑADIR A CARGA</button>
+            <input type="number" id="can" placeholder="CANTIDAD CAJAS" inputmode="numeric">
+            <button class="btn btn-main" onclick="agregar()">+ AÑADIR DESPACHO</button>
         </div>
 
         <div id="area-envio" style="display:none;">
-            <div id="lista" class="card" style="font-size: 14px; opacity: 0.8; border-left: 5px solid var(--primary);"></div>
-            
-            <div class="card">
-                <select id="cho"><option value="">Seleccione Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
-                <select id="pla"><option value="">Seleccione Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
-                <button class="btn btn-success" onclick="enviar()">✅ ENVIAR WHATSAPP</button>
-                <button class="btn btn-outline" onclick="anexo()">📦 AGREGAR ANEXO (Misma ruta)</button>
-            </div>
+            <div id="lista" class="card" style="font-size:14px; color:#888;"></div>
+            <select id="cho"><option value="">Seleccione Chofer...</option><option value="ROMARIO">ROMARIO</option><option value="CESAR">CESAR</option></select>
+            <select id="pla"><option value="">Seleccione Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+            <button class="btn btn-main" style="background:#2ecc71;" onclick="enviar()">✅ ENVIAR WHATSAPP</button>
+            <button class="btn" style="background:#444; color:#fff; font-size:14px;" onclick="anexo()">📦 AGREGAR ANEXO</button>
         </div>
         
-        <button class="btn btn-outline" onclick="irA('p2','p3')">📋 VER HISTORIAL DIARIO</button>
+        <button class="btn" style="border:1px solid var(--border); color:var(--text); font-size:14px;" onclick="document.getElementById('p2').style.display='none'; document.getElementById('p3').style.display='block';">📋 VER HISTORIAL</button>
     </div>
 
     <div id="p3" class="pantalla">
-        <header>
-            <button onclick="irA('p3','p2')" style="background:none; border:none; color:var(--primary); font-weight:bold;">← VOLVER</button>
-            <h3>HISTORIAL</h3>
-        </header>
-        
-        <input type="text" id="bus" onkeyup="buscar()" placeholder="🔍 Buscar por cliente...">
-        
-        <div class="table-container">
-            <table>
-                <thead><tr><th>Cliente</th><th>Cjs</th><th>Chofer</th></tr></thead>
-                <tbody id="tabla">
-                    <tr><td colspan="3" style="text-align:center; padding:20px;">No hay registros hoy</td></tr>
-                </tbody>
+        <button class="btn" onclick="document.getElementById('p3').style.display='none'; document.getElementById('p2').style.display='block';">← VOLVER</button>
+        <input type="text" id="bus" onkeyup="buscar()" placeholder="🔍 Buscar cliente...">
+        <div style="overflow-x:auto; margin-top:10px;">
+            <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                <thead><tr style="background:var(--primary); color:#fff;"><th>Cliente</th><th>Cjs</th><th>Chofer</th></tr></thead>
+                <tbody id="tabla"><tr><td colspan="3" style="text-align:center; padding:20px;">No hay registros</td></tr></tbody>
             </table>
         </div>
     </div>
 
     <script>
-        let operario = "";
-        let items = [];
-        let totalCajas = 0;
-
-        function toggleTheme() {
-            const body = document.body;
-            const current = body.getAttribute('data-theme');
-            body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
-        }
-
-        function irA(ocultar, mostrar) {
-            document.getElementById(ocultar).classList.remove('activa');
-            document.getElementById(mostrar).classList.add('activa');
-        }
-
-        function entrar(n) {
-            operario = n;
-            document.getElementById('nom-u').innerText = "👤 " + n;
-            irA('p1', 'p2');
-        }
-
-        function agregar() {
-            let c = document.getElementById('cli').value.toUpperCase().trim();
-            let q = parseInt(document.getElementById('can').value);
-            if(!c || isNaN(q)) return alert("Por favor, llene cliente y cajas");
-
-            items.push({c, q});
-            totalCajas += q;
-            document.getElementById('suma-total').innerText = totalCajas;
-            document.getElementById('lista').innerHTML += `<b>${c}</b>: ${q} cj<br>`;
-            document.getElementById('area-envio').style.display = 'block';
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-        }
-
-        function anexo() {
-            items = []; totalCajas = 0;
-            document.getElementById('suma-total').innerText = "0";
-            document.getElementById('lista').innerHTML = "";
-            alert("Modo Anexo: Chofer y Placa se mantienen.");
-        }
-
-        function enviar() {
-            let cho = document.getElementById('cho').value;
-            if(!cho) return alert("Selecciona un chofer");
-            let txt = `*REPORTE TWINS*\n👤 Operario: ${operario}\n🚚 Chofer: ${cho}\n----------------\n`;
-            items.forEach(i => { txt += `• ${i.c}: ${i.q} CJ\n`; });
-            txt += `----------------\n📦 TOTAL: ${totalCajas} CAJAS`;
-            window.open("https://wa.me/?text=" + encodeURIComponent(txt));
-        }
-
-        function buscar()
+        window.items = [];
+        window.totalCajas = 0;
