@@ -18,7 +18,6 @@
             --danger: #ef4444;
         }
 
-        /* MODO OSCURO MEJORADO (Azul Medianoche Premium) */
         [data-theme="dark"] {
             --bg: #0f172a;
             --card: #1e293b;
@@ -26,73 +25,67 @@
             --text-dim: #94a3b8;
             --border: #334155;
             --input-bg: #1e293b;
-            --twins-blue: #3b82f6; /* Azul más brillante para resaltar en fondo oscuro */
+            --twins-blue: #3b82f6;
         }
 
         body { 
             background: var(--bg); color: var(--text); 
             font-family: 'Inter', sans-serif; margin: 0; padding: 0; 
-            transition: background 0.3s, color 0.3s;
+            transition: background 0.2s;
         }
 
+        /* Estructura de Páginas */
         .page { display: none; padding: 20px; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
         .active { display: flex !important; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Header de usuario y tema */
+        /* Header / Top Bar */
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .theme-btn-mini { 
+        .theme-btn { 
             background: var(--card); border: 1px solid var(--border); 
-            color: var(--text); padding: 8px 12px; border-radius: 10px; 
-            cursor: pointer; font-size: 16px; font-weight: bold;
+            color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer;
         }
 
-        .main-title { font-size: 32px; font-weight: 800; color: var(--twins-blue); text-align: center; margin-top: 60px; letter-spacing: -1px; }
-        .creator-tag { font-size: 14px; color: var(--twins-blue); font-weight: 700; text-align: center; margin-bottom: 40px; opacity: 0.8; }
+        /* Login */
+        .login-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .main-title { font-size: 32px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px; }
+        .creator-tag { font-size: 14px; font-weight: 700; color: var(--twins-blue); margin-bottom: 30px; opacity: 0.8; }
 
+        /* Componentes */
         .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-bottom: 12px; }
-        .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,74,153,0.2); }
+        .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; }
 
-        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: 0.2s; }
+        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; }
-        .btn-save:disabled { background: #94a3b8; cursor: not-allowed; opacity: 0.5; }
+        .btn-save:disabled { background: #94a3b8; opacity: 0.5; }
         .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); }
         
-        .btn-action { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 11px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .btn-view { background: #e0f2fe; color: #0369a1; }
-        [data-theme="dark"] .btn-view { background: #0c4a6e; color: #bae6fd; }
-        .btn-edit { background: #f1f5f9; color: #475569; }
-        [data-theme="dark"] .btn-edit { background: #334155; color: #e2e8f0; }
-
         input, select { 
             width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; 
             border: 1px solid var(--border); background: var(--input-bg); 
             color: var(--text); font-size: 16px; box-sizing: border-box; 
         }
-        
-        .chip { background: var(--card); border: 1.5px solid var(--border); padding: 10px 18px; border-radius: 25px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; color: var(--text); }
-        .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
 
-        .item-row { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
-        .detail-pane { background: rgba(0,0,0,0.03); border: 1px dashed var(--twins-blue); border-radius: 12px; margin-top: 10px; padding: 15px; display: none; font-size: 13px; line-height: 1.6; }
-        [data-theme="dark"] .detail-pane { background: rgba(255,255,255,0.03); }
-        .detail-pane.open { display: block; }
+        .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; color: var(--text); font-size: 12px; }
+        .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
         
-        .search-box { background: var(--input-bg); border: 2px solid var(--twins-blue); padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 15px; width: 100%; box-sizing: border-box; color: var(--text); }
-        .op-badge { background: var(--border); color: var(--text-dim); padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .detail-pane { background: rgba(0,0,0,0.05); border-radius: 10px; padding: 12px; margin-top: 10px; display: none; font-size: 13px; }
+        [data-theme="dark"] .detail-pane { background: rgba(255,255,255,0.05); }
+        .detail-pane.open { display: block; }
     </style>
 </head>
 <body>
 
     <div id="p1" class="page active">
-        <div style="position: absolute; top: 15px; right: 15px;">
-            <button class="theme-btn-mini" onclick="toggleTheme()" id="theme-btn">🌙</button>
+        <div style="text-align: right;">
+            <button class="theme-btn" onclick="toggleTheme()">🌙</button>
         </div>
-        <div class="main-title">TWINS DESPACHOS</div>
-        <div class="creator-tag">By Tajho Developer</div>
-        <div style="display:flex; flex-direction:column; align-items:center;">
-            <div style="width: 100%; max-width: 290px;">
+        <div class="login-wrap">
+            <div class="main-title">TWINS DESPACHOS</div>
+            <div class="creator-tag">By Tajho Developer</div>
+            <div style="width: 100%; max-width: 280px;">
                 <button class="btn btn-outline" onclick="login('TAJHO')">TAJHO</button>
                 <button class="btn btn-outline" onclick="login('FRANCESCO')">FRANCESCO</button>
                 <button class="btn btn-outline" onclick="login('OSCAR')">OSCAR</button>
@@ -103,53 +96,174 @@
 
     <div id="p2" class="page">
         <div class="top-bar">
+            <b id="user-display" style="color:var(--twins-blue)"></b>
             <div>
-                <b id="user-display" style="color:var(--twins-blue); font-size:14px;"></b>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="theme-btn-mini" onclick="toggleTheme()" id="theme-btn-2" style="padding: 5px 10px;">🌙</button>
-                <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800; font-size: 13px;">SALIR</button>
+                <button class="theme-btn" onclick="toggleTheme()" style="margin-right:8px;">🌙</button>
+                <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
             </div>
         </div>
 
         <div class="banner-total">
-            <small style="font-weight: 600; opacity: 0.9; letter-spacing: 1px;">CAJAS EN ESTA RUTA</small>
-            <div id="total-vivo" style="font-size:48px; font-weight:800;">0</div>
+            <small>CAJAS EN RUTA</small>
+            <div id="total-vivo" style="font-size:45px; font-weight:800;">0</div>
         </div>
 
         <div class="card">
             <input type="text" id="cli" placeholder="Nombre del Cliente">
-            <input type="number" id="can" placeholder="Cantidad de Cajas" inputmode="numeric">
-            <button class="btn btn-main" onclick="addItem()">+ AGREGAR A LISTA</button>
+            <input type="number" id="can" placeholder="Cajas" inputmode="numeric">
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
         </div>
 
         <div id="area-despacho" style="display:none;">
-            <div class="card" id="lista-actual" style="height:auto; border-style: solid;"></div>
-            
+            <div class="card" id="lista-actual"></div>
             <div class="card">
-                <select id="cho" onchange="validateForm()"><option value="">Seleccionar Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                <select id="aux" onchange="validateForm()"><option value="">Seleccionar Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option></select>
-                <select id="pla" onchange="validateForm()"><option value="">Placa Vehículo...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
-                
-                <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
+                <select id="cho" onchange="validateForm()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                <select id="aux" onchange="validateForm()"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option></select>
+                <select id="pla" onchange="validateForm()"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR</button>
                 <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
             </div>
         </div>
-        <button class="btn btn-outline" style="margin-top:10px; border-style: dashed;" onclick="verReportes()">📊 HISTORIAL Y BUSCADOR</button>
+        <button class="btn btn-outline" style="margin-top:10px;" onclick="verReportes()">📊 HISTORIAL</button>
     </div>
 
     <div id="p3" class="page">
         <div class="top-bar">
-            <button class="btn btn-outline" style="width:auto; margin:0; padding: 8px 15px;" onclick="switchPage('p3', 'p2')">← VOLVER</button>
-            <button class="theme-btn-mini" onclick="toggleTheme()" id="theme-btn-3">🌙</button>
+            <button class="btn btn-outline" style="width:auto; padding:8px 15px; margin:0;" onclick="switchPage('p3','p2')">← VOLVER</button>
+            <button class="theme-btn" onclick="toggleTheme()">🌙</button>
         </div>
-        
-        <input type="text" id="search-cli" class="search-box" placeholder="🔍 Buscar cliente en el historial..." onkeyup="renderHistory()">
+        <input type="text" id="search-cli" style="margin-bottom:10px;" placeholder="🔍 Buscar cliente..." onkeyup="renderHistory()">
+        <div id="driver-chips-container" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
+        <div class="card" style="text-align:center; border-top: 4px solid var(--twins-green);">
+            <small id="stat-title">TOTAL</small>
+            <div id="stat-total" style="font-size:32px; font-weight:800; color:var(--twins-blue);">0</div>
+        </div>
+        <div id="history-list"></div>
+    </div>
 
-        <div style="display:flex; gap: 8px; overflow-x: auto; padding-bottom: 15px;">
-            <div class="driver-chips" id="driver-chips-container" style="display:flex; gap:8px;"></div>
-        </div>
+    <script>
+        let user = "", route = [], activeFilter = "TODOS", editId = null;
+        let db = JSON.parse(localStorage.getItem('twins_final_fix')) || [];
+
+        function toggleTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', isDark ? '' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            document.querySelectorAll('.theme-btn').forEach(b => b.innerText = isDark ? '🌙' : '☀️');
+        }
+
+        if(localStorage.getItem('theme') === 'dark') toggleTheme();
+
+        function switchPage(hide, show) {
+            document.getElementById(hide).classList.remove('active');
+            document.getElementById(show).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function login(n) { 
+            user = n; 
+            document.getElementById('user-display').innerText = "OP: " + n; 
+            switchPage('p1', 'p2'); 
+        }
+
+        function addItem() {
+            const cli = document.getElementById('cli').value.toUpperCase().trim();
+            const can = parseInt(document.getElementById('can').value);
+            if(!cli || !can) return;
+            route.push({id: Date.now(), cli, can});
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+            renderRoute();
+            validateForm();
+        }
+
+        function renderRoute() {
+            const list = document.getElementById('lista-actual');
+            let sum = 0; list.innerHTML = "";
+            route.forEach(i => {
+                sum += i.can;
+                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b></span><span>${i.can} CJ <b onclick="delItem(${i.id})" style="color:red; margin-left:15px;">✕</b></span></div>`;
+            });
+            document.getElementById('total-vivo').innerText = sum;
+            document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
+        }
+
+        function delItem(id) { route = route.filter(i => i.id !== id); renderRoute(); validateForm(); }
+
+        function validateForm() {
+            const ok = document.getElementById('cho').value && document.getElementById('aux').value && document.getElementById('pla').value && route.length > 0;
+            document.getElementById('btn-save-wa').disabled = !ok;
+            document.getElementById('btn-save-only').disabled = !ok;
+        }
+
+        function guardar(wa) {
+            const reg = {
+                id: editId || Date.now(), fecha: new Date().toISOString(),
+                chofer: document.getElementById('cho').value,
+                auxiliar: document.getElementById('aux').value,
+                placa: document.getElementById('pla').value,
+                operario: user, items: [...route], total: route.reduce((a,b)=>a+b.can, 0)
+            };
+            if(editId) db = db.map(x => x.id === editId ? reg : x); else db.push(reg);
+            localStorage.setItem('twins_final_fix', JSON.stringify(db));
+            if(wa) {
+                let m = `*DESPACHO TWINS*\nOp: ${user}\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
+                route.forEach(i => m += `• ${i.cli}: ${i.can} CJ\n`);
+                m += `---\nTOTAL: ${reg.total} CJ`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+            }
+            route = []; editId = null; renderRoute(); validateForm(); alert("Guardado");
+        }
+
+        function verReportes() { 
+            const cont = document.getElementById('driver-chips-container');
+            cont.innerHTML = `<div class="chip ${activeFilter=='TODOS'?'active':''}" onclick="setF('TODOS')">TODOS</div>`;
+            ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
+                cont.innerHTML += `<div class="chip ${activeFilter==d?'active':''}" onclick="setF('${d}')">${d}</div>`;
+            });
+            renderHistory(); 
+            switchPage('p2', 'p3'); 
+        }
+
+        function setF(d) { activeFilter = d; verReportes(); }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            const search = document.getElementById('search-cli').value.toUpperCase();
+            let sum = 0; list.innerHTML = "";
+            db.slice().reverse().forEach(r => {
+                const matchSearch = search === "" || r.items.some(i => i.cli.includes(search));
+                if((activeFilter === "TODOS" || r.chofer === activeFilter) && matchSearch) {
+                    sum += r.total;
+                    const d = new Date(r.fecha);
+                    let items = r.items.map(i => `<div>• ${i.cli}: ${i.can} CJ</div>`).join('');
+                    list.innerHTML += `
+                    <div class="card" style="border-left:5px solid var(--twins-blue)">
+                        <div style="display:flex; justify-content:space-between">
+                            <b>${d.toLocaleDateString()}</b><b>${r.total} CJ</b>
+                        </div>
+                        <div style="font-size:12px; margin:5px 0;">Chofer: ${r.chofer}</div>
+                        <div class="detail-pane" id="det-${r.id}">${items}</div>
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            <button class="btn" style="padding:8px; background:#e0f2fe; color:#0369a1; font-size:11px;" onclick="toggleDet('${r.id}')">🔍 DETALLE</button>
+                            <button class="btn" style="padding:8px; background:#f1f5f9; color:#475569; font-size:11px;" onclick="edit('${r.id}')">✏️ EDITAR</button>
+                        </div>
+                    </div>`;
+                }
+            });
+            document.getElementById('stat-total').innerText = sum;
+            document.getElementById('stat-title').innerText = "TOTAL " + activeFilter;
+        }
+
+        function toggleDet(id) { document.getElementById('det-'+id).classList.toggle('open'); }
         
-        <div class="card" style="text-align:center; border-top: 5px solid var(--twins-green);">
-            <small id="stat-title" style="font-weight:700; color:var(--text-dim);"></small>
-            <div id="stat-total" style="font
+        function edit(id) {
+            const r = db.find(x => x.id == id);
+            editId = id; route = [...r.items];
+            document.getElementById('cho').value = r.chofer;
+            document.getElementById('aux').value = r.auxiliar;
+            document.getElementById('pla').value = r.placa;
+            renderRoute(); validateForm(); switchPage('p3', 'p2');
+        }
+    </script>
+</body>
+</html>
