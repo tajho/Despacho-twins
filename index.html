@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | FINAL</title>
+    <title>TWINS V7 | SISTEMA INTELIGENTE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -26,8 +26,7 @@
 
         #modal-pass, #modal-view {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 2000;
-            flex-direction: column; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center;
         }
 
         .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
@@ -35,19 +34,20 @@
         .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
 
-        .banner-total { background: linear-gradient(135deg, var(--twins-blue), var(--accent)); color: white; border-radius: 15px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
+        .banner-total { background: linear-gradient(135deg, var(--twins-blue), var(--accent)); color: white; border-radius: 15px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; }
 
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 15px; box-sizing: border-box; outline: none; }
-        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+        input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; box-sizing: border-box; outline: none; }
+        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
-        .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
         
-        .action-btn { font-size: 16px; width: 38px; height: 38px; cursor: pointer; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; }
+        .action-btn { font-size: 16px; width: 36px; height: 36px; cursor: pointer; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; }
 
-        .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 8px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); }
-        .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); }
-        .view-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #334155; }
+        .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); }
+        .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+        
+        .search-box { position: relative; }
+        .search-box i { position: absolute; right: 12px; top: 18px; opacity: 0.5; }
     </style>
 </head>
 <body>
@@ -63,7 +63,7 @@
 
     <div id="modal-view">
         <div class="card" style="width: 85%; max-width: 350px;">
-            <div id="view-title" style="font-weight: 800; color: var(--twins-blue); margin-bottom: 10px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; text-transform: uppercase;"></div>
+            <div id="view-title" style="font-weight: 800; color: var(--twins-blue); margin-bottom: 10px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 10px;"></div>
             <div id="view-content" style="max-height: 350px; overflow-y: auto;"></div>
             <div id="view-footer" style="margin-top: 15px; font-weight: 900; text-align: right; color: var(--twins-green); font-size: 20px;"></div>
             <button class="btn btn-main" style="margin-top: 20px;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR</button>
@@ -71,26 +71,26 @@
     </div>
 
     <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
+        <div id="p1" class="page active" style="text-align: center; padding-top: 10vh;">
             <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
-            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px;">GESTIÓN ALMACÉN</div>
-            <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="openPassModal()">🔑 TAJHO (Admin)</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="login('OSCAR')">👤 OSCAR</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
+            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 30px;">GESTIÓN ALMACÉN</div>
+            <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 10px;">
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="openPassModal()">🔑 TAJHO (Admin)</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('OSCAR')">👤 OSCAR</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
             </div>
         </div>
 
         <div id="header-app" class="top-header" style="display:none;">
-            <div><small style="opacity:0.5; font-weight:800; font-size:9px;">OPERARIO</small><br><b id="user-display" style="color:var(--twins-blue)">---</b></div>
+            <div><small style="opacity:0.5; font-size:9px;">OPERARIO</small><br><b id="user-display" style="color:var(--twins-blue)">---</b></div>
             <span onclick="location.reload()" style="color:var(--danger); font-size:11px; font-weight:800; cursor:pointer;">SALIR</span>
         </div>
 
         <div id="p2" class="page">
             <div class="banner-total">
-                <div><small style="font-weight:700;">CAJAS EN RUTA</small><div id="total-vivo" style="font-size:38px; font-weight:900;">0</div></div>
-                <div style="font-size:30px;">📦</div>
+                <div><small>CAJAS ACTUALES</small><div id="total-vivo" style="font-size:35px; font-weight:900;">0</div></div>
+                <div style="font-size:25px;">📦</div>
             </div>
             <div class="card">
                 <input type="text" id="cli" placeholder="Nombre Cliente">
@@ -100,35 +100,29 @@
             <div id="area-envio" style="display:none;">
                 <div class="card" id="lista-items" style="border-left: 4px solid var(--twins-blue);"></div>
                 <div class="card">
-                    <select id="pla" onchange="val()">
-                        <option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
-                    </select>
-                    <select id="cho" onchange="val()">
-                        <option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
-                    </select>
-                    <select id="aux" onchange="val()">
-                        <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
-                    </select>
-                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
-                    <button id="btn-nube" class="btn" style="background:transparent; border:1px solid var(--twins-blue); color:var(--twins-blue); margin-top:8px;" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
+                    <select id="pla" onchange="val()"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
+                    <select id="cho" onchange="val()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                    <select id="aux" onchange="val()"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option></select>
+                    <button id="btn-wa" class="btn" style="background:var(--twins-green); color:white; margin-top:10px;" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
                 </div>
             </div>
         </div>
 
         <div id="p3" class="page">
-            <div class="card" style="padding:12px; margin-bottom:15px;">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px;">
-                    <select id="f-mes" onchange="renderH()">
-                        <option value="ALL">Todo el Año</option>
-                        <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
-                    </select>
+            <div class="banner-total" style="background: linear-gradient(135deg, #1e293b, #334155); border: 1px solid var(--border);">
+                <div><small id="label-filtro">CAJAS DEL MES</small><div id="stat-total-filtro" style="font-size:32px; font-weight:900; color:var(--twins-blue);">0</div></div>
+                <div style="font-size:25px;">📊</div>
+            </div>
+
+            <div class="card" style="padding:10px;">
+                <div class="search-box">
+                    <input type="text" id="f-search" placeholder="🔍 Buscar Cliente o Chofer..." onkeyup="renderH()">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                    <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
                     <input type="date" id="f-dia" onchange="renderH()">
                 </div>
                 <select id="f-chofer" onchange="renderH()"><option value="ALL">Todos los Choferes</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                <div style="display:flex; justify-content:space-between; margin-top:10px; padding:0 5px;">
-                    <small>VISTA: <b id="stat-mes" style="color:var(--twins-blue)">0</b> CJ</small>
-                    <small>HOY: <b id="stat-dia" style="color:var(--twins-green)">0</b> CJ</small>
-                </div>
             </div>
             <div id="h-list"></div>
         </div>
@@ -143,11 +137,9 @@
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
 
-        // AL CARGAR: SETEAR FECHA Y MES ACTUAL EN LOS BUSCADORES
         window.onload = () => {
             const hoy = new Date();
-            const fechaStr = hoy.toISOString().split('T')[0];
-            document.getElementById('f-dia').value = fechaStr;
+            document.getElementById('f-dia').value = hoy.toISOString().split('T')[0];
             document.getElementById('f-mes').value = hoy.getMonth();
         };
 
@@ -186,12 +178,12 @@
         function renderR() {
             const l = document.getElementById('lista-items');
             let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><span>${i.ca} CJ <b style="color:var(--danger)" onclick="ruta.splice(${x},1);renderR();val();">✕</b></span></div>`; });
+            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><span>${i.ca} CJ <b style="color:var(--danger)" onclick="ruta.splice(${x},1);renderR();val();">✕</b></span></div>`; });
             document.getElementById('total-vivo').innerText = s;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
-        function val() { const ok = document.getElementById('cho').value && document.getElementById('pla').value && ruta.length > 0; document.getElementById('btn-wa').disabled = !ok; document.getElementById('btn-nube').disabled = !ok; }
+        function val() { const ok = document.getElementById('cho').value && document.getElementById('pla').value && ruta.length > 0; document.getElementById('btn-wa').disabled = !ok; }
 
         async function guardar(wa) {
             const reg = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUXILIAR", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "), total: ruta.reduce((a,b) => a + b.ca, 0) };
@@ -201,8 +193,57 @@
         }
 
         function sendWA(r) {
-            let m = `*📦 DESPACHO TWINS*\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${r.auxiliar}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n*Detalles:* ${r.items}`;
+            let m = `*📦 DESPACHO TWINS*\n*Chofer:* ${r.chofer}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n*Detalles:* ${r.items}`;
             window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+        }
+
+        function renderH() {
+            const list = document.getElementById('h-list');
+            const fMes = document.getElementById('f-mes').value;
+            const fDia = document.getElementById('f-dia').value;
+            const fChofer = document.getElementById('f-chofer').value;
+            const fSearch = document.getElementById('f-search').value.toUpperCase();
+            
+            let totalFiltrado = 0;
+            list.innerHTML = "";
+            
+            db.forEach((r, idx) => {
+                const fO = new Date(r.fecha);
+                const fS = fO.toISOString().split('T')[0];
+                
+                const matchMes = fMes === "ALL" || fO.getMonth().toString() === fMes;
+                const matchDia = !fDia || fS === fDia;
+                const matchChofer = fChofer === "ALL" || r.chofer === fChofer;
+                const matchSearch = r.items.toUpperCase().includes(fSearch) || r.chofer.toUpperCase().includes(fSearch);
+
+                if (matchMes && matchDia && matchChofer && matchSearch) {
+                    totalFiltrado += parseFloat(r.total);
+                    const itemsArr = r.items.split(", ");
+                    const preview = itemsArr.slice(0, 2).join(", ") + (itemsArr.length > 2 ? "..." : "");
+
+                    list.innerHTML += `
+                    <div class="card" style="border-left: 4px solid #3b82f6;">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <div>
+                                <div style="font-weight:800; font-size:14px;">${r.chofer}</div>
+                                <div class="hist-item-preview">${preview}</div>
+                            </div>
+                            <div style="display:flex; gap:6px;">
+                                <div class="action-btn" onclick="verSoloRuta(${idx})">🔍</div>
+                                <div class="action-btn" style="color:#22c55e" onclick="sendWA(db[${idx}])">🟢</div>
+                                <div class="action-btn" style="color:#3b82f6" onclick="recargarRuta(${idx})">📝</div>
+                            </div>
+                        </div>
+                        <div class="hist-footer">
+                            <span>🚚 ${r.placa}</span>
+                            <span style="font-weight:700; color:var(--twins-blue);">${r.total} CJ</span>
+                            <span>📅 ${fS}</span>
+                        </div>
+                    </div>`;
+                }
+            });
+            document.getElementById('stat-total-filtro').innerText = totalFiltrado;
+            document.getElementById('label-filtro').innerText = fSearch ? "RESULTADO BÚSQUEDA" : (fDia ? "TOTAL DEL DÍA" : "TOTAL DEL MES");
         }
 
         function verSoloRuta(idx) {
@@ -222,55 +263,8 @@
             const r = db[idx];
             document.getElementById('cho').value = r.chofer;
             document.getElementById('pla').value = r.placa;
-            document.getElementById('aux').value = r.auxiliar;
             ruta = r.items.split(", ").map(str => { const p = str.split(": "); return { cl: p[0], ca: parseInt(p[1]) }; });
             renderR(); nav('p2');
-        }
-
-        function renderH() {
-            const list = document.getElementById('h-list');
-            const fMes = document.getElementById('f-mes').value;
-            const fDia = document.getElementById('f-dia').value;
-            const fChofer = document.getElementById('f-chofer').value;
-            let tF = 0, tD = 0, hoyStr = new Date().toISOString().split('T')[0];
-            list.innerHTML = "";
-            
-            db.forEach((r, idx) => {
-                const fO = new Date(r.fecha);
-                const fS = fO.toISOString().split('T')[0];
-                const matchMes = fMes === "ALL" || fO.getMonth().toString() === fMes;
-                const matchDia = !fDia || fS === fDia;
-                const matchChofer = fChofer === "ALL" || r.chofer === fChofer;
-
-                if (matchMes && matchDia && matchChofer) {
-                    const cant = parseFloat(r.total);
-                    tF += cant; if(fS === hoyStr) tD += cant;
-                    const itemsArr = r.items.split(", ");
-                    const preview = itemsArr.slice(0, 2).join(", ") + (itemsArr.length > 2 ? "..." : "");
-
-                    list.innerHTML += `
-                    <div class="card" style="padding:15px; margin-bottom:12px; border-left: 4px solid #3b82f6;">
-                        <div style="display:flex; justify-content:space-between; align-items:start;">
-                            <div>
-                                <div style="font-weight:800; font-size:15px;">${r.chofer}</div>
-                                <div class="hist-item-preview">${preview}</div>
-                            </div>
-                            <div style="display:flex; gap:8px;">
-                                <div class="action-btn" onclick="verSoloRuta(${idx})">🔍</div>
-                                <div class="action-btn" style="color:#22c55e" onclick="sendWA(db[${idx}])">🟢</div>
-                                <div class="action-btn" style="color:#3b82f6" onclick="recargarRuta(${idx})">📝</div>
-                            </div>
-                        </div>
-                        <div class="hist-footer">
-                            <span>🚚 ${r.placa}</span>
-                            <span style="font-weight:700; color:var(--twins-blue);">${r.total} CJ</span>
-                            <span>👤 ${r.operario}</span>
-                        </div>
-                    </div>`;
-                }
-            });
-            document.getElementById('stat-mes').innerText = tF;
-            document.getElementById('stat-dia').innerText = tD;
         }
     </script>
 </body>
