@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #0056b3; --green: #8cc63f; --bg: #ffffff; --card: #f8fafc; --text: #1e293b; --border: #e2e8f0; --danger: #ef4444; }
-        [data-theme="dark"] { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --border: #334155; --blue: #3b82f6; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         .page { display: none; padding: 20px; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
         .active { display: flex !important; }
@@ -17,10 +16,8 @@
         .btn-main { background: var(--blue); color: white; }
         .btn-save { background: var(--green); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--blue); color: var(--blue); }
-        input, select { width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border); background: transparent; color: inherit; font-size: 16px; box-sizing: border-box; }
+        input, select { width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border); background: white; color: black; font-size: 16px; box-sizing: border-box; }
         .item-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-        .chip.active { background: var(--blue); color: white; }
         .detail-pane { background: rgba(0,0,0,0.05); border-radius: 10px; padding: 10px; margin-top: 10px; display: none; font-size: 13px; }
         .detail-pane.open { display: block; }
     </style>
@@ -30,12 +27,12 @@
     <div id="p1" class="page active">
         <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
             <div style="font-size:32px; font-weight:800; color:var(--blue);">TWINS DESPACHOS</div>
-            <p style="opacity:0.6; margin-bottom:30px;">Inventory Manager v2.0</p>
+            <p style="opacity:0.6; margin-bottom:30px;">Inventory Manager v2.1</p>
             <div style="width: 100%; max-width: 280px;">
-                <button class="btn btn-outline" onclick="login('TAJHO')">TAJHO</button>
-                <button class="btn btn-outline" onclick="login('FRANCESCO')">FRANCESCO</button>
-                <button class="btn btn-outline" onclick="login('OSCAR')">OSCAR</button>
-                <button class="btn btn-outline" onclick="login('LUIS HERBER')">LUIS HERBER</button>
+                <button class="btn btn-outline" onclick="loginUser('TAJHO')">TAJHO</button>
+                <button class="btn btn-outline" onclick="loginUser('FRANCESCO')">FRANCESCO</button>
+                <button class="btn btn-outline" onclick="loginUser('OSCAR')">OSCAR</button>
+                <button class="btn btn-outline" onclick="loginUser('LUIS HERBER')">LUIS HERBER</button>
             </div>
         </div>
     </div>
@@ -50,19 +47,19 @@
         <div class="card">
             <input type="text" id="cli" placeholder="Nombre del Cliente">
             <input type="number" id="can" placeholder="Cantidad Cajas" inputmode="numeric">
-            <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
+            <button class="btn btn-main" onclick="addItemToList()">+ AÑADIR A LISTA</button>
         </div>
 
         <div id="area-despacho" style="display:none;">
             <div class="card" id="lista-actual"></div>
             <div class="card">
-                <select id="pla" onchange="validateForm()">
+                <select id="pla" onchange="checkForm()">
                     <option value="">Seleccionar Placa...</option>
                     <option value="BVN-704">BVN-704</option><option value="BVN930">BVN930</option>
                     <option value="BUL742">BUL742</option><option value="BPN711">BPN711</option>
                     <option value="FUSO">FUSO</option><option value="BPN104">BPN104</option>
                 </select>
-                <select id="cho" onchange="validateForm()">
+                <select id="cho" onchange="checkForm()">
                     <option value="">Seleccionar Chofer...</option>
                     <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option>
                     <option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option>
@@ -72,28 +69,23 @@
                     <option value="">Seleccionar Auxiliar...</option>
                     <option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option>
                     <option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option>
-                    <option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option>
-                    <option value="JOFER">JOFER</option>
                 </select>
-                <button id="btn-save" class="btn btn-save" onclick="guardar()" disabled>💾 GUARDAR EN NUBE</button>
+                <button id="btn-save" class="btn btn-save" onclick="saveToCloud()" disabled>💾 GUARDAR EN NUBE</button>
             </div>
         </div>
-        <button class="btn btn-outline" onclick="abrirHistorial()">📊 VER HISTORIAL COMPLETO</button>
+        <button class="btn btn-outline" onclick="showHistory()">📊 VER HISTORIAL COMPLETO</button>
     </div>
 
     <div id="p3" class="page">
-        <button class="btn btn-outline" style="width:auto;" onclick="switchPage('p3','p2')">← VOLVER</button>
-        <div class="card" style="margin-top:15px;">
-            <input type="text" id="search-cli" placeholder="🔍 Buscar cliente..." onkeyup="renderHistory()">
-            <div id="chips-choferes" style="display:flex; gap:8px; overflow-x:auto; padding:10px 0;"></div>
-        </div>
-        <div id="history-list"></div>
+        <button class="btn btn-outline" style="width:auto;" onclick="goToPage('p3','p2')">← VOLVER</button>
+        <div id="history-list" style="margin-top:20px;"></div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
 
     <script>
+        // CONFIGURACIÓN DE TU BASE DE DATOS
         const firebaseConfig = {
             apiKey: "AIzaSyAc_X5FLc7vTXY2VuDEakmC4foA18XL8fg",
             authDomain: "twins-despachos.firebaseapp.com",
@@ -103,89 +95,127 @@
             appId: "1:343830923000:web:7328bb677b1fc52b265d0d"
         };
 
+        // Inicializar
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        let user = "", route = [], cloudData = [], filterDriver = "TODOS";
+        
+        let currentUser = "";
+        let currentRoute = [];
 
-        function login(n) { user = n; document.getElementById('user-display').innerText = "OP: "+n; switchPage('p1','p2'); }
-        function switchPage(h, s) { document.getElementById(h).classList.remove('active'); document.getElementById(s).classList.add('active'); }
-
-        function addItem() {
-            const cli = document.getElementById('cli').value.toUpperCase().trim();
-            const can = parseInt(document.getElementById('can').value);
-            if(!cli || !can) return;
-            route.push({cli, can});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderRoute();
+        function goToPage(hide, show) {
+            document.getElementById(hide).classList.remove('active');
+            document.getElementById(show).classList.add('active');
         }
 
-        function renderRoute() {
-            const list = document.getElementById('lista-actual');
-            let sum = 0; list.innerHTML = "";
-            route.forEach((i, idx) => {
-                sum += i.can;
-                list.innerHTML += `<div class="item-row"><b>${i.cli}</b> <span>${i.can} CJ <b onclick="route.splice(${idx},1);renderRoute();" style="color:red; cursor:pointer;">✕</b></span></div>`;
-            });
-            document.getElementById('total-vivo').innerText = sum;
-            document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
-            validateForm();
+        function loginUser(name) {
+            currentUser = name;
+            document.getElementById('user-display').innerText = "OP: " + name;
+            goToPage('p1', 'p2');
         }
 
-        function validateForm() {
-            const ok = document.getElementById('pla').value && document.getElementById('cho').value && route.length > 0;
-            document.getElementById('btn-save').disabled = !ok;
-        }
-
-        async function guardar() {
-            const btn = document.getElementById('btn-save');
-            btn.disabled = true; btn.innerText = "GUARDANDO...";
+        function addItemToList() {
+            const cliente = document.getElementById('cli').value.toUpperCase().trim();
+            const cantidad = parseInt(document.getElementById('can').value);
             
-            const reg = {
+            if(!cliente || isNaN(cantidad)) {
+                alert("Completa cliente y cantidad");
+                return;
+            }
+
+            currentRoute.push({ cliente, cantidad });
+            document.getElementById('cli').value = "";
+            document.getElementById('can').value = "";
+            updateUI();
+        }
+
+        function updateUI() {
+            const listDiv = document.getElementById('lista-actual');
+            let total = 0;
+            listDiv.innerHTML = "";
+
+            currentRoute.forEach((item, index) => {
+                total += item.cantidad;
+                listDiv.innerHTML += `
+                    <div class="item-row">
+                        <b>${item.cliente}</b>
+                        <span>${item.cantidad} CJ <b onclick="removeItem(${index})" style="color:red; margin-left:10px;">✕</b></span>
+                    </div>`;
+            });
+
+            document.getElementById('total-vivo').innerText = total;
+            document.getElementById('area-despacho').style.display = currentRoute.length > 0 ? 'block' : 'none';
+            checkForm();
+        }
+
+        function removeItem(index) {
+            currentRoute.splice(index, 1);
+            updateUI();
+        }
+
+        function checkForm() {
+            const placa = document.getElementById('pla').value;
+            const chofer = document.getElementById('cho').value;
+            document.getElementById('btn-save').disabled = !(placa && chofer && currentRoute.length > 0);
+        }
+
+        async function saveToCloud() {
+            const btn = document.getElementById('btn-save');
+            btn.disabled = true;
+            btn.innerText = "GUARDANDO...";
+
+            const registro = {
                 fecha: new Date().toLocaleString(),
-                fecha_iso: new Date().toISOString(),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                 placa: document.getElementById('pla').value,
                 chofer: document.getElementById('cho').value,
                 auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
-                operario: user,
-                items: route,
-                total: route.reduce((a,b)=>a+b.can, 0)
+                operario: currentUser,
+                items: currentRoute,
+                total: currentRoute.reduce((a, b) => a + b.cantidad, 0)
             };
 
             try {
-                await db.collection("despachos").add(reg);
-                let m = `*DESPACHO TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ\nOp: ${user}`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
-                location.reload();
-            } catch (e) { alert("Error: " + e.message); btn.disabled = false; }
-        }
-
-        async function abrirHistorial() {
-            switchPage('p2','p3');
-            const snap = await db.collection("despachos").orderBy("fecha_iso", "desc").limit(50).get();
-            cloudData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
-            
-            // Chips de choferes
-            const choferes = ["TODOS", ...new Set(cloudData.map(d => d.chofer))];
-            document.getElementById('chips-choferes').innerHTML = choferes.map(c => 
-                `<div class="chip ${filterDriver==c?'active':''}" onclick="filterBy('${c}')">${c}</div>`
-            ).join('');
-            
-            renderHistory();
-        }
-
-        function filterBy(c) { filterDriver = c; abrirHistorial(); }
-
-        function renderHistory() {
-            const search = document.getElementById('search-cli').value.toUpperCase();
-            const list = document.getElementById('history-list');
-            list.innerHTML = "";
-            
-            cloudData.forEach(r => {
-                const matchSearch = search === "" || r.items.some(i => i.cli.includes(search));
-                const matchDriver = filterDriver === "TODOS" || r.chofer === filterDriver;
+                await db.collection("despachos").add(registro);
                 
-                if(matchSearch && matchDriver) {
-                    let itemsHtml = r.items.map(i => `<div>• ${i.cli}: ${i.can} CJ</div>`).join('');
-                    list.innerHTML += `<div class="card">
-                        <div style="display:flex; justify-content:space-between"><b>${r.fecha}</b><b>${r.total} CJ</b></div>
-                        <small>${r.placa} | ${r.chofer}</
+                // WhatsApp
+                let msg = `*DESPACHO TWINS*\nPlaca: ${registro.placa}\nChofer: ${registro.chofer}\nTotal: ${registro.total} CJ\nOp: ${currentUser}`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+                
+                alert("✅ GUARDADO EXITOSO");
+                location.reload();
+            } catch (error) {
+                alert("Error al guardar: " + error.message);
+                btn.disabled = false;
+                btn.innerText = "REINTENTAR";
+            }
+        }
+
+        async function showHistory() {
+            goToPage('p2', 'p3');
+            const historyDiv = document.getElementById('history-list');
+            historyDiv.innerHTML = "Cargando...";
+
+            try {
+                const snapshot = await db.collection("despachos").orderBy("timestamp", "desc").limit(20).get();
+                historyDiv.innerHTML = "";
+                
+                if(snapshot.empty) {
+                    historyDiv.innerHTML = "No hay registros.";
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    historyDiv.innerHTML += `
+                        <div class="card">
+                            <div style="display:flex; justify-content:space-between"><b>${data.fecha}</b><b>${data.total} CJ</b></div>
+                            <small>${data.placa} | ${data.chofer}</small>
+                        </div>`;
+                });
+            } catch (error) {
+                historyDiv.innerHTML = "Error: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
