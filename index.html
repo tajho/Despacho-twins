@@ -16,7 +16,6 @@
         }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
         
-        /* Título Moderno */
         .main-title { 
             font-size: 32px; 
             font-weight: 900; 
@@ -163,7 +162,6 @@
         }
 
         async function nav_hist() { nav('p3'); if(db.length === 0) await load(); else renderH(); }
-
         async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) { console.error(e); } }
 
         function addItem() {
@@ -196,7 +194,7 @@
             window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
         }
 
-        /* LÓGICA SWIPE CON BORRADO EN BASE DE DATOS */
+        /* LÓGICA SWIPE CORREGIDA */
         function hStart(e) { tStartX = e.touches[0].clientX; }
         function hMove(e, id) { let d = e.touches[0].clientX - tStartX; if(d < 0 && d > -100) document.getElementById('c-'+id).style.transform = `translateX(${d}px)`; }
         
@@ -204,10 +202,14 @@
             let d = e.changedTouches[0].clientX - tStartX; 
             let el = document.getElementById('c-'+id); 
             if(d < -70) { 
-                if(confirm("¿Eliminar permanentemente de la Nube?")) {
+                if(confirm("¿Eliminar de la nube? (Evita rutas fantasma)")) {
                     const rowToDelete = db[id];
-                    // Envío de comando DELETE al Apps Script
-                    fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', rowData: rowToDelete }) });
+                    // Enviamos acción específica para que el servidor NO cree una fila nueva
+                    fetch(URL, { 
+                        method: 'POST', 
+                        mode: 'no-cors', 
+                        body: JSON.stringify({ action: 'DELETE_ROW', data: rowToDelete }) 
+                    });
                     db.splice(id, 1); 
                     renderH(); 
                 } 
