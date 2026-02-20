@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | SISTEMA OFICIAL</title>
+    <title>TWINS V7 | OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -13,39 +13,25 @@
             --twins-blue: #3b82f6; --twins-green: #22c55e;
             --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
         }
-
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
-        .app-container { display: flex; flex-direction: column; min-height: 100vh; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        #modal-pass, #modal-view {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center;
-        }
-
+        #modal-pass, #modal-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { border: none; background: none; color: var(--text); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
-
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
-
         .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; }
         input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
-        
         .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
         .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
         .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
-        
-        .row-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
-        .edit-btn { color: var(--warning); margin-right: 15px; font-weight: bold; cursor: pointer; }
-        .del-btn { color: var(--danger); font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -70,8 +56,7 @@
     <div class="app-container">
         <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
             <div style="font-size: 40px; font-weight: 900; color: var(--twins-blue);">TWINS</div>
-            <div style="font-size: 10px; opacity: 0.5; margin-bottom: 30px;">GESTIÓN DE ALMACÉN</div>
-            <div style="max-width: 260px; margin: 0 auto; display: grid; gap: 10px;">
+            <div style="max-width: 260px; margin: 30px auto; display: grid; gap: 10px;">
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 TAJHO (Admin)</button>
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('OSCAR')">👤 OSCAR</button>
@@ -119,7 +104,7 @@
                     <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
                     <input type="date" id="f-dia" onchange="renderH()">
                 </div>
-                <button class="btn" style="background:#e11d48; color:white; margin-top:10px; padding:10px; font-size:12px;" onclick="generarPDF()">📄 DESCARGAR REPORTE PDF</button>
+                <button id="btn-reporte-admin" class="btn" style="background:#e11d48; color:white; margin-top:10px; display:none;" onclick="generarPDF()">📄 DESCARGAR REPORTE PDF</button>
             </div>
             <div id="h-list"></div>
         </div>
@@ -148,6 +133,8 @@
             document.getElementById('header-app').style.display='flex';
             document.getElementById('nav-app').style.display='flex';
             document.getElementById('user-display').innerText = n;
+            // Mostrar botón reporte solo si es TAJHO
+            if(n === 'TAJHO') document.getElementById('btn-reporte-admin').style.display = 'block';
             nav('p2'); load();
         }
 
@@ -170,31 +157,30 @@
             renderR();
         }
 
-        function editItem(x) {
-            const item = ruta[x];
-            document.getElementById('cli').value = item.cl;
-            document.getElementById('can').value = item.ca;
-            ruta.splice(x, 1);
-            renderR();
-        }
-
         function renderR() {
             const l = document.getElementById('lista-items');
             let s = 0; l.innerHTML = "";
             ruta.forEach((i, x) => { 
                 s += i.ca; 
-                l.innerHTML += `
-                <div class="row-item">
-                    <span>${i.cl}</span>
-                    <div>
-                        <b style="margin-right:10px;">${i.ca} CJ</b>
-                        <span class="edit-btn" onclick="editItem(${x})">✏️</span>
-                        <span class="del-btn" onclick="ruta.splice(${x},1);renderR()">✕</span>
-                    </div>
-                </div>`; 
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px;" onclick="ruta.splice(${x},1);renderR()">✕</span></b></div>`; 
             });
             document.getElementById('total-vivo').innerText = s;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
+        }
+
+        // CARGAR RUTA EN P2 PARA EDITAR
+        function editarRuta(idx) {
+            const r = db[idx];
+            ruta = r.items.split(", ").map(str => {
+                const [cl, ca] = str.split(":");
+                return { cl, ca: parseInt(ca) };
+            });
+            document.getElementById('pla').value = r.placa;
+            document.getElementById('cho').value = r.chofer;
+            document.getElementById('aux').value = r.auxiliar;
+            renderR();
+            nav('p2');
+            alert("Ruta cargada. Puedes editarla y volver a guardar.");
         }
 
         async function guardar(wa) {
@@ -207,10 +193,8 @@
                 total: ruta.reduce((a,b) => a+b.ca, 0) 
             };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
-            
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
             if(wa) sendWA(r); else alert("✅ Guardado en la nube");
-            
             ruta = []; renderR(); load();
         }
 
@@ -225,21 +209,22 @@
             const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
             let tM = 0, tD = 0, hoy = new Date().toISOString().split('T')[0];
             list.innerHTML = "";
-            
             const reversedDB = [...db].reverse();
             reversedDB.forEach((r) => {
                 const fO = new Date(r.fecha), fStr = fO.toISOString().split('T')[0];
                 const matchesSearch = r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS);
-                
                 if ((fM === "ALL" || fO.getMonth().toString() === fM) && (!fD || fStr === fD) && matchesSearch) {
                     const c = parseFloat(r.total);
                     tM += c; if(fStr === hoy) tD += c;
                     const realIdx = db.indexOf(r);
-
                     list.innerHTML += `<div class="card" style="border-left: 3px solid #3b82f6; padding:12px;">
                         <div style="display:flex; justify-content:space-between; align-items:start;">
                             <div><div style="font-weight:800; font-size:13px;">${r.chofer}</div><div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div></div>
-                            <div style="display:flex; gap:6px;"><div class="action-btn" onclick="verSoloRuta(${realIdx})">🔍</div><div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${realIdx}])">🟢</div></div>
+                            <div style="display:flex; gap:6px;">
+                                <div class="action-btn" onclick="verSoloRuta(${realIdx})">🔍</div>
+                                <div class="action-btn" style="color:var(--warning)" onclick="editarRuta(${realIdx})">✏️</div>
+                                <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${realIdx}])">🟢</div>
+                            </div>
                         </div>
                         <div class="hist-footer"><span>🚚 ${r.placa}</span><span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span><span>${fStr}</span></div>
                     </div>`;
@@ -258,30 +243,15 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             const fMText = document.getElementById('f-mes').options[document.getElementById('f-mes').selectedIndex].text;
-            const totalCajas = document.getElementById('stat-mes').innerText;
-
             doc.setFontSize(18); doc.text("REPORTE DE DESPACHOS - TWINS", 14, 20);
-            doc.setFontSize(10); doc.setTextColor(100);
-            doc.text(`Periodo: ${fMText} | Total: ${totalCajas} CJ`, 14, 28);
-            doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 34);
-
             const filas = [];
-            const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
-
             db.forEach(r => {
                 const fO = new Date(r.fecha), fStr = fO.toISOString().split('T')[0];
-                if ((fM === "ALL" || fO.getMonth().toString() === fM) && (!fD || fStr === fD) && (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS))) {
+                if ((document.getElementById('f-mes').value === "ALL" || fO.getMonth().toString() === document.getElementById('f-mes').value) && (!document.getElementById('f-dia').value || fStr === document.getElementById('f-dia').value)) {
                     filas.push([fStr, r.chofer, r.placa, r.total + " CJ"]);
                 }
             });
-
-            doc.autoTable({
-                startY: 40,
-                head: [['Fecha', 'Chofer', 'Placa', 'Cajas']],
-                body: filas,
-                headStyles: { fillColor: [59, 130, 246] }
-            });
-
+            doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas, headStyles: { fillColor: [59, 130, 246] } });
             doc.save(`Reporte_Twins_${fMText}.pdf`);
         }
     </script>
