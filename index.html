@@ -113,8 +113,6 @@
         <div id="area-despacho" style="display:none;">
             <div class="card" id="lista-actual" style="height:auto;"></div>
             <div class="card">
-                <select id="cho" onchange="validateForm()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                <select id="aux" onchange="validateForm()"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option></select>
                 <select id="pla" onchange="validateForm()">
                     <option value="">Placa...</option>
                     <option value="BVN-930">BVN-930</option>
@@ -123,6 +121,26 @@
                     <option value="BPN-711">BPN-711</option>
                     <option value="FUSO">FUSO</option>
                 </select>
+                <select id="cho" onchange="validateForm()">
+                    <option value="">Chofer...</option>
+                    <option value="LUIS H.">LUIS H.</option>
+                    <option value="ROMARIO">ROMARIO</option>
+                    <option value="CESAR C.">CESAR C.</option>
+                    <option value="WALDIR">WALDIR</option>
+                    <option value="MARCELO">MARCELO</option>
+                    <option value="TAJHO">TAJHO</option>
+                </select>
+                <select id="aux" onchange="validateForm()">
+                    <option value="">Auxiliar...</option>
+                    <option value="CRISTOPHER">CRISTOPHER</option>
+                    <option value="LUIS PLACIDO">LUIS PLACIDO</option>
+                    <option value="RODOLFO">RODOLFO</option>
+                    <option value="ELIO">ELIO</option>
+                    <option value="PERCY">PERCY</option>
+                    <option value="MARTIN">MARTIN</option>
+                    <option value="JOFER">JOFER</option>
+                </select>
+                
                 <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR</button>
                 <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
             </div>
@@ -221,11 +239,11 @@
                 total: route.reduce((a,b)=>a+b.can, 0)
             };
 
-            // 1. Guardar en local (historial del teléfono)
+            // 1. Local
             if(editId) db = db.map(x => x.id === editId ? reg : x); else db.push(reg);
             localStorage.setItem('twins_final_v5', JSON.stringify(db));
 
-            // 2. Enviar a Google Sheets (Nube)
+            // 2. Cloud
             fetch(CLOUD_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -234,10 +252,10 @@
                 body: JSON.stringify(reg)
             });
 
-            // 3. Opcional: WhatsApp
+            // 3. WhatsApp (Sin OP)
             if(wa) {
                 let ahora = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                let m = `*DESPACHO TWINS*\nHora: ${ahora}\nOp: ${user}\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
+                let m = `*DESPACHO TWINS*\nHora: ${ahora}\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
                 route.forEach(i => m += `• ${i.cli}: ${i.can} CJ\n`);
                 m += `---\nTOTAL: ${reg.total} CJ`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
