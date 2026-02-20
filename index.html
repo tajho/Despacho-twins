@@ -7,16 +7,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Paleta Moderna Oscura */
-            --bg: #0f172a;        /* Azul noche profundo */
-            --card: #1e293b;      /* Gris azulado pizarra */
-            --text: #f8fafc;      /* Blanco azulado */
-            --twins-blue: #3b82f6; /* Azul brillante */
-            --twins-green: #22c55e; /* Verde neón */
-            --border: #334155;    /* Borde sutil */
-            --input-bg: #0f172a;  /* Fondo de inputs */
-            --danger: #ef4444;    /* Rojo alerta */
-            --accent: #6366f1;    /* Violeta para degradados */
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --twins-blue: #3b82f6;
+            --twins-green: #22c55e;
+            --border: #334155;
+            --input-bg: #0f172a;
+            --danger: #ef4444;
+            --accent: #6366f1;
         }
 
         html, body {
@@ -30,7 +29,6 @@
         .active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* CABECERA */
         .top-header { 
             position: sticky; top: 0; z-index: 100;
             background: var(--card); padding: 14px 18px; 
@@ -39,7 +37,6 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* NAVEGACIÓN INFERIOR */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; height: 70px; 
             background: var(--card); border-top: 1px solid var(--border);
@@ -49,7 +46,6 @@
         .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; transition: 0.2s; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
 
-        /* ELEMENTOS VISUALES */
         .banner-total { 
             background: linear-gradient(135deg, var(--twins-blue), var(--accent)); 
             color: white; border-radius: 15px; padding: 20px; 
@@ -82,7 +78,6 @@
 
         .delete-btn { color: var(--danger); font-weight: 800; cursor: pointer; padding: 5px; }
 
-        /* Login Buttons Modern */
         .login-grid button {
             background: var(--card); border: 1px solid var(--border);
             color: var(--text); text-align: left; padding-left: 20px;
@@ -95,7 +90,6 @@
         <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
             <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px; letter-spacing: -1px;">TWINS</div>
             <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px; font-weight: 700;">GESTIÓN ALMACÉN</div>
-            
             <div class="login-grid" style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
                 <button class="btn" onclick="login('TAJHO')">👤 TAJHO</button>
                 <button class="btn" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
@@ -138,6 +132,19 @@
                         <option value="">Chofer Responsable...</option>
                         <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                     </select>
+                    <select id="aux" onchange="val()">
+                        <option value="">Seleccionar Auxiliar...</option>
+                        <option value="CRISTOPHER">CRISTOPHER</option>
+                        <option value="PLACIDO">PLACIDO</option>
+                        <option value="RODOLFO">RODOLFO</option>
+                        <option value="MARTIN">MARTIN</option>
+                        <option value="RICARDO">RICARDO</option>
+                        <option value="PERCY">PERCY</option>
+                        <option value="DANIEL C">DANIEL C</option>
+                        <option value="NELSON">NELSON</option>
+                        <option value="JULIO P.">JULIO P.</option>
+                        <option value="JOFER">JOFER</option>
+                    </select>
                     <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
                     <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
                 </div>
@@ -173,13 +180,9 @@
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
 
-        // AUTO-RECUPERACIÓN DE DATOS
         window.onload = () => {
             const temp = localStorage.getItem('twins_backup');
-            if (temp) {
-                ruta = JSON.parse(temp);
-                renderR();
-            }
+            if (temp) { ruta = JSON.parse(temp); renderR(); }
         };
 
         function login(n) {
@@ -214,7 +217,7 @@
             const ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
             ruta.push({cl, ca});
-            localStorage.setItem('twins_backup', JSON.stringify(ruta)); // GUARDADO TEMPORAL
+            localStorage.setItem('twins_backup', JSON.stringify(ruta));
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderR(); val();
         }
@@ -248,6 +251,7 @@
         async function guardar(wa) {
             const reg = {
                 chofer: document.getElementById('cho').value,
+                auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
                 placa: document.getElementById('pla').value,
                 operario: user,
                 items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "),
@@ -255,12 +259,12 @@
             };
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
             if(wa) {
-                let m = `*📦 DESPACHO TWINS*\n*Chofer:* ${reg.chofer}\n*Placa:* ${reg.placa}\n*Total:* ${reg.total} CJ\n*Detalles:* ${reg.items}`;
+                let m = `*📦 DESPACHO TWINS*\n*Chofer:* ${reg.chofer}\n*Auxiliar:* ${reg.auxiliar}\n*Placa:* ${reg.placa}\n*Total:* ${reg.total} CJ\n*Detalles:* ${reg.items}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
             ruta = [];
-            localStorage.removeItem('twins_backup'); // LIMPIAR SI SE GUARDÓ
-            document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
+            localStorage.removeItem('twins_backup');
+            document.getElementById('pla').value = ""; document.getElementById('cho').value = ""; document.getElementById('aux').value = "";
             renderR(); val();
             alert("✅ GUARDADO EXITOSO");
             setTimeout(load, 2000);
@@ -272,7 +276,6 @@
             let tM = 0, tD = 0, grupos = {};
             list.innerHTML = "";
             const hoy = new Date().toISOString().split('T')[0];
-
             db.forEach(r => {
                 const fK = new Date(r.fecha).toISOString().split('T')[0];
                 if (!search || r.items.toUpperCase().includes(search) || r.placa.includes(search)) {
@@ -284,13 +287,12 @@
                     if(fK === hoy) tD += totalNum;
                 }
             });
-
             Object.keys(grupos).sort().reverse().forEach(k => {
                 list.innerHTML += `<div class="date-divider"><span>📅 ${k}</span> <span>${grupos[k].s} CJ</span></div>`;
                 grupos[k].regs.forEach(r => {
                     list.innerHTML += `<div class="card" style="padding:12px; margin-bottom:8px;">
                         <div style="display:flex; justify-content:space-between;"><b>${r.chofer}</b> <b style="color:var(--twins-blue);">${r.total} CJ</b></div>
-                        <div style="font-size:10px; opacity:0.5; margin-top:4px;">${r.placa} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+                        <div style="font-size:10px; opacity:0.5; margin-top:4px;">${r.placa} • Aux: ${r.auxiliar || '---'} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
                     </div>`;
                 });
             });
