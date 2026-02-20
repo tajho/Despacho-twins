@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHOS | V8 FINAL</title>
+    <title>TWINS DESPACHOS | REFRESH OK</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,6 +15,7 @@
             --border: #e2e8f0;
             --input-bg: #ffffff;
             --danger: #ef4444;
+            --nav-bg: #ffffff;
         }
 
         [data-theme="dark"] {
@@ -24,260 +25,49 @@
             --border: #334155;
             --input-bg: #0f172a;
             --twins-blue: #3b82f6;
+            --nav-bg: #1e293b;
         }
 
-        /* REFRESH NATIVO: El body debe permitir overscroll */
-        html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: var(--bg); color: var(--text);
-            font-family: 'Inter', sans-serif;
-            overscroll-behavior-y: contain; /* Activa el refresco nativo del navegador */
+        body, html { 
+            height: 100%; width: 100%; overflow: hidden;
+            background: var(--bg); color: var(--text); 
+            font-family: 'Inter', sans-serif; margin: 0; padding: 0; 
         }
 
-        .app-container { display: flex; flex-direction: column; min-height: 100vh; }
-        .page { display: none; padding: 12px; padding-bottom: 90px; }
-        .active { display: block; }
-
-        .top-header { 
-            position: sticky; top: 0; z-index: 100;
-            background: var(--card); padding: 12px 15px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid var(--border);
+        /* CAPA DE CARGA AL TIRAR */
+        #pull-to-refresh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 0;
+            background: var(--twins-blue); color: white;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; z-index: 9999; font-weight: 800; font-size: 13px;
+            transition: height 0.1s ease-out;
         }
 
+        .page { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; background: var(--bg);
+        }
+        .active { display: flex !important; }
+        
+        .scroll-content { 
+            flex: 1; overflow-y: auto; padding: 12px; padding-bottom: 90px; 
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        .top-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+        
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; height: 65px; 
-            background: var(--card); border-top: 1px solid var(--border);
+            background: var(--nav-bg); border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; align-items: center; z-index: 1000;
         }
-
-        .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
+        .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; width: 50%; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
 
-        .banner-total { background: var(--twins-blue); color: white; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 10px; }
+        .banner-total-mini { background: var(--twins-blue); color: white; border-radius: 12px; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; margin: 10px; }
 
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 16px; box-sizing: border-box; }
-        
-        /* Ajuste para nombres de meses largos */
-        #f-mes { flex: 1.6; min-width: 150px; }
-        #f-fec { flex: 1; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 12px; margin-bottom: 8px; }
 
-        .btn { width: 100%; padding: 16px; border-radius: 10px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+        .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
-        .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
-        .btn:disabled { opacity: 0.3; }
-
-        .date-divider { background: var(--twins-blue); color: white; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; margin: 20px 0 10px 0; display: flex; justify-content: space-between; }
-    </style>
-</head>
-<body>
-
-    <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 15vh;">
-            <div style="font-size: 38px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
-            <div style="font-size: 12px; letter-spacing: 3px; opacity: 0.6; margin-bottom: 40px;">GESTIÓN DE RUTAS</div>
-            <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
-                <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('TAJHO')">TAJHO</button>
-                <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('FRANCESCO')">FRANCESCO</button>
-                <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('OSCAR')">OSCAR</button>
-                <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('LUIS HERBER')">LUIS HERBER</button>
-                <p onclick="toggleTheme()" style="margin-top:20px; font-weight:700;">🌓 CAMBIAR TEMA</p>
-            </div>
-        </div>
-
-        <div id="header-app" class="top-header" style="display:none;">
-            <b id="user-display">---</b>
-            <div style="display:flex; gap:20px;">
-                <span onclick="toggleTheme()" style="font-size:20px;">🌓</span>
-                <span onclick="location.reload()" style="color:var(--danger); font-size:12px; font-weight:800;">SALIR / REFRESCAR</span>
-            </div>
-        </div>
-
-        <div id="p2" class="page">
-            <div class="banner-total">
-                <span style="font-weight:700;">TOTAL LISTA:</span>
-                <span id="total-vivo" style="font-size:32px; font-weight:900;">0</span>
-            </div>
-            <div class="card">
-                <div style="display:flex; gap:8px;">
-                    <input type="text" id="cli" placeholder="Cliente" style="flex:2">
-                    <input type="number" id="can" placeholder="Cant" style="flex:1" inputmode="numeric">
-                </div>
-                <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
-            </div>
-            <div id="area-envio" style="display:none;">
-                <div class="card" id="lista-items" style="border-left: 5px solid var(--twins-blue);"></div>
-                <div class="card">
-                    <select id="pla" onchange="val()"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
-                    <select id="cho" onchange="val()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WA</button>
-                    <button id="btn-nube" class="btn btn-main" style="background:#64748b; margin-top:8px;" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="p3" class="page">
-            <div class="card">
-                <div style="display:flex; gap:10px; margin-bottom:15px; text-align:center;">
-                    <div style="flex:1">
-                        <small style="font-size:10px; opacity:0.6; font-weight:800; display:block;">MES</small>
-                        <b id="stat-mes" style="font-size:20px;">0</b>
-                    </div>
-                    <div style="flex:1">
-                        <small style="font-size:10px; opacity:0.6; font-weight:800; display:block;">HOY</small>
-                        <b id="stat-dia" style="font-size:20px; color:var(--twins-green);">0</b>
-                    </div>
-                </div>
-                <input type="text" id="bus" placeholder="🔍 Buscar cliente o placa..." onkeyup="renderH()">
-                <div style="display:flex; gap:8px;">
-                    <select id="f-mes" onchange="renderH()">
-                        <option value="ALL">Todos los Meses</option>
-                        <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
-                        <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
-                        <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
-                        <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-                    </select>
-                    <input type="date" id="f-fec" onchange="renderH()">
-                </div>
-            </div>
-            <div id="h-list"></div>
-        </div>
-
-        <div id="nav-app" class="bottom-nav" style="display:none;">
-            <div id="n2" class="nav-item active-nav" onclick="nav('p2')"><b>📝 Registro</b></div>
-            <div id="n3" class="nav-item" onclick="nav('p3')"><b>📊 Historial</b></div>
-        </div>
-    </div>
-
-    <script>
-        const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
-        let user = "", ruta = [], db = [];
-
-        function toggleTheme() {
-            const b = document.documentElement;
-            b.getAttribute('data-theme') === 'dark' ? b.removeAttribute('data-theme') : b.setAttribute('data-theme', 'dark');
-        }
-
-        function login(n) {
-            user = n;
-            document.getElementById('p1').style.display = 'none';
-            document.getElementById('header-app').style.display = 'flex';
-            document.getElementById('nav-app').style.display = 'flex';
-            document.getElementById('user-display').innerText = "OP: " + n;
-            nav('p2');
-            load();
-        }
-
-        function nav(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
-            if(id === 'p3') renderH();
-            window.scrollTo(0,0);
-        }
-
-        async function load() {
-            try {
-                const r = await fetch(URL);
-                db = await r.json();
-                renderH();
-            } catch(e) { console.log("Cargando..."); }
-        }
-
-        function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase().trim();
-            const ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return;
-            ruta.push({cl, ca});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderR(); val();
-        }
-
-        function renderR() {
-            const l = document.getElementById('lista-items');
-            let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => {
-                s += i.ca;
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
-                    <span><b>${i.cl}</b></span>
-                    <span>${i.ca} CJ <b onclick="del(${x})" style="color:var(--danger); margin-left:15px;">✕</b></span>
-                </div>`;
-            });
-            document.getElementById('total-vivo').innerText = s;
-            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
-        }
-
-        function del(x) { ruta.splice(x,1); renderR(); val(); }
-
-        function val() {
-            const ok = document.getElementById('cho').value && document.getElementById('pla').value && ruta.length > 0;
-            document.getElementById('btn-wa').disabled = !ok;
-            document.getElementById('btn-nube').disabled = !ok;
-        }
-
-        async function guardar(wa) {
-            const reg = {
-                chofer: document.getElementById('cho').value,
-                placa: document.getElementById('pla').value,
-                operario: user,
-                items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "),
-                total: ruta.reduce((a,b) => a + b.ca, 0)
-            };
-
-            // Enviar a Google Sheets
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-
-            if(wa) {
-                let m = `*DESPACHO TWINS*\nChofer: ${reg.chofer}\nPlaca: ${reg.placa}\nTotal: ${reg.total} CJ\nItems: ${reg.items}`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
-            }
-
-            ruta = []; document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
-            renderR(); val();
-            alert("✅ GUARDADO EN EXCEL");
-            setTimeout(load, 2000);
-        }
-
-        function renderH() {
-            const list = document.getElementById('h-list');
-            const search = document.getElementById('bus').value.toUpperCase();
-            const mes = document.getElementById('f-mes').value;
-            const fec = document.getElementById('f-fec').value;
-            let tM = 0, grupos = {};
-            list.innerHTML = "";
-
-            db.forEach(r => {
-                const f = new Date(r.fecha);
-                const fK = f.toISOString().split('T')[0];
-                const mS = !search || (r.items && r.items.toUpperCase().includes(search)) || r.placa.includes(search);
-                const mM = mes === "ALL" || (f.getMonth()+1).toString() === mes;
-                const mD = !fec || fK === fec;
-
-                if (mS && mM && mD) {
-                    if (!grupos[fK]) grupos[fK] = { regs: [], s: 0 };
-                    grupos[fK].regs.push(r);
-                    grupos[fK].s += parseFloat(r.total);
-                    tM += parseFloat(r.total);
-                }
-            });
-
-            const sortedDates = Object.keys(grupos).sort().reverse();
-            sortedDates.forEach(k => {
-                list.innerHTML += `<div class="date-divider"><span>📅 ${k}</span> <span>${grupos[k].s} CJ</span></div>`;
-                grupos[k].regs.forEach(r => {
-                    list.innerHTML += `<div class="card" style="padding:10px; font-size:13px;">
-                        <div style="display:flex; justify-content:space-between;"><b>${r.chofer}</b> <b style="color:var(--twins-blue);">${r.total} CJ</b></div>
-                        <div style="font-size:11px; opacity:0.6;">${r.placa} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
-                        <div style="margin-top:5px; padding-top:5px; border-top:1px dashed var(--border); font-size:11px;">${r.items}</div>
-                    </div>`;
-                });
-            });
-            document.getElementById('stat-mes').innerText = tM;
-            const todayK = new Date().toISOString().split('T')[0];
-            document.getElementById('stat-dia').innerText = grupos[todayK] ? grupos[todayK].s : 0;
-        }
-    </script>
-</body>
-</html>
+        .btn-save { background: var(--twins-green); color: white; margin-
