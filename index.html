@@ -20,11 +20,11 @@
         .btn-outline { background: transparent; border: 2px solid var(--blue); color: var(--blue); margin-bottom: 10px; }
         input, select { width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border); background: white; color: black; font-size: 16px; box-sizing: border-box; }
         .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .detail-pane { background: rgba(0,0,0,0.05); border-radius: 10px; padding: 10px; margin-top: 10px; display: none; font-size: 13px; }
-        .open { display: block !important; }
         .filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
         .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
         .chip.active { background: var(--blue); color: white; }
+        .detail-pane { background: rgba(0,0,0,0.05); border-radius: 10px; padding: 10px; margin-top: 10px; display: none; font-size: 13px; }
+        .open { display: block !important; }
     </style>
 </head>
 <body>
@@ -76,130 +76,4 @@
                     <option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option>
                     <option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option>
                     <option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option>
-                    <option value="JOFER">JOFER</option><option value="SIN AUXILIAR">SIN AUXILIAR</option>
-                </select>
-                <button id="btn-save" class="btn btn-save" onclick="app.guardar()">💾 GUARDAR Y ENVIAR</button>
-            </div>
-        </div>
-        <button class="btn btn-outline" style="margin-top:20px" onclick="app.abrirHistorial()">📊 REPORTE MENSUAL / HISTORIAL</button>
-    </div>
-
-    <div id="p3" class="page">
-        <button class="btn btn-outline" style="width:auto;" onclick="app.switchPage('p3','p2')">← VOLVER</button>
-        <div class="card" style="margin-top:10px;">
-            <small>FILTRAR POR MES:</small>
-            <div class="filter-scroll" id="mes-chips"></div>
-            <input type="text" id="search-cli" placeholder="🔍 Buscar cliente..." onkeyup="app.renderHistory()">
-            <div style="text-align:center; font-size:14px; margin-top:10px;">Total: <b id="stat-total">0</b> CJ</div>
-        </div>
-        <div id="history-list"></div>
-    </div>
-
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAc_X5FLc7vTXY2VuDEakmC4foA18XL8fg",
-            authDomain: "twins-despachos.firebaseapp.com",
-            projectId: "twins-despachos",
-            storageBucket: "twins-despachos.firebasestorage.app",
-            messagingSenderId: "343830923000",
-            appId: "1:343830923000:web:7328bb677b1fc52b265d0d"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        const app = {
-            user: "", route: [], cloudData: [], selMes: "TODOS",
-            meses: ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"],
-
-            login(n) { 
-                this.user = n; 
-                document.getElementById('user-display').innerText = "OP: "+n; 
-                this.switchPage('p1','p2'); 
-            },
-
-            switchPage(h, s) { 
-                document.getElementById(h).classList.remove('active'); 
-                document.getElementById(s).classList.add('active'); 
-            },
-
-            addItem() {
-                const cli = document.getElementById('cli').value.toUpperCase().trim();
-                const can = parseInt(document.getElementById('can').value);
-                if(!cli || !can) return;
-                this.route.push({cli, can});
-                document.getElementById('cli').value = ""; 
-                document.getElementById('can').value = "";
-                this.renderRoute();
-            },
-
-            renderRoute() {
-                const list = document.getElementById('lista-actual');
-                let sum = 0; list.innerHTML = "";
-                this.route.forEach((i, idx) => {
-                    sum += i.can;
-                    list.innerHTML += `<div class="item-row"><b>${i.cli}</b> <span>${i.can} CJ <b onclick="app.route.splice(${idx},1);app.renderRoute();" style="color:var(--danger)">✕</b></span></div>`;
-                });
-                document.getElementById('total-vivo').innerText = sum;
-                document.getElementById('area-despacho').style.display = this.route.length > 0 ? 'block' : 'none';
-            },
-
-            async guardar() {
-                const pla = document.getElementById('pla').value;
-                const cho = document.getElementById('cho').value;
-                if(!pla || !cho) return alert("Falta Placa o Chofer");
-
-                const btn = document.getElementById('btn-save');
-                btn.disabled = true; btn.innerText = "GUARDANDO...";
-
-                const ahora = new Date();
-                const reg = {
-                    fecha: ahora.toLocaleString(),
-                    fecha_iso: ahora.toISOString(),
-                    mes: this.meses[ahora.getMonth()],
-                    placa: pla, chofer: cho, 
-                    auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
-                    operario: this.user,
-                    items: this.route,
-                    total: this.route.reduce((a,b)=>a+b.can, 0)
-                };
-
-                try {
-                    await db.collection("despachos").add(reg);
-                    alert("✅ GUARDADO EN GOOGLE");
-                    let m = `*TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ`;
-                    window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
-                    location.reload();
-                } catch (e) { alert("Error: " + e.message); btn.disabled = false; }
-            },
-
-            async abrirHistorial() {
-                this.switchPage('p2','p3');
-                const list = document.getElementById('history-list');
-                list.innerHTML = "Cargando...";
-                const snap = await db.collection("despachos").orderBy("fecha_iso", "desc").limit(50).get();
-                this.cloudData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                
-                const mesesDisp = ["TODOS", ...new Set(this.cloudData.map(d => d.mes))];
-                document.getElementById('mes-chips').innerHTML = mesesDisp.map(m => 
-                    `<div class="chip ${this.selMes==m?'active':''}" onclick="app.selMes='${m}';app.renderHistory()">${m}</div>`
-                ).join('');
-                this.renderHistory();
-            },
-
-            renderHistory() {
-                const search = document.getElementById('search-cli').value.toUpperCase();
-                const list = document.getElementById('history-list');
-                let total = 0; list.innerHTML = "";
-                this.cloudData.forEach(r => {
-                    if((this.selMes === "TODOS" || r.mes === this.selMes) && (search === "" || r.items.some(i => i.cli.includes(search)))) {
-                        total += r.total;
-                        list.innerHTML += `<div class="card">
-                            <div style="display:flex; justify-content:space-between"><b>${r.fecha}</b><b>${r.total} CJ</b></div>
-                            <small>${r.placa} | ${r.chofer}</small>
-                            <button class="btn" style="padding:5px; margin-top:10px; font-size:11px; background:#eee;" onclick="this.nextElementSibling.classList.toggle('open')">VER DETALLES</button>
-                            <div class="detail-pane">${r.items.map(i => `<div>• ${i.cli}: ${i.can} CJ</div>`).join('')}</div>
-                        </div>`;
-                    }
-                });
-                document.getElementById('stat-total').innerText = total;
-                document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.innerText === this.selMes));
+                    <option value="JOFER">JOFER</option><option
