@@ -3,27 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | REFRESH TOTAL</title>
+    <title>TWINS V7 | MIDNIGHT MODE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --twins-blue: #0056b3;
-            --twins-green: #8cc63f;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-            --input-bg: #ffffff;
-            --danger: #ef4444;
-        }
-
-        [data-theme="dark"] {
-            --bg: #020617;
-            --card: #1e293b;
-            --text: #f8fafc;
-            --border: #334155;
-            --input-bg: #0f172a;
-            --twins-blue: #3b82f6;
+            /* Paleta Moderna Oscura */
+            --bg: #0f172a;        /* Azul noche profundo */
+            --card: #1e293b;      /* Gris azulado pizarra */
+            --text: #f8fafc;      /* Blanco azulado */
+            --twins-blue: #3b82f6; /* Azul brillante */
+            --twins-green: #22c55e; /* Verde neón */
+            --border: #334155;    /* Borde sutil */
+            --input-bg: #0f172a;  /* Fondo de inputs */
+            --danger: #ef4444;    /* Rojo alerta */
+            --accent: #6366f1;    /* Violeta para degradados */
         }
 
         html, body {
@@ -34,87 +27,115 @@
 
         .app-container { display: flex; flex-direction: column; min-height: 100vh; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
-        .active { display: block; }
+        .active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* CABECERA */
         .top-header { 
             position: sticky; top: 0; z-index: 100;
-            background: var(--card); padding: 12px 15px; 
+            background: var(--card); padding: 14px 18px; 
             display: flex; justify-content: space-between; align-items: center; 
             border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
+        /* NAVEGACIÓN INFERIOR */
         .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; height: 65px; 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 70px; 
             background: var(--card); border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; align-items: center; z-index: 1000;
         }
 
-        .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
+        .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; transition: 0.2s; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
 
-        .banner-total { background: var(--twins-blue); color: white; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        /* ELEMENTOS VISUALES */
+        .banner-total { 
+            background: linear-gradient(135deg, var(--twins-blue), var(--accent)); 
+            color: white; border-radius: 15px; padding: 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 15px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
 
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 16px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 16px; border-radius: 10px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
+
+        input, select { 
+            width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; 
+            border: 1px solid var(--border); background: var(--input-bg); 
+            color: var(--text); font-size: 16px; box-sizing: border-box; 
+            outline: none; transition: 0.2s;
+        }
+        input:focus { border-color: var(--twins-blue); }
+
+        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; }
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
         .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); margin-top: 10px; }
-        .btn:disabled { opacity: 0.3; }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        .date-divider { background: var(--twins-blue); color: white; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; margin: 20px 0 10px 0; display: flex; justify-content: space-between; }
+        .date-divider { 
+            background: rgba(59, 130, 246, 0.1); color: var(--twins-blue); 
+            padding: 8px 12px; border-radius: 6px; font-size: 11px; 
+            font-weight: 800; margin: 20px 0 10px 0; display: flex; justify-content: space-between; 
+        }
 
-        /* MODO OSCURO SUTIL */
-        .theme-sutil {
-            position: absolute; top: 15px; right: 15px;
-            font-size: 20px; cursor: pointer; opacity: 0.5;
+        .delete-btn { color: var(--danger); font-weight: 800; cursor: pointer; padding: 5px; }
+
+        /* Login Buttons Modern */
+        .login-grid button {
+            background: var(--card); border: 1px solid var(--border);
+            color: var(--text); text-align: left; padding-left: 20px;
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 15vh; position: relative;">
-            <div class="theme-sutil" onclick="toggleTheme()">🌓</div>
-            <div style="font-size: 38px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px;">TWINS</div>
-            <div style="font-size: 12px; letter-spacing: 3px; opacity: 0.6; margin-bottom: 40px;">ALMACÉN</div>
-            <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
-                <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('TAJHO')">TAJHO</button>
-                <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('FRANCESCO')">FRANCESCO</button>
-                <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('OSCAR')">OSCAR</button>
-                <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('LUIS HERBER')">LUIS HERBER</button>
+        <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
+            <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px; letter-spacing: -1px;">TWINS</div>
+            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px; font-weight: 700;">GESTIÓN ALMACÉN</div>
+            
+            <div class="login-grid" style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
+                <button class="btn" onclick="login('TAJHO')">👤 TAJHO</button>
+                <button class="btn" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
+                <button class="btn" onclick="login('OSCAR')">👤 OSCAR</button>
+                <button class="btn" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
             </div>
         </div>
 
         <div id="header-app" class="top-header" style="display:none;">
-            <b id="user-display">---</b>
-            <div style="display:flex; gap:20px;">
-                <span onclick="toggleTheme()" style="font-size:20px; cursor:pointer;">🌓</span>
-                <span onclick="confirmarSalida()" style="color:var(--danger); font-size:12px; font-weight:800; cursor:pointer;">SALIR</span>
+            <div>
+                <small style="display:block; font-size:9px; opacity:0.5; font-weight:800;">OPERARIO</small>
+                <b id="user-display" style="color:var(--twins-blue)">---</b>
             </div>
+            <span onclick="location.reload()" style="color:var(--danger); font-size:11px; font-weight:800; cursor:pointer; background:rgba(239,68,68,0.1); padding:6px 12px; border-radius:8px;">SALIR</span>
         </div>
 
         <div id="p2" class="page">
             <div class="banner-total">
-                <span style="font-weight:700;">CAJAS ACTUALES:</span>
-                <span id="total-vivo" style="font-size:32px; font-weight:900;">0</span>
-            </div>
-            <div class="card">
-                <div style="display:flex; gap:8px;">
-                    <input type="text" id="cli" placeholder="Cliente" style="flex:2">
-                    <input type="number" id="can" placeholder="Cant" style="flex:1" inputmode="numeric">
+                <div>
+                    <small style="font-weight:700; opacity:0.8;">CAJAS EN RUTA</small>
+                    <div id="total-vivo" style="font-size:38px; font-weight:900;">0</div>
                 </div>
-                <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
+                <div style="font-size:30px;">📦</div>
             </div>
+
+            <div class="card">
+                <input type="text" id="cli" placeholder="Nombre Cliente">
+                <input type="number" id="can" placeholder="Cant. Cajas" inputmode="numeric">
+                <button class="btn btn-main" onclick="addItem()">+ AGREGAR A LISTA</button>
+            </div>
+
             <div id="area-envio" style="display:none;">
-                <div class="card" id="lista-items" style="border-left: 5px solid var(--twins-blue);"></div>
+                <div class="card" id="lista-items" style="border-left: 4px solid var(--twins-blue);"></div>
                 <div class="card">
                     <select id="pla" onchange="val()">
-                        <option value="">Seleccionar Placa...</option>
+                        <option value="">Placa Vehículo...</option>
                         <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
                     </select>
                     <select id="cho" onchange="val()">
-                        <option value="">Seleccionar Chofer...</option>
+                        <option value="">Chofer Responsable...</option>
                         <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                     </select>
                     <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
@@ -124,38 +145,26 @@
         </div>
 
         <div id="p3" class="page">
-            <div class="card">
-                <div style="display:flex; gap:10px; margin-bottom:10px;">
-                    <div style="flex:1">
-                        <small style="font-size:10px; opacity:0.6; font-weight:800; display:block;">ESTE MES</small>
-                        <b id="stat-mes" style="font-size:18px;">0</b>
-                    </div>
-                    <div style="flex:1">
-                        <small style="font-size:10px; opacity:0.6; font-weight:800; display:block;">HOY</small>
-                        <b id="stat-dia" style="font-size:18px; color:var(--twins-green);">0</b>
-                    </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
+                <div class="card" style="margin-bottom:0; text-align:center; padding:10px;">
+                    <small style="font-size:10px; font-weight:800; opacity:0.5;">HOY</small>
+                    <div id="stat-dia" style="font-size:22px; font-weight:900; color:var(--twins-green);">0</div>
                 </div>
-                <input type="text" id="bus" placeholder="🔍 Buscar cliente o placa..." onkeyup="renderH()">
-                <div style="display:flex; gap:8px;">
-                    <select id="f-mes" onchange="renderH()" style="flex:1.5">
-                        <option value="ALL">Todos los Meses</option>
-                        <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
-                        <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
-                        <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
-                        <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-                    </select>
-                    <input type="date" id="f-fec" onchange="renderH()" style="flex:1">
+                <div class="card" style="margin-bottom:0; text-align:center; padding:10px;">
+                    <small style="font-size:10px; font-weight:800; opacity:0.5;">MES</small>
+                    <div id="stat-mes" style="font-size:22px; font-weight:900; color:var(--twins-blue);">0</div>
                 </div>
             </div>
+            <input type="text" id="bus" placeholder="🔍 Buscar por cliente o placa..." onkeyup="renderH()">
             <div id="h-list"></div>
         </div>
 
         <div id="nav-app" class="bottom-nav" style="display:none;">
             <div id="n2" class="nav-item active-nav" onclick="nav('p2')">
-                <span style="font-size:20px;">📝</span><span>Registro</span>
+                <span style="font-size:24px;">📝</span><span>RUTA</span>
             </div>
             <div id="n3" class="nav-item" onclick="nav('p3')">
-                <span style="font-size:20px;">📊</span><span>Historial</span>
+                <span style="font-size:24px;">📊</span><span>HISTORIAL</span>
             </div>
         </div>
     </div>
@@ -164,49 +173,23 @@
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
 
-        // Recuperar datos al cargar
+        // AUTO-RECUPERACIÓN DE DATOS
         window.onload = () => {
-            const savedRuta = localStorage.getItem('ruta_temporal');
-            const savedUser = localStorage.getItem('user_twins');
-            if (savedRuta) {
-                ruta = JSON.parse(savedRuta);
+            const temp = localStorage.getItem('twins_backup');
+            if (temp) {
+                ruta = JSON.parse(temp);
                 renderR();
-            }
-            if (savedUser) {
-                login(savedUser);
-            }
-            if (localStorage.getItem('theme') === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
             }
         };
 
-        function toggleTheme() {
-            const b = document.documentElement;
-            if (b.getAttribute('data-theme') === 'dark') {
-                b.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'light');
-            } else {
-                b.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
         function login(n) {
             user = n;
-            localStorage.setItem('user_twins', n);
             document.getElementById('p1').classList.remove('active');
             document.getElementById('header-app').style.display = 'flex';
             document.getElementById('nav-app').style.display = 'flex';
-            document.getElementById('user-display').innerText = "OP: " + n;
+            document.getElementById('user-display').innerText = n;
             nav('p2');
             load();
-        }
-
-        function confirmarSalida() {
-            if (confirm("¿Cerrar sesión? La lista actual se mantendrá guardada.")) {
-                localStorage.removeItem('user_twins');
-                location.reload();
-            }
         }
 
         function nav(id) {
@@ -223,7 +206,7 @@
                 const r = await fetch(URL);
                 db = await r.json();
                 renderH();
-            } catch(e) { console.log("Error de red"); }
+            } catch(e) { console.warn("Error en red"); }
         }
 
         function addItem() {
@@ -231,7 +214,7 @@
             const ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
             ruta.push({cl, ca});
-            localStorage.setItem('ruta_temporal', JSON.stringify(ruta)); // Guardado automático
+            localStorage.setItem('twins_backup', JSON.stringify(ruta)); // GUARDADO TEMPORAL
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderR(); val();
         }
@@ -241,9 +224,9 @@
             let s = 0; l.innerHTML = "";
             ruta.forEach((i, x) => {
                 s += i.ca;
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
                     <span><b>${i.cl}</b></span>
-                    <span>${i.ca} CJ <b onclick="del(${x})" style="color:var(--danger); margin-left:15px; cursor:pointer;">✕</b></span>
+                    <span>${i.ca} CJ <b class="delete-btn" onclick="del(${x})">✕</b></span>
                 </div>`;
             });
             document.getElementById('total-vivo').innerText = s;
@@ -252,9 +235,8 @@
 
         function del(x) { 
             ruta.splice(x,1); 
-            localStorage.setItem('ruta_temporal', JSON.stringify(ruta));
-            renderR(); 
-            val(); 
+            localStorage.setItem('twins_backup', JSON.stringify(ruta));
+            renderR(); val(); 
         }
 
         function val() {
@@ -271,57 +253,44 @@
                 items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "),
                 total: ruta.reduce((a,b) => a + b.ca, 0)
             };
-            
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            
             if(wa) {
-                let m = `*DESPACHO TWINS*\nChofer: ${reg.chofer}\nPlaca: ${reg.placa}\nTotal: ${reg.total} CJ\nItems: ${reg.items}`;
+                let m = `*📦 DESPACHO TWINS*\n*Chofer:* ${reg.chofer}\n*Placa:* ${reg.placa}\n*Total:* ${reg.total} CJ\n*Detalles:* ${reg.items}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
-
-            // Limpiar al guardar con éxito
             ruta = [];
-            localStorage.removeItem('ruta_temporal'); 
-            document.getElementById('pla').value = ""; 
-            document.getElementById('cho').value = "";
+            localStorage.removeItem('twins_backup'); // LIMPIAR SI SE GUARDÓ
+            document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
             renderR(); val();
-            alert("✅ GUARDADO CORRECTO");
+            alert("✅ GUARDADO EXITOSO");
             setTimeout(load, 2000);
         }
 
         function renderH() {
             const list = document.getElementById('h-list');
             const search = document.getElementById('bus').value.toUpperCase();
-            const mes = document.getElementById('f-mes').value;
-            const fec = document.getElementById('f-fec').value;
             let tM = 0, tD = 0, grupos = {};
             list.innerHTML = "";
-            const hoyStr = new Date().toISOString().split('T')[0];
+            const hoy = new Date().toISOString().split('T')[0];
 
             db.forEach(r => {
-                const f = new Date(r.fecha);
-                const fK = f.toISOString().split('T')[0];
-                const mS = !search || (r.items && r.items.toUpperCase().includes(search)) || r.placa.includes(search);
-                const mM = mes === "ALL" || (f.getMonth()+1).toString() === mes;
-                const mD = !fec || fK === fec;
-
-                if (mS && mM && mD) {
+                const fK = new Date(r.fecha).toISOString().split('T')[0];
+                if (!search || r.items.toUpperCase().includes(search) || r.placa.includes(search)) {
                     const totalNum = parseFloat(r.total) || 0;
                     if (!grupos[fK]) grupos[fK] = { regs: [], s: 0 };
                     grupos[fK].regs.push(r);
                     grupos[fK].s += totalNum;
                     tM += totalNum;
-                    if(fK === hoyStr) tD += totalNum;
+                    if(fK === hoy) tD += totalNum;
                 }
             });
 
-            const sortedDates = Object.keys(grupos).sort().reverse();
-            sortedDates.forEach(k => {
+            Object.keys(grupos).sort().reverse().forEach(k => {
                 list.innerHTML += `<div class="date-divider"><span>📅 ${k}</span> <span>${grupos[k].s} CJ</span></div>`;
                 grupos[k].regs.forEach(r => {
-                    list.innerHTML += `<div class="card" style="padding:10px;">
+                    list.innerHTML += `<div class="card" style="padding:12px; margin-bottom:8px;">
                         <div style="display:flex; justify-content:space-between;"><b>${r.chofer}</b> <b style="color:var(--twins-blue);">${r.total} CJ</b></div>
-                        <div style="font-size:10px; opacity:0.6;">${r.placa} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+                        <div style="font-size:10px; opacity:0.5; margin-top:4px;">${r.placa} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
                     </div>`;
                 });
             });
