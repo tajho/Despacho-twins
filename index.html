@@ -106,7 +106,11 @@
             <div class="card">
                 <select id="pla" onchange="validateForm()">
                     <option value="">Placa...</option>
-                    <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
+                    <option value="BVN-930">BVN-930</option>
+                    <option value="BVN-704">BVN-704</option>
+                    <option value="BUL-742">BUL-742</option>
+                    <option value="BPN-711">BPN-711</option>
+                    <option value="FUSO">FUSO</option>
                 </select>
                 <select id="cho" onchange="validateForm()">
                     <option value="">Chofer...</option>
@@ -138,6 +142,7 @@
     </div>
 
     <script>
+        // URL DE TU GOOGLE SHEETS
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwZ9POMWvQZ_ymsu5TU9MK7ERY3jpAPLMUnGTAhBSoZo9s0Nq_PGADRi59Le0PulYia/exec";
         let user = "", route = [], activeFilter = "TODOS", dbCloud = [];
 
@@ -156,8 +161,10 @@
         function login(n) { 
             user = n; 
             document.getElementById('user-display').innerText = "OP: " + n; 
+            // PRIMERO CAMBIAMOS DE PÁGINA
             switchPage('p1', 'p2'); 
-            cargarDatosNube();
+            // LUEGO INTENTAMOS CARGAR DATOS SIN BLOQUEAR LA APP
+            setTimeout(cargarDatosNube, 500);
         }
 
         async function cargarDatosNube() {
@@ -165,9 +172,13 @@
             if(btn) btn.innerText = "⌛...";
             try {
                 const resp = await fetch(CLOUD_URL);
-                dbCloud = await resp.json();
-                renderHistory();
-            } catch (e) { console.log("Carga silenciosa"); }
+                if(resp.ok) {
+                    dbCloud = await resp.json();
+                    renderHistory();
+                }
+            } catch (e) { 
+                console.log("Carga de nube fallida o bloqueada por CORS"); 
+            }
             if(btn) btn.innerText = "🔄 ACTUALIZAR";
         }
 
@@ -207,13 +218,11 @@
                 operario: user, items: [...route], total: route.reduce((a,b)=>a+b.can, 0)
             };
 
-            // BASE DE DATOS EN SEGUNDO PLANO (MODO NO-CORS PARA QUE NO BLOQUEE BOTONES)
+            // GUARDAR EN SEGUNDO PLANO
             fetch(CLOUD_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(reg)
-            }).then(() => {
-                setTimeout(cargarDatosNube, 1000);
             });
 
             if(wa) {
@@ -230,10 +239,12 @@
 
         function verReportes() { 
             const cont = document.getElementById('driver-chips-container');
-            cont.innerHTML = `<div class="chip active" id="chip-TODOS" onclick="setF('TODOS')">TODOS</div>`;
-            ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
-                cont.innerHTML += `<div class="chip" id="chip-${d.replace(' ','')}" onclick="setF('${d}')">${d}</div>`;
-            });
+            if(cont) {
+                cont.innerHTML = `<div class="chip active" id="chip-TODOS" onclick="setF('TODOS')">TODOS</div>`;
+                ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
+                    cont.innerHTML += `<div class="chip" id="chip-${d.replace(' ','')}" onclick="setF('${d}')">${d}</div>`;
+                });
+            }
             renderHistory(); switchPage('p2', 'p3'); 
         }
 
@@ -247,11 +258,15 @@
 
         function renderHistory() {
             const list = document.getElementById('history-list');
+            if(!list) return;
             const search = document.getElementById('search-cli').value.toUpperCase();
             let sum = 0; list.innerHTML = "";
             dbCloud.forEach(r => {
-                if((search === "" || r.items.toUpperCase().includes(search) || r.placa.includes(search)) && (activeFilter === "TODOS" || r.chofer === activeFilter)) {
-                    sum += parseFloat(r.total);
+                const matchSearch = search === "" || (r.items && r.items.toUpperCase().includes(search)) || (r.placa && r.placa.includes(search));
+                const matchDriver = activeFilter === "TODOS" || r.chofer === activeFilter;
+                
+                if(matchSearch && matchDriver) {
+                    sum += parseFloat(r.total || 0);
                     list.innerHTML += `<div class="card" style="border-left:5px solid var(--twins-blue)">
                         <div style="display:flex; justify-content:space-between"><b>${new Date(r.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</b><b>${r.total} CJ</b></div>
                         <div style="font-size:12px; margin:4px 0;">${r.chofer} | ${r.placa} | Op: ${r.operario}</div>
