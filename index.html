@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | SEGURIDAD TAJHO</title>
+    <title>TWINS V7 | VISTA RÁPIDA</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,23 +18,239 @@
             --accent: #6366f1;
         }
 
-        html, body {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: var(--bg); color: var(--text);
-            font-family: 'Inter', sans-serif; overscroll-behavior-y: auto;
-        }
-
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
         .app-container { display: flex; flex-direction: column; min-height: 100vh; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* MODAL DE SEGURIDAD TAJHO */
-        #modal-pass {
+        /* MODALES */
+        #modal-pass, #modal-view {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 2000;
+            background: rgba(0,0,0,0.9); z-index: 2000;
             flex-direction: column; justify-content: center; align-items: center;
         }
+
+        .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
+        .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
+
+        .banner-total { background: linear-gradient(135deg, var(--twins-blue), var(--accent)); color: white; border-radius: 15px; padding: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
+
+        input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 15px; box-sizing: border-box; outline: none; }
+        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+        .btn-main { background: var(--twins-blue); color: white; }
+        .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
+        .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); margin-top: 10px; }
+
+        .action-btn { font-size: 16px; padding: 6px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); background: var(--input-bg); display: flex; align-items: center; justify-content: center; }
+        
+        /* LISTA DENTRO DEL MODAL DE LUPA */
+        .view-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #334155; }
+    </style>
+</head>
+<body>
+
+    <div id="modal-pass">
+        <div class="card" style="width: 80%; max-width: 300px; text-align: center;">
+            <div style="font-weight: 800; margin-bottom: 15px;">🔒 ACCESO TAJHO</div>
+            <input type="password" id="pass-input" pattern="[0-9]*" inputmode="numeric" placeholder="Código" style="text-align: center; font-size: 24px; letter-spacing: 10px;">
+            <button class="btn btn-main" onclick="checkPass()">ENTRAR</button>
+            <button class="btn" style="background:transparent; color:var(--danger);" onclick="closeModal()">CANCELAR</button>
+        </div>
+    </div>
+
+    <div id="modal-view">
+        <div class="card" style="width: 85%; max-width: 350px;">
+            <div id="view-title" style="font-weight: 800; color: var(--twins-blue); margin-bottom: 10px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 10px;">DETALLE DE RUTA</div>
+            <div id="view-content" style="max-height: 300px; overflow-y: auto;"></div>
+            <div id="view-footer" style="margin-top: 15px; font-weight: 800; text-align: right; color: var(--twins-green);"></div>
+            <button class="btn btn-main" style="margin-top: 20px;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR</button>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
+            <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
+            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px;">GESTIÓN ALMACÉN</div>
+            <div class="login-grid" style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="openPassModal()">🔑 TAJHO (Admin)</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('OSCAR')">👤 OSCAR</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
+            </div>
+        </div>
+
+        <div id="header-app" class="top-header" style="display:none;">
+            <div><small style="opacity:0.5; font-weight:800;">OPERARIO</small><br><b id="user-display" style="color:var(--twins-blue)">---</b></div>
+            <span onclick="location.reload()" style="color:var(--danger); font-size:11px; font-weight:800; cursor:pointer;">SALIR</span>
+        </div>
+
+        <div id="p2" class="page">
+            <div class="banner-total">
+                <div><small>CAJAS EN RUTA</small><div id="total-vivo" style="font-size:38px; font-weight:900;">0</div></div>
+                <div style="font-size:30px;">📦</div>
+            </div>
+            <div class="card">
+                <input type="text" id="cli" placeholder="Nombre Cliente">
+                <input type="number" id="can" placeholder="Cant. Cajas" inputmode="numeric">
+                <button class="btn btn-main" onclick="addItem()">+ AGREGAR A LISTA</button>
+            </div>
+            <div id="area-envio" style="display:none;">
+                <div class="card" id="lista-items" style="border-left: 4px solid var(--twins-blue);"></div>
+                <div class="card">
+                    <select id="pla" onchange="val()">
+                        <option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
+                    </select>
+                    <select id="cho" onchange="val()">
+                        <option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
+                    </select>
+                    <select id="aux" onchange="val()">
+                        <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
+                    </select>
+                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
+                    <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="p3" class="page">
+            <div class="card" style="padding:10px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px;">
+                    <select id="f-mes" onchange="renderH()"><option value="ALL">Meses</option><option value="0">Ene</option><option value="1">Feb</option><option value="2">Mar</option><option value="3">Abr</option><option value="4">May</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Ago</option><option value="8">Set</option><option value="9">Oct</option><option value="10">Nov</option><option value="11">Dic</option></select>
+                    <input type="date" id="f-dia" onchange="renderH()">
+                </div>
+                <select id="f-chofer" onchange="renderH()"><option value="ALL">Todos los Choferes</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                <div style="display:flex; justify-content:space-between; margin-top:5px; padding:0 5px;">
+                    <small>FILTRO: <b id="stat-mes" style="color:var(--twins-blue)">0</b> CJ</small>
+                    <small>HOY: <b id="stat-dia" style="color:var(--twins-green)">0</b> CJ</small>
+                </div>
+            </div>
+            <div id="h-list"></div>
+        </div>
+
+        <div id="nav-app" class="bottom-nav" style="display:none;">
+            <div id="n2" class="nav-item active-nav" onclick="nav('p2')"><span>📝</span><span>RUTA</span></div>
+            <div id="n3" class="nav-item" onclick="nav('p3')"><span>📊</span><span>HISTORIAL</span></div>
+        </div>
+    </div>
+
+    <script>
+        const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
+        let user = "", ruta = [], db = [];
+
+        function openPassModal() { document.getElementById('modal-pass').style.display = 'flex'; document.getElementById('pass-input').focus(); }
+        function closeModal() { document.getElementById('modal-pass').style.display = 'none'; document.getElementById('pass-input').value = ''; }
+        function checkPass() { if (document.getElementById('pass-input').value === "2026") { closeModal(); login('TAJHO'); } else { alert("❌ ERROR"); } }
+
+        function login(n) {
+            user = n;
+            document.getElementById('p1').classList.remove('active');
+            document.getElementById('header-app').style.display = 'flex';
+            document.getElementById('nav-app').style.display = 'flex';
+            document.getElementById('user-display').innerText = n;
+            nav('p2'); load();
+        }
+
+        function nav(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
+            if(id === 'p3') renderH();
+        }
+
+        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) {} }
+
+        function addItem() {
+            const cl = document.getElementById('cli').value.toUpperCase().trim();
+            const ca = parseInt(document.getElementById('can').value);
+            if(!cl || !ca) return;
+            ruta.push({cl, ca});
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+            renderR(); val();
+        }
+
+        function renderR() {
+            const l = document.getElementById('lista-items');
+            let s = 0; l.innerHTML = "";
+            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><span>${i.ca} CJ <b style="color:var(--danger)" onclick="ruta.splice(${x},1);renderR();val();">✕</b></span></div>`; });
+            document.getElementById('total-vivo').innerText = s;
+            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
+        }
+
+        function val() { const ok = document.getElementById('cho').value && document.getElementById('pla').value && ruta.length > 0; document.getElementById('btn-wa').disabled = !ok; document.getElementById('btn-nube').disabled = !ok; }
+
+        async function guardar(wa) {
+            const reg = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUXILIAR", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "), total: ruta.reduce((a,b) => a + b.ca, 0) };
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+            if(wa) sendWA(reg);
+            ruta = []; renderR(); alert("✅ GUARDADO EN NUBE"); load();
+        }
+
+        function sendWA(r) {
+            let m = `*📦 DESPACHO TWINS*\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${r.auxiliar}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n*Detalles:* ${r.items}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+        }
+
+        // --- NUEVA FUNCIÓN LUPA ---
+        function verSoloRuta(idx) {
+            const r = db[idx];
+            const content = document.getElementById('view-content');
+            content.innerHTML = "";
+            const items = r.items.split(", ");
+            items.forEach(item => {
+                const p = item.split(": ");
+                content.innerHTML += `<div class="view-item"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`;
+            });
+            document.getElementById('view-title').innerText = `RUTA: ${r.chofer}`;
+            document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`;
+            document.getElementById('modal-view').style.display = 'flex';
+        }
+
+        function recargarRuta(idx) {
+            const r = db[idx];
+            document.getElementById('cho').value = r.chofer;
+            document.getElementById('pla').value = r.placa;
+            document.getElementById('aux').value = r.auxiliar;
+            ruta = r.items.split(", ").map(str => { const p = str.split(": "); return { cl: p[0], ca: parseInt(p[1]) }; });
+            renderR(); nav('p2');
+        }
+
+        function renderH() {
+            const list = document.getElementById('h-list');
+            const fMes = document.getElementById('f-mes').value;
+            const fDia = document.getElementById('f-dia').value;
+            const fChofer = document.getElementById('f-chofer').value;
+            let tF = 0, tD = 0, hoy = new Date().toISOString().split('T')[0];
+            list.innerHTML = "";
+            db.forEach((r, idx) => {
+                const fO = new Date(r.fecha);
+                const fS = fO.toISOString().split('T')[0];
+                if ((fMes === "ALL" || fO.getMonth().toString() === fMes) && (!fDia || fS === fDia) && (fChofer === "ALL" || r.chofer === fChofer)) {
+                    const cant = parseFloat(r.total);
+                    tF += cant; if(fS === hoy) tD += cant;
+                    list.innerHTML += `<div class="card" style="padding:12px; margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                            <b>${r.chofer}</b>
+                            <div style="display:flex; gap:6px;">
+                                <span class="action-btn" onclick="verSoloRuta(${idx})">🔍</span>
+                                <span class="action-btn" onclick="sendWA(db[${idx}])">🟢</span>
+                                <span class="action-btn" onclick="recargarRuta(${idx})">📝</span>
+                            </div>
+                        </div>
+                        <div style="font-size:10px; opacity:0.5;">${fS} | ${r.placa} | ${r.total} CJ | Op: ${r.operario}</div>
+                    </div>`;
+                }
+            });
+            document.getElementById('stat-mes').innerText = tF;
+            document.getElementById('stat-dia').innerText = tD;
+        }
+    </script>
+</body>
+</html>        }
 
         .top-header { 
             position: sticky; top: 0; z-index: 100;
