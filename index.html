@@ -13,37 +13,29 @@
             --twins-blue: #3b82f6; --twins-green: #22c55e;
             --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
         }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        /* ESTILOS PARA DESLIZAR (SWIPE) */
-        .swipe-container { position: relative; overflow: hidden; margin-bottom: 10px; border-radius: 12px; }
-        .delete-btn { 
-            position: absolute; right: 0; top: 0; bottom: 0; width: 80px; 
-            background: var(--danger); color: white; display: flex; 
-            align-items: center; justify-content: center; font-size: 20px; 
-            font-weight: 800; border-radius: 0 12px 12px 0; z-index: 1;
-        }
-        
+        #modal-pass, #modal-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { border: none; background: none; color: var(--text); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
-        
-        .card { 
-            background: var(--card); border-radius: 12px; border: 1px solid var(--border); 
-            padding: 14px; position: relative; z-index: 2; transition: transform 0.2s ease-out; 
-            margin-bottom: 0; /* Ajustado para el swipe container */
-        }
-        
+        .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
+        .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; transition: transform 0.2s; position: relative; z-index: 2; }
         input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
         .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
         .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
         .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+        
+        /* Contenedor para el swipe */
+        .swipe-wrap { position: relative; background: var(--danger); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+        .swipe-bg { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-weight: 800; color: white; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -131,7 +123,7 @@
     <script>
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
-        let touchStartX = 0;
+        let touchX = 0;
 
         window.onload = () => {
             const h = new Date();
@@ -141,15 +133,14 @@
             loadDraft(); updateSugs();
         };
 
-        // FUNCIONES DE LOGIN Y DRAFT (MANTENIDAS)
-        function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
-        function login(n) { user = n; document.getElementById('p1').style.display='none'; document.getElementById('header-app').style.display='flex'; document.getElementById('nav-app').style.display='flex'; document.getElementById('user-display').innerText = n; if(n === 'TAJHO') document.getElementById('btn-reporte-admin').style.display = 'block'; nav('p2'); load(); }
-        
         function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
         function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { const d = JSON.parse(s); ruta = d.ruta||[]; document.getElementById('pla').value=d.p||""; document.getElementById('cho').value=d.c||""; document.getElementById('aux').value=d.a||""; renderR(); } }
         function updateSugs() { const c = JSON.parse(localStorage.getItem('tw_c') || "[]"); const dl = document.getElementById('clientes-sugeridos'); dl.innerHTML = ""; c.forEach(x => { let o = document.createElement('option'); o.value = x; dl.appendChild(o); }); }
         function saveClients(it) { let c = JSON.parse(localStorage.getItem('tw_c') || "[]"); it.forEach(i => { if(!c.includes(i.cl)) c.push(i.cl); }); localStorage.setItem('tw_c', JSON.stringify(c.slice(-60))); updateSugs(); }
 
+        function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
+        function login(n) { user = n; document.getElementById('p1').style.display='none'; document.getElementById('header-app').style.display='flex'; document.getElementById('nav-app').style.display='flex'; document.getElementById('user-display').innerText = n; if(n === 'TAJHO') document.getElementById('btn-reporte-admin').style.display = 'block'; nav('p2'); load(); }
+        
         function nav(id) { 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav')); 
@@ -158,10 +149,17 @@
             document.getElementById(nBtn).classList.add('active-nav');
         }
 
-        async function nav_hist() { nav('p3'); if(db.length === 0) await load(); else renderH(); }
+        async function nav_hist() { 
+            nav('p3'); 
+            if(db.length === 0) await load(); else renderH();
+        }
 
         async function load() { 
-            try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) { console.error(e); }
+            try { 
+                const r = await fetch(URL); 
+                db = await r.json(); 
+                renderH(); 
+            } catch(e) { console.error(e); }
         }
 
         function addItem() {
@@ -175,11 +173,15 @@
             document.getElementById('total-vivo').innerText = s; document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
+        function editarRuta(idx) {
+            const r = db[idx]; ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
+            document.getElementById('pla').value = r.placa; document.getElementById('cho').value = r.chofer; document.getElementById('aux').value = r.auxiliar; renderR(); saveDraft(); nav('p2');
+        }
+
         async function guardar(wa) {
             const r = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUX", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0) };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
-            saveClients(ruta);
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            saveClients(ruta); fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
             if(wa) sendWA(r); else alert("✅ Guardado");
             ruta = []; localStorage.removeItem('tw_d'); renderR(); load();
         }
@@ -190,34 +192,25 @@
             window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
         }
 
-        // LÓGICA DE SWIPE (DESLIZAR)
-        function handleTouchStart(e) { touchStartX = e.touches[0].clientX; }
-        function handleTouchMove(e, id) {
-            let moveX = e.touches[0].clientX - touchStartX;
-            let card = document.getElementById('card-' + id);
-            if (moveX < 0 && moveX > -100) card.style.transform = `translateX(${moveX}px)`;
+        // SWIPE LÓGICA
+        function handleStart(e) { touchX = e.touches[0].clientX; }
+        function handleMove(e, id) {
+            let diff = e.touches[0].clientX - touchX;
+            if (diff < 0 && diff > -100) document.getElementById('c-'+id).style.transform = `translateX(${diff}px)`;
         }
-        function handleTouchEnd(e, id) {
-            let moveX = e.changedTouches[0].clientX - touchStartX;
-            let card = document.getElementById('card-' + id);
-            if (moveX < -60) {
-                card.style.transform = `translateX(-80px)`;
-            } else {
-                card.style.transform = `translateX(0)`;
+        function handleEnd(e, id) {
+            let diff = e.changedTouches[0].clientX - touchX;
+            let el = document.getElementById('c-'+id);
+            if (diff < -70) {
+                if(confirm("¿Eliminar del historial local?")) { db.splice(id, 1); renderH(); }
             }
-        }
-
-        function borrarRuta(idx) {
-            if(confirm("¿Eliminar esta ruta del historial?")) {
-                // Aquí podrías agregar un fetch para borrar en la nube si tu Apps Script lo soporta
-                db.splice(idx, 1);
-                renderH();
-            }
+            el.style.transform = `translateX(0)`;
         }
 
         function renderH() {
             const list = document.getElementById('h-list');
             const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
+            
             let tAcumulado = 0, tDiaIndividual = 0;
             const targetDate = fD ? new Date(fD + "T12:00:00") : new Date();
             const targetStr = targetDate.getFullYear() + '-' + String(targetDate.getMonth() + 1).padStart(2, '0') + '-' + String(targetDate.getDate()).padStart(2, '0');
@@ -233,27 +226,21 @@
                 if(rStr === targetStr) tDiaIndividual += cVal;
 
                 if ((r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS)) && (fM === "ALL" || rDate.getMonth().toString() === fM) && (!fD || rStr === fD)) {
-                    html += `
-                    <div class="swipe-container">
-                        <div class="delete-btn" onclick="borrarRuta(${i})">🗑️</div>
-                        <div class="card" id="card-${i}" 
-                             ontouchstart="handleTouchStart(event)" 
-                             ontouchmove="handleTouchMove(event, ${i})" 
-                             ontouchend="handleTouchEnd(event, ${i})">
+                    html += `<div class="swipe-wrap">
+                        <div class="swipe-bg">BORRAR 🗑️</div>
+                        <div class="card" id="c-${i}" ontouchstart="handleStart(event)" ontouchmove="handleMove(event, ${i})" ontouchend="handleEnd(event, ${i})">
                             <div style="display:flex; justify-content:space-between; align-items:start;">
-                                <div>
-                                    <div style="font-weight:800; font-size:13px;">${r.chofer}</div>
-                                    <div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div>
-                                </div>
+                                <div><div style="font-weight:800; font-size:13px;">${r.chofer}</div><div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div></div>
                                 <div style="display:flex; gap:6px;">
                                     <div class="action-btn" onclick="verSoloRuta(${i})">🔍</div>
+                                    <div class="action-btn" style="color:var(--warning)" onclick="editarRuta(${i})">✏️</div>
                                     <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${i}])">🟢</div>
                                 </div>
                             </div>
                             <div class="hist-footer">
                                 <span>🚚 ${r.placa}</span>
                                 <span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span>
-                                <span>👤 ${r.operario || 'N/A'}</span>
+                                <span>👤 ${r.operario || '---'}</span>
                                 <span>${rStr}</span>
                             </div>
                         </div>
@@ -265,7 +252,6 @@
             document.getElementById('stat-dia').innerText = Math.round(tDiaIndividual);
         }
 
-        // LAS DEMÁS FUNCIONES (PDF, VISTARUTA) SE MANTIENEN IGUAL
         function verSoloRuta(idx) {
             const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
             r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #334155;"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; });
@@ -279,9 +265,9 @@
             db.forEach(r => {
                 const rd = new Date(r.fecha);
                 const rfs = rd.getFullYear() + '-' + String(rd.getMonth() + 1).padStart(2, '0') + '-' + String(rd.getDate()).padStart(2, '0');
-                filas.push([rfs, r.chofer, r.placa, r.total + " CJ", r.operario]);
+                filas.push([rfs, r.chofer, r.placa, r.total + " CJ"]);
             });
-            doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas', 'Operario']], body: filas });
+            doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas });
             doc.save(`Reporte.pdf`);
         }
     </script>
