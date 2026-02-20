@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V8 | SISTEMA INTELIGENTE</title>
+    <title>TWINS V9 | CONTEO EXACTO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -77,7 +77,6 @@
             <div class="card">
                 <input type="text" id="cli" list="clientes-sugeridos" placeholder="Nombre Cliente" oninput="saveDraft()">
                 <datalist id="clientes-sugeridos"></datalist>
-                
                 <input type="number" id="can" placeholder="Cantidad" inputmode="numeric">
                 <button class="btn btn-main" onclick="addItem()">AGREGAR</button>
             </div>
@@ -97,8 +96,8 @@
 
         <div id="p3" class="page">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-                <div class="stat-box"><div class="stat-label">Total Mes</div><div id="stat-mes" class="stat-val">0</div></div>
-                <div class="stat-box"><div class="stat-label">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
+                <div class="stat-box"><div class="stat-label">Total en Filtro</div><div id="stat-mes" class="stat-val">0</div></div>
+                <div class="stat-box"><div class="stat-label">Total Hoy</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
             </div>
             <div class="card" style="padding:10px;">
                 <input type="text" id="f-search" placeholder="🔍 Buscar cliente, chofer o placa..." onkeyup="renderH()">
@@ -113,143 +112,103 @@
 
         <div id="nav-app" class="bottom-nav" style="display:none;">
             <div id="n2" class="nav-item active-nav" onclick="nav('p2')"><span>📝</span><span>RUTA</span></div>
-            <div id="n3" class="nav-item" onclick="nav('p3')"><span>📊</span><span>HISTORIAL</span></div>
+            <div id="n3" class="nav-item" onclick="nav('n3_click()')"><span>📊</span><span>HISTORIAL</span></div>
         </div>
     </div>
 
     <script>
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
-        let user = "", ruta = [], db = [], listaClientes = [];
+        let user = "", ruta = [], db = [];
 
         window.onload = () => {
             const h = new Date();
-            document.getElementById('f-dia').value = h.toISOString().split('T')[0];
+            // Ajustar a fecha local YYYY-MM-DD
+            const localDate = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
+            document.getElementById('f-dia').value = localDate;
             document.getElementById('f-mes').value = h.getMonth();
-            loadDraft(); // Cargar borrador al abrir
-            updateClientSuggestions(); // Cargar sugerencias
+            loadDraft();
+            updateClientSuggestions();
         };
 
-        // --- FUNCIONES DE BORRADOR (LOCALSTORAGE) ---
-        function saveDraft() {
-            const draft = {
-                ruta: ruta,
-                placa: document.getElementById('pla').value,
-                chofer: document.getElementById('cho').value,
-                auxiliar: document.getElementById('aux').value
-            };
-            localStorage.setItem('twins_draft', JSON.stringify(draft));
-        }
+        function n3_click() { nav('p3'); load(); }
 
+        // --- PERSISTENCIA Y SUGERENCIAS ---
+        function saveDraft() {
+            localStorage.setItem('twins_draft', JSON.stringify({
+                ruta, pla: document.getElementById('pla').value, cho: document.getElementById('cho').value, aux: document.getElementById('aux').value
+            }));
+        }
         function loadDraft() {
-            const saved = localStorage.getItem('twins_draft');
-            if (saved) {
-                const draft = JSON.parse(saved);
-                ruta = draft.ruta || [];
-                document.getElementById('pla').value = draft.placa || "";
-                document.getElementById('cho').value = draft.chofer || "";
-                document.getElementById('aux').value = draft.auxiliar || "";
+            const s = localStorage.getItem('twins_draft');
+            if(s) {
+                const d = JSON.parse(s); ruta = d.ruta || [];
+                document.getElementById('pla').value = d.pla || ""; document.getElementById('cho').value = d.cho || ""; document.getElementById('aux').value = d.aux || "";
                 renderR();
             }
         }
-
-        // --- SUGERENCIAS DE CLIENTES ---
         function updateClientSuggestions() {
-            const savedClients = JSON.parse(localStorage.getItem('twins_clients') || "[]");
-            const datalist = document.getElementById('clientes-sugeridos');
-            datalist.innerHTML = "";
-            savedClients.forEach(c => {
-                let opt = document.createElement('option');
-                opt.value = c;
-                datalist.appendChild(opt);
-            });
+            const clients = JSON.parse(localStorage.getItem('twins_clients') || "[]");
+            const dl = document.getElementById('clientes-sugeridos');
+            dl.innerHTML = "";
+            clients.forEach(c => { let o = document.createElement('option'); o.value = c; dl.appendChild(o); });
         }
-
-        function saveClientToMemory(newItems) {
+        function saveClients(items) {
             let current = JSON.parse(localStorage.getItem('twins_clients') || "[]");
-            newItems.forEach(item => {
-                if(!current.includes(item.cl)) current.push(item.cl);
-            });
-            localStorage.setItem('twins_clients', JSON.stringify(current.slice(-50))); // Guardar últimos 50
+            items.forEach(i => { if(!current.includes(i.cl)) current.push(i.cl); });
+            localStorage.setItem('twins_clients', JSON.stringify(current.slice(-60)));
             updateClientSuggestions();
         }
 
-        // --- LÓGICA DE APP ---
+        // --- LOGIN Y NAV ---
         function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
-
         function login(n) {
-            user = n;
-            document.getElementById('p1').style.display='none';
-            document.getElementById('header-app').style.display='flex';
-            document.getElementById('nav-app').style.display='flex';
+            user = n; document.getElementById('p1').style.display='none';
+            document.getElementById('header-app').style.display='flex'; document.getElementById('nav-app').style.display='flex';
             document.getElementById('user-display').innerText = n;
             if(n === 'TAJHO') document.getElementById('btn-reporte-admin').style.display = 'block';
             nav('p2'); load();
         }
-
         function nav(id) {
+            if(id.includes('n3')) id = 'p3';
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
+            const nId = 'n' + id.charAt(1);
+            if(document.getElementById(nId)) document.getElementById(nId).classList.add('active-nav');
             if(id === 'p3') renderH();
         }
 
-        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) {} }
+        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) { console.log(e)} }
 
         function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase().trim();
-            const ca = parseInt(document.getElementById('can').value);
+            const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
             ruta.unshift({cl, ca});
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderR();
-            saveDraft();
+            renderR(); saveDraft();
         }
 
         function renderR() {
-            const l = document.getElementById('lista-items');
-            let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { 
-                s += i.ca; 
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px;" onclick="ruta.splice(${x},1);renderR();saveDraft()">✕</span></b></div>`; 
-            });
+            const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
+            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px;" onclick="ruta.splice(${x},1);renderR();saveDraft()">✕</span></b></div>`; });
             document.getElementById('total-vivo').innerText = s;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
         function editarRuta(idx) {
             const r = db[idx];
-            ruta = r.items.split(", ").map(str => {
-                const [cl, ca] = str.split(":");
-                return { cl, ca: parseInt(ca) };
-            });
-            document.getElementById('pla').value = r.placa;
-            document.getElementById('cho').value = r.chofer;
-            document.getElementById('aux').value = r.auxiliar;
-            renderR();
-            saveDraft();
-            nav('p2');
+            ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
+            document.getElementById('pla').value = r.placa; document.getElementById('cho').value = r.chofer; document.getElementById('aux').value = r.auxiliar;
+            renderR(); saveDraft(); nav('p2');
         }
 
         async function guardar(wa) {
-            const r = { 
-                chofer: document.getElementById('cho').value, 
-                auxiliar: document.getElementById('aux').value || "SIN AUX",
-                placa: document.getElementById('pla').value, 
-                operario: user, 
-                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
-                total: ruta.reduce((a,b) => a+b.ca, 0) 
-            };
+            const r = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUX", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0) };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
-            
-            saveClientToMemory(ruta); // Aprender nombres de clientes
+            saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            
-            if(wa) sendWA(r); else alert("✅ Guardado en la nube");
-            
-            ruta = [];
-            localStorage.removeItem('twins_draft'); // Limpiar borrador al guardar con éxito
-            renderR(); load();
+            if(wa) sendWA(r); else alert("✅ Guardado");
+            ruta = []; localStorage.removeItem('twins_draft'); renderR(); load();
         }
 
         function sendWA(r) {
@@ -261,15 +220,28 @@
         function renderH() {
             const list = document.getElementById('h-list');
             const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
-            let tM = 0, tD = 0, hoy = new Date().toISOString().split('T')[0];
+            let tFiltro = 0, tHoy = 0;
+            
+            const now = new Date();
+            const hoyStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+            
             list.innerHTML = "";
-            const reversedDB = [...db].reverse();
-            reversedDB.forEach((r) => {
-                const fO = new Date(r.fecha), fStr = fO.toISOString().split('T')[0];
-                const matchesSearch = r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS);
-                if ((fM === "ALL" || fO.getMonth().toString() === fM) && (!fD || fStr === fD) && matchesSearch) {
-                    const c = parseFloat(r.total);
-                    tM += c; if(fStr === hoy) tD += c;
+            [...db].reverse().forEach((r) => {
+                // Procesar fecha del registro para que coincida con zona local
+                const regDateObj = new Date(r.fecha);
+                const rFechaStr = regDateObj.getFullYear() + '-' + String(regDateObj.getMonth() + 1).padStart(2, '0') + '-' + String(regDateObj.getDate()).padStart(2, '0');
+                const rMes = regDateObj.getMonth().toString();
+
+                const matchBusqueda = r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS);
+                const matchFiltro = (fM === "ALL" || rMes === fM) && (!fD || rFechaStr === fD);
+
+                const cVal = parseFloat(r.total) || 0;
+                
+                // Sumar al total de HOY (independiente del filtro visual)
+                if(rFechaStr === hoyStr) tHoy += cVal;
+
+                if (matchFiltro && matchBusqueda) {
+                    tFiltro += cVal;
                     const realIdx = db.indexOf(r);
                     list.innerHTML += `<div class="card" style="border-left: 3px solid #3b82f6; padding:12px;">
                         <div style="display:flex; justify-content:space-between; align-items:start;">
@@ -277,14 +249,15 @@
                             <div style="display:flex; gap:6px;">
                                 <div class="action-btn" onclick="verSoloRuta(${realIdx})">🔍</div>
                                 <div class="action-btn" style="color:var(--warning)" onclick="editarRuta(${realIdx})">✏️</div>
-                                <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${realIdx}])">🟢</div>
+                                <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[realIdx])">🟢</div>
                             </div>
                         </div>
-                        <div class="hist-footer"><span>🚚 ${r.placa}</span><span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span><span>${fStr}</span></div>
+                        <div class="hist-footer"><span>🚚 ${r.placa}</span><span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span><span>${rFechaStr}</span></div>
                     </div>`;
                 }
             });
-            document.getElementById('stat-mes').innerText = tM; document.getElementById('stat-dia').innerText = tD;
+            document.getElementById('stat-mes').innerText = tFiltro; 
+            document.getElementById('stat-dia').innerText = tHoy;
         }
 
         function verSoloRuta(idx) {
@@ -294,15 +267,15 @@
         }
 
         function generarPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const fMText = document.getElementById('f-mes').options[document.getElementById('f-mes').selectedIndex].text;
             doc.setFontSize(18); doc.text("REPORTE DE DESPACHOS - TWINS", 14, 20);
             const filas = [];
             db.forEach(r => {
-                const fO = new Date(r.fecha), fStr = fO.toISOString().split('T')[0];
-                if ((document.getElementById('f-mes').value === "ALL" || fO.getMonth().toString() === document.getElementById('f-mes').value) && (!document.getElementById('f-dia').value || fStr === document.getElementById('f-dia').value)) {
-                    filas.push([fStr, r.chofer, r.placa, r.total + " CJ"]);
+                const rd = new Date(r.fecha);
+                const rfs = rd.getFullYear() + '-' + String(rd.getMonth() + 1).padStart(2, '0') + '-' + String(rd.getDate()).padStart(2, '0');
+                if ((document.getElementById('f-mes').value === "ALL" || rd.getMonth().toString() === document.getElementById('f-mes').value) && (!document.getElementById('f-dia').value || rfs === document.getElementById('f-dia').value)) {
+                    filas.push([rfs, r.chofer, r.placa, r.total + " CJ"]);
                 }
             });
             doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas, headStyles: { fillColor: [59, 130, 246] } });
