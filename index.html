@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | ORDEN DINÁMICO</title>
+    <title>TWINS V7 | SISTEMA OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
             --twins-blue: #3b82f6; --twins-green: #22c55e;
-            --border: #334155; --input-bg: #0f172a; --danger: #ef4444;
+            --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
         }
 
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
@@ -40,6 +42,10 @@
         .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
         .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
         .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+        
+        .row-item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border); }
+        .edit-btn { color: var(--warning); margin-right: 15px; font-weight: bold; cursor: pointer; }
+        .del-btn { color: var(--danger); font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -108,11 +114,12 @@
                 <div class="stat-box"><div class="stat-label">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
             </div>
             <div class="card" style="padding:10px;">
-                <input type="text" id="f-search" placeholder="🔍 Buscar cliente o chofer..." onkeyup="renderH()">
+                <input type="text" id="f-search" placeholder="🔍 Buscar cliente, chofer o placa..." onkeyup="renderH()">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                     <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
                     <input type="date" id="f-dia" onchange="renderH()">
                 </div>
+                <button class="btn" style="background:#e11d48; color:white; margin-top:10px; padding:10px; font-size:12px;" onclick="generarPDF()">📄 DESCARGAR REPORTE PDF</button>
             </div>
             <div id="h-list"></div>
         </div>
@@ -158,16 +165,34 @@
             const cl = document.getElementById('cli').value.toUpperCase().trim();
             const ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
-            // .unshift agrega al principio de la lista
             ruta.unshift({cl, ca});
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+            renderR();
+        }
+
+        function editItem(x) {
+            const item = ruta[x];
+            document.getElementById('cli').value = item.cl;
+            document.getElementById('can').value = item.ca;
+            ruta.splice(x, 1);
             renderR();
         }
 
         function renderR() {
             const l = document.getElementById('lista-items');
             let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger)" onclick="ruta.splice(${x},1);renderR()">✕</span></b></div>`; });
+            ruta.forEach((i, x) => { 
+                s += i.ca; 
+                l.innerHTML += `
+                <div class="row-item">
+                    <span>${i.cl}</span>
+                    <div>
+                        <b style="margin-right:10px;">${i.ca} CJ</b>
+                        <span class="edit-btn" onclick="editItem(${x})">✏️</span>
+                        <span class="del-btn" onclick="ruta.splice(${x},1);renderR()">✕</span>
+                    </div>
+                </div>`; 
+            });
             document.getElementById('total-vivo').innerText = s;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
@@ -201,16 +226,14 @@
             let tM = 0, tD = 0, hoy = new Date().toISOString().split('T')[0];
             list.innerHTML = "";
             
-            // Invertimos la base de datos para mostrar lo más nuevo arriba
             const reversedDB = [...db].reverse();
-
-            reversedDB.forEach((r, idx) => {
+            reversedDB.forEach((r) => {
                 const fO = new Date(r.fecha), fStr = fO.toISOString().split('T')[0];
-                if ((fM === "ALL" || fO.getMonth().toString() === fM) && (!fD || fStr === fD) && (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS))) {
+                const matchesSearch = r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS);
+                
+                if ((fM === "ALL" || fO.getMonth().toString() === fM) && (!fD || fStr === fD) && matchesSearch) {
                     const c = parseFloat(r.total);
                     tM += c; if(fStr === hoy) tD += c;
-                    
-                    // Ajustamos el índice real de la DB original para las funciones
                     const realIdx = db.indexOf(r);
 
                     list.innerHTML += `<div class="card" style="border-left: 3px solid #3b82f6; padding:12px;">
@@ -229,6 +252,37 @@
             const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
             r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #334155;"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; });
             document.getElementById('view-title').innerText = r.chofer; document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`; document.getElementById('modal-view').style.display = 'flex';
+        }
+
+        function generarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const fMText = document.getElementById('f-mes').options[document.getElementById('f-mes').selectedIndex].text;
+            const totalCajas = document.getElementById('stat-mes').innerText;
+
+            doc.setFontSize(18); doc.text("REPORTE DE DESPACHOS - TWINS", 14, 20);
+            doc.setFontSize(10); doc.setTextColor(100);
+            doc.text(`Periodo: ${fMText} | Total: ${totalCajas} CJ`, 14, 28);
+            doc.text(`Generado: ${new Date().toLocaleString()}`, 14, 34);
+
+            const filas = [];
+            const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
+
+            db.forEach(r => {
+                const fO = new Date(r.fecha), fStr = fO.toISOString().split('T')[0];
+                if ((fM === "ALL" || fO.getMonth().toString() === fM) && (!fD || fStr === fD) && (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS))) {
+                    filas.push([fStr, r.chofer, r.placa, r.total + " CJ"]);
+                }
+            });
+
+            doc.autoTable({
+                startY: 40,
+                head: [['Fecha', 'Chofer', 'Placa', 'Cajas']],
+                body: filas,
+                headStyles: { fillColor: [59, 130, 246] }
+            });
+
+            doc.save(`Reporte_Twins_${fMText}.pdf`);
         }
     </script>
 </body>
