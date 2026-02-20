@@ -147,6 +147,8 @@
                         <option value="ALL">Todos los Meses</option>
                         <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
                         <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                        <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                        <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
                     </select>
                     <input type="date" id="f-fec" onchange="renderH()" style="flex:1">
                 </div>
@@ -165,7 +167,7 @@
     </div>
 
     <script>
-        const URL = "https://script.google.com/macros/s/AKfycbwZ9POMWvQZ_ymsu5TU9MK7ERY3jpAPLMUnGTAhBSoZo9s0Nq_PGADRi59Le0PulYia/exec";
+        const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
 
         function toggleTheme() {
@@ -255,8 +257,10 @@
             const search = document.getElementById('bus').value.toUpperCase();
             const mes = document.getElementById('f-mes').value;
             const fec = document.getElementById('f-fec').value;
-            let tM = 0, grupos = {};
+            let tM = 0, tD = 0, grupos = {};
             list.innerHTML = "";
+            
+            const hoyStr = new Date().toISOString().split('T')[0];
 
             db.forEach(r => {
                 const f = new Date(r.fecha);
@@ -266,10 +270,12 @@
                 const mD = !fec || fK === fec;
 
                 if (mS && mM && mD) {
+                    const totalNum = parseFloat(r.total) || 0;
                     if (!grupos[fK]) grupos[fK] = { regs: [], s: 0 };
                     grupos[fK].regs.push(r);
-                    grupos[fK].s += parseFloat(r.total);
-                    tM += parseFloat(r.total);
+                    grupos[fK].s += totalNum;
+                    tM += totalNum;
+                    if(fK === hoyStr) tD += totalNum;
                 }
             });
 
@@ -284,8 +290,7 @@
                 });
             });
             document.getElementById('stat-mes').innerText = tM;
-            const todayK = new Date().toISOString().split('T')[0];
-            document.getElementById('stat-dia').innerText = grupos[todayK] ? grupos[todayK].s : 0;
+            document.getElementById('stat-dia').innerText = tD;
         }
     </script>
 </body>
