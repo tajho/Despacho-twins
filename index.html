@@ -64,20 +64,12 @@
         }
 
         .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; color: var(--text); font-size: 12px; }
-        .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
-        
-        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; color: white; font-weight: 700; }
     </style>
 </head>
 <body>
 
-    <div id="loading" class="loading-overlay">SINCRONIZANDO NUBE...</div>
-
     <div id="p1" class="page active">
-        <div style="text-align: right;">
-            <button class="theme-btn" onclick="toggleTheme()">🌙</button>
-        </div>
+        <div style="text-align: right;"><button class="theme-btn" onclick="toggleTheme()">🌙</button></div>
         <div class="login-wrap">
             <div class="main-title">TWINS DESPACHOS</div>
             <div class="creator-tag">By Tajho Developer</div>
@@ -93,25 +85,19 @@
     <div id="p2" class="page">
         <div class="top-bar">
             <b id="user-display" style="color:var(--twins-blue)"></b>
-            <div>
-                <button class="theme-btn" onclick="toggleTheme()" style="margin-right:8px;">🌙</button>
-                <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
-            </div>
+            <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
         </div>
-
         <div class="banner-total">
             <small>CAJAS EN RUTA</small>
             <div id="total-vivo" style="font-size:45px; font-weight:800;">0</div>
         </div>
-
         <div class="card">
             <input type="text" id="cli" placeholder="Nombre del Cliente">
             <input type="number" id="can" placeholder="Cajas" inputmode="numeric">
             <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
         </div>
-
         <div id="area-despacho" style="display:none;">
-            <div class="card" id="lista-actual" style="height:auto;"></div>
+            <div class="card" id="lista-actual"></div>
             <div class="card">
                 <select id="pla" onchange="validateForm()">
                     <option value="">Placa...</option>
@@ -123,22 +109,11 @@
                 </select>
                 <select id="cho" onchange="validateForm()">
                     <option value="">Chofer...</option>
-                    <option value="LUIS H.">LUIS H.</option>
-                    <option value="ROMARIO">ROMARIO</option>
-                    <option value="CESAR C.">CESAR C.</option>
-                    <option value="WALDIR">WALDIR</option>
-                    <option value="MARCELO">MARCELO</option>
-                    <option value="TAJHO">TAJHO</option>
+                    <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                 </select>
                 <select id="aux" onchange="validateForm()">
                     <option value="">Auxiliar...</option>
-                    <option value="CRISTOPHER">CRISTOPHER</option>
-                    <option value="LUIS PLACIDO">LUIS PLACIDO</option>
-                    <option value="RODOLFO">RODOLFO</option>
-                    <option value="ELIO">ELIO</option>
-                    <option value="PERCY">PERCY</option>
-                    <option value="MARTIN">MARTIN</option>
-                    <option value="JOFER">JOFER</option>
+                    <option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option>
                 </select>
                 <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR</button>
                 <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
@@ -150,20 +125,14 @@
     <div id="p3" class="page">
         <div class="top-bar">
             <button class="btn btn-outline" style="width:auto; padding:8px 15px; margin:0;" onclick="switchPage('p3','p2')">← VOLVER</button>
-            <button class="btn" style="width:auto; padding:8px; background:var(--twins-green); color:white;" onclick="cargarDatosNube()">🔄 REFRESCAR</button>
+            <button id="ref-btn" class="btn" style="width:auto; padding:8px; background:var(--twins-green); color:white;" onclick="cargarDatosNube()">🔄 REFRESCAR</button>
         </div>
-
-        <div class="card">
-            <input type="text" id="search-cli" placeholder="🔍 Buscar en historial nube..." onkeyup="renderHistory()">
-        </div>
-
+        <div class="card"><input type="text" id="search-cli" placeholder="🔍 Buscar en historial nube..." onkeyup="renderHistory()"></div>
         <div id="driver-chips-container" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
-        
         <div class="card" style="text-align:center; border-top: 4px solid var(--twins-green);">
             <small id="stat-title">TOTAL HOY (NUBE)</small>
             <div id="stat-total" style="font-size:32px; font-weight:800; color:var(--twins-blue);">0</div>
         </div>
-        
         <div id="history-list"></div>
     </div>
 
@@ -181,8 +150,6 @@
         function switchPage(hide, show) {
             document.getElementById(hide).style.display = 'none';
             document.getElementById(show).style.display = 'flex';
-            document.getElementById(hide).classList.remove('active');
-            document.getElementById(show).classList.add('active');
         }
 
         function login(n) { 
@@ -193,13 +160,14 @@
         }
 
         async function cargarDatosNube() {
-            document.getElementById('loading').style.display = 'flex';
+            const btn = document.getElementById('ref-btn');
+            btn.innerText = "⌛...";
             try {
                 const resp = await fetch(CLOUD_URL);
                 dbCloud = await resp.json();
                 renderHistory();
-            } catch (e) { alert("Error de conexión"); }
-            document.getElementById('loading').style.display = 'none';
+            } catch (e) { console.log("Error de red silencioso"); }
+            btn.innerText = "🔄 REFRESCAR";
         }
 
         function addItem() {
@@ -216,7 +184,7 @@
             let sum = 0; list.innerHTML = "";
             route.forEach((i, idx) => {
                 sum += i.can;
-                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b></span><span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); margin-left:15px; cursor:pointer;">✕</b></span></div>`;
+                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b></span><span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); cursor:pointer;">✕</b></span></div>`;
             });
             document.getElementById('total-vivo').innerText = sum;
             document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
@@ -235,64 +203,47 @@
                 chofer: document.getElementById('cho').value,
                 auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
                 placa: document.getElementById('pla').value,
-                operario: user, 
-                items: [...route], 
-                total: route.reduce((a,b)=>a+b.can, 0)
+                operario: user, items: [...route], total: route.reduce((a,b)=>a+b.can, 0)
             };
 
-            document.getElementById('loading').style.display = 'flex';
-            
-            // Enviar a Google Sheets
-            await fetch(CLOUD_URL, {
-                method: 'POST',
-                body: JSON.stringify(reg)
-            });
+            // Enviar sin bloquear pantalla
+            fetch(CLOUD_URL, { method: 'POST', body: JSON.stringify(reg) })
+            .then(() => cargarDatosNube());
 
             if(wa) {
-                let ahora = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                let m = `*DESPACHO TWINS*\nHora: ${ahora}\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
+                let m = `*DESPACHO TWINS*\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
                 route.forEach(i => m += `• ${i.cli}: ${i.can} CJ\n`);
                 m += `---\nTOTAL: ${reg.total} CJ`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
 
-            route = []; 
+            route = []; renderRoute(); validateForm();
             document.getElementById('cho').value = ""; document.getElementById('aux').value = ""; document.getElementById('pla').value = "";
-            renderRoute(); validateForm(); 
-            await cargarDatosNube();
-            alert("✅ DESPACHO SINCRONIZADO");
+            alert("✅ REGISTRADO");
         }
 
         function verReportes() { 
             const cont = document.getElementById('driver-chips-container');
-            cont.innerHTML = `<div class="chip ${activeFilter=='TODOS'?'active':''}" onclick="setF('TODOS')">TODOS</div>`;
+            cont.innerHTML = `<div class="chip" onclick="setF('TODOS')">TODOS</div>`;
             ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
-                cont.innerHTML += `<div class="chip ${activeFilter==d?'active':''}" onclick="setF('${d}')">${d}</div>`;
+                cont.innerHTML += `<div class="chip" onclick="setF('${d}')">${d}</div>`;
             });
-            renderHistory(); 
-            switchPage('p2', 'p3'); 
+            renderHistory(); switchPage('p2', 'p3'); 
         }
 
-        function setF(d) { activeFilter = d; renderHistory(); verReportes(); }
+        function setF(d) { activeFilter = d; renderHistory(); }
 
         function renderHistory() {
             const list = document.getElementById('history-list');
             const search = document.getElementById('search-cli').value.toUpperCase();
             let sum = 0; list.innerHTML = "";
-            
             dbCloud.forEach(r => {
-                const matchSearch = search === "" || r.items.toUpperCase().includes(search) || r.placa.includes(search);
-                const matchDriver = activeFilter === "TODOS" || r.chofer === activeFilter;
-
-                if(matchSearch && matchDriver) {
+                if((search === "" || r.items.toUpperCase().includes(search) || r.placa.includes(search)) && (activeFilter === "TODOS" || r.chofer === activeFilter)) {
                     sum += parseFloat(r.total);
-                    list.innerHTML += `
-                    <div class="card" style="border-left:5px solid var(--twins-blue)">
-                        <div style="display:flex; justify-content:space-between">
-                            <b>${new Date(r.fecha).toLocaleString()}</b><b style="color:var(--twins-blue)">${r.total} CJ</b>
-                        </div>
-                        <div style="font-size:12px; margin:5px 0; opacity:0.8;">Ch: ${r.chofer} | Pl: ${r.placa} | Op: ${r.operario}</div>
-                        <div style="font-size:13px; background:rgba(0,0,0,0.05); padding:8px; border-radius:8px;">${r.items}</div>
+                    list.innerHTML += `<div class="card" style="border-left:5px solid var(--twins-blue)">
+                        <div style="display:flex; justify-content:space-between"><b>${new Date(r.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</b><b>${r.total} CJ</b></div>
+                        <div style="font-size:12px; margin:4px 0;">${r.chofer} | ${r.placa} | Op: ${r.operario}</div>
+                        <div style="font-size:13px; opacity:0.8;">${r.items}</div>
                     </div>`;
                 }
             });
