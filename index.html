@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TWINS V10 | OFICIAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
@@ -12,8 +12,22 @@
             --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
             --twins-blue: #3b82f6; --twins-green: #22c55e;
             --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
+            --grad: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
         }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+        
+        /* Título Moderno */
+        .main-title { 
+            font-size: 32px; 
+            font-weight: 900; 
+            letter-spacing: -1px;
+            background: var(--grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -26,7 +40,6 @@
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
         
-        /* Estilos de tarjeta con soporte para swipe */
         .swipe-container { position: relative; background: var(--danger); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
         .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; z-index: 2; transition: transform 0.2s; margin-bottom: 0; }
         
@@ -59,7 +72,7 @@
 
     <div class="app-container">
         <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
-            <div style="font-size: 28px; font-weight: 900; color: var(--twins-blue); line-height: 1.2;">REGISTRO DESPACHOS<br>TWINS</div>
+            <div class="main-title">REGISTRO<br>DESPACHOS TWINS</div>
             <div style="max-width: 260px; margin: 30px auto; display: grid; gap: 10px;">
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 TAJHO (Admin)</button>
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
@@ -149,18 +162,9 @@
             document.getElementById(nBtn).classList.add('active-nav');
         }
 
-        async function nav_hist() { 
-            nav('p3'); 
-            if(db.length === 0) await load(); else renderH();
-        }
+        async function nav_hist() { nav('p3'); if(db.length === 0) await load(); else renderH(); }
 
-        async function load() { 
-            try { 
-                const r = await fetch(URL); 
-                db = await r.json(); 
-                renderH(); 
-            } catch(e) { console.error(e); }
-        }
+        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) { console.error(e); } }
 
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
@@ -192,15 +196,28 @@
             window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
         }
 
-        /* LOGICA SWIPE */
+        /* LÓGICA SWIPE CON BORRADO EN BASE DE DATOS */
         function hStart(e) { tStartX = e.touches[0].clientX; }
         function hMove(e, id) { let d = e.touches[0].clientX - tStartX; if(d < 0 && d > -100) document.getElementById('c-'+id).style.transform = `translateX(${d}px)`; }
-        function hEnd(e, id) { let d = e.changedTouches[0].clientX - tStartX; let el = document.getElementById('c-'+id); if(d < -70) { if(confirm("¿Eliminar del historial?")) { db.splice(id, 1); renderH(); } } el.style.transform = `translateX(0)`; }
+        
+        async function hEnd(e, id) { 
+            let d = e.changedTouches[0].clientX - tStartX; 
+            let el = document.getElementById('c-'+id); 
+            if(d < -70) { 
+                if(confirm("¿Eliminar permanentemente de la Nube?")) {
+                    const rowToDelete = db[id];
+                    // Envío de comando DELETE al Apps Script
+                    fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', rowData: rowToDelete }) });
+                    db.splice(id, 1); 
+                    renderH(); 
+                } 
+            } 
+            el.style.transform = `translateX(0)`; 
+        }
 
         function renderH() {
             const list = document.getElementById('h-list');
             const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
-            
             let tAcumulado = 0, tDiaIndividual = 0;
             const targetDate = fD ? new Date(fD + "T12:00:00") : new Date();
             const targetStr = targetDate.getFullYear() + '-' + String(targetDate.getMonth() + 1).padStart(2, '0') + '-' + String(targetDate.getDate()).padStart(2, '0');
@@ -210,10 +227,8 @@
                 const r = db[i];
                 const rDate = new Date(r.fecha);
                 const rStr = rDate.getFullYear() + '-' + String(rDate.getMonth() + 1).padStart(2, '0') + '-' + String(rDate.getDate()).padStart(2, '0');
-                const cVal = parseFloat(r.total) || 0;
-
-                if(rDate.getFullYear() === targetDate.getFullYear() && rDate.getMonth() === targetDate.getMonth() && rDate.getDate() <= targetDate.getDate()) tAcumulado += cVal;
-                if(rStr === targetStr) tDiaIndividual += cVal;
+                if(rDate.getFullYear() === targetDate.getFullYear() && rDate.getMonth() === targetDate.getMonth() && rDate.getDate() <= targetDate.getDate()) tAcumulado += parseFloat(r.total) || 0;
+                if(rStr === targetStr) tDiaIndividual += parseFloat(r.total) || 0;
 
                 if ((r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS)) && (fM === "ALL" || rDate.getMonth().toString() === fM) && (!fD || rStr === fD)) {
                     html += `
