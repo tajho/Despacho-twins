@@ -25,17 +25,17 @@
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; transition: transform 0.2s; position: relative; z-index: 2; }
+        
+        /* Estilos de tarjeta con soporte para swipe */
+        .swipe-container { position: relative; background: var(--danger); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; z-index: 2; transition: transform 0.2s; margin-bottom: 0; }
+        
         input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
         .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
         .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
         .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
-        
-        /* Contenedor para el swipe */
-        .swipe-wrap { position: relative; background: var(--danger); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
-        .swipe-bg { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-weight: 800; color: white; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -59,7 +59,7 @@
 
     <div class="app-container">
         <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
-            <div style="font-size: 40px; font-weight: 900; color: var(--twins-blue);">TWINS</div>
+            <div style="font-size: 28px; font-weight: 900; color: var(--twins-blue); line-height: 1.2;">REGISTRO DESPACHOS<br>TWINS</div>
             <div style="max-width: 260px; margin: 30px auto; display: grid; gap: 10px;">
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 TAJHO (Admin)</button>
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
@@ -123,7 +123,7 @@
     <script>
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
-        let touchX = 0;
+        let tStartX = 0;
 
         window.onload = () => {
             const h = new Date();
@@ -192,20 +192,10 @@
             window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
         }
 
-        // SWIPE LÓGICA
-        function handleStart(e) { touchX = e.touches[0].clientX; }
-        function handleMove(e, id) {
-            let diff = e.touches[0].clientX - touchX;
-            if (diff < 0 && diff > -100) document.getElementById('c-'+id).style.transform = `translateX(${diff}px)`;
-        }
-        function handleEnd(e, id) {
-            let diff = e.changedTouches[0].clientX - touchX;
-            let el = document.getElementById('c-'+id);
-            if (diff < -70) {
-                if(confirm("¿Eliminar del historial local?")) { db.splice(id, 1); renderH(); }
-            }
-            el.style.transform = `translateX(0)`;
-        }
+        /* LOGICA SWIPE */
+        function hStart(e) { tStartX = e.touches[0].clientX; }
+        function hMove(e, id) { let d = e.touches[0].clientX - tStartX; if(d < 0 && d > -100) document.getElementById('c-'+id).style.transform = `translateX(${d}px)`; }
+        function hEnd(e, id) { let d = e.changedTouches[0].clientX - tStartX; let el = document.getElementById('c-'+id); if(d < -70) { if(confirm("¿Eliminar del historial?")) { db.splice(id, 1); renderH(); } } el.style.transform = `translateX(0)`; }
 
         function renderH() {
             const list = document.getElementById('h-list');
@@ -226,9 +216,9 @@
                 if(rStr === targetStr) tDiaIndividual += cVal;
 
                 if ((r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS)) && (fM === "ALL" || rDate.getMonth().toString() === fM) && (!fD || rStr === fD)) {
-                    html += `<div class="swipe-wrap">
-                        <div class="swipe-bg">BORRAR 🗑️</div>
-                        <div class="card" id="c-${i}" ontouchstart="handleStart(event)" ontouchmove="handleMove(event, ${i})" ontouchend="handleEnd(event, ${i})">
+                    html += `
+                    <div class="swipe-container">
+                        <div class="card" id="c-${i}" ontouchstart="hStart(event)" ontouchmove="hMove(event, ${i})" ontouchend="hEnd(event, ${i})">
                             <div style="display:flex; justify-content:space-between; align-items:start;">
                                 <div><div style="font-weight:800; font-size:13px;">${r.chofer}</div><div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div></div>
                                 <div style="display:flex; gap:6px;">
