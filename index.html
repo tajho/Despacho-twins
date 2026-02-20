@@ -7,33 +7,64 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --twins-blue: #0056b3; --twins-green: #8cc63f; --bg: #ffffff;
-            --card: #f8fafc; --text: #1e293b; --border: #e2e8f0;
-            --input-bg: #ffffff; --danger: #ef4444;
+            --twins-blue: #0056b3;
+            --twins-green: #8cc63f;
+            --bg: #ffffff;
+            --card: #f8fafc;
+            --text: #1e293b;
+            --text-dim: #64748b;
+            --border: #e2e8f0;
+            --input-bg: #ffffff;
+            --danger: #ef4444;
         }
+
         [data-theme="dark"] {
-            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
-            --border: #334155; --input-bg: #1e293b; --twins-blue: #3b82f6;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #334155;
+            --input-bg: #1e293b;
+            --twins-blue: #3b82f6;
         }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+
+        body { 
+            background: var(--bg); color: var(--text); 
+            font-family: 'Inter', sans-serif; margin: 0; padding: 0; 
+            transition: background 0.2s;
+        }
+
         .page { display: none; padding: 20px; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
         .active { display: flex !important; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .theme-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+        .theme-btn { 
+            background: var(--card); border: 1px solid var(--border); 
+            color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer;
+        }
+
         .login-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .main-title { font-size: 32px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px; }
         .creator-tag { font-size: 14px; font-weight: 700; color: var(--twins-blue); margin-bottom: 30px; opacity: 0.8; }
+
         .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-bottom: 12px; }
         .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; }
+
         .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; }
-        .btn-save:disabled { background: #94a3b8; opacity: 0.5; }
+        .btn-save:disabled { background: #94a3b8; opacity: 0.5; cursor: not-allowed; }
         .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); }
-        input, select { width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 16px; box-sizing: border-box; }
+        
+        input, select { 
+            width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; 
+            border: 1px solid var(--border); background: var(--input-bg); 
+            color: var(--text); font-size: 16px; box-sizing: border-box; 
+        }
+
         .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; color: var(--text); font-size: 12px; margin-bottom: 5px; }
+        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; color: var(--text); font-size: 12px; }
         .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
     </style>
 </head>
@@ -56,7 +87,10 @@
     <div id="p2" class="page">
         <div class="top-bar">
             <b id="user-display" style="color:var(--twins-blue)"></b>
-            <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
+            <div>
+                <button class="theme-btn" onclick="toggleTheme()" style="margin-right:8px;">🌙</button>
+                <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
+            </div>
         </div>
         <div class="banner-total">
             <small>CAJAS EN RUTA</small>
@@ -68,7 +102,7 @@
             <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
         </div>
         <div id="area-despacho" style="display:none;">
-            <div class="card" id="lista-actual"></div>
+            <div class="card" id="lista-actual" style="height:auto;"></div>
             <div class="card">
                 <select id="pla" onchange="validateForm()">
                     <option value="">Placa...</option>
@@ -91,7 +125,7 @@
 
     <div id="p3" class="page">
         <div class="top-bar">
-            <button class="btn btn-outline" style="width:auto; padding:8px 15px; margin:0;" onclick="atras()">← VOLVER</button>
+            <button class="btn btn-outline" style="width:auto; padding:8px 15px; margin:0;" onclick="switchPage('p3','p2')">← VOLVER</button>
             <button id="ref-btn" class="btn" style="width:auto; padding:8px; background:var(--twins-green); color:white;" onclick="cargarDatosNube()">🔄 ACTUALIZAR</button>
         </div>
         <div class="card"><input type="text" id="search-cli" placeholder="🔍 Buscar cliente o placa..." onkeyup="renderHistory()"></div>
@@ -115,8 +149,8 @@
         if(localStorage.getItem('theme') === 'dark') toggleTheme();
 
         function switchPage(hide, show) {
-            document.getElementById(hide).classList.remove('active');
-            document.getElementById(show).classList.add('active');
+            document.getElementById(hide).style.display = 'none';
+            document.getElementById(show).style.display = 'flex';
         }
 
         function login(n) { 
@@ -126,7 +160,16 @@
             cargarDatosNube();
         }
 
-        function atras() { switchPage('p3', 'p2'); }
+        async function cargarDatosNube() {
+            const btn = document.getElementById('ref-btn');
+            if(btn) btn.innerText = "⌛...";
+            try {
+                const resp = await fetch(CLOUD_URL);
+                dbCloud = await resp.json();
+                renderHistory();
+            } catch (e) { console.log("Carga silenciosa"); }
+            if(btn) btn.innerText = "🔄 ACTUALIZAR";
+        }
 
         function addItem() {
             const cli = document.getElementById('cli').value.toUpperCase().trim();
@@ -142,7 +185,7 @@
             let sum = 0; list.innerHTML = "";
             route.forEach((i, idx) => {
                 sum += i.can;
-                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b></span><span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); cursor:pointer; padding-left:10px;">✕</b></span></div>`;
+                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b></span><span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); cursor:pointer;">✕</b></span></div>`;
             });
             document.getElementById('total-vivo').innerText = sum;
             document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
@@ -156,17 +199,6 @@
             document.getElementById('btn-save-only').disabled = !ok;
         }
 
-        async function cargarDatosNube() {
-            const btn = document.getElementById('ref-btn');
-            if(btn) btn.innerText = "⌛...";
-            try {
-                const r = await fetch(CLOUD_URL);
-                dbCloud = await r.json();
-                renderHistory();
-            } catch (e) { console.log("Carga silenciosa"); }
-            if(btn) btn.innerText = "🔄 ACTUALIZAR";
-        }
-
         async function guardar(wa) {
             const reg = {
                 chofer: document.getElementById('cho').value,
@@ -175,12 +207,13 @@
                 operario: user, items: [...route], total: route.reduce((a,b)=>a+b.can, 0)
             };
 
+            // BASE DE DATOS EN SEGUNDO PLANO (MODO NO-CORS PARA QUE NO BLOQUEE BOTONES)
             fetch(CLOUD_URL, {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(reg)
             }).then(() => {
-                setTimeout(cargarDatosNube, 1500);
+                setTimeout(cargarDatosNube, 1000);
             });
 
             if(wa) {
@@ -190,26 +223,25 @@
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
 
-            alert("✅ REGISTRADO");
             route = []; renderRoute(); validateForm();
             document.getElementById('cho').value = ""; document.getElementById('aux').value = ""; document.getElementById('pla').value = "";
+            alert("✅ REGISTRADO");
         }
 
         function verReportes() { 
             const cont = document.getElementById('driver-chips-container');
             cont.innerHTML = `<div class="chip active" id="chip-TODOS" onclick="setF('TODOS')">TODOS</div>`;
             ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
-                cont.innerHTML += `<div class="chip" id="chip-${d.replace(/\s+/g, '')}" onclick="setF('${d}')">${d}</div>`;
+                cont.innerHTML += `<div class="chip" id="chip-${d.replace(' ','')}" onclick="setF('${d}')">${d}</div>`;
             });
-            renderHistory(); 
-            switchPage('p2', 'p3'); 
+            renderHistory(); switchPage('p2', 'p3'); 
         }
 
         function setF(d) { 
             activeFilter = d; 
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            const id = d === 'TODOS' ? 'chip-TODOS' : 'chip-' + d.replace(/\s+/g, '');
-            if(document.getElementById(id)) document.getElementById(id).classList.add('active');
+            const activeId = d === 'TODOS' ? 'chip-TODOS' : 'chip-' + d.replace(' ','');
+            if(document.getElementById(activeId)) document.getElementById(activeId).classList.add('active');
             renderHistory(); 
         }
 
@@ -218,14 +250,12 @@
             const search = document.getElementById('search-cli').value.toUpperCase();
             let sum = 0; list.innerHTML = "";
             dbCloud.forEach(r => {
-                const mS = search === "" || r.items.toUpperCase().includes(search) || r.placa.includes(search);
-                const mD = activeFilter === "TODOS" || r.chofer === activeFilter;
-                if(mS && mD) {
+                if((search === "" || r.items.toUpperCase().includes(search) || r.placa.includes(search)) && (activeFilter === "TODOS" || r.chofer === activeFilter)) {
                     sum += parseFloat(r.total);
                     list.innerHTML += `<div class="card" style="border-left:5px solid var(--twins-blue)">
                         <div style="display:flex; justify-content:space-between"><b>${new Date(r.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</b><b>${r.total} CJ</b></div>
-                        <div style="font-size:12px; margin:4px 0; opacity:0.8;">${r.chofer} | ${r.placa} | Op: ${r.operario}</div>
-                        <div style="font-size:13px;">${r.items}</div>
+                        <div style="font-size:12px; margin:4px 0;">${r.chofer} | ${r.placa} | Op: ${r.operario}</div>
+                        <div style="font-size:13px; opacity:0.8;">${r.items}</div>
                     </div>`;
                 }
             });
