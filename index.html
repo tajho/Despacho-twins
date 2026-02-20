@@ -15,7 +15,6 @@
             --border: #e2e8f0;
             --input-bg: #ffffff;
             --danger: #ef4444;
-            --btn-grey: #64748b;
         }
 
         [data-theme="dark"] {
@@ -25,7 +24,6 @@
             --border: #334155;
             --input-bg: #0f172a;
             --twins-blue: #3b82f6;
-            --btn-grey: #475569;
         }
 
         html, body {
@@ -66,35 +64,18 @@
 
         .date-divider { background: var(--twins-blue); color: white; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; margin: 20px 0 10px 0; display: flex; justify-content: space-between; }
 
-        /* EL BOTÓN DE LA IMAGEN (FLECHA CIRCULAR GRIS) */
-        .theme-circle {
-            width: 60px; height: 60px;
-            background: var(--btn-grey);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin: 30px auto;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: all 0.4s ease;
-            border: 2px solid rgba(255,255,255,0.1);
-        }
-        .theme-circle svg {
-            width: 30px; height: 30px;
-            fill: white;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        [data-theme="dark"] .theme-circle {
-            background: var(--twins-blue);
-        }
-        [data-theme="dark"] .theme-circle svg {
-            transform: rotate(180deg);
+        /* MODO OSCURO SUTIL */
+        .theme-sutil {
+            position: absolute; top: 15px; right: 15px;
+            font-size: 20px; cursor: pointer; opacity: 0.5;
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 15vh;">
+        <div id="p1" class="page active" style="text-align: center; padding-top: 15vh; position: relative;">
+            <div class="theme-sutil" onclick="toggleTheme()">🌓</div>
             <div style="font-size: 38px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px;">TWINS</div>
             <div style="font-size: 12px; letter-spacing: 3px; opacity: 0.6; margin-bottom: 40px;">ALMACÉN</div>
             <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
@@ -102,10 +83,6 @@
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('FRANCESCO')">FRANCESCO</button>
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('OSCAR')">OSCAR</button>
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('LUIS HERBER')">LUIS HERBER</button>
-                
-                <div class="theme-circle" onclick="toggleTheme()">
-                    <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-                </div>
             </div>
         </div>
 
@@ -113,7 +90,7 @@
             <b id="user-display">---</b>
             <div style="display:flex; gap:20px;">
                 <span onclick="toggleTheme()" style="font-size:20px; cursor:pointer;">🌓</span>
-                <span onclick="location.reload()" style="color:var(--danger); font-size:12px; font-weight:800; cursor:pointer;">SALIR</span>
+                <span onclick="confirmarSalida()" style="color:var(--danger); font-size:12px; font-weight:800; cursor:pointer;">SALIR</span>
             </div>
         </div>
 
@@ -187,19 +164,49 @@
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
 
+        // Recuperar datos al cargar
+        window.onload = () => {
+            const savedRuta = localStorage.getItem('ruta_temporal');
+            const savedUser = localStorage.getItem('user_twins');
+            if (savedRuta) {
+                ruta = JSON.parse(savedRuta);
+                renderR();
+            }
+            if (savedUser) {
+                login(savedUser);
+            }
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        };
+
         function toggleTheme() {
             const b = document.documentElement;
-            b.getAttribute('data-theme') === 'dark' ? b.removeAttribute('data-theme') : b.setAttribute('data-theme', 'dark');
+            if (b.getAttribute('data-theme') === 'dark') {
+                b.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                b.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
         }
 
         function login(n) {
             user = n;
+            localStorage.setItem('user_twins', n);
             document.getElementById('p1').classList.remove('active');
             document.getElementById('header-app').style.display = 'flex';
             document.getElementById('nav-app').style.display = 'flex';
             document.getElementById('user-display').innerText = "OP: " + n;
             nav('p2');
             load();
+        }
+
+        function confirmarSalida() {
+            if (confirm("¿Cerrar sesión? La lista actual se mantendrá guardada.")) {
+                localStorage.removeItem('user_twins');
+                location.reload();
+            }
         }
 
         function nav(id) {
@@ -216,7 +223,7 @@
                 const r = await fetch(URL);
                 db = await r.json();
                 renderH();
-            } catch(e) { console.log("Error al cargar"); }
+            } catch(e) { console.log("Error de red"); }
         }
 
         function addItem() {
@@ -224,6 +231,7 @@
             const ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
             ruta.push({cl, ca});
+            localStorage.setItem('ruta_temporal', JSON.stringify(ruta)); // Guardado automático
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderR(); val();
         }
@@ -235,14 +243,19 @@
                 s += i.ca;
                 l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
                     <span><b>${i.cl}</b></span>
-                    <span>${i.ca} CJ <b onclick="del(${x})" style="color:var(--danger); margin-left:15px;">✕</b></span>
+                    <span>${i.ca} CJ <b onclick="del(${x})" style="color:var(--danger); margin-left:15px; cursor:pointer;">✕</b></span>
                 </div>`;
             });
             document.getElementById('total-vivo').innerText = s;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
-        function del(x) { ruta.splice(x,1); renderR(); val(); }
+        function del(x) { 
+            ruta.splice(x,1); 
+            localStorage.setItem('ruta_temporal', JSON.stringify(ruta));
+            renderR(); 
+            val(); 
+        }
 
         function val() {
             const ok = document.getElementById('cho').value && document.getElementById('pla').value && ruta.length > 0;
@@ -258,12 +271,19 @@
                 items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "),
                 total: ruta.reduce((a,b) => a + b.ca, 0)
             };
+            
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+            
             if(wa) {
                 let m = `*DESPACHO TWINS*\nChofer: ${reg.chofer}\nPlaca: ${reg.placa}\nTotal: ${reg.total} CJ\nItems: ${reg.items}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
-            ruta = []; document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
+
+            // Limpiar al guardar con éxito
+            ruta = [];
+            localStorage.removeItem('ruta_temporal'); 
+            document.getElementById('pla').value = ""; 
+            document.getElementById('cho').value = "";
             renderR(); val();
             alert("✅ GUARDADO CORRECTO");
             setTimeout(load, 2000);
