@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | MIDNIGHT MODE</title>
+    <title>TWINS V7 | SEGURIDAD TAJHO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -58,7 +58,7 @@
         input, select { 
             width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; 
             border: 1px solid var(--border); background: var(--input-bg); 
-            color: var(--text); font-size: 16px; box-sizing: border-box; 
+            color: var(--text); font-size: 15px; box-sizing: border-box; 
             outline: none; transition: 0.2s;
         }
         input:focus { border-color: var(--twins-blue); }
@@ -67,8 +67,6 @@
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
         .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); margin-top: 10px; }
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { opacity: 0.2; cursor: not-allowed; }
 
         .date-divider { 
             background: rgba(59, 130, 246, 0.1); color: var(--twins-blue); 
@@ -77,11 +75,7 @@
         }
 
         .delete-btn { color: var(--danger); font-weight: 800; cursor: pointer; padding: 5px; }
-
-        .login-grid button {
-            background: var(--card); border: 1px solid var(--border);
-            color: var(--text); text-align: left; padding-left: 20px;
-        }
+        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -91,10 +85,10 @@
             <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px; letter-spacing: -1px;">TWINS</div>
             <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px; font-weight: 700;">GESTIÓN ALMACÉN</div>
             <div class="login-grid" style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
-                <button class="btn" onclick="login('TAJHO')">👤 TAJHO</button>
-                <button class="btn" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
-                <button class="btn" onclick="login('OSCAR')">👤 OSCAR</button>
-                <button class="btn" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align: left; padding-left: 20px;" onclick="login('TAJHO')">🔑 TAJHO (Admin)</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align: left; padding-left: 20px;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align: left; padding-left: 20px;" onclick="login('OSCAR')">👤 OSCAR</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align: left; padding-left: 20px;" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
             </div>
         </div>
 
@@ -114,13 +108,11 @@
                 </div>
                 <div style="font-size:30px;">📦</div>
             </div>
-
             <div class="card">
                 <input type="text" id="cli" placeholder="Nombre Cliente">
                 <input type="number" id="can" placeholder="Cant. Cajas" inputmode="numeric">
                 <button class="btn btn-main" onclick="addItem()">+ AGREGAR A LISTA</button>
             </div>
-
             <div id="area-envio" style="display:none;">
                 <div class="card" id="lista-items" style="border-left: 4px solid var(--twins-blue);"></div>
                 <div class="card">
@@ -134,16 +126,7 @@
                     </select>
                     <select id="aux" onchange="val()">
                         <option value="">Seleccionar Auxiliar...</option>
-                        <option value="CRISTOPHER">CRISTOPHER</option>
-                        <option value="PLACIDO">PLACIDO</option>
-                        <option value="RODOLFO">RODOLFO</option>
-                        <option value="MARTIN">MARTIN</option>
-                        <option value="RICARDO">RICARDO</option>
-                        <option value="PERCY">PERCY</option>
-                        <option value="DANIEL C">DANIEL C</option>
-                        <option value="NELSON">NELSON</option>
-                        <option value="JULIO P.">JULIO P.</option>
-                        <option value="JOFER">JOFER</option>
+                        <option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
                     </select>
                     <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
                     <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
@@ -155,14 +138,27 @@
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
                 <div class="card" style="margin-bottom:0; text-align:center; padding:10px;">
                     <small style="font-size:10px; font-weight:800; opacity:0.5;">HOY</small>
-                    <div id="stat-dia" style="font-size:22px; font-weight:900; color:var(--twins-green);">0</div>
+                    <div id="stat-dia" style="font-size:20px; font-weight:900; color:var(--twins-green);">0</div>
                 </div>
                 <div class="card" style="margin-bottom:0; text-align:center; padding:10px;">
-                    <small style="font-size:10px; font-weight:800; opacity:0.5;">MES</small>
-                    <div id="stat-mes" style="font-size:22px; font-weight:900; color:var(--twins-blue);">0</div>
+                    <small style="font-size:10px; font-weight:800; opacity:0.5;">TOTAL FILTRO</small>
+                    <div id="stat-mes" style="font-size:20px; font-weight:900; color:var(--twins-blue);">0</div>
                 </div>
             </div>
-            <input type="text" id="bus" placeholder="🔍 Buscar por cliente o placa..." onkeyup="renderH()">
+            <div class="card" style="padding:10px;">
+                <div class="filter-grid">
+                    <select id="f-mes" onchange="renderH()">
+                        <option value="ALL">Todos los Meses</option>
+                        <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+                    </select>
+                    <input type="date" id="f-dia" onchange="renderH()">
+                </div>
+                <select id="f-chofer" onchange="renderH()">
+                    <option value="ALL">Todos los Conductores</option>
+                    <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
+                </select>
+                <input type="text" id="bus" placeholder="🔍 Buscar cliente o placa..." onkeyup="renderH()" style="margin-bottom:0;">
+            </div>
             <div id="h-list"></div>
         </div>
 
@@ -186,6 +182,13 @@
         };
 
         function login(n) {
+            if (n === 'TAJHO') {
+                const pass = prompt("INGRESE CÓDIGO DE ACCESO:");
+                if (pass !== "2026") {
+                    alert("⚠️ CÓDIGO INCORRECTO");
+                    return;
+                }
+            }
             user = n;
             document.getElementById('p1').classList.remove('active');
             document.getElementById('header-app').style.display = 'flex';
@@ -273,18 +276,26 @@
         function renderH() {
             const list = document.getElementById('h-list');
             const search = document.getElementById('bus').value.toUpperCase();
-            let tM = 0, tD = 0, grupos = {};
+            const fMes = document.getElementById('f-mes').value;
+            const fDia = document.getElementById('f-dia').value;
+            const fChofer = document.getElementById('f-chofer').value;
+            let totalFiltro = 0, totalHoy = 0, grupos = {};
             list.innerHTML = "";
             const hoy = new Date().toISOString().split('T')[0];
             db.forEach(r => {
-                const fK = new Date(r.fecha).toISOString().split('T')[0];
-                if (!search || r.items.toUpperCase().includes(search) || r.placa.includes(search)) {
-                    const totalNum = parseFloat(r.total) || 0;
-                    if (!grupos[fK]) grupos[fK] = { regs: [], s: 0 };
-                    grupos[fK].regs.push(r);
-                    grupos[fK].s += totalNum;
-                    tM += totalNum;
-                    if(fK === hoy) tD += totalNum;
+                const fechaObj = new Date(r.fecha);
+                const fechaStr = fechaObj.toISOString().split('T')[0];
+                const matchSearch = !search || r.items.toUpperCase().includes(search) || r.placa.includes(search) || r.chofer.toUpperCase().includes(search);
+                const matchMes = fMes === "ALL" || fechaObj.getMonth().toString() === fMes;
+                const matchDia = !fDia || fechaStr === fDia;
+                const matchChofer = fChofer === "ALL" || r.chofer === fChofer;
+                if (matchSearch && matchMes && matchDia && matchChofer) {
+                    const cant = parseFloat(r.total) || 0;
+                    if (!grupos[fechaStr]) grupos[fechaStr] = { regs: [], s: 0 };
+                    grupos[fechaStr].regs.push(r);
+                    grupos[fechaStr].s += cant;
+                    totalFiltro += cant;
+                    if(fechaStr === hoy) totalHoy += cant;
                 }
             });
             Object.keys(grupos).sort().reverse().forEach(k => {
@@ -292,12 +303,13 @@
                 grupos[k].regs.forEach(r => {
                     list.innerHTML += `<div class="card" style="padding:12px; margin-bottom:8px;">
                         <div style="display:flex; justify-content:space-between;"><b>${r.chofer}</b> <b style="color:var(--twins-blue);">${r.total} CJ</b></div>
-                        <div style="font-size:10px; opacity:0.5; margin-top:4px;">${r.placa} • Aux: ${r.auxiliar || '---'} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+                        <div style="font-size:10px; opacity:0.5; margin-top:4px;">${r.placa} • Aux: ${r.auxiliar}</div>
+                        <div style="font-size:10px; opacity:0.3; margin-top:2px;">${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} | Op: ${r.operario}</div>
                     </div>`;
                 });
             });
-            document.getElementById('stat-mes').innerText = tM;
-            document.getElementById('stat-dia').innerText = tD;
+            document.getElementById('stat-mes').innerText = totalFiltro;
+            document.getElementById('stat-dia').innerText = totalHoy;
         }
     </script>
 </body>
