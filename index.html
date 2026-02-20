@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHOS | ELITE</title>
+    <title>TWINS DESPACHOS | ELITE V4</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -28,44 +28,50 @@
             --nav-bg: #1e293b;
         }
 
+        /* PERMITIR GESTO DE ACTUALIZAR */
         body, html { 
-            height: 100%; overflow: hidden; 
+            height: 100%; 
             background: var(--bg); color: var(--text); 
             font-family: 'Inter', sans-serif; margin: 0; padding: 0; 
-            transition: all 0.3s ease;
+            transition: background 0.3s;
+            overscroll-behavior-y: contain; /* Controla el rebote del navegador */
         }
 
-        .page { display: none; flex-direction: column; height: 100vh; box-sizing: border-box; padding-bottom: 65px; }
+        .page { display: none; flex-direction: column; height: 100vh; box-sizing: border-box; }
         .active { display: flex !important; }
         
-        .scroll-content { flex: 1; overflow-y: auto; padding: 10px; -webkit-overflow-scrolling: touch; }
+        /* SCROLL FLUIDO PARA ACTUALIZACIÓN */
+        .scroll-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 10px; 
+            padding-bottom: 90px; 
+            -webkit-overflow-scrolling: touch; 
+        }
 
-        /* Barra superior compacta */
-        .top-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); }
+        .top-header { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
         
-        /* Navegación Inferior */
         .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; height: 60px; 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 65px; 
             background: var(--nav-bg); border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; align-items: center;
             z-index: 1000;
         }
-        .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; opacity: 0.6; }
-        .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
+        .nav-item { border: none; background: none; color: var(--text); font-size: 12px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.5; width: 50%; }
+        .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
 
-        /* Banner de Cajas Compacto */
         .banner-total-mini { 
             background: var(--twins-blue); color: white; border-radius: 12px; 
-            padding: 10px 15px; display: flex; justify-content: space-between; 
-            align-items: center; margin: 5px 10px; flex-shrink: 0;
+            padding: 8px 15px; display: flex; justify-content: space-between; 
+            align-items: center; margin: 8px 10px; flex-shrink: 0;
         }
 
         .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 12px; margin-bottom: 8px; }
 
         .btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-size: 13px; font-weight: 700; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; margin-top: 5px; }
-        .btn-save { background: var(--twins-green); color: white; margin-top: 5px; }
-        .btn-outline { background: transparent; border: 1px solid var(--twins-blue); color: var(--twins-blue); margin-top: 5px; }
+        .btn-save { background: var(--twins-green); color: white; margin-top: 8px; }
+        .btn-outline { background: transparent; border: 1.5px solid var(--twins-blue); color: var(--twins-blue); margin-top: 8px; }
         .btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         input, select { 
@@ -74,23 +80,28 @@
             color: var(--text); font-size: 15px; box-sizing: border-box; 
         }
 
-        .date-divider { 
-            background: var(--twins-blue); color: white; padding: 8px 12px; 
-            border-radius: 8px; font-size: 11px; font-weight: 800; 
-            margin: 10px 0 5px 0; display: flex; justify-content: space-between;
+        /* INDICADOR DE ACTUALIZACIÓN VISIBLE */
+        #pull-indicator { 
+            text-align: center; 
+            height: 0; 
+            overflow: hidden; 
+            transition: height 0.3s ease; 
+            color: var(--twins-green); 
+            font-weight: 800; 
+            font-size: 11px; 
+            background: var(--card);
+            line-height: 40px;
         }
-
-        #pull-indicator { text-align: center; height: 0; overflow: hidden; transition: 0.3s; color: var(--twins-green); font-weight: 800; font-size: 11px; }
     </style>
 </head>
 <body ontouchstart="hStart(event)" ontouchmove="hMove(event)" ontouchend="hEnd()">
 
-    <div id="p1" class="page active" style="justify-content: center; align-items: center; padding-bottom: 0;">
+    <div id="p1" class="page active" style="justify-content: center; align-items: center;">
         <div style="text-align:center">
-            <div style="font-size: 24px; font-weight: 800; color: var(--twins-blue);">TWINS DESPACHOS</div>
+            <div style="font-size: 26px; font-weight: 800; color: var(--twins-blue);">TWINS DESPACHOS</div>
             <p style="opacity: 0.6; font-weight: 700; font-size: 11px; letter-spacing: 1px;">SISTEMA DE ALMACÉN</p>
         </div>
-        <div style="width: 100%; max-width: 260px; margin-top: 25px; display: grid; gap: 8px;">
+        <div style="width: 100%; max-width: 260px; margin-top: 30px; display: grid; gap: 10px;">
             <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('TAJHO')">TAJHO</button>
             <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('FRANCESCO')">FRANCESCO</button>
             <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('OSCAR')">OSCAR</button>
@@ -99,204 +110,11 @@
     </div>
 
     <div id="p2" class="page">
+        <div id="pull-indicator-p2" style="text-align:center; height:0; overflow:hidden; background:var(--card); color:var(--twins-blue); font-size:11px; font-weight:800; line-height:40px;">⬇️ SUELTA PARA ACTUALIZAR</div>
         <div class="top-header">
             <b id="user-display" style="color:var(--twins-blue); font-size: 14px;">---</b>
-            <div style="display:flex; gap:12px; align-items: center;">
-                <span onclick="toggleTheme()" style="font-size:18px; cursor:pointer;">🌓</span>
+            <div style="display:flex; gap:15px; align-items: center;">
+                <span onclick="toggleTheme()" style="font-size:20px; cursor:pointer;">🌓</span>
                 <span onclick="location.reload()" style="color:var(--danger); font-weight:800; font-size:12px;">SALIR</span>
             </div>
         </div>
-        
-        <div class="banner-total-mini">
-            <span style="font-weight: 700; font-size: 13px;">CAJAS EN LISTA:</span>
-            <span id="total-vivo" style="font-size:24px; font-weight:900;">0</span>
-        </div>
-
-        <div class="scroll-content">
-            <div class="card" style="padding: 10px;">
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="cli" placeholder="Cliente" style="flex: 2;">
-                    <input type="number" id="can" placeholder="Cant." inputmode="numeric" style="flex: 1;">
-                </div>
-                <button class="btn btn-main" onclick="addItem()">+ AGREGAR A LISTA</button>
-            </div>
-            
-            <div id="area-despacho" style="display:none;">
-                <div class="card" id="lista-actual" style="border-left: 4px solid var(--twins-blue); background: var(--bg);"></div>
-                <div class="card">
-                    <select id="pla" onchange="validateForm()">
-                        <option value="">Placa...</option>
-                        <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
-                    </select>
-                    <select id="cho" onchange="validateForm()">
-                        <option value="">Chofer...</option>
-                        <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
-                    </select>
-                    <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR WA</button>
-                    <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR EN NUBE</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="bottom-nav">
-            <button class="nav-item active-nav" onclick="switchPage('p3', 'p2')"><span>📝 Registro</span></button>
-            <button class="nav-item" onclick="verReportes()"><span>📊 Historial</span></button>
-        </div>
-    </div>
-
-    <div id="p3" class="page">
-        <div class="top-header">
-            <div style="display:flex; gap:10px;">
-                <div style="text-align:left"><small style="font-size:9px; opacity:0.6; display:block;">MES</small><b id="stat-mes" style="color:var(--twins-blue);">0</b></div>
-                <div style="text-align:left"><small style="font-size:9px; opacity:0.6; display:block;">HOY</small><b id="stat-dia" style="color:var(--twins-green);">0</b></div>
-            </div>
-            <span onclick="toggleTheme()" style="font-size:18px;">🌓</span>
-        </div>
-
-        <div id="pull-indicator">⬇️ ACTUALIZANDO...</div>
-
-        <div class="scroll-content">
-            <div class="card" style="padding:8px;">
-                <input type="text" id="search-cli" placeholder="🔍 Buscar..." onkeyup="renderHistory()">
-                <div style="display:flex; gap:5px; margin-top:5px;">
-                    <select id="filter-month" onchange="renderHistory()" style="margin:0; font-size:13px; height:35px;">
-                        <option value="ALL">Meses</option>
-                        <option value="0">Ene</option><option value="1">Feb</option><option value="2">Mar</option>
-                    </select>
-                    <input type="date" id="filter-date" onchange="renderHistory()" style="margin:0; width:130px; font-size:13px; height:35px;">
-                </div>
-            </div>
-            <div id="driver-chips" style="display:flex; gap:5px; overflow-x:auto; padding:5px 0;"></div>
-            <div id="history-list"></div>
-        </div>
-
-        <div class="bottom-nav">
-            <button class="nav-item" onclick="switchPage('p3', 'p2')"><span>📝 Registro</span></button>
-            <button class="nav-item active-nav"><span>📊 Historial</span></button>
-        </div>
-    </div>
-
-    <script>
-        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwZ9POMWvQZ_ymsu5TU9MK7ERY3jpAPLMUnGTAhBSoZo9s0Nq_PGADRi59Le0PulYia/exec";
-        let user = "", route = [], activeFilter = "TODOS", dbCloud = [];
-
-        function toggleTheme() {
-            const body = document.documentElement;
-            body.getAttribute('data-theme') === 'dark' ? body.removeAttribute('data-theme') : body.setAttribute('data-theme', 'dark');
-        }
-
-        let sY = 0;
-        function hStart(e) { sY = e.touches[0].pageY; }
-        function hMove(e) {
-            let move = e.touches[0].pageY - sY;
-            if (move > 80 && document.getElementById('p3').classList.contains('active')) {
-                document.getElementById('pull-indicator').style.height = "30px";
-            }
-        }
-        function hEnd() {
-            if (document.getElementById('pull-indicator').style.height === "30px") {
-                cargarDatosNube();
-                setTimeout(() => document.getElementById('pull-indicator').style.height = "0", 800);
-            }
-        }
-
-        function switchPage(hide, show) {
-            document.getElementById(hide).classList.remove('active');
-            document.getElementById(show).classList.add('active');
-        }
-
-        function login(n) { 
-            user = n; 
-            document.getElementById('user-display').innerText = "OP: " + n; 
-            switchPage('p1', 'p2'); 
-            cargarDatosNube();
-        }
-
-        async function cargarDatosNube() {
-            try {
-                const r = await fetch(CLOUD_URL);
-                dbCloud = await r.json();
-                renderHistory();
-            } catch (e) { console.log("Error nube"); }
-        }
-
-        function addItem() {
-            const cli = document.getElementById('cli').value.toUpperCase().trim();
-            const can = parseInt(document.getElementById('can').value);
-            if(!cli || isNaN(can)) return;
-            route.push({cli, can});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderRoute(); validateForm();
-        }
-
-        function renderRoute() {
-            const list = document.getElementById('lista-actual');
-            let sum = 0; list.innerHTML = "";
-            route.forEach((i, idx) => {
-                sum += i.can;
-                list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border); font-size:14px;">
-                    <span><b>${i.cli}</b></span>
-                    <span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); margin-left:8px;">✕</b></span>
-                </div>`;
-            });
-            document.getElementById('total-vivo').innerText = sum;
-            document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
-        }
-
-        function delItem(idx) { route.splice(idx, 1); renderRoute(); validateForm(); }
-
-        function validateForm() {
-            const ok = document.getElementById('cho').value && document.getElementById('pla').value && route.length > 0;
-            document.getElementById('btn-save-wa').disabled = !ok;
-            document.getElementById('btn-save-only').disabled = !ok;
-        }
-
-        async function guardar(wa) {
-            const reg = {
-                chofer: document.getElementById('cho').value,
-                placa: document.getElementById('pla').value,
-                operario: user,
-                items: route.map(i => `${i.cli}: ${i.can}`).join(", "),
-                total: route.reduce((a,b) => a + b.can, 0)
-            };
-            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            if(wa) {
-                let m = `*DESPACHO TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ\nItems: ${reg.items}`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
-            }
-            route = []; renderRoute(); validateForm();
-            alert("✅ REGISTRO EXITOSO");
-            cargarDatosNube();
-        }
-
-        function verReportes() {
-            const cont = document.getElementById('driver-chips');
-            cont.innerHTML = `<div class="chip ${activeFilter==='TODOS'?'active':''}" onclick="setF('TODOS')" style="padding:5px 10px; border:1px solid var(--border); border-radius:15px; font-size:11px;">TODOS</div>`;
-            ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
-                cont.innerHTML += `<div class="chip ${activeFilter===d?'active':''}" onclick="setF('${d}')" style="padding:5px 10px; border:1px solid var(--border); border-radius:15px; font-size:11px; white-space:nowrap;">${d}</div>`;
-            });
-            renderHistory(); switchPage('p2', 'p3');
-        }
-
-        function setF(d) { activeFilter = d; verReportes(); }
-
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            const search = document.getElementById('search-cli').value.toUpperCase();
-            const monthF = document.getElementById('filter-month').value;
-            const dateF = document.getElementById('filter-date').value;
-            let totalM = 0, totalD = 0, grupos = {};
-            list.innerHTML = "";
-
-            dbCloud.forEach(r => {
-                const f = new Date(r.fecha);
-                const fKey = f.toISOString().split('T')[0];
-                const matchS = !search || (r.items && r.items.toUpperCase().includes(search)) || r.placa.includes(search);
-                const matchC = activeFilter === "TODOS" || r.chofer === activeFilter;
-                const matchM = monthF === "ALL" || f.getMonth().toString() === monthF;
-                const matchD = !dateF || fKey === dateF;
-
-                if (matchS && matchC && matchM && matchD) {
-                    if (!grupos[fKey]) grupos[fKey] = { regs: [], suma: 0 };
-                    grupos[fKey].regs.push(r);
-                    grupos
