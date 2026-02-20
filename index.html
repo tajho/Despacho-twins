@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | FINAL OPTIMIZADO</title>
+    <title>TWINS V7 | ORDEN DINÁMICO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,7 +18,6 @@
         .active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* MODALES */
         #modal-pass, #modal-view {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center;
@@ -29,8 +28,6 @@
         .nav-item { border: none; background: none; color: var(--text); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
 
-        /* CONTADORES PEQUEÑOS */
-        .mini-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
@@ -65,11 +62,11 @@
     </div>
 
     <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 15vh;">
+        <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
             <div style="font-size: 40px; font-weight: 900; color: var(--twins-blue);">TWINS</div>
-            <div style="font-size: 10px; letter-spacing: 3px; opacity: 0.5; margin-bottom: 30px;">INVENTORY MANAGER</div>
+            <div style="font-size: 10px; opacity: 0.5; margin-bottom: 30px;">GESTIÓN DE ALMACÉN</div>
             <div style="max-width: 260px; margin: 0 auto; display: grid; gap: 10px;">
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 TAJHO</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 TAJHO (Admin)</button>
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('OSCAR')">👤 OSCAR</button>
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('LUIS HERBER')">👤 LUIS H.</button>
@@ -96,23 +93,20 @@
                 <div class="card">
                     <select id="pla"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
                     <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                    <button id="btn-wa" class="btn" style="background:var(--twins-green); color:white; margin-top:8px;" onclick="guardar()">💾 GUARDAR Y ENVIAR</button>
+                    <select id="aux">
+                        <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
+                    </select>
+                    <button id="btn-wa" class="btn" style="background:var(--twins-green); color:white; margin-top:8px;" onclick="guardar(true)">💾 GUARDAR Y WHATSAPP</button>
+                    <button id="btn-cloud" class="btn" style="background:var(--twins-blue); color:white; margin-top:8px; opacity: 0.8;" onclick="guardar(false)">☁️ SOLO GUARDAR</button>
                 </div>
             </div>
         </div>
 
         <div id="p3" class="page">
-            <div class="mini-stats">
-                <div class="stat-box">
-                    <div class="stat-label">Total Mes</div>
-                    <div id="stat-mes" class="stat-val">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-label">Total Día</div>
-                    <div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div>
-                </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                <div class="stat-box"><div class="stat-label">Total Mes</div><div id="stat-mes" class="stat-val">0</div></div>
+                <div class="stat-box"><div class="stat-label">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
             </div>
-
             <div class="card" style="padding:10px;">
                 <input type="text" id="f-search" placeholder="🔍 Buscar cliente o chofer..." onkeyup="renderH()">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
@@ -164,7 +158,8 @@
             const cl = document.getElementById('cli').value.toUpperCase().trim();
             const ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
-            ruta.push({cl, ca});
+            // .unshift agrega al principio de la lista
+            ruta.unshift({cl, ca});
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderR();
         }
@@ -177,78 +172,63 @@
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
-        async function guardar() {
-            const reg = { chofer: document.getElementById('cho').value, placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0) };
-            if(!reg.chofer || !reg.placa) return alert("Faltan datos");
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            sendWA(reg);
+        async function guardar(wa) {
+            const r = { 
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value || "SIN AUX",
+                placa: document.getElementById('pla').value, 
+                operario: user, 
+                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
+                total: ruta.reduce((a,b) => a+b.ca, 0) 
+            };
+            if(!r.chofer || !r.placa) return alert("Faltan datos");
+            
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            if(wa) sendWA(r); else alert("✅ Guardado en la nube");
+            
             ruta = []; renderR(); load();
         }
 
         function sendWA(r) {
-            // FORMATO SOLICITADO: Clientes por separado
-            let listaSeparada = r.items.split(", ").map(item => "✅ " + item.replace(":", ": ")).join("\n");
-            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE DE RUTA:*\n${listaSeparada}\n\n_Registrado por: ${r.operario}_`;
+            let lista = r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n");
+            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${r.auxiliar}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${lista}\n\n_Registrado por: ${r.operario}_`;
             window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
         }
 
         function renderH() {
             const list = document.getElementById('h-list');
-            const fM = document.getElementById('f-mes').value;
-            const fD = document.getElementById('f-dia').value;
-            const fS = document.getElementById('f-search').value.toUpperCase();
+            const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
             let tM = 0, tD = 0, hoy = new Date().toISOString().split('T')[0];
             list.innerHTML = "";
             
-            db.forEach((r, idx) => {
-                const fechaO = new Date(r.fecha);
-                const fechaS = fechaO.toISOString().split('T')[0];
-                const matchM = fM === "ALL" || fechaO.getMonth().toString() === fM;
-                const matchD = !fD || fechaS === fD;
-                const matchS = r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS);
+            // Invertimos la base de datos para mostrar lo más nuevo arriba
+            const reversedDB = [...db].reverse();
 
-                if (matchM && matchD && matchS) {
-                    const cant = parseFloat(r.total);
-                    if(matchM) tM += cant;
-                    if(fechaS === hoy) tD += cant;
+            reversedDB.forEach((r, idx) => {
+                const fO = new Date(r.fecha), fStr = fO.toISOString().split('T')[0];
+                if ((fM === "ALL" || fO.getMonth().toString() === fM) && (!fD || fStr === fD) && (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS))) {
+                    const c = parseFloat(r.total);
+                    tM += c; if(fStr === hoy) tD += c;
+                    
+                    // Ajustamos el índice real de la DB original para las funciones
+                    const realIdx = db.indexOf(r);
 
-                    const preview = r.items.split(", ").slice(0, 2).join(", ") + "...";
-
-                    list.innerHTML += `
-                    <div class="card" style="border-left: 3px solid #3b82f6; padding:12px;">
+                    list.innerHTML += `<div class="card" style="border-left: 3px solid #3b82f6; padding:12px;">
                         <div style="display:flex; justify-content:space-between; align-items:start;">
-                            <div>
-                                <div style="font-weight:800; font-size:13px;">${r.chofer}</div>
-                                <div class="hist-item-preview">${preview}</div>
-                            </div>
-                            <div style="display:flex; gap:6px;">
-                                <div class="action-btn" onclick="verSoloRuta(${idx})">🔍</div>
-                                <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${idx}])">🟢</div>
-                            </div>
+                            <div><div style="font-weight:800; font-size:13px;">${r.chofer}</div><div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div></div>
+                            <div style="display:flex; gap:6px;"><div class="action-btn" onclick="verSoloRuta(${realIdx})">🔍</div><div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${realIdx}])">🟢</div></div>
                         </div>
-                        <div class="hist-footer">
-                            <span>🚚 ${r.placa}</span>
-                            <span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span>
-                            <span>${fechaS}</span>
-                        </div>
+                        <div class="hist-footer"><span>🚚 ${r.placa}</span><span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span><span>${fStr}</span></div>
                     </div>`;
                 }
             });
-            document.getElementById('stat-mes').innerText = tM;
-            document.getElementById('stat-dia').innerText = tD;
+            document.getElementById('stat-mes').innerText = tM; document.getElementById('stat-dia').innerText = tD;
         }
 
         function verSoloRuta(idx) {
-            const r = db[idx];
-            const content = document.getElementById('view-content');
-            content.innerHTML = "";
-            r.items.split(", ").forEach(item => {
-                const p = item.split(":");
-                content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #334155;"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`;
-            });
-            document.getElementById('view-title').innerText = r.chofer;
-            document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`;
-            document.getElementById('modal-view').style.display = 'flex';
+            const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
+            r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #334155;"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; });
+            document.getElementById('view-title').innerText = r.chofer; document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`; document.getElementById('modal-view').style.display = 'flex';
         }
     </script>
 </body>
