@@ -113,9 +113,10 @@
         <div id="area-despacho" style="display:none;">
             <div class="card" id="lista-actual" style="height:auto;"></div>
             <div class="card">
+                <select id="pla" onchange="validateForm()"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
                 <select id="cho" onchange="validateForm()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
                 <select id="aux" onchange="validateForm()"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option></select>
-                <select id="pla" onchange="validateForm()"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                
                 <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR</button>
                 <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
             </div>
@@ -196,31 +197,37 @@
         function delItem(id) { route = route.filter(i => i.id !== id); renderRoute(); validateForm(); }
 
         function validateForm() {
-            const ok = document.getElementById('cho').value && document.getElementById('pla').value && route.length > 0;
+            // El botón se activa solo si hay Placa, Chofer y al menos un item
+            const ok = document.getElementById('pla').value && document.getElementById('cho').value && route.length > 0;
             document.getElementById('btn-save-wa').disabled = !ok;
             document.getElementById('btn-save-only').disabled = !ok;
         }
 
         function guardar(wa) {
             const reg = {
-                id: editId || Date.now(), fecha: new Date().toISOString(),
+                id: editId || Date.now(), 
+                fecha: new Date().toISOString(),
+                placa: document.getElementById('pla').value,
                 chofer: document.getElementById('cho').value,
                 auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
-                placa: document.getElementById('pla').value,
-                operario: user, items: [...route], total: route.reduce((a,b)=>a+b.can, 0)
+                operario: user, 
+                items: [...route], 
+                total: route.reduce((a,b)=>a+b.can, 0)
             };
+            
             if(editId) db = db.map(x => x.id === editId ? reg : x); else db.push(reg);
             localStorage.setItem('twins_final_v5', JSON.stringify(db));
+
             if(wa) {
-                // Aquí también incluimos la hora en el mensaje de WhatsApp
                 let ahora = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                let m = `*DESPACHO TWINS*\nHora: ${ahora}\nOp: ${user}\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
+                let m = `*DESPACHO TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nAuxiliar: ${reg.auxiliar}\n---\n`;
                 route.forEach(i => m += `• ${i.cli}: ${i.can} CJ\n`);
-                m += `---\nTOTAL: ${reg.total} CJ`;
+                m += `---\nTOTAL: ${reg.total} CJ\nHora: ${ahora}\nOp: ${user}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
+            
             route = []; editId = null; 
-            document.getElementById('cho').value = ""; document.getElementById('aux').value = ""; document.getElementById('pla').value = "";
+            document.getElementById('pla').value = ""; document.getElementById('cho').value = ""; document.getElementById('aux').value = "";
             renderRoute(); validateForm(); alert("✅ Guardado correctamente");
         }
 
@@ -234,7 +241,7 @@
             switchPage('p2', 'p3'); 
         }
 
-        function setF(d) { activeFilter = d; verReportes(); }
+        function setF(d) { activeFilter = d; renderHistory(); }
 
         function renderHistory() {
             const list = document.getElementById('history-list');
@@ -251,8 +258,6 @@
                 if(matchMonth && matchSearch && matchDriver) {
                     sum += r.total;
                     let items = r.items.map(i => `<div style="${i.cli.includes(search) && search !== '' ? 'color:#fbbf24;font-weight:bold' : ''}">• ${i.cli}: ${i.can} CJ</div>`).join('');
-                    
-                    // CAMBIO AQUÍ: d.toLocaleString() muestra Fecha + Hora
                     let fechaConHora = d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
                     list.innerHTML += `
@@ -260,7 +265,10 @@
                         <div style="display:flex; justify-content:space-between">
                             <b>${fechaConHora}</b><b style="color:var(--twins-blue)">${r.total} CJ</b>
                         </div>
-                        <div style="font-size:12px; margin:5px 0; opacity:0.8;">Chofer: ${r.chofer} | Placa: ${r.placa}</div>
+                        <div style="font-size:12px; margin:5px 0; opacity:0.8;">
+                            Placa: ${r.placa} | Chofer: ${r.chofer}<br>
+                            Aux: ${r.auxiliar}
+                        </div>
                         <div class="detail-pane" id="det-${r.id}">${items}</div>
                         <div style="display:flex; gap:10px; margin-top:10px;">
                             <button class="btn" style="padding:8px; background:rgba(0,86,179,0.1); color:var(--twins-blue); font-size:11px;" onclick="toggleDet('${r.id}')">🔍 DETALLE</button>
@@ -278,9 +286,9 @@
         function edit(id) {
             const r = db.find(x => x.id == id);
             editId = id; route = [...r.items];
+            document.getElementById('pla').value = r.placa;
             document.getElementById('cho').value = r.chofer;
             document.getElementById('aux').value = r.auxiliar;
-            document.getElementById('pla').value = r.placa;
             renderRoute(); validateForm(); switchPage('p3', 'p2');
         }
     </script>
