@@ -12,7 +12,6 @@
             --bg: #ffffff;
             --card: #f8fafc;
             --text: #1e293b;
-            --text-dim: #64748b;
             --border: #e2e8f0;
             --input-bg: #ffffff;
             --danger: #ef4444;
@@ -22,13 +21,11 @@
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
-            --text-dim: #94a3b8;
             --border: #334155;
             --input-bg: #1e293b;
             --twins-blue: #3b82f6;
         }
 
-        /* AJUSTE PARA PANTALLA FIJA (NO SCROLL) */
         body, html { 
             height: 100%; overflow: hidden; 
             background: var(--bg); color: var(--text); 
@@ -38,7 +35,6 @@
         .page { display: none; padding: 20px; flex-direction: column; height: 100vh; box-sizing: border-box; }
         .active { display: flex !important; animation: fadeIn 0.2s ease; }
         
-        /* AREAS CON SCROLL INTERNO */
         .scroll-content { flex: 1; overflow-y: auto; padding-right: 5px; }
 
         .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-shrink: 0; }
@@ -49,12 +45,11 @@
         .creator-tag { font-size: 14px; font-weight: 700; color: var(--twins-blue); margin-bottom: 30px; opacity: 0.8; }
 
         .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-bottom: 12px; flex-shrink: 0; }
-        .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; flex-shrink: 0; }
+        .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 10px; flex-shrink: 0; }
 
         .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; }
-        .btn-save:disabled { background: #94a3b8; opacity: 0.5; cursor: not-allowed; }
         .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); }
         
         input, select { 
@@ -65,13 +60,16 @@
 
         .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; color: var(--text); font-size: 12px; margin-right: 5px; }
-        .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
+        .chip.active { background: var(--twins-blue); color: white; }
 
-        /* Indicador de actualización */
-        #pull-indicator { 
-            text-align: center; height: 0; overflow: hidden; 
-            transition: height 0.3s; color: var(--twins-green); font-weight: 800; font-size: 12px;
+        /* Estilo para los separadores de fecha */
+        .date-divider { 
+            background: var(--twins-blue); color: white; padding: 8px 15px; 
+            border-radius: 10px; font-size: 13px; font-weight: 800; 
+            margin: 15px 0 10px 0; display: flex; justify-content: space-between;
         }
+
+        #pull-indicator { text-align: center; height: 0; overflow: hidden; transition: height 0.3s; color: var(--twins-green); font-weight: 800; }
     </style>
 </head>
 <body ontouchstart="handleTouchStart(event)" ontouchmove="handleTouchMove(event)" ontouchend="handleTouchEnd()">
@@ -93,10 +91,7 @@
     <div id="p2" class="page">
         <div class="top-bar">
             <b id="user-display" style="color:var(--twins-blue)"></b>
-            <div>
-                <button class="theme-btn" onclick="toggleTheme()" style="margin-right:8px;">🌙</button>
-                <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
-            </div>
+            <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
         </div>
         <div class="banner-total">
             <small>CAJAS EN RUTA</small>
@@ -110,3 +105,219 @@
                 <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
             </div>
             <div id="area-despacho" style="display:none;">
+                <div class="card" id="lista-actual"></div>
+                <div class="card">
+                    <select id="pla" onchange="validateForm()">
+                        <option value="">Placa...</option>
+                        <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
+                    </select>
+                    <select id="cho" onchange="validateForm()">
+                        <option value="">Chofer...</option>
+                        <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
+                    </select>
+                    <select id="aux" onchange="validateForm()">
+                        <option value="">Auxiliar...</option>
+                        <option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option>
+                    </select>
+                    <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR</button>
+                    <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-outline" style="margin-top:10px;" onclick="verReportes()">📊 HISTORIAL GLOBAL</button>
+    </div>
+
+    <div id="p3" class="page">
+        <div id="pull-indicator">⬇️ ACTUALIZAR</div>
+        <div class="top-bar">
+            <button class="btn btn-outline" style="width:auto; padding:8px 15px; margin:0;" onclick="switchPage('p3','p2')">← VOLVER</button>
+            <div style="display:flex; gap:10px;">
+                <div style="text-align:right"><small>MES</small><div id="stat-mes" style="font-weight:800; color:var(--twins-blue);">0</div></div>
+                <div style="text-align:right"><small>DÍA</small><div id="stat-dia" style="font-weight:800; color:var(--twins-green);">0</div></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 5px; padding:10px;">
+            <input type="text" id="search-cli" placeholder="🔍 Cliente o Placa..." onkeyup="renderHistory()" style="padding:10px;">
+            <div style="display:flex; gap:5px; margin-top:5px;">
+                <select id="filter-month" onchange="renderHistory()" style="padding:10px; margin:0;">
+                    <option value="ALL">Todos los Meses</option>
+                    <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+                </select>
+                <input type="date" id="filter-date" onchange="renderHistory()" style="padding:10px; margin:0; width:140px;">
+            </div>
+        </div>
+        
+        <div id="driver-chips-container" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
+        
+        <div id="history-list" class="scroll-content"></div>
+    </div>
+
+    <script>
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwZ9POMWvQZ_ymsu5TU9MK7ERY3jpAPLMUnGTAhBSoZo9s0Nq_PGADRi59Le0PulYia/exec";
+        let user = "", route = [], activeFilter = "TODOS", dbCloud = [];
+        
+        let touchStartY = 0;
+        function handleTouchStart(e) { touchStartY = e.touches[0].pageY; }
+        function handleTouchMove(e) {
+            if (e.touches[0].pageY - touchStartY > 80 && document.getElementById('p3').classList.contains('active')) {
+                document.getElementById('pull-indicator').style.height = "40px";
+            }
+        }
+        function handleTouchEnd() {
+            if (document.getElementById('pull-indicator').style.height === "40px") {
+                cargarDatosNube();
+                setTimeout(() => { document.getElementById('pull-indicator').style.height = "0"; }, 1000);
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', isDark ? '' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+        if(localStorage.getItem('theme') === 'dark') toggleTheme();
+
+        function switchPage(hide, show) {
+            document.getElementById(hide).classList.remove('active');
+            document.getElementById(show).classList.add('active');
+        }
+
+        function login(n) { 
+            user = n; 
+            document.getElementById('user-display').innerText = "OP: " + n; 
+            switchPage('p1', 'p2'); 
+            cargarDatosNube();
+        }
+
+        async function cargarDatosNube() {
+            try {
+                const resp = await fetch(CLOUD_URL);
+                dbCloud = await resp.json();
+                renderHistory();
+            } catch (e) { console.log("Error de red"); }
+        }
+
+        function addItem() {
+            const cli = document.getElementById('cli').value.toUpperCase().trim();
+            const can = parseInt(document.getElementById('can').value);
+            if(!cli || !can) return;
+            route.push({cli, can});
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+            renderRoute(); validateForm();
+        }
+
+        function renderRoute() {
+            const list = document.getElementById('lista-actual');
+            let sum = 0; list.innerHTML = "";
+            route.forEach((i, idx) => {
+                sum += i.can;
+                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b></span><span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); cursor:pointer;">✕</b></span></div>`;
+            });
+            document.getElementById('total-vivo').innerText = sum;
+            document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
+        }
+
+        function delItem(idx) { route.splice(idx, 1); renderRoute(); validateForm(); }
+
+        function validateForm() {
+            const ok = document.getElementById('cho').value && document.getElementById('pla').value && route.length > 0;
+            document.getElementById('btn-save-wa').disabled = !ok;
+            document.getElementById('btn-save-only').disabled = !ok;
+        }
+
+        async function guardar(wa) {
+            const reg = {
+                chofer: document.getElementById('cho').value,
+                auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
+                placa: document.getElementById('pla').value,
+                operario: user, 
+                items: route.map(i => `${i.cli}: ${i.can}`).join(", "),
+                total: route.reduce((a,b)=>a+b.can, 0)
+            };
+            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+            if(wa) {
+                let m = `*TWINS*\nCh: ${reg.chofer}\nAux: ${reg.auxiliar}\nPl: ${reg.placa}\nTotal: ${reg.total} CJ`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+            }
+            route = []; renderRoute(); validateForm();
+            document.getElementById('cho').value = ""; document.getElementById('aux').value = ""; document.getElementById('pla').value = "";
+            alert("✅ REGISTRADO");
+        }
+
+        function verReportes() { 
+            const cont = document.getElementById('driver-chips-container');
+            cont.innerHTML = `<div class="chip active" id="chip-TODOS" onclick="setF('TODOS')">TODOS</div>`;
+            ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
+                cont.innerHTML += `<div class="chip" id="chip-${d.replace(' ','')}" onclick="setF('${d}')">${d}</div>`;
+            });
+            renderHistory(); switchPage('p2', 'p3'); 
+        }
+
+        function setF(d) { 
+            activeFilter = d; 
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            const id = d === 'TODOS' ? 'chip-TODOS' : 'chip-' + d.replace(' ','');
+            if(document.getElementById(id)) document.getElementById(id).classList.add('active');
+            renderHistory(); 
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            const search = document.getElementById('search-cli').value.toUpperCase();
+            const monthF = document.getElementById('filter-month').value;
+            const dateF = document.getElementById('filter-date').value; // Formato YYYY-MM-DD
+            
+            let totalMes = 0;
+            let totalDia = 0;
+            list.innerHTML = "";
+
+            // Agrupar datos por fecha
+            const grupos = {};
+            dbCloud.forEach(r => {
+                const f = new Date(r.fecha);
+                const fechaKey = f.toISOString().split('T')[0];
+                const matchSearch = search === "" || (r.items && r.items.toUpperCase().includes(search)) || (r.placa && r.placa.includes(search));
+                const matchDriver = activeFilter === "TODOS" || r.chofer === activeFilter;
+                const matchMonth = monthF === "ALL" || f.getMonth().toString() === monthF;
+                const matchDate = !dateF || fechaKey === dateF;
+
+                if (matchSearch && matchDriver && matchMonth && matchDate) {
+                    if (!grupos[fechaKey]) grupos[fechaKey] = { registros: [], sumaDia: 0 };
+                    grupos[fechaKey].registros.push(r);
+                    grupos[fechaKey].sumaDia += parseFloat(r.total || 0);
+                    totalMes += parseFloat(r.total || 0);
+                }
+            });
+
+            // Ordenar fechas descendente
+            const fechasOrdenadas = Object.keys(grupos).sort().reverse();
+            
+            fechasOrdenadas.forEach(fKey => {
+                const g = grupos[fKey];
+                const dDisplay = new Date(fKey + "T00:00:00").toLocaleDateString('es-ES', { day:'numeric', month:'long' });
+                
+                list.innerHTML += `<div class="date-divider"><span>📅 ${dDisplay.toUpperCase()}</span> <span>${g.sumaDia} CJ</span></div>`;
+                
+                g.registros.forEach(r => {
+                    list.innerHTML += `<div class="card" style="border-left:5px solid var(--twins-blue); margin-bottom:8px;">
+                        <div style="display:flex; justify-content:space-between">
+                            <b>${new Date(r.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</b>
+                            <b style="color:var(--twins-blue)">${r.total} CJ</b>
+                        </div>
+                        <div style="font-size:12px; margin:4px 0;">${r.chofer} | ${r.placa} | Aux: ${r.auxiliar}</div>
+                        <div style="font-size:13px; opacity:0.8;">${r.items}</div>
+                    </div>`;
+                });
+            });
+
+            // Si hay un filtro de fecha específico, el total día es ese, sino es el del primer día de la lista
+            if(dateF && grupos[dateF]) totalDia = grupos[dateF].sumaDia;
+            else if(fechasOrdenadas.length > 0) totalDia = grupos[fechasOrdenadas[0]].sumaDia;
+
+            document.getElementById('stat-mes').innerText = totalMes;
+            document.getElementById('stat-dia').innerText = totalDia;
+        }
+    </script>
+</body>
+</html>
