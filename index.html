@@ -70,4 +70,259 @@
 
         .btn { width: 100%; padding: 14px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
-        .btn-save { background: var(--twins-green); color: white; margin-
+        .btn-save { background: var(--twins-green); color: white; margin-top: 8px; }
+        .btn-outline { background: transparent; border: 1.5px solid var(--twins-blue); color: var(--twins-blue); margin-top: 8px; }
+        .btn:disabled { opacity: 0.2; }
+
+        input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 15px; box-sizing: border-box; }
+
+        /* AJUSTE PARA QUE EL MES SE VEA COMPLETO */
+        .filter-group { display: flex; gap: 8px; margin-top: 8px; }
+        #f-mes { flex: 1.6; min-width: 150px; } 
+        #f-fec { flex: 1; }
+
+        .date-divider { background: var(--twins-blue); color: white; padding: 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin: 15px 0 8px 0; display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body ontouchstart="ptrStart(event)" ontouchmove="ptrMove(event)" ontouchend="ptrEnd()">
+
+    <div id="pull-to-refresh">🔄 SOLTAR PARA REFRESCAR TODO</div>
+
+    <div id="p1" class="page active" style="justify-content: center; align-items: center;">
+        <div style="text-align:center; margin-bottom: 30px;">
+            <div style="font-size: 32px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
+            <div style="font-size: 10px; font-weight: 700; opacity: 0.6; letter-spacing: 3px;">INVENTARIO & DESPACHOS</div>
+        </div>
+        <div style="width: 100%; max-width: 270px; display: grid; gap: 12px;">
+            <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('TAJHO')">TAJHO</button>
+            <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('FRANCESCO')">FRANCESCO</button>
+            <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('OSCAR')">OSCAR</button>
+            <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('LUIS HERBER')">LUIS HERBER</button>
+            <button onclick="toggleTheme()" style="background:none; border:none; color:var(--text); margin-top:15px; font-size: 14px;">🌓 CAMBIAR MODO</button>
+        </div>
+    </div>
+
+    <div id="p2" class="page">
+        <div class="top-header">
+            <b id="user-display" style="color:var(--twins-blue);">---</b>
+            <div style="display:flex; gap:15px; align-items: center;">
+                <span onclick="toggleTheme()" style="font-size:22px;">🌓</span>
+                <span onclick="location.reload()" style="color:var(--danger); font-weight:800; font-size:12px;">SALIR</span>
+            </div>
+        </div>
+        <div class="banner-total-mini">
+            <span style="font-weight: 700;">CAJAS EN LISTA:</span>
+            <span id="total-vivo" style="font-size:28px; font-weight:900;">0</span>
+        </div>
+        <div class="scroll-content">
+            <div class="card">
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="cli" placeholder="Cliente" style="flex: 2;">
+                    <input type="number" id="can" placeholder="Cant." inputmode="numeric" style="flex: 1;">
+                </div>
+                <button class="btn btn-main" onclick="addItem()">+ AGREGAR A RUTA</button>
+            </div>
+            <div id="area-despacho" style="display:none;">
+                <div class="card" id="lista-actual" style="border-left: 5px solid var(--twins-blue);"></div>
+                <div class="card">
+                    <select id="pla" onchange="val()">
+                        <option value="">Placa...</option>
+                        <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
+                    </select>
+                    <select id="cho" onchange="val()">
+                        <option value="">Chofer...</option>
+                        <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
+                    </select>
+                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WA</button>
+                    <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-nav">
+            <div class="nav-item active-nav" onclick="nav('p2')"><span>📝 Registro</span></div>
+            <div class="nav-item" onclick="nav('p3')"><span>📊 Historial</span></div>
+        </div>
+    </div>
+
+    <div id="p3" class="page">
+        <div class="top-header">
+            <div style="display:flex; gap:15px;">
+                <div style="text-align:left"><small style="font-size:9px; opacity:0.6; display:block; font-weight:700;">MES</small><b id="stat-mes" style="font-size:16px;">0</b></div>
+                <div style="text-align:left"><small style="font-size:9px; opacity:0.6; display:block; font-weight:700;">HOY</small><b id="stat-dia" style="color:var(--twins-green); font-size:16px;">0</b></div>
+            </div>
+            <span onclick="toggleTheme()" style="font-size:22px;">🌓</span>
+        </div>
+        <div class="scroll-content">
+            <div class="card">
+                <input type="text" id="bus" placeholder="🔍 Buscar cliente..." onkeyup="renderH()">
+                <div class="filter-group">
+                    <select id="f-mes" onchange="renderH()">
+                        <option value="ALL">Todos los Meses</option>
+                        <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                        <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                        <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                        <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+                    </select>
+                    <input type="date" id="f-fec" onchange="renderH()">
+                </div>
+            </div>
+            <div id="chips" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:10px;"></div>
+            <div id="h-list"></div>
+        </div>
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="nav('p2')"><span>📝 Registro</span></div>
+            <div class="nav-item active-nav" onclick="nav('p3')"><span>📊 Historial</span></div>
+        </div>
+    </div>
+
+    <script>
+        const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
+        let user = "", ruta = [], db = [], f_driver = "TODOS";
+
+        let startY = 0;
+        function ptrStart(e) { startY = e.touches[0].pageY; }
+        function ptrMove(e) {
+            let y = e.touches[0].pageY;
+            let diff = y - startY;
+            let activeScroll = document.querySelector('.page.active .scroll-content');
+            if (diff > 0 && activeScroll.scrollTop <= 0) {
+                document.getElementById('pull-to-refresh').style.height = Math.min(diff / 2, 60) + "px";
+            }
+        }
+        function ptrEnd() {
+            let ptr = document.getElementById('pull-to-refresh');
+            if (parseInt(ptr.style.height) >= 55) {
+                ptr.innerText = "⏳ CARGANDO...";
+                location.reload(); 
+            } else {
+                ptr.style.height = "0px";
+            }
+        }
+
+        function toggleTheme() {
+            const b = document.documentElement;
+            b.getAttribute('data-theme') === 'dark' ? b.removeAttribute('data-theme') : b.setAttribute('data-theme', 'dark');
+        }
+
+        function nav(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'p3') { renderChips(); renderH(); }
+        }
+
+        function login(n) {
+            user = n;
+            document.getElementById('user-display').innerText = "OP: " + n;
+            nav('p2'); load();
+        }
+
+        async function load() {
+            try {
+                const r = await fetch(URL);
+                db = await r.json();
+                renderH();
+            } catch(e) { console.error("Error nube"); }
+        }
+
+        function addItem() {
+            const cl = document.getElementById('cli').value.toUpperCase().trim();
+            const ca = parseInt(document.getElementById('can').value);
+            if(!cl || !ca) return;
+            ruta.push({cl, ca});
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+            renderR(); val();
+        }
+
+        function renderR() {
+            const l = document.getElementById('lista-actual');
+            let s = 0; l.innerHTML = "";
+            ruta.forEach((i, x) => {
+                s += i.ca;
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
+                    <span><b>${i.cl}</b></span>
+                    <span>${i.ca} CJ <b onclick="del(${x})" style="color:var(--danger); margin-left:15px; padding:5px;">✕</b></span>
+                </div>`;
+            });
+            document.getElementById('total-vivo').innerText = s;
+            document.getElementById('area-despacho').style.display = ruta.length > 0 ? 'block' : 'none';
+        }
+
+        function del(x) { ruta.splice(x, 1); renderR(); val(); }
+
+        function val() {
+            const ok = document.getElementById('cho').value && document.getElementById('pla').value && ruta.length > 0;
+            document.getElementById('btn-wa').disabled = !ok;
+            document.getElementById('btn-nube').disabled = !ok;
+        }
+
+        async function guardar(wa) {
+            const reg = {
+                chofer: document.getElementById('cho').value,
+                placa: document.getElementById('pla').value,
+                operario: user,
+                items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "),
+                total: ruta.reduce((a,b) => a + b.ca, 0)
+            };
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+            if(wa) {
+                let m = `*DESPACHO TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ\nDetalle: ${reg.items}`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+            }
+            ruta = []; document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
+            renderR(); val();
+            alert("✅ GUARDADO");
+            setTimeout(load, 1500);
+        }
+
+        function renderChips() {
+            const c = document.getElementById('chips');
+            c.innerHTML = `<div onclick="setF('TODOS')" style="padding:6px 12px; border:1px solid var(--border); border-radius:15px; font-size:11px; ${f_driver==='TODOS'?'background:var(--twins-blue);color:white;':'background:var(--card);'}">TODOS</div>`;
+            ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
+                let act = f_driver === d ? 'background:var(--twins-blue); color:white;' : 'background:var(--card);';
+                c.innerHTML += `<div onclick="setF('${d}')" style="padding:6px 12px; border:1px solid var(--border); border-radius:15px; font-size:11px; white-space:nowrap; ${act}">${d}</div>`;
+            });
+        }
+        function setF(d) { f_driver = d; renderChips(); renderH(); }
+
+        function renderH() {
+            const list = document.getElementById('h-list');
+            const search = document.getElementById('bus').value.toUpperCase();
+            const mes = document.getElementById('f-mes').value;
+            const fec = document.getElementById('f-fec').value;
+            let tM = 0, grupos = {};
+            list.innerHTML = "";
+
+            db.forEach(r => {
+                const f = new Date(r.fecha);
+                const fK = f.toISOString().split('T')[0];
+                const mS = !search || (r.items && r.items.toUpperCase().includes(search)) || r.placa.includes(search);
+                const mC = f_driver === "TODOS" || r.chofer === f_driver;
+                const mM = mes === "ALL" || (f.getMonth()+1).toString() === mes;
+                const mD = !fec || fK === fec;
+
+                if (mS && mC && mM && mD) {
+                    if (!grupos[fK]) grupos[fK] = { regs: [], s: 0 };
+                    grupos[fK].regs.push(r);
+                    grupos[fK].s += parseFloat(r.total);
+                    tM += parseFloat(r.total);
+                }
+            });
+
+            const sortedDates = Object.keys(grupos).sort().reverse();
+            sortedDates.forEach(k => {
+                list.innerHTML += `<div class="date-divider"><span>📅 ${k}</span> <span>${grupos[k].s} CJ</span></div>`;
+                grupos[k].regs.forEach(r => {
+                    list.innerHTML += `<div class="card" style="padding:10px;">
+                        <div style="display:flex; justify-content:space-between;"><b>${r.chofer}</b> <b style="color:var(--twins-blue);">${r.total} CJ</b></div>
+                        <div style="font-size:10px; opacity:0.6;">${r.placa} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+                        <div style="font-size:11px; border-top:1px dashed var(--border); padding-top:5px; margin-top:5px;">${r.items}</div>
+                    </div>`;
+                });
+            });
+            document.getElementById('stat-mes').innerText = tM;
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('stat-dia').innerText = fec ? (grupos[fec]?grupos[fec].s:0) : (grupos[today]?grupos[today].s:0);
+        }
+    </script>
+</body>
+</html>
