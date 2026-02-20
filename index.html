@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | REFRESH TOTAL</title>
+    <title>TWINS DESPACHOS | V8 FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -26,26 +26,16 @@
             --twins-blue: #3b82f6;
         }
 
-        /* RESET PARA PERMITIR PULL-TO-REFRESH NATIVO */
+        /* REFRESH NATIVO: El body debe permitir overscroll */
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg);
-            color: var(--text);
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--bg); color: var(--text);
             font-family: 'Inter', sans-serif;
-            overscroll-behavior-y: auto; /* Permite el gesto del navegador */
+            overscroll-behavior-y: contain; /* Activa el refresco nativo del navegador */
         }
 
-        /* Estructura de bloque único (no absoluta) */
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .page { display: none; padding: 12px; padding-bottom: 80px; }
+        .app-container { display: flex; flex-direction: column; min-height: 100vh; }
+        .page { display: none; padding: 12px; padding-bottom: 90px; }
         .active { display: block; }
 
         .top-header { 
@@ -65,13 +55,17 @@
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
 
         .banner-total { background: var(--twins-blue); color: white; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 15px; margin-bottom: 10px; }
 
         input, select { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 16px; box-sizing: border-box; }
+        
+        /* Ajuste para nombres de meses largos */
+        #f-mes { flex: 1.6; min-width: 150px; }
+        #f-fec { flex: 1; }
+
         .btn { width: 100%; padding: 16px; border-radius: 10px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
-        .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); margin-top: 10px; }
         .btn:disabled { opacity: 0.3; }
 
         .date-divider { background: var(--twins-blue); color: white; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; margin: 20px 0 10px 0; display: flex; justify-content: space-between; }
@@ -80,15 +74,15 @@
 <body>
 
     <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 20vh;">
-            <div style="font-size: 38px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px;">TWINS</div>
-            <div style="font-size: 12px; letter-spacing: 3px; opacity: 0.6; margin-bottom: 40px;">ALMACÉN</div>
+        <div id="p1" class="page active" style="text-align: center; padding-top: 15vh;">
+            <div style="font-size: 38px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
+            <div style="font-size: 12px; letter-spacing: 3px; opacity: 0.6; margin-bottom: 40px;">GESTIÓN DE RUTAS</div>
             <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('TAJHO')">TAJHO</button>
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('FRANCESCO')">FRANCESCO</button>
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('OSCAR')">OSCAR</button>
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('LUIS HERBER')">LUIS HERBER</button>
-                <p onclick="toggleTheme()" style="margin-top:20px; font-weight:700; font-size:14px;">🌓 MODO OSCURO</p>
+                <p onclick="toggleTheme()" style="margin-top:20px; font-weight:700;">🌓 CAMBIAR TEMA</p>
             </div>
         </div>
 
@@ -96,13 +90,13 @@
             <b id="user-display">---</b>
             <div style="display:flex; gap:20px;">
                 <span onclick="toggleTheme()" style="font-size:20px;">🌓</span>
-                <span onclick="location.reload()" style="color:var(--danger); font-size:12px; font-weight:800;">SALIR</span>
+                <span onclick="location.reload()" style="color:var(--danger); font-size:12px; font-weight:800;">SALIR / REFRESCAR</span>
             </div>
         </div>
 
         <div id="p2" class="page">
             <div class="banner-total">
-                <span style="font-weight:700;">CAJAS ACTUALES:</span>
+                <span style="font-weight:700;">TOTAL LISTA:</span>
                 <span id="total-vivo" style="font-size:32px; font-weight:900;">0</span>
             </div>
             <div class="card">
@@ -115,57 +109,49 @@
             <div id="area-envio" style="display:none;">
                 <div class="card" id="lista-items" style="border-left: 5px solid var(--twins-blue);"></div>
                 <div class="card">
-                    <select id="pla" onchange="val()">
-                        <option value="">Seleccionar Placa...</option>
-                        <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
-                    </select>
-                    <select id="cho" onchange="val()">
-                        <option value="">Seleccionar Chofer...</option>
-                        <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
-                    </select>
-                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
-                    <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
+                    <select id="pla" onchange="val()"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
+                    <select id="cho" onchange="val()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WA</button>
+                    <button id="btn-nube" class="btn btn-main" style="background:#64748b; margin-top:8px;" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
                 </div>
             </div>
         </div>
 
         <div id="p3" class="page">
             <div class="card">
-                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <div style="display:flex; gap:10px; margin-bottom:15px; text-align:center;">
                     <div style="flex:1">
-                        <small style="font-size:10px; opacity:0.6; font-weight:800; display:block;">ESTE MES</small>
-                        <b id="stat-mes" style="font-size:18px;">0</b>
+                        <small style="font-size:10px; opacity:0.6; font-weight:800; display:block;">MES</small>
+                        <b id="stat-mes" style="font-size:20px;">0</b>
                     </div>
                     <div style="flex:1">
                         <small style="font-size:10px; opacity:0.6; font-weight:800; display:block;">HOY</small>
-                        <b id="stat-dia" style="font-size:18px; color:var(--twins-green);">0</b>
+                        <b id="stat-dia" style="font-size:20px; color:var(--twins-green);">0</b>
                     </div>
                 </div>
                 <input type="text" id="bus" placeholder="🔍 Buscar cliente o placa..." onkeyup="renderH()">
                 <div style="display:flex; gap:8px;">
-                    <select id="f-mes" onchange="renderH()" style="flex:1.5">
+                    <select id="f-mes" onchange="renderH()">
                         <option value="ALL">Todos los Meses</option>
                         <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
                         <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                        <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                        <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
                     </select>
-                    <input type="date" id="f-fec" onchange="renderH()" style="flex:1">
+                    <input type="date" id="f-fec" onchange="renderH()">
                 </div>
             </div>
             <div id="h-list"></div>
         </div>
 
         <div id="nav-app" class="bottom-nav" style="display:none;">
-            <div id="n2" class="nav-item active-nav" onclick="nav('p2')">
-                <span style="font-size:20px;">📝</span><span>Registro</span>
-            </div>
-            <div id="n3" class="nav-item" onclick="nav('p3')">
-                <span style="font-size:20px;">📊</span><span>Historial</span>
-            </div>
+            <div id="n2" class="nav-item active-nav" onclick="nav('p2')"><b>📝 Registro</b></div>
+            <div id="n3" class="nav-item" onclick="nav('p3')"><b>📊 Historial</b></div>
         </div>
     </div>
 
     <script>
-        const URL = "https://script.google.com/macros/s/AKfycbwZ9POMWvQZ_ymsu5TU9MK7ERY3jpAPLMUnGTAhBSoZo9s0Nq_PGADRi59Le0PulYia/exec";
+        const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
 
         function toggleTheme() {
@@ -175,7 +161,7 @@
 
         function login(n) {
             user = n;
-            document.getElementById('p1').classList.remove('active');
+            document.getElementById('p1').style.display = 'none';
             document.getElementById('header-app').style.display = 'flex';
             document.getElementById('nav-app').style.display = 'flex';
             document.getElementById('user-display').innerText = "OP: " + n;
@@ -197,7 +183,7 @@
                 const r = await fetch(URL);
                 db = await r.json();
                 renderH();
-            } catch(e) { console.log("Error al cargar"); }
+            } catch(e) { console.log("Cargando..."); }
         }
 
         function addItem() {
@@ -239,14 +225,18 @@
                 items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "),
                 total: ruta.reduce((a,b) => a + b.ca, 0)
             };
+
+            // Enviar a Google Sheets
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+
             if(wa) {
                 let m = `*DESPACHO TWINS*\nChofer: ${reg.chofer}\nPlaca: ${reg.placa}\nTotal: ${reg.total} CJ\nItems: ${reg.items}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
+
             ruta = []; document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
             renderR(); val();
-            alert("✅ GUARDADO CORRECTO");
+            alert("✅ GUARDADO EN EXCEL");
             setTimeout(load, 2000);
         }
 
@@ -277,9 +267,10 @@
             sortedDates.forEach(k => {
                 list.innerHTML += `<div class="date-divider"><span>📅 ${k}</span> <span>${grupos[k].s} CJ</span></div>`;
                 grupos[k].regs.forEach(r => {
-                    list.innerHTML += `<div class="card" style="padding:10px;">
+                    list.innerHTML += `<div class="card" style="padding:10px; font-size:13px;">
                         <div style="display:flex; justify-content:space-between;"><b>${r.chofer}</b> <b style="color:var(--twins-blue);">${r.total} CJ</b></div>
-                        <div style="font-size:10px; opacity:0.6;">${r.placa} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+                        <div style="font-size:11px; opacity:0.6;">${r.placa} | ${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div>
+                        <div style="margin-top:5px; padding-top:5px; border-top:1px dashed var(--border); font-size:11px;">${r.items}</div>
                     </div>`;
                 });
             });
