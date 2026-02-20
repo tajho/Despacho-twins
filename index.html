@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | ORDEN DINÁMICO</title>
+    <title>TWINS V7 | SISTEMA COMPLETO CON EDICIÓN</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
             --twins-blue: #3b82f6; --twins-green: #22c55e;
-            --border: #334155; --input-bg: #0f172a; --danger: #ef4444;
+            --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
         }
 
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
@@ -40,6 +40,8 @@
         .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
         .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
         .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+        .btn-edit { color: var(--warning); margin-right: 12px; font-weight: bold; cursor: pointer; }
+        .btn-del { color: var(--danger); font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -86,7 +88,7 @@
             <div class="card">
                 <input type="text" id="cli" placeholder="Nombre Cliente">
                 <input type="number" id="can" placeholder="Cantidad" inputmode="numeric">
-                <button class="btn btn-main" onclick="addItem()">AGREGAR</button>
+                <button class="btn btn-main" id="btn-add" onclick="addItem()">AGREGAR</button>
             </div>
             <div id="area-envio" style="display:none;">
                 <div class="card" id="lista-items"></div>
@@ -158,16 +160,35 @@
             const cl = document.getElementById('cli').value.toUpperCase().trim();
             const ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
-            // .unshift agrega al principio de la lista
             ruta.unshift({cl, ca});
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderR();
         }
 
+        function editItem(index) {
+            const item = ruta[index];
+            document.getElementById('cli').value = item.cl;
+            document.getElementById('can').value = item.ca;
+            ruta.splice(index, 1);
+            renderR();
+            document.getElementById('cli').focus();
+        }
+
         function renderR() {
             const l = document.getElementById('lista-items');
             let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger)" onclick="ruta.splice(${x},1);renderR()">✕</span></b></div>`; });
+            ruta.forEach((i, x) => { 
+                s += i.ca; 
+                l.innerHTML += `
+                <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)">
+                    <span>${i.cl}</span>
+                    <div style="display:flex; align-items:center;">
+                        <b style="margin-right:15px;">${i.ca} CJ</b>
+                        <span class="btn-edit" onclick="editItem(${x})">✏️</span>
+                        <span class="btn-del" onclick="ruta.splice(${x},1);renderR()">✕</span>
+                    </div>
+                </div>`; 
+            });
             document.getElementById('total-vivo').innerText = s;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
@@ -200,19 +221,13 @@
             const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
             let tM = 0, tD = 0, hoy = new Date().toISOString().split('T')[0];
             list.innerHTML = "";
-            
-            // Invertimos la base de datos para mostrar lo más nuevo arriba
-            const reversedDB = [...db].reverse();
-
-            reversedDB.forEach((r, idx) => {
+            const rev = [...db].reverse();
+            rev.forEach((r) => {
                 const fO = new Date(r.fecha), fStr = fO.toISOString().split('T')[0];
                 if ((fM === "ALL" || fO.getMonth().toString() === fM) && (!fD || fStr === fD) && (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS))) {
                     const c = parseFloat(r.total);
                     tM += c; if(fStr === hoy) tD += c;
-                    
-                    // Ajustamos el índice real de la DB original para las funciones
                     const realIdx = db.indexOf(r);
-
                     list.innerHTML += `<div class="card" style="border-left: 3px solid #3b82f6; padding:12px;">
                         <div style="display:flex; justify-content:space-between; align-items:start;">
                             <div><div style="font-weight:800; font-size:13px;">${r.chofer}</div><div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div></div>
