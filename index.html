@@ -12,7 +12,6 @@
             --bg: #ffffff;
             --card: #f8fafc;
             --text: #1e293b;
-            --text-dim: #64748b;
             --border: #e2e8f0;
             --input-bg: #ffffff;
             --danger: #ef4444;
@@ -22,164 +21,174 @@
             --bg: #0f172a;
             --card: #1e293b;
             --text: #f8fafc;
-            --text-dim: #94a3b8;
             --border: #334155;
             --input-bg: #1e293b;
             --twins-blue: #3b82f6;
         }
 
-        body { 
+        body, html { 
+            height: 100%; overflow: hidden; 
             background: var(--bg); color: var(--text); 
             font-family: 'Inter', sans-serif; margin: 0; padding: 0; 
-            transition: background 0.2s;
         }
 
-        .page { display: none; padding: 20px; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
-        .active { display: flex !important; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .theme-btn { 
-            background: var(--card); border: 1px solid var(--border); 
-            color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer;
+        .page { 
+            display: none; height: 100vh; padding: 20px; 
+            flex-direction: column; box-sizing: border-box; 
         }
+        .active { display: flex !important; }
 
-        .login-wrap { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .main-title { font-size: 32px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px; }
+        /* Contenedores con Scroll interno */
+        .scroll-area { flex: 1; overflow-y: auto; padding-right: 5px; margin-top: 10px; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .theme-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 10px; }
+
+        .main-title { font-size: 32px; font-weight: 800; color: var(--twins-blue); }
         .creator-tag { font-size: 14px; font-weight: 700; color: var(--twins-blue); margin-bottom: 30px; opacity: 0.8; }
 
-        .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-bottom: 12px; }
-        .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; }
+        .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 15px; margin-bottom: 12px; flex-shrink: 0; }
+        .banner-total { background: var(--twins-blue); color: white; border-radius: 20px; padding: 15px; text-align: center; flex-shrink: 0; }
 
-        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-        .btn-main { background: var(--twins-blue); color: white; }
-        .btn-save { background: var(--twins-green); color: white; }
-        .btn-save:disabled { background: #94a3b8; opacity: 0.5; cursor: not-allowed; }
+        .btn { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+        .btn-main { background: var(--twins-blue); color: white; margin-top: 10px; }
+        .btn-save { background: var(--twins-green); color: white; margin-bottom: 8px; }
         .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); }
         
         input, select { 
-            width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; 
+            width: 100%; padding: 12px; margin: 5px 0; border-radius: 10px; 
             border: 1px solid var(--border); background: var(--input-bg); 
             color: var(--text); font-size: 16px; box-sizing: border-box; 
         }
 
-        .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
-        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; color: var(--text); font-size: 12px; }
-        .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
+        .item-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .chip { background: var(--card); border: 1px solid var(--border); padding: 6px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; color: var(--text); margin-right: 5px; }
+        .chip.active { background: var(--twins-blue); color: white; }
+
+        /* Indicador de carga al deslizar */
+        #refresh-indicator { 
+            text-align: center; height: 0; overflow: hidden; 
+            transition: height 0.2s; color: var(--twins-green); font-weight: bold; 
+        }
     </style>
 </head>
-<body>
+<body ontouchstart="startTouch(event)" ontouchmove="moveTouch(event)" ontouchend="endTouch()">
 
-    <div id="p1" class="page active">
-        <div style="text-align: right;"><button class="theme-btn" onclick="toggleTheme()">🌙</button></div>
-        <div class="login-wrap">
-            <div class="main-title">TWINS DESPACHOS</div>
-            <div class="creator-tag">By Tajho Developer</div>
-            <div style="width: 100%; max-width: 280px;">
-                <button class="btn btn-outline" onclick="login('TAJHO')">TAJHO</button>
-                <button class="btn btn-outline" onclick="login('FRANCESCO')">FRANCESCO</button>
-                <button class="btn btn-outline" onclick="login('OSCAR')">OSCAR</button>
-                <button class="btn btn-outline" onclick="login('LUIS HERBER')">LUIS HERBER</button>
-            </div>
+    <div id="p1" class="page active" style="justify-content: center; align-items: center;">
+        <div class="main-title">TWINS DESPACHOS</div>
+        <div class="creator-tag">By Tajho Developer</div>
+        <div style="width: 100%; max-width: 280px; gap: 10px; display: flex; flex-direction: column;">
+            <button class="btn btn-outline" onclick="login('TAJHO')">TAJHO</button>
+            <button class="btn btn-outline" onclick="login('FRANCESCO')">FRANCESCO</button>
+            <button class="btn btn-outline" onclick="login('OSCAR')">OSCAR</button>
+            <button class="btn btn-outline" onclick="login('LUIS HERBER')">LUIS HERBER</button>
         </div>
     </div>
 
     <div id="p2" class="page">
         <div class="top-bar">
             <b id="user-display" style="color:var(--twins-blue)"></b>
-            <div>
-                <button class="theme-btn" onclick="toggleTheme()" style="margin-right:8px;">🌙</button>
-                <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
-            </div>
+            <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
         </div>
+        
         <div class="banner-total">
             <small>CAJAS EN RUTA</small>
-            <div id="total-vivo" style="font-size:45px; font-weight:800;">0</div>
+            <div id="total-vivo" style="font-size:40px; font-weight:800;">0</div>
         </div>
+
         <div class="card">
-            <input type="text" id="cli" placeholder="Nombre del Cliente">
+            <input type="text" id="cli" placeholder="Cliente">
             <input type="number" id="can" placeholder="Cajas" inputmode="numeric">
-            <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR</button>
         </div>
-        <div id="area-despacho" style="display:none;">
-            <div class="card" id="lista-actual" style="height:auto;"></div>
+
+        <div id="area-despacho" class="scroll-area" style="display:none;">
+            <div class="card" id="lista-actual"></div>
             <div class="card">
                 <select id="pla" onchange="validateForm()">
                     <option value="">Placa...</option>
-                    <option value="BVN-930">BVN-930</option>
-                    <option value="BVN-704">BVN-704</option>
-                    <option value="BUL-742">BUL-742</option>
-                    <option value="BPN-711">BPN-711</option>
+                    <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option>
+                    <option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option>
                     <option value="FUSO">FUSO</option>
                 </select>
                 <select id="cho" onchange="validateForm()">
                     <option value="">Chofer...</option>
-                    <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
-                </select>
-                <select id="aux" onchange="validateForm()">
-                    <option value="">Auxiliar...</option>
-                    <option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option>
+                    <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option>
+                    <option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                 </select>
                 <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR</button>
-                <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
             </div>
         </div>
+        
         <button class="btn btn-outline" style="margin-top:10px;" onclick="verReportes()">📊 HISTORIAL GLOBAL</button>
     </div>
 
     <div id="p3" class="page">
+        <div id="refresh-indicator">Actualizando...</div>
         <div class="top-bar">
-            <button class="btn btn-outline" style="width:auto; padding:8px 15px; margin:0;" onclick="switchPage('p3','p2')">← VOLVER</button>
-            <button id="ref-btn" class="btn" style="width:auto; padding:8px; background:var(--twins-green); color:white;" onclick="cargarDatosNube()">🔄 ACTUALIZAR</button>
+            <button class="btn btn-outline" style="width:auto; padding:8px 15px;" onclick="switchPage('p3','p2')">← VOLVER</button>
+            <div style="text-align: right;">
+                <small>TOTAL</small>
+                <div id="stat-total" style="font-size:24px; font-weight:800; color:var(--twins-blue);">0</div>
+            </div>
         </div>
-        <div class="card"><input type="text" id="search-cli" placeholder="🔍 Buscar cliente o placa..." onkeyup="renderHistory()"></div>
-        <div id="driver-chips-container" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
-        <div class="card" style="text-align:center; border-top: 4px solid var(--twins-green);">
-            <small id="stat-title">TOTAL (NUBE)</small>
-            <div id="stat-total" style="font-size:32px; font-weight:800; color:var(--twins-blue);">0</div>
+
+        <div class="card" style="padding: 10px;">
+            <input type="text" id="search-cli" placeholder="🔍 Buscar cliente..." onkeyup="renderHistory()">
+            <div style="display: flex; gap: 5px; margin-top: 5px;">
+                <select id="filter-month" onchange="renderHistory()" style="margin:0; flex:1;">
+                    <option value="ALL">Todos los Meses</option>
+                    <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+                    <option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option>
+                    <option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option>
+                    <option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+                </select>
+            </div>
         </div>
-        <div id="history-list"></div>
+
+        <div id="driver-chips-container" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:5px;"></div>
+
+        <div id="history-list" class="scroll-area"></div>
     </div>
 
     <script>
-        // URL DE TU GOOGLE SHEETS
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwZ9POMWvQZ_ymsu5TU9MK7ERY3jpAPLMUnGTAhBSoZo9s0Nq_PGADRi59Le0PulYia/exec";
         let user = "", route = [], activeFilter = "TODOS", dbCloud = [];
-
-        function toggleTheme() {
-            const isDark = document.body.getAttribute('data-theme') === 'dark';
-            document.body.setAttribute('data-theme', isDark ? '' : 'dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        
+        // Lógica de deslizar para actualizar
+        let startY = 0;
+        function startTouch(e) { startY = e.touches[0].pageY; }
+        function moveTouch(e) {
+            let currentY = e.touches[0].pageY;
+            if (currentY - startY > 100 && document.getElementById('p3').classList.contains('active')) {
+                document.getElementById('refresh-indicator').style.height = "30px";
+            }
         }
-        if(localStorage.getItem('theme') === 'dark') toggleTheme();
+        function endTouch() {
+            if (document.getElementById('refresh-indicator').style.height === "30px") {
+                cargarDatosNube();
+                setTimeout(() => document.getElementById('refresh-indicator').style.height = "0", 1000);
+            }
+        }
 
         function switchPage(hide, show) {
-            document.getElementById(hide).style.display = 'none';
-            document.getElementById(show).style.display = 'flex';
+            document.getElementById(hide).classList.remove('active');
+            document.getElementById(show).classList.add('active');
         }
 
         function login(n) { 
             user = n; 
             document.getElementById('user-display').innerText = "OP: " + n; 
-            // PRIMERO CAMBIAMOS DE PÁGINA
             switchPage('p1', 'p2'); 
-            // LUEGO INTENTAMOS CARGAR DATOS SIN BLOQUEAR LA APP
-            setTimeout(cargarDatosNube, 500);
+            cargarDatosNube();
         }
 
         async function cargarDatosNube() {
-            const btn = document.getElementById('ref-btn');
-            if(btn) btn.innerText = "⌛...";
             try {
                 const resp = await fetch(CLOUD_URL);
-                if(resp.ok) {
-                    dbCloud = await resp.json();
-                    renderHistory();
-                }
-            } catch (e) { 
-                console.log("Carga de nube fallida o bloqueada por CORS"); 
-            }
-            if(btn) btn.innerText = "🔄 ACTUALIZAR";
+                dbCloud = await resp.json();
+                renderHistory();
+            } catch (e) { console.log("Error de conexión"); }
         }
 
         function addItem() {
@@ -196,7 +205,7 @@
             let sum = 0; list.innerHTML = "";
             route.forEach((i, idx) => {
                 sum += i.can;
-                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b></span><span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); cursor:pointer;">✕</b></span></div>`;
+                list.innerHTML += `<div class="item-row"><b>${i.cli}</b> <span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); cursor:pointer;">✕</b></span></div>`;
             });
             document.getElementById('total-vivo').innerText = sum;
             document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
@@ -207,70 +216,59 @@
         function validateForm() {
             const ok = document.getElementById('cho').value && document.getElementById('pla').value && route.length > 0;
             document.getElementById('btn-save-wa').disabled = !ok;
-            document.getElementById('btn-save-only').disabled = !ok;
         }
 
         async function guardar(wa) {
             const reg = {
                 chofer: document.getElementById('cho').value,
-                auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
                 placa: document.getElementById('pla').value,
                 operario: user, items: [...route], total: route.reduce((a,b)=>a+b.can, 0)
             };
 
-            // GUARDAR EN SEGUNDO PLANO
-            fetch(CLOUD_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(reg)
-            });
+            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
 
             if(wa) {
-                let m = `*DESPACHO TWINS*\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
-                route.forEach(i => m += `• ${i.cli}: ${i.can} CJ\n`);
-                m += `---\nTOTAL: ${reg.total} CJ`;
+                let m = `*TWINS*\nCh: ${reg.chofer}\nPl: ${reg.placa}\nTotal: ${reg.total} CJ`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
 
             route = []; renderRoute(); validateForm();
-            document.getElementById('cho').value = ""; document.getElementById('aux').value = ""; document.getElementById('pla').value = "";
-            alert("✅ REGISTRADO");
+            alert("✅ GUARDADO");
         }
 
         function verReportes() { 
             const cont = document.getElementById('driver-chips-container');
-            if(cont) {
-                cont.innerHTML = `<div class="chip active" id="chip-TODOS" onclick="setF('TODOS')">TODOS</div>`;
-                ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
-                    cont.innerHTML += `<div class="chip" id="chip-${d.replace(' ','')}" onclick="setF('${d}')">${d}</div>`;
-                });
-            }
-            renderHistory(); switchPage('p2', 'p3'); 
+            cont.innerHTML = `<div class="chip active" id="chip-TODOS" onclick="setF('TODOS')">TODOS</div>`;
+            ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
+                cont.innerHTML += `<div class="chip" id="chip-${d.replace(' ','')}" onclick="setF('${d}')">${d}</div>`;
+            });
+            switchPage('p2', 'p3'); 
         }
 
         function setF(d) { 
             activeFilter = d; 
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            const activeId = d === 'TODOS' ? 'chip-TODOS' : 'chip-' + d.replace(' ','');
-            if(document.getElementById(activeId)) document.getElementById(activeId).classList.add('active');
             renderHistory(); 
         }
 
         function renderHistory() {
             const list = document.getElementById('history-list');
-            if(!list) return;
             const search = document.getElementById('search-cli').value.toUpperCase();
+            const monthF = document.getElementById('filter-month').value;
             let sum = 0; list.innerHTML = "";
+            
             dbCloud.forEach(r => {
-                const matchSearch = search === "" || (r.items && r.items.toUpperCase().includes(search)) || (r.placa && r.placa.includes(search));
+                const fechaObj = new Date(r.fecha);
+                const matchSearch = search === "" || r.items.toUpperCase().includes(search) || r.placa.includes(search);
                 const matchDriver = activeFilter === "TODOS" || r.chofer === activeFilter;
+                const matchMonth = monthF === "ALL" || fechaObj.getMonth().toString() === monthF;
                 
-                if(matchSearch && matchDriver) {
-                    sum += parseFloat(r.total || 0);
+                if(matchSearch && matchDriver && matchMonth) {
+                    sum += parseFloat(r.total);
                     list.innerHTML += `<div class="card" style="border-left:5px solid var(--twins-blue)">
-                        <div style="display:flex; justify-content:space-between"><b>${new Date(r.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</b><b>${r.total} CJ</b></div>
-                        <div style="font-size:12px; margin:4px 0;">${r.chofer} | ${r.placa} | Op: ${r.operario}</div>
-                        <div style="font-size:13px; opacity:0.8;">${r.items}</div>
+                        <div style="display:flex; justify-content:space-between"><b>${fechaObj.toLocaleDateString()}</b><b>${r.total} CJ</b></div>
+                        <small>${r.chofer} | ${r.placa}</small><br>
+                        <small style="opacity:0.7">${r.items}</small>
                     </div>`;
                 }
             });
