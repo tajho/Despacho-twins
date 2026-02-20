@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V9 | CONTEO EXACTO</title>
+    <title>TWINS V10 | ACUMULADO DINÁMICO</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -13,7 +13,7 @@
             --twins-blue: #3b82f6; --twins-green: #22c55e;
             --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
         }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -36,9 +36,9 @@
 </head>
 <body>
 
-    <div id="modal-pass">
-        <div class="card" style="width: 260px; text-align: center;">
-            <div style="font-weight: 800; margin-bottom: 10px;">🔒 ACCESO</div>
+    <div id="modal-pass" onclick="this.style.display='none'">
+        <div class="card" style="width: 260px; text-align: center;" onclick="event.stopPropagation()">
+            <div style="font-weight: 800; margin-bottom: 10px;">🔒 ACCESO TAJHO</div>
             <input type="password" id="pass-input" inputmode="numeric" placeholder="Código" style="text-align: center; font-size: 20px;">
             <button class="btn btn-main" onclick="checkPass()">ENTRAR</button>
         </div>
@@ -96,11 +96,11 @@
 
         <div id="p3" class="page">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-                <div class="stat-box"><div class="stat-label">Total en Filtro</div><div id="stat-mes" class="stat-val">0</div></div>
-                <div class="stat-box"><div class="stat-label">Total Hoy</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
+                <div class="stat-box"><div class="stat-label">Acumulado Mes</div><div id="stat-mes" class="stat-val">0</div></div>
+                <div class="stat-box"><div class="stat-label">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
             </div>
             <div class="card" style="padding:10px;">
-                <input type="text" id="f-search" placeholder="🔍 Buscar cliente, chofer o placa..." onkeyup="renderH()">
+                <input type="text" id="f-search" placeholder="🔍 Buscar cliente, chofer..." onkeyup="renderH()">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                     <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
                     <input type="date" id="f-dia" onchange="renderH()">
@@ -112,7 +112,7 @@
 
         <div id="nav-app" class="bottom-nav" style="display:none;">
             <div id="n2" class="nav-item active-nav" onclick="nav('p2')"><span>📝</span><span>RUTA</span></div>
-            <div id="n3" class="nav-item" onclick="nav('n3_click()')"><span>📊</span><span>HISTORIAL</span></div>
+            <div id="n3" class="nav-item" onclick="nav_hist()"><span>📊</span><span>HISTORIAL</span></div>
         </div>
     </div>
 
@@ -122,93 +122,46 @@
 
         window.onload = () => {
             const h = new Date();
-            // Ajustar a fecha local YYYY-MM-DD
-            const localDate = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
-            document.getElementById('f-dia').value = localDate;
+            const local = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
+            document.getElementById('f-dia').value = local;
             document.getElementById('f-mes').value = h.getMonth();
-            loadDraft();
-            updateClientSuggestions();
+            loadDraft(); updateSugs();
         };
 
-        function n3_click() { nav('p3'); load(); }
+        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
+        function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { const d = JSON.parse(s); ruta = d.ruta||[]; document.getElementById('pla').value=d.p; document.getElementById('cho').value=d.c; document.getElementById('aux').value=d.a; renderR(); } }
+        function updateSugs() { const c = JSON.parse(localStorage.getItem('tw_c') || "[]"); const dl = document.getElementById('clientes-sugeridos'); dl.innerHTML = ""; c.forEach(x => { let o = document.createElement('option'); o.value = x; dl.appendChild(o); }); }
+        function saveClients(it) { let c = JSON.parse(localStorage.getItem('tw_c') || "[]"); it.forEach(i => { if(!c.includes(i.cl)) c.push(i.cl); }); localStorage.setItem('tw_c', JSON.stringify(c.slice(-60))); updateSugs(); }
 
-        // --- PERSISTENCIA Y SUGERENCIAS ---
-        function saveDraft() {
-            localStorage.setItem('twins_draft', JSON.stringify({
-                ruta, pla: document.getElementById('pla').value, cho: document.getElementById('cho').value, aux: document.getElementById('aux').value
-            }));
-        }
-        function loadDraft() {
-            const s = localStorage.getItem('twins_draft');
-            if(s) {
-                const d = JSON.parse(s); ruta = d.ruta || [];
-                document.getElementById('pla').value = d.pla || ""; document.getElementById('cho').value = d.cho || ""; document.getElementById('aux').value = d.aux || "";
-                renderR();
-            }
-        }
-        function updateClientSuggestions() {
-            const clients = JSON.parse(localStorage.getItem('twins_clients') || "[]");
-            const dl = document.getElementById('clientes-sugeridos');
-            dl.innerHTML = "";
-            clients.forEach(c => { let o = document.createElement('option'); o.value = c; dl.appendChild(o); });
-        }
-        function saveClients(items) {
-            let current = JSON.parse(localStorage.getItem('twins_clients') || "[]");
-            items.forEach(i => { if(!current.includes(i.cl)) current.push(i.cl); });
-            localStorage.setItem('twins_clients', JSON.stringify(current.slice(-60)));
-            updateClientSuggestions();
-        }
-
-        // --- LOGIN Y NAV ---
         function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
-        function login(n) {
-            user = n; document.getElementById('p1').style.display='none';
-            document.getElementById('header-app').style.display='flex'; document.getElementById('nav-app').style.display='flex';
-            document.getElementById('user-display').innerText = n;
-            if(n === 'TAJHO') document.getElementById('btn-reporte-admin').style.display = 'block';
-            nav('p2'); load();
-        }
-        function nav(id) {
-            if(id.includes('n3')) id = 'p3';
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-            document.getElementById(id).classList.add('active');
-            const nId = 'n' + id.charAt(1);
-            if(document.getElementById(nId)) document.getElementById(nId).classList.add('active-nav');
-            if(id === 'p3') renderH();
-        }
+        function login(n) { user = n; document.getElementById('p1').style.display='none'; document.getElementById('header-app').style.display='flex'; document.getElementById('nav-app').style.display='flex'; document.getElementById('user-display').innerText = n; if(n === 'TAJHO') document.getElementById('btn-reporte-admin').style.display = 'block'; nav('p2'); load(); }
+        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav')); document.getElementById(id).classList.add('active'); if(id === 'p2') document.getElementById('n2').classList.add('active-nav'); else document.querySelector('.nav-item:nth-child(2)').classList.add('active-nav'); if(id==='p3') renderH(); }
+        function nav_hist() { nav('p3'); load(); }
 
-        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) { console.log(e)} }
+        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) {} }
 
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return;
-            ruta.unshift({cl, ca});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderR(); saveDraft();
+            if(!cl || !ca) return; ruta.unshift({cl, ca}); document.getElementById('cli').value = ""; document.getElementById('can').value = ""; renderR(); saveDraft();
         }
 
         function renderR() {
             const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
             ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px;" onclick="ruta.splice(${x},1);renderR();saveDraft()">✕</span></b></div>`; });
-            document.getElementById('total-vivo').innerText = s;
-            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
+            document.getElementById('total-vivo').innerText = s; document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
         function editarRuta(idx) {
-            const r = db[idx];
-            ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
-            document.getElementById('pla').value = r.placa; document.getElementById('cho').value = r.chofer; document.getElementById('aux').value = r.auxiliar;
-            renderR(); saveDraft(); nav('p2');
+            const r = db[idx]; ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
+            document.getElementById('pla').value = r.placa; document.getElementById('cho').value = r.chofer; document.getElementById('aux').value = r.auxiliar; renderR(); saveDraft(); nav('p2');
         }
 
         async function guardar(wa) {
             const r = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUX", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0) };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
-            saveClients(ruta);
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            saveClients(ruta); fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
             if(wa) sendWA(r); else alert("✅ Guardado");
-            ruta = []; localStorage.removeItem('twins_draft'); renderR(); load();
+            ruta = []; localStorage.removeItem('tw_d'); renderR(); load();
         }
 
         function sendWA(r) {
@@ -220,30 +173,38 @@
         function renderH() {
             const list = document.getElementById('h-list');
             const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
-            let tFiltro = 0, tHoy = 0;
+            let tAcumulado = 0, tDiaIndividual = 0;
             
-            const now = new Date();
-            const hoyStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-            
+            // Fecha de referencia: si hay calendario, esa; si no, hoy.
+            const targetDate = fD ? new Date(fD + "T12:00:00") : new Date();
+            const tYear = targetDate.getFullYear(), tMonth = targetDate.getMonth(), tDay = targetDate.getDate();
+            const targetStr = tYear + '-' + String(tMonth + 1).padStart(2, '0') + '-' + String(tDay).padStart(2, '0');
+
             list.innerHTML = "";
             [...db].reverse().forEach((r) => {
-                // Procesar fecha del registro para que coincida con zona local
-                const regDateObj = new Date(r.fecha);
-                const rFechaStr = regDateObj.getFullYear() + '-' + String(regDateObj.getMonth() + 1).padStart(2, '0') + '-' + String(regDateObj.getDate()).padStart(2, '0');
-                const rMes = regDateObj.getMonth().toString();
-
-                const matchBusqueda = r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS);
-                const matchFiltro = (fM === "ALL" || rMes === fM) && (!fD || rFechaStr === fD);
-
-                const cVal = parseFloat(r.total) || 0;
+                const rDate = new Date(r.fecha);
+                const rY = rDate.getFullYear(), rM = rDate.getMonth(), rD = rDate.getDate();
+                const rStr = rY + '-' + String(rM + 1).padStart(2, '0') + '-' + String(rD).padStart(2, '0');
                 
-                // Sumar al total de HOY (independiente del filtro visual)
-                if(rFechaStr === hoyStr) tHoy += cVal;
+                const cVal = parseFloat(r.total) || 0;
 
-                if (matchFiltro && matchBusqueda) {
-                    tFiltro += cVal;
+                // LÓGICA ACUMULATIVA: Sumar si es el mismo año, mismo mes Y día es menor o igual al buscado
+                if(rY === tYear && rM === tMonth && rD <= tDay) {
+                    tAcumulado += cVal;
+                }
+
+                // LÓGICA DÍA SELECCIONADO: Sumar solo si es exactamente el día buscado
+                if(rStr === targetStr) {
+                    tDiaIndividual += cVal;
+                }
+
+                // Filtros visuales para la lista
+                const matchBusq = r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS);
+                const matchFecha = (fM === "ALL" || rM.toString() === fM) && (!fD || rStr === fD);
+
+                if (matchFecha && matchBusq) {
                     const realIdx = db.indexOf(r);
-                    list.innerHTML += `<div class="card" style="border-left: 3px solid #3b82f6; padding:12px;">
+                    list.innerHTML += `<div class="card" style="border-left: 3px solid #3b82f6;">
                         <div style="display:flex; justify-content:space-between; align-items:start;">
                             <div><div style="font-weight:800; font-size:13px;">${r.chofer}</div><div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div></div>
                             <div style="display:flex; gap:6px;">
@@ -252,12 +213,12 @@
                                 <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[realIdx])">🟢</div>
                             </div>
                         </div>
-                        <div class="hist-footer"><span>🚚 ${r.placa}</span><span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span><span>${rFechaStr}</span></div>
+                        <div class="hist-footer"><span>🚚 ${r.placa}</span><span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span><span>${rStr}</span></div>
                     </div>`;
                 }
             });
-            document.getElementById('stat-mes').innerText = tFiltro; 
-            document.getElementById('stat-dia').innerText = tHoy;
+            document.getElementById('stat-mes').innerText = tAcumulado; 
+            document.getElementById('stat-dia').innerText = tDiaIndividual;
         }
 
         function verSoloRuta(idx) {
@@ -268,18 +229,15 @@
 
         function generarPDF() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            const fMText = document.getElementById('f-mes').options[document.getElementById('f-mes').selectedIndex].text;
-            doc.setFontSize(18); doc.text("REPORTE DE DESPACHOS - TWINS", 14, 20);
+            doc.text("REPORTE TWINS", 14, 20);
             const filas = [];
             db.forEach(r => {
                 const rd = new Date(r.fecha);
                 const rfs = rd.getFullYear() + '-' + String(rd.getMonth() + 1).padStart(2, '0') + '-' + String(rd.getDate()).padStart(2, '0');
-                if ((document.getElementById('f-mes').value === "ALL" || rd.getMonth().toString() === document.getElementById('f-mes').value) && (!document.getElementById('f-dia').value || rfs === document.getElementById('f-dia').value)) {
-                    filas.push([rfs, r.chofer, r.placa, r.total + " CJ"]);
-                }
+                filas.push([rfs, r.chofer, r.placa, r.total + " CJ"]);
             });
-            doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas, headStyles: { fillColor: [59, 130, 246] } });
-            doc.save(`Reporte_Twins_${fMText}.pdf`);
+            doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas });
+            doc.save(`Reporte.pdf`);
         }
     </script>
 </body>
