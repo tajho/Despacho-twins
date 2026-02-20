@@ -115,7 +115,14 @@
             <div class="card">
                 <select id="cho" onchange="validateForm()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
                 <select id="aux" onchange="validateForm()"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option><option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option><option value="JOFER">JOFER</option></select>
-                <select id="pla" onchange="validateForm()"><option value="">Placa...</option><option value="BUL742">BUL742</option><option value="BPN104">BPN104</option></select>
+                <select id="pla" onchange="validateForm()">
+                    <option value="">Placa...</option>
+                    <option value="BVN-930">BVN-930</option>
+                    <option value="BVN-704">BVN-704</option>
+                    <option value="BUL-742">BUL-742</option>
+                    <option value="BPN-711">BPN-711</option>
+                    <option value="FUSO">FUSO</option>
+                </select>
                 <button id="btn-save-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR</button>
                 <button id="btn-save-only" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
             </div>
@@ -147,6 +154,7 @@
     </div>
 
     <script>
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzHoyBTrHpXzbXRIBt2P-0EMsrNhrOYGVej3EzL34i7rYXMfKqtiFunI42mD6tQ2TUM/exec";
         let user = "", route = [], activeFilter = "TODOS", editId = null;
         let db = JSON.parse(localStorage.getItem('twins_final_v5')) || [];
 
@@ -203,25 +211,42 @@
 
         function guardar(wa) {
             const reg = {
-                id: editId || Date.now(), fecha: new Date().toISOString(),
+                id: editId || Date.now(), 
+                fecha: new Date().toISOString(),
                 chofer: document.getElementById('cho').value,
                 auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
                 placa: document.getElementById('pla').value,
-                operario: user, items: [...route], total: route.reduce((a,b)=>a+b.can, 0)
+                operario: user, 
+                items: [...route], 
+                total: route.reduce((a,b)=>a+b.can, 0)
             };
+
+            // 1. Guardar en local (historial del teléfono)
             if(editId) db = db.map(x => x.id === editId ? reg : x); else db.push(reg);
             localStorage.setItem('twins_final_v5', JSON.stringify(db));
+
+            // 2. Enviar a Google Sheets (Nube)
+            fetch(CLOUD_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reg)
+            });
+
+            // 3. Opcional: WhatsApp
             if(wa) {
-                // Aquí también incluimos la hora en el mensaje de WhatsApp
                 let ahora = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 let m = `*DESPACHO TWINS*\nHora: ${ahora}\nOp: ${user}\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
                 route.forEach(i => m += `• ${i.cli}: ${i.can} CJ\n`);
                 m += `---\nTOTAL: ${reg.total} CJ`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
+
             route = []; editId = null; 
             document.getElementById('cho').value = ""; document.getElementById('aux').value = ""; document.getElementById('pla').value = "";
-            renderRoute(); validateForm(); alert("✅ Guardado correctamente");
+            renderRoute(); validateForm(); 
+            alert("✅ Guardado en Historial y Google Sheets");
         }
 
         function verReportes() { 
@@ -251,8 +276,6 @@
                 if(matchMonth && matchSearch && matchDriver) {
                     sum += r.total;
                     let items = r.items.map(i => `<div style="${i.cli.includes(search) && search !== '' ? 'color:#fbbf24;font-weight:bold' : ''}">• ${i.cli}: ${i.can} CJ</div>`).join('');
-                    
-                    // CAMBIO AQUÍ: d.toLocaleString() muestra Fecha + Hora
                     let fechaConHora = d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
                     list.innerHTML += `
