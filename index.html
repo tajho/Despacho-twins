@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHOS | FINAL</title>
+    <title>TWINS DESPACHOS | ELITE V5</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,7 +18,6 @@
             --nav-bg: #ffffff;
         }
 
-        /* MODO OSCURO REAL */
         [data-theme="dark"] {
             --bg: #020617;
             --card: #1e293b;
@@ -36,7 +35,7 @@
             transition: background 0.3s;
         }
 
-        /* Gestión de pantallas */
+        /* Pantallas */
         .page { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: none; flex-direction: column; background: var(--bg);
@@ -46,17 +45,17 @@
         .scroll-content { flex: 1; overflow-y: auto; padding: 12px; padding-bottom: 90px; -webkit-overflow-scrolling: touch; }
 
         /* Encabezado */
-        .top-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); }
+        .top-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: var(--card); border-bottom: 1px solid var(--border); flex-shrink: 0; }
         
-        /* Navegación */
+        /* Navegación Inferior */
         .bottom-nav { 
             position: fixed; bottom: 0; left: 0; right: 0; height: 65px; 
             background: var(--nav-bg); border-top: 1px solid var(--border);
             display: flex; justify-content: space-around; align-items: center;
             z-index: 1000;
         }
-        .nav-item { border: none; background: none; color: var(--text); font-size: 12px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
-        .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
+        .nav-item { border: none; background: none; color: var(--text); font-size: 12px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; width: 50%; }
+        .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
 
         .banner-total-mini { 
             background: var(--twins-blue); color: white; border-radius: 12px; 
@@ -70,45 +69,50 @@
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; margin-top: 8px; }
         .btn-outline { background: transparent; border: 1.5px solid var(--twins-blue); color: var(--twins-blue); margin-top: 8px; }
-        .btn:disabled { opacity: 0.3; pointer-events: none; }
+        .btn:disabled { opacity: 0.2; pointer-events: none; }
 
         input, select { 
             width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; 
             border: 1px solid var(--border); background: var(--input-bg); 
-            color: var(--text); font-size: 16px; box-sizing: border-box; 
+            color: var(--text); font-size: 15px; box-sizing: border-box; 
         }
+
+        /* Ajuste de Filtros para que quepa el nombre del mes */
+        .filter-group { display: flex; gap: 8px; margin-top: 8px; }
+        #f-mes { flex: 1.4; min-width: 130px; }
+        #f-fec { flex: 1; }
 
         .date-divider { 
             background: var(--twins-blue); color: white; padding: 10px; 
-            border-radius: 8px; font-size: 12px; font-weight: 800; 
+            border-radius: 8px; font-size: 11px; font-weight: 800; 
             margin: 15px 0 8px 0; display: flex; justify-content: space-between;
         }
 
-        #pull-text { text-align: center; height: 0; overflow: hidden; color: var(--twins-green); font-weight: 800; font-size: 12px; line-height: 40px; }
+        #pull-indicator { text-align: center; height: 0; overflow: hidden; color: var(--twins-green); font-weight: 800; font-size: 11px; line-height: 40px; background: var(--card); transition: height 0.2s; }
     </style>
 </head>
 <body ontouchstart="ts(event)" ontouchmove="tm(event)" ontouchend="te()">
 
     <div id="p1" class="page active" style="justify-content: center; align-items: center; z-index: 50;">
-        <div style="text-align:center; margin-bottom: 20px;">
-            <div style="font-size: 28px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
-            <div style="font-size: 12px; font-weight: 700; opacity: 0.6; letter-spacing: 2px;">LOGÍSTICA</div>
+        <div style="text-align:center; margin-bottom: 30px;">
+            <div style="font-size: 32px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
+            <div style="font-size: 12px; font-weight: 700; opacity: 0.6; letter-spacing: 3px;">DESPACHOS</div>
         </div>
-        <div style="width: 100%; max-width: 260px; display: grid; gap: 12px;">
+        <div style="width: 100%; max-width: 270px; display: grid; gap: 12px;">
             <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('TAJHO')">TAJHO</button>
             <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('FRANCESCO')">FRANCESCO</button>
             <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('OSCAR')">OSCAR</button>
             <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('LUIS HERBER')">LUIS HERBER</button>
-            <button onclick="toggleTheme()" style="background:none; border:none; color:var(--text); margin-top:10px; font-size: 20px;">🌓 MODO OSCURO</button>
+            <button onclick="toggleTheme()" style="background:none; border:none; color:var(--text); margin-top:15px; font-size: 14px; font-weight: 600;">🌓 CAMBIAR TEMA</button>
         </div>
     </div>
 
     <div id="p2" class="page">
-        <div id="pull-text" class="pull-msg">⬇️ SUELTA PARA ACTUALIZAR</div>
+        <div id="pull-indicator">⬇️ SUELTA PARA ACTUALIZAR</div>
         <div class="top-header">
-            <b id="user-display" style="color:var(--twins-blue);">---</b>
+            <b id="user-display" style="color:var(--twins-blue); font-size: 14px;">---</b>
             <div style="display:flex; gap:15px; align-items: center;">
-                <span onclick="toggleTheme()" style="font-size:22px;">🌓</span>
+                <span onclick="toggleTheme()" style="font-size:22px; cursor:pointer;">🌓</span>
                 <span onclick="location.reload()" style="color:var(--danger); font-weight:800; font-size:12px;">SALIR</span>
             </div>
         </div>
@@ -118,17 +122,17 @@
             <span id="total-vivo" style="font-size:28px; font-weight:900;">0</span>
         </div>
 
-        <div class="scroll-content" id="scroll2">
+        <div class="scroll-content">
             <div class="card">
                 <div style="display: flex; gap: 8px;">
                     <input type="text" id="cli" placeholder="Cliente" style="flex: 2;">
                     <input type="number" id="can" placeholder="Cant." inputmode="numeric" style="flex: 1;">
                 </div>
-                <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
+                <button class="btn btn-main" onclick="addItem()">+ AGREGAR A RUTA</button>
             </div>
             
             <div id="area-despacho" style="display:none;">
-                <div class="card" id="lista-actual" style="border-left: 5px solid var(--twins-blue); background: var(--bg);"></div>
+                <div class="card" id="lista-actual" style="border-left: 5px solid var(--twins-blue);"></div>
                 <div class="card">
                     <select id="pla" onchange="val()">
                         <option value="">Seleccionar Placa...</option>
@@ -138,36 +142,39 @@
                         <option value="">Seleccionar Chofer...</option>
                         <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                     </select>
-                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
-                    <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
+                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y ENVIAR WA</button>
+                    <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR EN NUBE</button>
                 </div>
             </div>
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-item active-nav" id="n-reg" onclick="nav('p2')"><span>📝 Registro</span></div>
-            <div class="nav-item" id="n-his" onclick="nav('p3')"><span>📊 Historial</span></div>
+            <div class="nav-item active-nav" onclick="nav('p2')"><span>📝 Registro</span></div>
+            <div class="nav-item" onclick="nav('p3')"><span>📊 Historial</span></div>
         </div>
     </div>
 
     <div id="p3" class="page">
         <div class="top-header">
             <div style="display:flex; gap:15px;">
-                <div style="text-align:left"><small style="font-size:9px; opacity:0.6; display:block;">MES</small><b id="stat-mes">0</b></div>
-                <div style="text-align:left"><small style="font-size:9px; opacity:0.6; display:block;">HOY</small><b id="stat-dia" style="color:var(--twins-green);">0</b></div>
+                <div style="text-align:left"><small style="font-size:9px; opacity:0.6; display:block; font-weight:700;">TOTAL MES</small><b id="stat-mes" style="font-size:16px;">0</b></div>
+                <div style="text-align:left"><small style="font-size:9px; opacity:0.6; display:block; font-weight:700;">HOY</small><b id="stat-dia" style="color:var(--twins-green); font-size:16px;">0</b></div>
             </div>
             <span onclick="toggleTheme()" style="font-size:22px;">🌓</span>
         </div>
 
-        <div class="scroll-content" id="scroll3">
+        <div class="scroll-content">
             <div class="card">
-                <input type="text" id="bus" placeholder="🔍 Buscar..." onkeyup="renderH()">
-                <div style="display:flex; gap:5px; margin-top:5px;">
-                    <select id="f-mes" onchange="renderH()" style="margin:0; height:40px;">
+                <input type="text" id="bus" placeholder="🔍 Buscar cliente o placa..." onkeyup="renderH()">
+                <div class="filter-group">
+                    <select id="f-mes" onchange="renderH()">
                         <option value="ALL">Todos los Meses</option>
-                        <option value="1">Febrero</option><option value="2">Marzo</option>
+                        <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+                        <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+                        <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+                        <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
                     </select>
-                    <input type="date" id="f-fec" onchange="renderH()" style="margin:0; width:140px; height:40px;">
+                    <input type="date" id="f-fec" onchange="renderH()">
                 </div>
             </div>
             <div id="chips" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:10px;"></div>
@@ -181,6 +188,7 @@
     </div>
 
     <script>
+        // PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT
         const URL = "https://script.google.com/macros/s/AKfycbwZ9POMWvQZ_ymsu5TU9MK7ERY3jpAPLMUnGTAhBSoZo9s0Nq_PGADRi59Le0PulYia/exec";
         let user = "", ruta = [], db = [], f_driver = "TODOS";
 
@@ -189,13 +197,10 @@
             b.getAttribute('data-theme') === 'dark' ? b.removeAttribute('data-theme') : b.setAttribute('data-theme', 'dark');
         }
 
-        // Lógica de navegación
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            if(id === 'p3') {
-                renderChips(); renderH();
-            }
+            if(id === 'p3') { renderChips(); renderH(); }
         }
 
         function login(n) {
@@ -205,20 +210,24 @@
             load();
         }
 
-        // Pull to refresh
+        // Lógica de deslizar para actualizar
         let sy = 0;
         function ts(e) { sy = e.touches[0].pageY; }
         function tm(e) {
             let diff = e.touches[0].pageY - sy;
             let sc = document.querySelector('.page.active .scroll-content');
-            if(diff > 0 && sc.scrollTop <= 0) {
-                document.getElementById('pull-text').style.height = Math.min(diff/2, 40) + "px";
+            if(diff > 40 && sc.scrollTop <= 0) {
+                document.getElementById('pull-indicator').style.height = "40px";
             }
         }
         function te() {
-            let p = document.getElementById('pull-text');
-            if(parseInt(p.style.height) > 30) { load(); p.innerText = "🔄 CARGANDO..."; }
-            setTimeout(() => { p.style.height = "0"; p.innerText = "⬇️ SUELTA PARA ACTUALIZAR"; }, 800);
+            let p = document.getElementById('pull-indicator');
+            if(parseInt(p.style.height) >= 40) { 
+                p.innerText = "🔄 ACTUALIZANDO...";
+                load().then(() => {
+                    setTimeout(() => { p.style.height = "0"; p.innerText = "⬇️ SUELTA PARA ACTUALIZAR"; }, 600);
+                });
+            } else { p.style.height = "0"; }
         }
 
         async function load() {
@@ -226,7 +235,7 @@
                 const r = await fetch(URL);
                 db = await r.json();
                 renderH();
-            } catch(e) {}
+            } catch(e) { console.error("Error cargando historial"); }
         }
 
         function addItem() {
@@ -243,9 +252,9 @@
             let s = 0; l.innerHTML = "";
             ruta.forEach((i, x) => {
                 s += i.ca;
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)">
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
                     <span><b>${i.cl}</b></span>
-                    <span>${i.ca} CJ <b onclick="del(${x})" style="color:var(--danger); margin-left:10px;">✕</b></span>
+                    <span>${i.ca} CJ <b onclick="del(${x})" style="color:var(--danger); margin-left:15px; padding:5px;">✕</b></span>
                 </div>`;
             });
             document.getElementById('total-vivo').innerText = s;
@@ -268,15 +277,18 @@
                 items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "),
                 total: ruta.reduce((a,b) => a + b.ca, 0)
             };
+
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+
             if(wa) {
-                let m = `*DESPACHO TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ\nDetalle: ${reg.items}`;
+                let m = `*DESPACHO TWINS*\nChofer: ${reg.chofer}\nPlaca: ${reg.placa}\nTotal: ${reg.total} CJ\nDetalle: ${reg.items}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
             }
+
             ruta = []; document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
             renderR(); val();
-            alert("✅ GUARDADO");
-            load();
+            alert("✅ GUARDADO EXITOSO");
+            setTimeout(load, 1500); // Recarga para ver el nuevo registro
         }
 
         function renderChips() {
@@ -313,7 +325,8 @@
                 }
             });
 
-            Object.keys(grupos).sort().reverse().forEach(k => {
+            const sortedDates = Object.keys(grupos).sort().reverse();
+            sortedDates.forEach(k => {
                 list.innerHTML += `<div class="date-divider"><span>📅 ${k}</span> <span>${grupos[k].s} CJ</span></div>`;
                 grupos[k].regs.forEach(r => {
                     list.innerHTML += `<div class="card" style="padding:10px;">
@@ -323,8 +336,10 @@
                     </div>`;
                 });
             });
+
             document.getElementById('stat-mes').innerText = tM;
-            document.getElementById('stat-dia').innerText = fec && grupos[fec] ? grupos[fec].s : (Object.keys(grupos)[0] ? grupos[Object.keys(grupos).sort().reverse()[0]].s : 0);
+            const todayK = new Date().toISOString().split('T')[0];
+            document.getElementById('stat-dia').innerText = fec ? (grupos[fec] ? grupos[fec].s : 0) : (grupos[todayK] ? grupos[todayK].s : 0);
         }
     </script>
 </body>
