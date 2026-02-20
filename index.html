@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHOS | SISTEMA PROFESIONAL</title>
+    <title>TWINS DESPACHOS | GESTIÓN MENSUAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -20,8 +20,9 @@
         .btn-outline { background: transparent; border: 2px solid var(--blue); color: var(--blue); margin-bottom: 10px; }
         input, select { width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border); background: white; color: black; font-size: 16px; box-sizing: border-box; }
         .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; margin-right: 5px; }
-        .chip.active { background: var(--blue); color: white; }
+        .filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .chip.active { background: var(--blue); color: white; border-color: var(--blue); }
         .detail-pane { background: rgba(0,0,0,0.05); border-radius: 10px; padding: 10px; margin-top: 10px; display: none; font-size: 13px; }
         .open { display: block !important; }
     </style>
@@ -30,8 +31,8 @@
 
     <div id="p1" class="page active">
         <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
-            <h1 style="color:var(--blue); font-weight:800;">TWINS DESPACHOS</h1>
-            <p style="opacity:0.6; margin-bottom:30px;">Cloud System v4.0</p>
+            <div style="font-size:32px; font-weight:800; color:var(--blue);">TWINS DESPACHOS</div>
+            <p style="opacity:0.6; margin-bottom:30px;">Control de Inventario y Ruta</p>
             <div style="width: 100%; max-width: 280px;">
                 <button class="btn btn-outline" onclick="login('TAJHO')">TAJHO</button>
                 <button class="btn btn-outline" onclick="login('FRANCESCO')">FRANCESCO</button>
@@ -47,13 +48,13 @@
             <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
         </div>
         <div class="banner-total">
-            <small>TOTAL RUTA</small>
+            <small>CARGA ACTUAL</small>
             <div id="total-vivo" style="font-size:45px; font-weight:800;">0</div>
         </div>
         <div class="card">
             <input type="text" id="cli" placeholder="Cliente">
             <input type="number" id="can" placeholder="Cajas" inputmode="numeric">
-            <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR</button>
         </div>
         <div id="area-despacho" style="display:none;">
             <div class="card" id="lista-actual"></div>
@@ -70,23 +71,37 @@
                     <option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option>
                     <option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                 </select>
+                <select id="aux">
+                    <option value="">Auxiliar...</option>
+                    <option value="CRISTOPHER">CRISTOPHER</option><option value="LUIS PLACIDO">LUIS PLACIDO</option>
+                    <option value="RODOLFO">RODOLFO</option><option value="ELIO">ELIO</option>
+                    <option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option>
+                    <option value="JOFER">JOFER</option><option value="SIN AUXILIAR">SIN AUXILIAR</option>
+                </select>
                 <button id="btn-save" class="btn btn-save" onclick="guardar()">💾 GUARDAR Y ENVIAR</button>
             </div>
         </div>
-        <button class="btn btn-outline" style="margin-top:20px" onclick="abrirHistorial()">📊 VER HISTORIAL COMPLETO</button>
+        <button class="btn btn-outline" style="margin-top:20px" onclick="abrirHistorial()">📊 REPORTE MENSUAL / HISTORIAL</button>
     </div>
 
     <div id="p3" class="page">
         <button class="btn btn-outline" style="width:auto;" onclick="switchPage('p3','p2')">← VOLVER</button>
-        <div class="card" style="margin-top:15px;">
+        
+        <div class="card" style="margin-top:10px;">
+            <small>FILTRAR POR MES:</small>
+            <div class="filter-scroll" id="mes-chips"></div>
+            
+            <small>FILTRAR POR CHOFER:</small>
+            <div class="filter-scroll" id="chofer-chips"></div>
+
             <input type="text" id="search-cli" placeholder="🔍 Buscar cliente..." onkeyup="renderHistory()">
-            <div id="chips-choferes" style="display:flex; gap:8px; overflow-x:auto; padding:10px 0;"></div>
+            <div style="text-align:center; font-size:14px; margin-top:10px;">Total Periodo: <b id="stat-total" style="color:var(--blue)">0</b> CJ</div>
         </div>
+        
         <div id="history-list"></div>
     </div>
 
     <script>
-        // CONFIGURACION FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAc_X5FLc7vTXY2VuDEakmC4foA18XL8fg",
             authDomain: "twins-despachos.firebaseapp.com",
@@ -98,7 +113,8 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let user = "", route = [], cloudData = [], filterDriver = "TODOS";
+        let user = "", route = [], cloudData = [], selMes = "TODOS", selCho = "TODOS";
+        const mesesNombres = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
 
         function login(n) { user = n; document.getElementById('user-display').innerText = "OP: "+n; switchPage('p1','p2'); }
         function switchPage(h, s) { document.getElementById(h).classList.remove('active'); document.getElementById(s).classList.add('active'); }
@@ -126,62 +142,38 @@
         async function guardar() {
             const pla = document.getElementById('pla').value;
             const cho = document.getElementById('cho').value;
-            if(!pla || !cho) return alert("Selecciona Placa y Chofer");
+            if(!pla || !cho) return alert("Falta Placa o Chofer");
 
             const btn = document.getElementById('btn-save');
-            btn.disabled = true; btn.innerText = "GUARDANDO EN NUBE...";
+            btn.disabled = true; btn.innerText = "SINCRONIZANDO...";
 
+            const ahora = new Date();
             const reg = {
-                fecha: new Date().toLocaleString(),
-                fecha_iso: new Date().toISOString(),
-                placa: pla, chofer: cho, operario: user,
+                fecha: ahora.toLocaleString(),
+                fecha_iso: ahora.toISOString(),
+                mes: mesesNombres[ahora.getMonth()], // Guardamos el mes para el filtro
+                placa: pla, chofer: cho, 
+                auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
+                operario: user,
                 items: route,
                 total: route.reduce((a,b)=>a+b.can, 0)
             };
 
             try {
                 await db.collection("despachos").add(reg);
-                alert("✅ GUARDADO EN BASE DE DATOS");
+                alert("✅ DESPACHO REGISTRADO EN NUBE");
                 
-                let m = `*TWINS DESPACHO*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ\nOp: ${user}`;
+                let m = `*TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ\nOp: ${user}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
                 location.reload();
             } catch (e) {
                 alert("ERROR: " + e.message);
-                btn.disabled = false; btn.innerText = "REINTENTAR";
+                btn.disabled = false;
             }
         }
 
         async function abrirHistorial() {
             switchPage('p2','p3');
-            document.getElementById('history-list').innerHTML = "Cargando nube...";
-            const snap = await db.collection("despachos").orderBy("fecha_iso", "desc").limit(40).get();
-            cloudData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
-            
-            const choferes = ["TODOS", ...new Set(cloudData.map(d => d.chofer))];
-            document.getElementById('chips-choferes').innerHTML = choferes.map(c => 
-                `<div class="chip ${filterDriver==c?'active':''}" onclick="filterBy('${c}')">${c}</div>`
-            ).join('');
-            renderHistory();
-        }
-
-        function filterBy(c) { filterDriver = c; abrirHistorial(); }
-
-        function renderHistory() {
-            const search = document.getElementById('search-cli').value.toUpperCase();
-            const list = document.getElementById('history-list');
-            list.innerHTML = "";
-            cloudData.forEach(r => {
-                if((filterDriver === "TODOS" || r.chofer === filterDriver) && (search === "" || r.items.some(i => i.cli.includes(search)))) {
-                    list.innerHTML += `<div class="card">
-                        <div style="display:flex; justify-content:space-between"><b>${r.fecha}</b><b style="color:var(--blue)">${r.total} CJ</b></div>
-                        <small>${r.placa} | ${r.chofer}</small>
-                        <button class="btn" style="padding:5px; margin-top:10px; font-size:11px;" onclick="this.nextElementSibling.classList.toggle('open')">DETALLES</button>
-                        <div class="detail-pane">${r.items.map(i => `<div>• ${i.cli}: ${i.can} CJ</div>`).join('')}</div>
-                    </div>`;
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+            document.getElementById('history-list').innerHTML = "Consultando base de datos...";
+            const snap = await db.collection("despachos").orderBy("fecha_iso", "desc").limit(100).get();
+            cloud
