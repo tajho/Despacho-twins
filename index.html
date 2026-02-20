@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | OFICIAL</title>
+    <title>TWINS V8 | SISTEMA INTELIGENTE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -13,7 +13,7 @@
             --twins-blue: #3b82f6; --twins-green: #22c55e;
             --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
         }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -75,16 +75,18 @@
                 <div id="total-vivo" class="stat-val" style="font-size: 32px;">0</div>
             </div>
             <div class="card">
-                <input type="text" id="cli" placeholder="Nombre Cliente">
+                <input type="text" id="cli" list="clientes-sugeridos" placeholder="Nombre Cliente" oninput="saveDraft()">
+                <datalist id="clientes-sugeridos"></datalist>
+                
                 <input type="number" id="can" placeholder="Cantidad" inputmode="numeric">
                 <button class="btn btn-main" onclick="addItem()">AGREGAR</button>
             </div>
             <div id="area-envio" style="display:none;">
                 <div class="card" id="lista-items"></div>
                 <div class="card">
-                    <select id="pla"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
-                    <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                    <select id="aux">
+                    <select id="pla" onchange="saveDraft()"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
+                    <select id="cho" onchange="saveDraft()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                    <select id="aux" onchange="saveDraft()">
                         <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
                     </select>
                     <button id="btn-wa" class="btn" style="background:var(--twins-green); color:white; margin-top:8px;" onclick="guardar(true)">💾 GUARDAR Y WHATSAPP</button>
@@ -117,14 +119,61 @@
 
     <script>
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
-        let user = "", ruta = [], db = [];
+        let user = "", ruta = [], db = [], listaClientes = [];
 
         window.onload = () => {
             const h = new Date();
             document.getElementById('f-dia').value = h.toISOString().split('T')[0];
             document.getElementById('f-mes').value = h.getMonth();
+            loadDraft(); // Cargar borrador al abrir
+            updateClientSuggestions(); // Cargar sugerencias
         };
 
+        // --- FUNCIONES DE BORRADOR (LOCALSTORAGE) ---
+        function saveDraft() {
+            const draft = {
+                ruta: ruta,
+                placa: document.getElementById('pla').value,
+                chofer: document.getElementById('cho').value,
+                auxiliar: document.getElementById('aux').value
+            };
+            localStorage.setItem('twins_draft', JSON.stringify(draft));
+        }
+
+        function loadDraft() {
+            const saved = localStorage.getItem('twins_draft');
+            if (saved) {
+                const draft = JSON.parse(saved);
+                ruta = draft.ruta || [];
+                document.getElementById('pla').value = draft.placa || "";
+                document.getElementById('cho').value = draft.chofer || "";
+                document.getElementById('aux').value = draft.auxiliar || "";
+                renderR();
+            }
+        }
+
+        // --- SUGERENCIAS DE CLIENTES ---
+        function updateClientSuggestions() {
+            const savedClients = JSON.parse(localStorage.getItem('twins_clients') || "[]");
+            const datalist = document.getElementById('clientes-sugeridos');
+            datalist.innerHTML = "";
+            savedClients.forEach(c => {
+                let opt = document.createElement('option');
+                opt.value = c;
+                datalist.appendChild(opt);
+            });
+        }
+
+        function saveClientToMemory(newItems) {
+            let current = JSON.parse(localStorage.getItem('twins_clients') || "[]");
+            newItems.forEach(item => {
+                if(!current.includes(item.cl)) current.push(item.cl);
+            });
+            localStorage.setItem('twins_clients', JSON.stringify(current.slice(-50))); // Guardar últimos 50
+            updateClientSuggestions();
+        }
+
+        // --- LÓGICA DE APP ---
         function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
 
         function login(n) {
@@ -133,7 +182,6 @@
             document.getElementById('header-app').style.display='flex';
             document.getElementById('nav-app').style.display='flex';
             document.getElementById('user-display').innerText = n;
-            // Mostrar botón reporte solo si es TAJHO
             if(n === 'TAJHO') document.getElementById('btn-reporte-admin').style.display = 'block';
             nav('p2'); load();
         }
@@ -155,6 +203,7 @@
             ruta.unshift({cl, ca});
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderR();
+            saveDraft();
         }
 
         function renderR() {
@@ -162,13 +211,12 @@
             let s = 0; l.innerHTML = "";
             ruta.forEach((i, x) => { 
                 s += i.ca; 
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px;" onclick="ruta.splice(${x},1);renderR()">✕</span></b></div>`; 
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px;" onclick="ruta.splice(${x},1);renderR();saveDraft()">✕</span></b></div>`; 
             });
             document.getElementById('total-vivo').innerText = s;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
-        // CARGAR RUTA EN P2 PARA EDITAR
         function editarRuta(idx) {
             const r = db[idx];
             ruta = r.items.split(", ").map(str => {
@@ -179,8 +227,8 @@
             document.getElementById('cho').value = r.chofer;
             document.getElementById('aux').value = r.auxiliar;
             renderR();
+            saveDraft();
             nav('p2');
-            alert("Ruta cargada. Puedes editarla y volver a guardar.");
         }
 
         async function guardar(wa) {
@@ -193,9 +241,15 @@
                 total: ruta.reduce((a,b) => a+b.ca, 0) 
             };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
+            
+            saveClientToMemory(ruta); // Aprender nombres de clientes
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            
             if(wa) sendWA(r); else alert("✅ Guardado en la nube");
-            ruta = []; renderR(); load();
+            
+            ruta = [];
+            localStorage.removeItem('twins_draft'); // Limpiar borrador al guardar con éxito
+            renderR(); load();
         }
 
         function sendWA(r) {
