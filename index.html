@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHOS | GESTIÓN MENSUAL</title>
+    <title>TWINS DESPACHOS | VERSION FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -20,11 +20,11 @@
         .btn-outline { background: transparent; border: 2px solid var(--blue); color: var(--blue); margin-bottom: 10px; }
         input, select { width: 100%; padding: 14px; margin: 6px 0; border-radius: 12px; border: 1px solid var(--border); background: white; color: black; font-size: 16px; box-sizing: border-box; }
         .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
-        .chip.active { background: var(--blue); color: white; border-color: var(--blue); }
         .detail-pane { background: rgba(0,0,0,0.05); border-radius: 10px; padding: 10px; margin-top: 10px; display: none; font-size: 13px; }
         .open { display: block !important; }
+        .filter-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .chip.active { background: var(--blue); color: white; }
     </style>
 </head>
 <body>
@@ -32,12 +32,12 @@
     <div id="p1" class="page active">
         <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
             <div style="font-size:32px; font-weight:800; color:var(--blue);">TWINS DESPACHOS</div>
-            <p style="opacity:0.6; margin-bottom:30px;">Control de Inventario y Ruta</p>
+            <p style="opacity:0.6; margin-bottom:30px;">Inventory Management System</p>
             <div style="width: 100%; max-width: 280px;">
-                <button class="btn btn-outline" onclick="login('TAJHO')">TAJHO</button>
-                <button class="btn btn-outline" onclick="login('FRANCESCO')">FRANCESCO</button>
-                <button class="btn btn-outline" onclick="login('OSCAR')">OSCAR</button>
-                <button class="btn btn-outline" onclick="login('LUIS HERBER')">LUIS HERBER</button>
+                <button class="btn btn-outline" onclick="app.login('TAJHO')">TAJHO</button>
+                <button class="btn btn-outline" onclick="app.login('FRANCESCO')">FRANCESCO</button>
+                <button class="btn btn-outline" onclick="app.login('OSCAR')">OSCAR</button>
+                <button class="btn btn-outline" onclick="app.login('LUIS HERBER')">LUIS HERBER</button>
             </div>
         </div>
     </div>
@@ -48,13 +48,13 @@
             <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
         </div>
         <div class="banner-total">
-            <small>CARGA ACTUAL</small>
+            <small>TOTAL RUTA</small>
             <div id="total-vivo" style="font-size:45px; font-weight:800;">0</div>
         </div>
         <div class="card">
-            <input type="text" id="cli" placeholder="Cliente">
-            <input type="number" id="can" placeholder="Cajas" inputmode="numeric">
-            <button class="btn btn-main" onclick="addItem()">+ AÑADIR</button>
+            <input type="text" id="cli" placeholder="Nombre del Cliente">
+            <input type="number" id="can" placeholder="Cantidad Cajas" inputmode="numeric">
+            <button class="btn btn-main" onclick="app.addItem()">+ AÑADIR A LISTA</button>
         </div>
         <div id="area-despacho" style="display:none;">
             <div class="card" id="lista-actual"></div>
@@ -78,26 +78,20 @@
                     <option value="PERCY">PERCY</option><option value="MARTIN">MARTIN</option>
                     <option value="JOFER">JOFER</option><option value="SIN AUXILIAR">SIN AUXILIAR</option>
                 </select>
-                <button id="btn-save" class="btn btn-save" onclick="guardar()">💾 GUARDAR Y ENVIAR</button>
+                <button id="btn-save" class="btn btn-save" onclick="app.guardar()">💾 GUARDAR Y ENVIAR</button>
             </div>
         </div>
-        <button class="btn btn-outline" style="margin-top:20px" onclick="abrirHistorial()">📊 REPORTE MENSUAL / HISTORIAL</button>
+        <button class="btn btn-outline" style="margin-top:20px" onclick="app.abrirHistorial()">📊 REPORTE MENSUAL / HISTORIAL</button>
     </div>
 
     <div id="p3" class="page">
-        <button class="btn btn-outline" style="width:auto;" onclick="switchPage('p3','p2')">← VOLVER</button>
-        
+        <button class="btn btn-outline" style="width:auto;" onclick="app.switchPage('p3','p2')">← VOLVER</button>
         <div class="card" style="margin-top:10px;">
             <small>FILTRAR POR MES:</small>
             <div class="filter-scroll" id="mes-chips"></div>
-            
-            <small>FILTRAR POR CHOFER:</small>
-            <div class="filter-scroll" id="chofer-chips"></div>
-
-            <input type="text" id="search-cli" placeholder="🔍 Buscar cliente..." onkeyup="renderHistory()">
-            <div style="text-align:center; font-size:14px; margin-top:10px;">Total Periodo: <b id="stat-total" style="color:var(--blue)">0</b> CJ</div>
+            <input type="text" id="search-cli" placeholder="🔍 Buscar cliente..." onkeyup="app.renderHistory()">
+            <div style="text-align:center; font-size:14px; margin-top:10px;">Total: <b id="stat-total">0</b> CJ</div>
         </div>
-        
         <div id="history-list"></div>
     </div>
 
@@ -113,67 +107,99 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let user = "", route = [], cloudData = [], selMes = "TODOS", selCho = "TODOS";
-        const mesesNombres = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+        const app = {
+            user: "", route: [], cloudData: [], selMes: "TODOS",
+            meses: ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"],
 
-        function login(n) { user = n; document.getElementById('user-display').innerText = "OP: "+n; switchPage('p1','p2'); }
-        function switchPage(h, s) { document.getElementById(h).classList.remove('active'); document.getElementById(s).classList.add('active'); }
+            login(n) { 
+                this.user = n; 
+                document.getElementById('user-display').innerText = "OP: "+n; 
+                this.switchPage('p1','p2'); 
+            },
 
-        function addItem() {
-            const cli = document.getElementById('cli').value.toUpperCase().trim();
-            const can = parseInt(document.getElementById('can').value);
-            if(!cli || !can) return;
-            route.push({cli, can});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderRoute();
-        }
+            switchPage(h, s) { 
+                document.getElementById(h).classList.remove('active'); 
+                document.getElementById(s).classList.add('active'); 
+            },
 
-        function renderRoute() {
-            const list = document.getElementById('lista-actual');
-            let sum = 0; list.innerHTML = "";
-            route.forEach((i, idx) => {
-                sum += i.can;
-                list.innerHTML += `<div class="item-row"><b>${i.cli}</b> <span>${i.can} CJ <b onclick="route.splice(${idx},1);renderRoute();" style="color:red">✕</b></span></div>`;
-            });
-            document.getElementById('total-vivo').innerText = sum;
-            document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
-        }
+            addItem() {
+                const cli = document.getElementById('cli').value.toUpperCase().trim();
+                const can = parseInt(document.getElementById('can').value);
+                if(!cli || !can) return;
+                this.route.push({cli, can});
+                document.getElementById('cli').value = ""; 
+                document.getElementById('can').value = "";
+                this.renderRoute();
+            },
 
-        async function guardar() {
-            const pla = document.getElementById('pla').value;
-            const cho = document.getElementById('cho').value;
-            if(!pla || !cho) return alert("Falta Placa o Chofer");
+            renderRoute() {
+                const list = document.getElementById('lista-actual');
+                let sum = 0; list.innerHTML = "";
+                this.route.forEach((i, idx) => {
+                    sum += i.can;
+                    list.innerHTML += `<div class="item-row"><b>${i.cli}</b> <span>${i.can} CJ <b onclick="app.route.splice(${idx},1);app.renderRoute();" style="color:var(--danger)">✕</b></span></div>`;
+                });
+                document.getElementById('total-vivo').innerText = sum;
+                document.getElementById('area-despacho').style.display = this.route.length > 0 ? 'block' : 'none';
+            },
 
-            const btn = document.getElementById('btn-save');
-            btn.disabled = true; btn.innerText = "SINCRONIZANDO...";
+            async guardar() {
+                const pla = document.getElementById('pla').value;
+                const cho = document.getElementById('cho').value;
+                if(!pla || !cho) return alert("Falta Placa o Chofer");
 
-            const ahora = new Date();
-            const reg = {
-                fecha: ahora.toLocaleString(),
-                fecha_iso: ahora.toISOString(),
-                mes: mesesNombres[ahora.getMonth()], // Guardamos el mes para el filtro
-                placa: pla, chofer: cho, 
-                auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
-                operario: user,
-                items: route,
-                total: route.reduce((a,b)=>a+b.can, 0)
-            };
+                const btn = document.getElementById('btn-save');
+                btn.disabled = true; btn.innerText = "GUARDANDO...";
 
-            try {
-                await db.collection("despachos").add(reg);
-                alert("✅ DESPACHO REGISTRADO EN NUBE");
+                const ahora = new Date();
+                const reg = {
+                    fecha: ahora.toLocaleString(),
+                    fecha_iso: ahora.toISOString(),
+                    mes: this.meses[ahora.getMonth()],
+                    placa: pla, chofer: cho, 
+                    auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
+                    operario: this.user,
+                    items: this.route,
+                    total: this.route.reduce((a,b)=>a+b.can, 0)
+                };
+
+                try {
+                    await db.collection("despachos").add(reg);
+                    alert("✅ GUARDADO EN GOOGLE");
+                    let m = `*TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ`;
+                    window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+                    location.reload();
+                } catch (e) { alert("Error: " + e.message); btn.disabled = false; }
+            },
+
+            async abrirHistorial() {
+                this.switchPage('p2','p3');
+                const list = document.getElementById('history-list');
+                list.innerHTML = "Cargando...";
+                const snap = await db.collection("despachos").orderBy("fecha_iso", "desc").limit(50).get();
+                this.cloudData = snap.docs.map(doc => ({id: doc.id, ...doc.data()}));
                 
-                let m = `*TWINS*\nPlaca: ${reg.placa}\nChofer: ${reg.chofer}\nTotal: ${reg.total} CJ\nOp: ${user}`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
-                location.reload();
-            } catch (e) {
-                alert("ERROR: " + e.message);
-                btn.disabled = false;
-            }
-        }
+                const mesesDisp = ["TODOS", ...new Set(this.cloudData.map(d => d.mes))];
+                document.getElementById('mes-chips').innerHTML = mesesDisp.map(m => 
+                    `<div class="chip ${this.selMes==m?'active':''}" onclick="app.selMes='${m}';app.renderHistory()">${m}</div>`
+                ).join('');
+                this.renderHistory();
+            },
 
-        async function abrirHistorial() {
-            switchPage('p2','p3');
-            document.getElementById('history-list').innerHTML = "Consultando base de datos...";
-            const snap = await db.collection("despachos").orderBy("fecha_iso", "desc").limit(100).get();
-            cloud
+            renderHistory() {
+                const search = document.getElementById('search-cli').value.toUpperCase();
+                const list = document.getElementById('history-list');
+                let total = 0; list.innerHTML = "";
+                this.cloudData.forEach(r => {
+                    if((this.selMes === "TODOS" || r.mes === this.selMes) && (search === "" || r.items.some(i => i.cli.includes(search)))) {
+                        total += r.total;
+                        list.innerHTML += `<div class="card">
+                            <div style="display:flex; justify-content:space-between"><b>${r.fecha}</b><b>${r.total} CJ</b></div>
+                            <small>${r.placa} | ${r.chofer}</small>
+                            <button class="btn" style="padding:5px; margin-top:10px; font-size:11px; background:#eee;" onclick="this.nextElementSibling.classList.toggle('open')">VER DETALLES</button>
+                            <div class="detail-pane">${r.items.map(i => `<div>• ${i.cli}: ${i.can} CJ</div>`).join('')}</div>
+                        </div>`;
+                    }
+                });
+                document.getElementById('stat-total').innerText = total;
+                document.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c.innerText === this.selMes));
