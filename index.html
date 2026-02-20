@@ -15,6 +15,7 @@
             --border: #e2e8f0;
             --input-bg: #ffffff;
             --danger: #ef4444;
+            --btn-grey: #64748b;
         }
 
         [data-theme="dark"] {
@@ -24,27 +25,16 @@
             --border: #334155;
             --input-bg: #0f172a;
             --twins-blue: #3b82f6;
+            --btn-grey: #475569;
         }
 
-        /* RESET PARA PERMITIR PULL-TO-REFRESH NATIVO */
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            overscroll-behavior-y: auto; /* Permite el gesto del navegador */
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif; overscroll-behavior-y: auto;
         }
 
-        /* Estructura de bloque único (no absoluta) */
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
+        .app-container { display: flex; flex-direction: column; min-height: 100vh; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; }
 
@@ -75,12 +65,36 @@
         .btn:disabled { opacity: 0.3; }
 
         .date-divider { background: var(--twins-blue); color: white; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 800; margin: 20px 0 10px 0; display: flex; justify-content: space-between; }
+
+        /* EL BOTÓN DE LA IMAGEN (FLECHA CIRCULAR GRIS) */
+        .theme-circle {
+            width: 60px; height: 60px;
+            background: var(--btn-grey);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 30px auto;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.4s ease;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .theme-circle svg {
+            width: 30px; height: 30px;
+            fill: white;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-theme="dark"] .theme-circle {
+            background: var(--twins-blue);
+        }
+        [data-theme="dark"] .theme-circle svg {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 20vh;">
+        <div id="p1" class="page active" style="text-align: center; padding-top: 15vh;">
             <div style="font-size: 38px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px;">TWINS</div>
             <div style="font-size: 12px; letter-spacing: 3px; opacity: 0.6; margin-bottom: 40px;">ALMACÉN</div>
             <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
@@ -88,15 +102,18 @@
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('FRANCESCO')">FRANCESCO</button>
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('OSCAR')">OSCAR</button>
                 <button class="btn" style="background:var(--card); border:1px solid var(--border); color:var(--text)" onclick="login('LUIS HERBER')">LUIS HERBER</button>
-                <p onclick="toggleTheme()" style="margin-top:20px; font-weight:700; font-size:14px;">🌓 MODO OSCURO</p>
+                
+                <div class="theme-circle" onclick="toggleTheme()">
+                    <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                </div>
             </div>
         </div>
 
         <div id="header-app" class="top-header" style="display:none;">
             <b id="user-display">---</b>
             <div style="display:flex; gap:20px;">
-                <span onclick="toggleTheme()" style="font-size:20px;">🌓</span>
-                <span onclick="location.reload()" style="color:var(--danger); font-size:12px; font-weight:800;">SALIR</span>
+                <span onclick="toggleTheme()" style="font-size:20px; cursor:pointer;">🌓</span>
+                <span onclick="location.reload()" style="color:var(--danger); font-size:12px; font-weight:800; cursor:pointer;">SALIR</span>
             </div>
         </div>
 
@@ -259,7 +276,6 @@
             const fec = document.getElementById('f-fec').value;
             let tM = 0, tD = 0, grupos = {};
             list.innerHTML = "";
-            
             const hoyStr = new Date().toISOString().split('T')[0];
 
             db.forEach(r => {
