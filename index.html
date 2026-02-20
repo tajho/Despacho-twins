@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | VISTA RÁPIDA</title>
+    <title>TWINS V7 | OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -43,54 +43,56 @@
         .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
-        .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); margin-top: 10px; }
-
-        .action-btn { font-size: 16px; padding: 6px; cursor: pointer; border-radius: 8px; border: 1px solid var(--border); background: var(--input-bg); display: flex; align-items: center; justify-content: center; }
         
-        /* LISTA DENTRO DEL MODAL DE LUPA */
-        .view-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #334155; }
+        .action-btn { font-size: 16px; width: 38px; height: 38px; cursor: pointer; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .action-btn:active { transform: scale(0.9); background: var(--twins-blue); }
+
+        .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 8px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
+        .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); }
+        
+        .view-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #334155; }
     </style>
 </head>
 <body>
 
     <div id="modal-pass">
         <div class="card" style="width: 80%; max-width: 300px; text-align: center;">
-            <div style="font-weight: 800; margin-bottom: 15px;">🔒 ACCESO TAJHO</div>
+            <div style="font-weight: 800; margin-bottom: 15px;">🔒 ACCESO PRIVADO</div>
             <input type="password" id="pass-input" pattern="[0-9]*" inputmode="numeric" placeholder="Código" style="text-align: center; font-size: 24px; letter-spacing: 10px;">
             <button class="btn btn-main" onclick="checkPass()">ENTRAR</button>
-            <button class="btn" style="background:transparent; color:var(--danger);" onclick="closeModal()">CANCELAR</button>
+            <button class="btn" style="background:transparent; color:var(--danger); border:none;" onclick="closeModal()">CANCELAR</button>
         </div>
     </div>
 
     <div id="modal-view">
         <div class="card" style="width: 85%; max-width: 350px;">
-            <div id="view-title" style="font-weight: 800; color: var(--twins-blue); margin-bottom: 10px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 10px;">DETALLE DE RUTA</div>
-            <div id="view-content" style="max-height: 300px; overflow-y: auto;"></div>
-            <div id="view-footer" style="margin-top: 15px; font-weight: 800; text-align: right; color: var(--twins-green);"></div>
-            <button class="btn btn-main" style="margin-top: 20px;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR</button>
+            <div id="view-title" style="font-weight: 800; color: var(--twins-blue); margin-bottom: 10px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; text-transform: uppercase;"></div>
+            <div id="view-content" style="max-height: 350px; overflow-y: auto;"></div>
+            <div id="view-footer" style="margin-top: 15px; font-weight: 900; text-align: right; color: var(--twins-green); font-size: 20px;"></div>
+            <button class="btn btn-main" style="margin-top: 20px;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR VISTA</button>
         </div>
     </div>
 
     <div class="app-container">
         <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
-            <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
-            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px;">GESTIÓN ALMACÉN</div>
-            <div class="login-grid" style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="openPassModal()">🔑 TAJHO (Admin)</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('OSCAR')">👤 OSCAR</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left;" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
+            <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue); letter-spacing: -1px;">TWINS</div>
+            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px; font-weight: 700;">GESTIÓN ALMACÉN</div>
+            <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="openPassModal()">🔑 TAJHO (Admin)</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="login('OSCAR')">👤 OSCAR</button>
+                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
             </div>
         </div>
 
         <div id="header-app" class="top-header" style="display:none;">
-            <div><small style="opacity:0.5; font-weight:800;">OPERARIO</small><br><b id="user-display" style="color:var(--twins-blue)">---</b></div>
-            <span onclick="location.reload()" style="color:var(--danger); font-size:11px; font-weight:800; cursor:pointer;">SALIR</span>
+            <div><small style="opacity:0.5; font-weight:800; font-size:9px;">OPERARIO ACTUAL</small><br><b id="user-display" style="color:var(--twins-blue)">---</b></div>
+            <span onclick="location.reload()" style="color:var(--danger); font-size:11px; font-weight:800; cursor:pointer; background:rgba(239,68,68,0.1); padding:6px 12px; border-radius:8px;">SALIR</span>
         </div>
 
         <div id="p2" class="page">
             <div class="banner-total">
-                <div><small>CAJAS EN RUTA</small><div id="total-vivo" style="font-size:38px; font-weight:900;">0</div></div>
+                <div><small style="font-weight:700;">CAJAS EN RUTA</small><div id="total-vivo" style="font-size:38px; font-weight:900;">0</div></div>
                 <div style="font-size:30px;">📦</div>
             </div>
             <div class="card">
@@ -102,28 +104,28 @@
                 <div class="card" id="lista-items" style="border-left: 4px solid var(--twins-blue);"></div>
                 <div class="card">
                     <select id="pla" onchange="val()">
-                        <option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
+                        <option value="">Seleccionar Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
                     </select>
                     <select id="cho" onchange="val()">
-                        <option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
+                        <option value="">Seleccionar Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                     </select>
                     <select id="aux" onchange="val()">
-                        <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
+                        <option value="">Seleccionar Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
                     </select>
                     <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
-                    <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
+                    <button id="btn-nube" class="btn" style="background:transparent; border:1px solid var(--twins-blue); color:var(--twins-blue); margin-top:8px;" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
                 </div>
             </div>
         </div>
 
         <div id="p3" class="page">
-            <div class="card" style="padding:10px;">
+            <div class="card" style="padding:12px; margin-bottom:15px;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px;">
-                    <select id="f-mes" onchange="renderH()"><option value="ALL">Meses</option><option value="0">Ene</option><option value="1">Feb</option><option value="2">Mar</option><option value="3">Abr</option><option value="4">May</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Ago</option><option value="8">Set</option><option value="9">Oct</option><option value="10">Nov</option><option value="11">Dic</option></select>
+                    <select id="f-mes" onchange="renderH()"><option value="ALL">Mes Completo</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
                     <input type="date" id="f-dia" onchange="renderH()">
                 </div>
                 <select id="f-chofer" onchange="renderH()"><option value="ALL">Todos los Choferes</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                <div style="display:flex; justify-content:space-between; margin-top:5px; padding:0 5px;">
+                <div style="display:flex; justify-content:space-between; margin-top:10px; padding:0 5px;">
                     <small>FILTRO: <b id="stat-mes" style="color:var(--twins-blue)">0</b> CJ</small>
                     <small>HOY: <b id="stat-dia" style="color:var(--twins-green)">0</b> CJ</small>
                 </div>
@@ -143,11 +145,11 @@
 
         function openPassModal() { document.getElementById('modal-pass').style.display = 'flex'; document.getElementById('pass-input').focus(); }
         function closeModal() { document.getElementById('modal-pass').style.display = 'none'; document.getElementById('pass-input').value = ''; }
-        function checkPass() { if (document.getElementById('pass-input').value === "2026") { closeModal(); login('TAJHO'); } else { alert("❌ ERROR"); } }
+        function checkPass() { if (document.getElementById('pass-input').value === "2026") { closeModal(); login('TAJHO'); } else { alert("❌ CÓDIGO INCORRECTO"); } }
 
         function login(n) {
             user = n;
-            document.getElementById('p1').classList.remove('active');
+            document.getElementById('p1').style.display = 'none';
             document.getElementById('header-app').style.display = 'flex';
             document.getElementById('nav-app').style.display = 'flex';
             document.getElementById('user-display').innerText = n;
@@ -187,7 +189,7 @@
             const reg = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUXILIAR", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "), total: ruta.reduce((a,b) => a + b.ca, 0) };
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
             if(wa) sendWA(reg);
-            ruta = []; renderR(); alert("✅ GUARDADO EN NUBE"); load();
+            ruta = []; renderR(); alert("✅ REGISTRO GUARDADO"); load();
         }
 
         function sendWA(r) {
@@ -195,18 +197,16 @@
             window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
         }
 
-        // --- NUEVA FUNCIÓN LUPA ---
         function verSoloRuta(idx) {
             const r = db[idx];
             const content = document.getElementById('view-content');
             content.innerHTML = "";
-            const items = r.items.split(", ");
-            items.forEach(item => {
+            r.items.split(", ").forEach(item => {
                 const p = item.split(": ");
                 content.innerHTML += `<div class="view-item"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`;
             });
-            document.getElementById('view-title').innerText = `RUTA: ${r.chofer}`;
-            document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`;
+            document.getElementById('view-title').innerText = r.chofer;
+            document.getElementById('view-footer').innerText = `${r.total} CAJAS`;
             document.getElementById('modal-view').style.display = 'flex';
         }
 
@@ -226,310 +226,40 @@
             const fChofer = document.getElementById('f-chofer').value;
             let tF = 0, tD = 0, hoy = new Date().toISOString().split('T')[0];
             list.innerHTML = "";
+            
             db.forEach((r, idx) => {
                 const fO = new Date(r.fecha);
                 const fS = fO.toISOString().split('T')[0];
                 if ((fMes === "ALL" || fO.getMonth().toString() === fMes) && (!fDia || fS === fDia) && (fChofer === "ALL" || r.chofer === fChofer)) {
                     const cant = parseFloat(r.total);
                     tF += cant; if(fS === hoy) tD += cant;
-                    list.innerHTML += `<div class="card" style="padding:12px; margin-bottom:10px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                            <b>${r.chofer}</b>
-                            <div style="display:flex; gap:6px;">
-                                <span class="action-btn" onclick="verSoloRuta(${idx})">🔍</span>
-                                <span class="action-btn" onclick="sendWA(db[${idx}])">🟢</span>
-                                <span class="action-btn" onclick="recargarRuta(${idx})">📝</span>
+                    
+                    const itemsArr = r.items.split(", ");
+                    const preview = itemsArr.slice(0, 2).join(", ") + (itemsArr.length > 2 ? "..." : "");
+
+                    list.innerHTML += `
+                    <div class="card" style="padding:15px; margin-bottom:12px; border-left: 4px solid #3b82f6;">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <div>
+                                <div style="font-weight:800; font-size:15px;">${r.chofer}</div>
+                                <div class="hist-item-preview">${preview}</div>
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <div class="action-btn" onclick="verSoloRuta(${idx})">🔍</div>
+                                <div class="action-btn" style="color:#22c55e" onclick="sendWA(db[${idx}])">🟢</div>
+                                <div class="action-btn" style="color:#3b82f6" onclick="recargarRuta(${idx})">📝</div>
                             </div>
                         </div>
-                        <div style="font-size:10px; opacity:0.5;">${fS} | ${r.placa} | ${r.total} CJ | Op: ${r.operario}</div>
+                        <div class="hist-footer">
+                            <span>🚚 ${r.placa}</span>
+                            <span style="font-weight:700; color:var(--twins-blue);">${r.total} CJ</span>
+                            <span>👤 ${r.operario}</span>
+                        </div>
                     </div>`;
                 }
             });
             document.getElementById('stat-mes').innerText = tF;
             document.getElementById('stat-dia').innerText = tD;
-        }
-    </script>
-</body>
-</html>        }
-
-        .top-header { 
-            position: sticky; top: 0; z-index: 100;
-            background: var(--card); padding: 14px 18px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        .bottom-nav { 
-            position: fixed; bottom: 0; left: 0; right: 0; height: 70px; 
-            background: var(--card); border-top: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-        }
-
-        .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; transition: 0.2s; }
-        .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
-
-        .banner-total { 
-            background: linear-gradient(135deg, var(--twins-blue), var(--accent)); 
-            color: white; border-radius: 15px; padding: 20px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 15px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
-
-        input, select { 
-            width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; 
-            border: 1px solid var(--border); background: var(--input-bg); 
-            color: var(--text); font-size: 15px; box-sizing: border-box; 
-            outline: none; transition: 0.2s;
-        }
-        input:focus { border-color: var(--twins-blue); }
-
-        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; }
-        .btn-main { background: var(--twins-blue); color: white; }
-        .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
-        .btn-outline { background: transparent; border: 2px solid var(--twins-blue); color: var(--twins-blue); margin-top: 10px; }
-
-        .date-divider { 
-            background: rgba(59, 130, 246, 0.1); color: var(--twins-blue); 
-            padding: 8px 12px; border-radius: 6px; font-size: 11px; 
-            font-weight: 800; margin: 20px 0 10px 0; display: flex; justify-content: space-between; 
-        }
-
-        .delete-btn { color: var(--danger); font-weight: 800; cursor: pointer; padding: 5px; }
-        .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-    </style>
-</head>
-<body>
-
-    <div id="modal-pass">
-        <div class="card" style="width: 80%; max-width: 300px; text-align: center;">
-            <div style="font-weight: 800; margin-bottom: 15px;">🔒 ACCESO PRIVADO</div>
-            <input type="password" id="pass-input" pattern="[0-9]*" inputmode="numeric" placeholder="Código de 4 dígitos" style="text-align: center; font-size: 24px; letter-spacing: 10px;">
-            <button class="btn btn-main" onclick="checkPass()">ENTRAR</button>
-            <button class="btn" style="background:transparent; color:var(--danger); margin-top:5px;" onclick="closeModal()">CANCELAR</button>
-        </div>
-    </div>
-
-    <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
-            <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue); margin-bottom: 5px; letter-spacing: -1px;">TWINS</div>
-            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px; font-weight: 700;">GESTIÓN ALMACÉN</div>
-            <div class="login-grid" style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align: left; padding-left: 20px;" onclick="openPassModal()">🔑 TAJHO (Admin)</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align: left; padding-left: 20px;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align: left; padding-left: 20px;" onclick="login('OSCAR')">👤 OSCAR</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align: left; padding-left: 20px;" onclick="login('LUIS HERBER')">👤 LUIS HERBER</button>
-            </div>
-        </div>
-
-        <div id="header-app" class="top-header" style="display:none;">
-            <div>
-                <small style="display:block; font-size:9px; opacity:0.5; font-weight:800;">OPERARIO</small>
-                <b id="user-display" style="color:var(--twins-blue)">---</b>
-            </div>
-            <span onclick="location.reload()" style="color:var(--danger); font-size:11px; font-weight:800; cursor:pointer; background:rgba(239,68,68,0.1); padding:6px 12px; border-radius:8px;">SALIR</span>
-        </div>
-
-        <div id="p2" class="page">
-            <div class="banner-total">
-                <div><small style="font-weight:700; opacity:0.8;">CAJAS EN RUTA</small><div id="total-vivo" style="font-size:38px; font-weight:900;">0</div></div>
-                <div style="font-size:30px;">📦</div>
-            </div>
-            <div class="card">
-                <input type="text" id="cli" placeholder="Nombre Cliente">
-                <input type="number" id="can" placeholder="Cant. Cajas" inputmode="numeric">
-                <button class="btn btn-main" onclick="addItem()">+ AGREGAR A LISTA</button>
-            </div>
-            <div id="area-envio" style="display:none;">
-                <div class="card" id="lista-items" style="border-left: 4px solid var(--twins-blue);"></div>
-                <div class="card">
-                    <select id="pla" onchange="val()">
-                        <option value="">Placa Vehículo...</option>
-                        <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
-                    </select>
-                    <select id="cho" onchange="val()">
-                        <option value="">Chofer Responsable...</option>
-                        <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
-                    </select>
-                    <select id="aux" onchange="val()">
-                        <option value="">Seleccionar Auxiliar...</option>
-                        <option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
-                    </select>
-                    <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
-                    <button id="btn-nube" class="btn btn-outline" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="p3" class="page">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
-                <div class="card" style="margin-bottom:0; text-align:center; padding:10px;"><small style="font-size:10px; font-weight:800; opacity:0.5;">HOY</small><div id="stat-dia" style="font-size:20px; font-weight:900; color:var(--twins-green);">0</div></div>
-                <div class="card" style="margin-bottom:0; text-align:center; padding:10px;"><small style="font-size:10px; font-weight:800; opacity:0.5;">TOTAL FILTRO</small><div id="stat-mes" style="font-size:20px; font-weight:900; color:var(--twins-blue);">0</div></div>
-            </div>
-            <div class="card" style="padding:10px;">
-                <div class="filter-grid">
-                    <select id="f-mes" onchange="renderH()"><option value="ALL">Todos los Meses</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Septiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
-                    <input type="date" id="f-dia" onchange="renderH()">
-                </div>
-                <select id="f-chofer" onchange="renderH()">
-                    <option value="ALL">Todos los Conductores</option>
-                    <option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
-                </select>
-                <input type="text" id="bus" placeholder="🔍 Buscar cliente o placa..." onkeyup="renderH()" style="margin-bottom:0;">
-            </div>
-            <div id="h-list"></div>
-        </div>
-
-        <div id="nav-app" class="bottom-nav" style="display:none;">
-            <div id="n2" class="nav-item active-nav" onclick="nav('p2')"><span style="font-size:24px;">📝</span><span>RUTA</span></div>
-            <div id="n3" class="nav-item" onclick="nav('p3')"><span style="font-size:24px;">📊</span><span>HISTORIAL</span></div>
-        </div>
-    </div>
-
-    <script>
-        const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
-        let user = "", ruta = [], db = [];
-
-        window.onload = () => {
-            const temp = localStorage.getItem('twins_backup');
-            if (temp) { ruta = JSON.parse(temp); renderR(); }
-        };
-
-        // SEGURIDAD TAJHO
-        function openPassModal() {
-            document.getElementById('modal-pass').style.display = 'flex';
-            document.getElementById('pass-input').focus();
-        }
-        function closeModal() {
-            document.getElementById('modal-pass').style.display = 'none';
-            document.getElementById('pass-input').value = '';
-        }
-        function checkPass() {
-            const p = document.getElementById('pass-input').value;
-            if (p === "93") {
-                closeModal();
-                login('TAJHO');
-            } else {
-                alert("⚠️ CÓDIGO INCORRECTO");
-                document.getElementById('pass-input').value = '';
-            }
-        }
-
-        function login(n) {
-            user = n;
-            document.getElementById('p1').classList.remove('active');
-            document.getElementById('header-app').style.display = 'flex';
-            document.getElementById('nav-app').style.display = 'flex';
-            document.getElementById('user-display').innerText = n;
-            nav('p2'); load();
-        }
-
-        function nav(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
-            if(id === 'p3') renderH();
-            window.scrollTo(0,0);
-        }
-
-        async function load() {
-            try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) {}
-        }
-
-        function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase().trim();
-            const ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return;
-            ruta.push({cl, ca});
-            localStorage.setItem('twins_backup', JSON.stringify(ruta));
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderR(); val();
-        }
-
-        function renderR() {
-            const l = document.getElementById('lista-items');
-            let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => {
-                s += i.ca;
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
-                    <span><b>${i.cl}</b></span>
-                    <span>${i.ca} CJ <b class="delete-btn" onclick="del(${x})">✕</b></span>
-                </div>`;
-            });
-            document.getElementById('total-vivo').innerText = s;
-            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
-        }
-
-        function del(x) { ruta.splice(x,1); localStorage.setItem('twins_backup', JSON.stringify(ruta)); renderR(); val(); }
-
-        function val() {
-            const ok = document.getElementById('cho').value && document.getElementById('pla').value && ruta.length > 0;
-            document.getElementById('btn-wa').disabled = !ok;
-            document.getElementById('btn-nube').disabled = !ok;
-        }
-
-        async function guardar(wa) {
-            const reg = {
-                chofer: document.getElementById('cho').value,
-                auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
-                placa: document.getElementById('pla').value,
-                operario: user,
-                items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "),
-                total: ruta.reduce((a,b) => a + b.ca, 0)
-            };
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            if(wa) {
-                let m = `*📦 DESPACHO TWINS*\n*Chofer:* ${reg.chofer}\n*Auxiliar:* ${reg.auxiliar}\n*Placa:* ${reg.placa}\n*Total:* ${reg.total} CJ\n*Detalles:* ${reg.items}`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
-            }
-            ruta = [];
-            localStorage.removeItem('twins_backup');
-            document.getElementById('pla').value = ""; document.getElementById('cho').value = ""; document.getElementById('aux').value = "";
-            renderR(); val();
-            alert("✅ GUARDADO EXITOSO");
-            setTimeout(load, 2000);
-        }
-
-        function renderH() {
-            const list = document.getElementById('h-list');
-            const search = document.getElementById('bus').value.toUpperCase();
-            const fMes = document.getElementById('f-mes').value;
-            const fDia = document.getElementById('f-dia').value;
-            const fChofer = document.getElementById('f-chofer').value;
-            let totalFiltro = 0, totalHoy = 0, grupos = {};
-            list.innerHTML = "";
-            const hoy = new Date().toISOString().split('T')[0];
-            db.forEach(r => {
-                const fechaObj = new Date(r.fecha);
-                const fechaStr = fechaObj.toISOString().split('T')[0];
-                const matchSearch = !search || r.items.toUpperCase().includes(search) || r.placa.includes(search) || r.chofer.toUpperCase().includes(search);
-                const matchMes = fMes === "ALL" || fechaObj.getMonth().toString() === fMes;
-                const matchDia = !fDia || fechaStr === fDia;
-                const matchChofer = fChofer === "ALL" || r.chofer === fChofer;
-                if (matchSearch && matchMes && matchDia && matchChofer) {
-                    const cant = parseFloat(r.total) || 0;
-                    if (!grupos[fechaStr]) grupos[fechaStr] = { regs: [], s: 0 };
-                    grupos[fechaStr].regs.push(r);
-                    grupos[fechaStr].s += cant;
-                    totalFiltro += cant;
-                    if(fechaStr === hoy) totalHoy += cant;
-                }
-            });
-            Object.keys(grupos).sort().reverse().forEach(k => {
-                list.innerHTML += `<div class="date-divider"><span>📅 ${k}</span> <span>${grupos[k].s} CJ</span></div>`;
-                grupos[k].regs.forEach(r => {
-                    list.innerHTML += `<div class="card" style="padding:12px; margin-bottom:8px;">
-                        <div style="display:flex; justify-content:space-between;"><b>${r.chofer}</b> <b style="color:var(--twins-blue);">${r.total} CJ</b></div>
-                        <div style="font-size:10px; opacity:0.5; margin-top:4px;">${r.placa} • Aux: ${r.auxiliar}</div>
-                        <div style="font-size:10px; opacity:0.3; margin-top:2px;">${new Date(r.fecha).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})} | Op: ${r.operario}</div>
-                    </div>`;
-                });
-            });
-            document.getElementById('stat-mes').innerText = totalFiltro;
-            document.getElementById('stat-dia').innerText = totalHoy;
         }
     </script>
 </body>
