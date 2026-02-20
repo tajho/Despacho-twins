@@ -64,6 +64,8 @@
         }
 
         .item-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .chip { background: var(--card); border: 1px solid var(--border); padding: 8px 15px; border-radius: 20px; white-space: nowrap; cursor: pointer; color: var(--text); font-size: 12px; }
+        .chip.active { background: var(--twins-blue); color: white; border-color: var(--twins-blue); }
     </style>
 </head>
 <body>
@@ -85,7 +87,10 @@
     <div id="p2" class="page">
         <div class="top-bar">
             <b id="user-display" style="color:var(--twins-blue)"></b>
-            <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
+            <div>
+                <button class="theme-btn" onclick="toggleTheme()" style="margin-right:8px;">🌙</button>
+                <button onclick="location.reload()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
+            </div>
         </div>
         <div class="banner-total">
             <small>CAJAS EN RUTA</small>
@@ -101,11 +106,7 @@
             <div class="card">
                 <select id="pla" onchange="validateForm()">
                     <option value="">Placa...</option>
-                    <option value="BVN-930">BVN-930</option>
-                    <option value="BVN-704">BVN-704</option>
-                    <option value="BUL-742">BUL-742</option>
-                    <option value="BPN-711">BPN-711</option>
-                    <option value="FUSO">FUSO</option>
+                    <option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
                 </select>
                 <select id="cho" onchange="validateForm()">
                     <option value="">Chofer...</option>
@@ -125,130 +126,7 @@
     <div id="p3" class="page">
         <div class="top-bar">
             <button class="btn btn-outline" style="width:auto; padding:8px 15px; margin:0;" onclick="switchPage('p3','p2')">← VOLVER</button>
-            <button id="ref-btn" class="btn" style="width:auto; padding:8px; background:var(--twins-green); color:white;" onclick="cargarDatosNube()">🔄 REFRESCAR</button>
+            <button id="ref-btn" class="btn" style="width:auto; padding:8px; background:var(--twins-green); color:white;" onclick="cargarDatosNube()">🔄 ACTUALIZAR</button>
         </div>
-        <div class="card"><input type="text" id="search-cli" placeholder="🔍 Buscar en historial nube..." onkeyup="renderHistory()"></div>
-        <div id="driver-chips-container" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:10px;"></div>
-        <div class="card" style="text-align:center; border-top: 4px solid var(--twins-green);">
-            <small id="stat-title">TOTAL HOY (NUBE)</small>
-            <div id="stat-total" style="font-size:32px; font-weight:800; color:var(--twins-blue);">0</div>
-        </div>
-        <div id="history-list"></div>
-    </div>
-
-    <script>
-        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbwZ9POMWvQZ_ymsu5TU9MK7ERY3jpAPLMUnGTAhBSoZo9s0Nq_PGADRi59Le0PulYia/exec";
-        let user = "", route = [], activeFilter = "TODOS", dbCloud = [];
-
-        function toggleTheme() {
-            const isDark = document.body.getAttribute('data-theme') === 'dark';
-            document.body.setAttribute('data-theme', isDark ? '' : 'dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-        }
-        if(localStorage.getItem('theme') === 'dark') toggleTheme();
-
-        function switchPage(hide, show) {
-            document.getElementById(hide).style.display = 'none';
-            document.getElementById(show).style.display = 'flex';
-        }
-
-        function login(n) { 
-            user = n; 
-            document.getElementById('user-display').innerText = "OP: " + n; 
-            switchPage('p1', 'p2'); 
-            cargarDatosNube();
-        }
-
-        async function cargarDatosNube() {
-            const btn = document.getElementById('ref-btn');
-            btn.innerText = "⌛...";
-            try {
-                const resp = await fetch(CLOUD_URL);
-                dbCloud = await resp.json();
-                renderHistory();
-            } catch (e) { console.log("Error de red silencioso"); }
-            btn.innerText = "🔄 REFRESCAR";
-        }
-
-        function addItem() {
-            const cli = document.getElementById('cli').value.toUpperCase().trim();
-            const can = parseInt(document.getElementById('can').value);
-            if(!cli || !can) return;
-            route.push({cli, can});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderRoute(); validateForm();
-        }
-
-        function renderRoute() {
-            const list = document.getElementById('lista-actual');
-            let sum = 0; list.innerHTML = "";
-            route.forEach((i, idx) => {
-                sum += i.can;
-                list.innerHTML += `<div class="item-row"><span><b>${i.cli}</b></span><span>${i.can} CJ <b onclick="delItem(${idx})" style="color:var(--danger); cursor:pointer;">✕</b></span></div>`;
-            });
-            document.getElementById('total-vivo').innerText = sum;
-            document.getElementById('area-despacho').style.display = route.length > 0 ? 'block' : 'none';
-        }
-
-        function delItem(idx) { route.splice(idx, 1); renderRoute(); validateForm(); }
-
-        function validateForm() {
-            const ok = document.getElementById('cho').value && document.getElementById('pla').value && route.length > 0;
-            document.getElementById('btn-save-wa').disabled = !ok;
-            document.getElementById('btn-save-only').disabled = !ok;
-        }
-
-        async function guardar(wa) {
-            const reg = {
-                chofer: document.getElementById('cho').value,
-                auxiliar: document.getElementById('aux').value || "SIN AUXILIAR",
-                placa: document.getElementById('pla').value,
-                operario: user, items: [...route], total: route.reduce((a,b)=>a+b.can, 0)
-            };
-
-            // Enviar sin bloquear pantalla
-            fetch(CLOUD_URL, { method: 'POST', body: JSON.stringify(reg) })
-            .then(() => cargarDatosNube());
-
-            if(wa) {
-                let m = `*DESPACHO TWINS*\nCh: ${reg.chofer}\nPl: ${reg.placa}\n---\n`;
-                route.forEach(i => m += `• ${i.cli}: ${i.can} CJ\n`);
-                m += `---\nTOTAL: ${reg.total} CJ`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
-            }
-
-            route = []; renderRoute(); validateForm();
-            document.getElementById('cho').value = ""; document.getElementById('aux').value = ""; document.getElementById('pla').value = "";
-            alert("✅ REGISTRADO");
-        }
-
-        function verReportes() { 
-            const cont = document.getElementById('driver-chips-container');
-            cont.innerHTML = `<div class="chip" onclick="setF('TODOS')">TODOS</div>`;
-            ["LUIS H.","ROMARIO","CESAR C.","WALDIR","MARCELO","TAJHO"].forEach(d => {
-                cont.innerHTML += `<div class="chip" onclick="setF('${d}')">${d}</div>`;
-            });
-            renderHistory(); switchPage('p2', 'p3'); 
-        }
-
-        function setF(d) { activeFilter = d; renderHistory(); }
-
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            const search = document.getElementById('search-cli').value.toUpperCase();
-            let sum = 0; list.innerHTML = "";
-            dbCloud.forEach(r => {
-                if((search === "" || r.items.toUpperCase().includes(search) || r.placa.includes(search)) && (activeFilter === "TODOS" || r.chofer === activeFilter)) {
-                    sum += parseFloat(r.total);
-                    list.innerHTML += `<div class="card" style="border-left:5px solid var(--twins-blue)">
-                        <div style="display:flex; justify-content:space-between"><b>${new Date(r.fecha).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</b><b>${r.total} CJ</b></div>
-                        <div style="font-size:12px; margin:4px 0;">${r.chofer} | ${r.placa} | Op: ${r.operario}</div>
-                        <div style="font-size:13px; opacity:0.8;">${r.items}</div>
-                    </div>`;
-                }
-            });
-            document.getElementById('stat-total').innerText = sum;
-        }
-    </script>
-</body>
-</html>
+        <div class="card"><input type="text" id="search-cli" placeholder="🔍 Buscar en historial..." onkeyup="renderHistory()"></div>
+        <div id="driver-chips-container" style="display:flex; gap:8px; overflow-x:
