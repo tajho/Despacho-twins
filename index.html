@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V7 | OFICIAL</title>
+    <title>TWINS V7 | FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,7 +24,6 @@
         .active { display: block; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* MODALES */
         #modal-pass, #modal-view {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); z-index: 2000;
@@ -44,12 +43,10 @@
         .btn-main { background: var(--twins-blue); color: white; }
         .btn-save { background: var(--twins-green); color: white; margin-top: 10px; }
         
-        .action-btn { font-size: 16px; width: 38px; height: 38px; cursor: pointer; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .action-btn:active { transform: scale(0.9); background: var(--twins-blue); }
+        .action-btn { font-size: 16px; width: 38px; height: 38px; cursor: pointer; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; }
 
-        .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 8px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
+        .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 8px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); }
         .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--border); }
-        
         .view-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #334155; }
     </style>
 </head>
@@ -69,14 +66,14 @@
             <div id="view-title" style="font-weight: 800; color: var(--twins-blue); margin-bottom: 10px; text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; text-transform: uppercase;"></div>
             <div id="view-content" style="max-height: 350px; overflow-y: auto;"></div>
             <div id="view-footer" style="margin-top: 15px; font-weight: 900; text-align: right; color: var(--twins-green); font-size: 20px;"></div>
-            <button class="btn btn-main" style="margin-top: 20px;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR VISTA</button>
+            <button class="btn btn-main" style="margin-top: 20px;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR</button>
         </div>
     </div>
 
     <div class="app-container">
         <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
-            <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue); letter-spacing: -1px;">TWINS</div>
-            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px; font-weight: 700;">GESTIÓN ALMACÉN</div>
+            <div style="font-size: 45px; font-weight: 800; color: var(--twins-blue);">TWINS</div>
+            <div style="font-size: 11px; letter-spacing: 4px; opacity: 0.5; margin-bottom: 40px;">GESTIÓN ALMACÉN</div>
             <div style="max-width: 280px; margin: 0 auto; display: grid; gap: 12px;">
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="openPassModal()">🔑 TAJHO (Admin)</button>
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border); text-align:left; padding-left:20px;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
@@ -86,8 +83,8 @@
         </div>
 
         <div id="header-app" class="top-header" style="display:none;">
-            <div><small style="opacity:0.5; font-weight:800; font-size:9px;">OPERARIO ACTUAL</small><br><b id="user-display" style="color:var(--twins-blue)">---</b></div>
-            <span onclick="location.reload()" style="color:var(--danger); font-size:11px; font-weight:800; cursor:pointer; background:rgba(239,68,68,0.1); padding:6px 12px; border-radius:8px;">SALIR</span>
+            <div><small style="opacity:0.5; font-weight:800; font-size:9px;">OPERARIO</small><br><b id="user-display" style="color:var(--twins-blue)">---</b></div>
+            <span onclick="location.reload()" style="color:var(--danger); font-size:11px; font-weight:800; cursor:pointer;">SALIR</span>
         </div>
 
         <div id="p2" class="page">
@@ -104,13 +101,13 @@
                 <div class="card" id="lista-items" style="border-left: 4px solid var(--twins-blue);"></div>
                 <div class="card">
                     <select id="pla" onchange="val()">
-                        <option value="">Seleccionar Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
+                        <option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option>
                     </select>
                     <select id="cho" onchange="val()">
-                        <option value="">Seleccionar Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
+                        <option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option>
                     </select>
                     <select id="aux" onchange="val()">
-                        <option value="">Seleccionar Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
+                        <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
                     </select>
                     <button id="btn-wa" class="btn btn-save" onclick="guardar(true)" disabled>💾 GUARDAR Y WHATSAPP</button>
                     <button id="btn-nube" class="btn" style="background:transparent; border:1px solid var(--twins-blue); color:var(--twins-blue); margin-top:8px;" onclick="guardar(false)" disabled>SOLO GUARDAR</button>
@@ -121,12 +118,15 @@
         <div id="p3" class="page">
             <div class="card" style="padding:12px; margin-bottom:15px;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-bottom:10px;">
-                    <select id="f-mes" onchange="renderH()"><option value="ALL">Mes Completo</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
+                    <select id="f-mes" onchange="renderH()">
+                        <option value="ALL">Todo el Año</option>
+                        <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option>
+                    </select>
                     <input type="date" id="f-dia" onchange="renderH()">
                 </div>
                 <select id="f-chofer" onchange="renderH()"><option value="ALL">Todos los Choferes</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
                 <div style="display:flex; justify-content:space-between; margin-top:10px; padding:0 5px;">
-                    <small>FILTRO: <b id="stat-mes" style="color:var(--twins-blue)">0</b> CJ</small>
+                    <small>VISTA: <b id="stat-mes" style="color:var(--twins-blue)">0</b> CJ</small>
                     <small>HOY: <b id="stat-dia" style="color:var(--twins-green)">0</b> CJ</small>
                 </div>
             </div>
@@ -143,9 +143,17 @@
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
 
+        // AL CARGAR: SETEAR FECHA Y MES ACTUAL EN LOS BUSCADORES
+        window.onload = () => {
+            const hoy = new Date();
+            const fechaStr = hoy.toISOString().split('T')[0];
+            document.getElementById('f-dia').value = fechaStr;
+            document.getElementById('f-mes').value = hoy.getMonth();
+        };
+
         function openPassModal() { document.getElementById('modal-pass').style.display = 'flex'; document.getElementById('pass-input').focus(); }
         function closeModal() { document.getElementById('modal-pass').style.display = 'none'; document.getElementById('pass-input').value = ''; }
-        function checkPass() { if (document.getElementById('pass-input').value === "2026") { closeModal(); login('TAJHO'); } else { alert("❌ CÓDIGO INCORRECTO"); } }
+        function checkPass() { if (document.getElementById('pass-input').value === "2026") { closeModal(); login('TAJHO'); } else { alert("❌ ERROR"); } }
 
         function login(n) {
             user = n;
@@ -189,7 +197,7 @@
             const reg = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUXILIAR", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}: ${i.ca}`).join(", "), total: ruta.reduce((a,b) => a + b.ca, 0) };
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
             if(wa) sendWA(reg);
-            ruta = []; renderR(); alert("✅ REGISTRO GUARDADO"); load();
+            ruta = []; renderR(); alert("✅ GUARDADO"); load();
         }
 
         function sendWA(r) {
@@ -224,16 +232,19 @@
             const fMes = document.getElementById('f-mes').value;
             const fDia = document.getElementById('f-dia').value;
             const fChofer = document.getElementById('f-chofer').value;
-            let tF = 0, tD = 0, hoy = new Date().toISOString().split('T')[0];
+            let tF = 0, tD = 0, hoyStr = new Date().toISOString().split('T')[0];
             list.innerHTML = "";
             
             db.forEach((r, idx) => {
                 const fO = new Date(r.fecha);
                 const fS = fO.toISOString().split('T')[0];
-                if ((fMes === "ALL" || fO.getMonth().toString() === fMes) && (!fDia || fS === fDia) && (fChofer === "ALL" || r.chofer === fChofer)) {
+                const matchMes = fMes === "ALL" || fO.getMonth().toString() === fMes;
+                const matchDia = !fDia || fS === fDia;
+                const matchChofer = fChofer === "ALL" || r.chofer === fChofer;
+
+                if (matchMes && matchDia && matchChofer) {
                     const cant = parseFloat(r.total);
-                    tF += cant; if(fS === hoy) tD += cant;
-                    
+                    tF += cant; if(fS === hoyStr) tD += cant;
                     const itemsArr = r.items.split(", ");
                     const preview = itemsArr.slice(0, 2).join(", ") + (itemsArr.length > 2 ? "..." : "");
 
