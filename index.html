@@ -92,9 +92,8 @@
                 <select id="aux">
                     <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
                 </select>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                    <button class="btn" style="background: var(--success); color:#000;" onclick="guardar(true)">WA ✅</button>
-                    <button class="btn" style="background: var(--accent); color:#000;" onclick="guardar(false)">NUBE ☁️</button>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;">
+                    <button class="btn btn-main" onclick="guardar()">💾 GUARDAR DESPACHO</button>
                 </div>
             </div>
         </div>
@@ -193,21 +192,45 @@
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
-        function editarRuta(idx) {
-            const r = db[idx]; 
-            ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
-            document.getElementById('pla').value = r.placa; 
-            document.getElementById('cho').value = r.chofer; 
-            document.getElementById('aux').value = r.auxiliar || ""; 
-            renderR(); saveDraft(); nav('p2');
-        }
+        async function guardar() {
+            const chofer = document.getElementById('cho').value;
+            const placa = document.getElementById('pla').value;
+            const auxiliar = document.getElementById('aux').value;
+            
+            if(!chofer || !placa) return alert("Faltan datos (Chofer/Placa)");
 
-        async function guardar(wa) {
-            const r = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0) };
-            if(!r.chofer || !r.placa) return alert("Faltan datos");
-            saveClients(ruta); fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            if(wa) sendWA(r); else alert("✅ Guardado");
-            ruta = []; localStorage.removeItem('tw_d'); renderR(); setTimeout(load, 1500); 
+            // Preguntar si es para hoy o mañana
+            const respuesta = confirm("¿El despacho es para HOY?\n(Aceptar = HOY / Cancelar = MAÑANA)");
+            
+            // Registrar Hora
+            const ahora = new Date();
+            const horaStr = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const r = { 
+                chofer: chofer, 
+                auxiliar: auxiliar, 
+                placa: placa, 
+                operario: user, 
+                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
+                total: ruta.reduce((a,b) => a+b.ca, 0),
+                hora: horaStr // Se añade la hora al objeto
+            };
+
+            saveClients(ruta);
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+
+            if(respuesta) {
+                // Si es HOY, mandar WhatsApp
+                sendWA(r);
+            } else {
+                // Si es MAÑANA, solo avisar guardado
+                alert("✅ Guardado para Mañana (Nube)");
+            }
+
+            ruta = []; 
+            localStorage.removeItem('tw_d'); 
+            renderR(); 
+            setTimeout(load, 1500); 
         }
 
         function renderH() {
@@ -227,9 +250,10 @@
                 if (matchMes && matchDia && matchSearch) {
                     tPuntos += (r.items.match(/:/g) || []).length;
                     let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
+                    let horaLabel = r.hora ? ` <span style="color:var(--text-dim)">[${r.hora}]</span>` : "";
                     html += `<div class="card">
                         <div style="display:flex; justify-content:space-between;">
-                            <div><b style="color:var(--accent)">${r.chofer}${auxLabel}</b><br><small>${r.placa} • ${rStr}</small></div>
+                            <div><b style="color:var(--accent)">${r.chofer}${auxLabel}</b>${horaLabel}<br><small>${r.placa} • ${rStr}</small></div>
                             <div style="font-weight:900;">${r.total} CJ</div>
                         </div>
                         <div style="display:flex; gap:8px; margin-top:10px;">
@@ -280,12 +304,22 @@
             let y = 30;
             db.slice(-30).forEach(r => {
                 let fechaStr = r.fecha ? r.fecha.split('T')[0] : 'S/F';
+                let horaStr = r.hora ? ` [${r.hora}]` : "";
                 doc.setFontSize(10);
-                doc.text(`${fechaStr} | ${r.chofer} (${r.auxiliar || 'S/A'}) | ${r.total} CJ`, 10, y);
+                doc.text(`${fechaStr}${horaStr} | ${r.chofer} (${r.auxiliar || 'S/A'}) | ${r.total} CJ`, 10, y);
                 y += 8;
                 if(y > 280) { doc.addPage(); y = 20; }
             });
             doc.save("Reporte_Twins_Admin.pdf");
+        }
+
+        function editarRuta(idx) {
+            const r = db[idx]; 
+            ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
+            document.getElementById('pla').value = r.placa; 
+            document.getElementById('cho').value = r.chofer; 
+            document.getElementById('aux').value = r.auxiliar || ""; 
+            renderR(); saveDraft(); nav('p2');
         }
 
         function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
