@@ -31,10 +31,24 @@
         input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #070b1a; color: var(--text); font-size: 15px; }
         .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .btn-main { background: var(--grad); color: white; }
-        #modal-pass, #modal-view { display: none; position: fixed; inset: 0; background: rgba(2, 4, 10, 0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
+        
+        /* Modales */
+        #modal-pass, #modal-view, #modal-ask { display: none; position: fixed; inset: 0; background: rgba(2, 4, 10, 0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
+        .ask-box { width: 100%; max-width: 320px; text-align: center; }
     </style>
 </head>
 <body>
+
+    <div id="modal-ask">
+        <div class="card ask-box">
+            <div style="font-size: 24px; margin-bottom: 10px;">📅</div>
+            <div style="font-weight: 800; margin-bottom: 5px;">PROGRAMAR DESPACHO</div>
+            <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 20px;">¿Cuándo sale esta ruta?</p>
+            <button class="btn" style="background: var(--success); color: #000; margin-bottom: 10px;" onclick="confirmarGuardado(true)">HOY (Mandar WA)</button>
+            <button class="btn" style="background: var(--accent); color: #000;" onclick="confirmarGuardado(false)">MAÑANA (Solo Guardar)</button>
+            <button class="btn" style="background: transparent; color: var(--danger); margin-top: 10px; font-size: 12px;" onclick="document.getElementById('modal-ask').style.display='none'">CANCELAR</button>
+        </div>
+    </div>
 
     <div id="modal-pass" onclick="this.style.display='none'">
         <div class="card" style="width: 300px; text-align: center;" onclick="event.stopPropagation()">
@@ -92,9 +106,7 @@
                 <select id="aux">
                     <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
                 </select>
-                <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 10px;">
-                    <button class="btn btn-main" onclick="guardar()">💾 GUARDAR DESPACHO</button>
-                </div>
+                <button class="btn btn-main" onclick="abrirModalGuardar()" style="margin-top: 10px;">💾 GUARDAR DESPACHO</button>
             </div>
         </div>
     </div>
@@ -192,45 +204,33 @@
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
-        async function guardar() {
-            const chofer = document.getElementById('cho').value;
-            const placa = document.getElementById('pla').value;
-            const auxiliar = document.getElementById('aux').value;
-            
-            if(!chofer || !placa) return alert("Faltan datos (Chofer/Placa)");
+        function abrirModalGuardar() {
+            if(!document.getElementById('cho').value || !document.getElementById('pla').value) return alert("Faltan datos");
+            document.getElementById('modal-ask').style.display = 'flex';
+        }
 
-            // Preguntar si es para hoy o mañana
-            const respuesta = confirm("¿El despacho es para HOY?\n(Aceptar = HOY / Cancelar = MAÑANA)");
-            
-            // Registrar Hora
+        async function confirmarGuardado(esHoy) {
+            document.getElementById('modal-ask').style.display = 'none';
             const ahora = new Date();
-            const horaStr = ahora.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const horaActual = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
 
             const r = { 
-                chofer: chofer, 
-                auxiliar: auxiliar, 
-                placa: placa, 
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, 
                 operario: user, 
                 items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
                 total: ruta.reduce((a,b) => a+b.ca, 0),
-                hora: horaStr // Se añade la hora al objeto
+                hora: horaActual 
             };
 
             saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
 
-            if(respuesta) {
-                // Si es HOY, mandar WhatsApp
-                sendWA(r);
-            } else {
-                // Si es MAÑANA, solo avisar guardado
-                alert("✅ Guardado para Mañana (Nube)");
-            }
+            if(esHoy) sendWA(r); else alert("✅ Guardado para Mañana");
 
-            ruta = []; 
-            localStorage.removeItem('tw_d'); 
-            renderR(); 
-            setTimeout(load, 1500); 
+            ruta = []; localStorage.removeItem('tw_d'); renderR(); 
+            setTimeout(load, 1500);
         }
 
         function renderH() {
@@ -250,10 +250,12 @@
                 if (matchMes && matchDia && matchSearch) {
                     tPuntos += (r.items.match(/:/g) || []).length;
                     let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
-                    let horaLabel = r.hora ? ` <span style="color:var(--text-dim)">[${r.hora}]</span>` : "";
+                    // VISUALIZACIÓN DE HORA CORREGIDA
+                    let horaTxt = r.hora ? `<span style="color:var(--success); margin-left:8px; font-size:11px;">🕒 ${r.hora}</span>` : "";
+                    
                     html += `<div class="card">
                         <div style="display:flex; justify-content:space-between;">
-                            <div><b style="color:var(--accent)">${r.chofer}${auxLabel}</b>${horaLabel}<br><small>${r.placa} • ${rStr}</small></div>
+                            <div><b style="color:var(--accent)">${r.chofer}${auxLabel}</b>${horaTxt}<br><small>${r.placa} • ${rStr}</small></div>
                             <div style="font-weight:900;">${r.total} CJ</div>
                         </div>
                         <div style="display:flex; gap:8px; margin-top:10px;">
@@ -304,11 +306,9 @@
             let y = 30;
             db.slice(-30).forEach(r => {
                 let fechaStr = r.fecha ? r.fecha.split('T')[0] : 'S/F';
-                let horaStr = r.hora ? ` [${r.hora}]` : "";
                 doc.setFontSize(10);
-                doc.text(`${fechaStr}${horaStr} | ${r.chofer} (${r.auxiliar || 'S/A'}) | ${r.total} CJ`, 10, y);
-                y += 8;
-                if(y > 280) { doc.addPage(); y = 20; }
+                doc.text(`${fechaStr} [${r.hora || '--:--'}] | ${r.chofer} | ${r.total} CJ`, 10, y);
+                y += 8; if(y > 280) { doc.addPage(); y = 20; }
             });
             doc.save("Reporte_Twins_Admin.pdf");
         }
