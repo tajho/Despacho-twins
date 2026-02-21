@@ -14,38 +14,36 @@
             --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
             --grad: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
         }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
         
         .main-title { 
-            font-size: 32px; 
-            font-weight: 900; 
-            letter-spacing: -1px;
-            background: var(--grad);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.1;
-            margin-bottom: 20px;
+            font-size: 32px; font-weight: 900; letter-spacing: -1px;
+            background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            line-height: 1.1; margin-bottom: 20px;
         }
 
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        #modal-pass, #modal-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
+        #modal-pass, #modal-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { border: none; background: none; color: var(--text); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
+        
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
         
         .swipe-container { position: relative; background: var(--danger); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; z-index: 2; transition: transform 0.2s; margin-bottom: 0; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; z-index: 2; transition: transform 0.2s; }
         
         input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-main { background: var(--twins-blue); color: white; }
         .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
+        
         .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
         .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
     </style>
@@ -181,20 +179,32 @@
         }
 
         async function guardar(wa) {
-            const r = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUX", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0) };
+            const r = { 
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value || "SIN AUX", 
+                placa: document.getElementById('pla').value, 
+                operario: user, 
+                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
+                total: ruta.reduce((a,b) => a+b.ca, 0) 
+            };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
             saveClients(ruta); fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            if(wa) sendWA(r); else alert("✅ Guardado");
+            if(wa) sendWA(r); else alert("✅ Guardado en Nube");
             ruta = []; localStorage.removeItem('tw_d'); renderR(); load();
         }
 
+        /* FUNCIÓN WHATSAPP CORREGIDA (Sin pantalla negra y con Auxiliar de DB) */
         function sendWA(r) {
+            let auxNombre = r.auxiliar || "SIN AUX";
             let lista = r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n");
-            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${r.auxiliar}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${lista}\n\n_Registrado por: ${r.operario}_`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(m)}`);
+            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${auxNombre}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${lista}\n\n_Registrado por: ${r.operario || 'SISTEMA'}_`;
+            
+            // Usamos un enlace directo para evitar la pantalla negra de redirección
+            const waURL = `https://api.whatsapp.com/send?text=${encodeURIComponent(m)}`;
+            const win = window.open(waURL, '_blank');
+            if (win) win.focus();
         }
 
-        /* LÓGICA SWIPE CORREGIDA */
         function hStart(e) { tStartX = e.touches[0].clientX; }
         function hMove(e, id) { let d = e.touches[0].clientX - tStartX; if(d < 0 && d > -100) document.getElementById('c-'+id).style.transform = `translateX(${d}px)`; }
         
@@ -202,14 +212,9 @@
             let d = e.changedTouches[0].clientX - tStartX; 
             let el = document.getElementById('c-'+id); 
             if(d < -70) { 
-                if(confirm("¿Eliminar de la nube? (Evita rutas fantasma)")) {
+                if(confirm("¿Eliminar permanentemente de la nube?")) {
                     const rowToDelete = db[id];
-                    // Enviamos acción específica para que el servidor NO cree una fila nueva
-                    fetch(URL, { 
-                        method: 'POST', 
-                        mode: 'no-cors', 
-                        body: JSON.stringify({ action: 'DELETE_ROW', data: rowToDelete }) 
-                    });
+                    fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'DELETE_ROW', data: rowToDelete }) });
                     db.splice(id, 1); 
                     renderH(); 
                 } 
@@ -270,13 +275,3 @@
             doc.text("REPORTE TWINS", 14, 20);
             const filas = [];
             db.forEach(r => {
-                const rd = new Date(r.fecha);
-                const rfs = rd.getFullYear() + '-' + String(rd.getMonth() + 1).padStart(2, '0') + '-' + String(rd.getDate()).padStart(2, '0');
-                filas.push([rfs, r.chofer, r.placa, r.total + " CJ"]);
-            });
-            doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas });
-            doc.save(`Reporte.pdf`);
-        }
-    </script>
-</body>
-</html>
