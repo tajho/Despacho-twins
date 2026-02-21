@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V10 | OFICIAL</title>
+    <title>TWINS V10 | FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -123,7 +123,6 @@
     </div>
 
     <script>
-        // TU NUEVO LINK INTEGRADO
         const URL = "https://script.google.com/macros/s/AKfycbz9V0MzUuuAHTa9N4-xrsVJV7DbkWLtgJY5xHM7_JTfIDlBxCtimM6FHjRpVczuD2kM/exec";
         let user = "", ruta = [], db = [];
 
@@ -150,8 +149,14 @@
             document.getElementById(nBtn).classList.add('active-nav');
         }
 
-        async function nav_hist() { nav('p3'); if(db.length === 0) await load(); else renderH(); }
-        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) { console.error(e); } }
+        async function nav_hist() { nav('p3'); await load(); }
+        async function load() { 
+            try { 
+                const r = await fetch(URL, { cache: 'no-cache' }); 
+                db = await r.json(); 
+                renderH(); 
+            } catch(e) { console.error("Error cargando base:", e); } 
+        }
 
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
@@ -180,9 +185,14 @@
             };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
             saveClients(ruta); 
+            
+            // Envío con prioridad para evitar bloqueos
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            if(wa) sendWA(r); else alert("✅ Guardado");
-            ruta = []; localStorage.removeItem('tw_d'); renderR(); load();
+            
+            if(wa) sendWA(r); else alert("✅ Guardado solicitado");
+            
+            ruta = []; localStorage.removeItem('tw_d'); renderR(); 
+            setTimeout(load, 2000); // Recarga después de 2 seg para dar tiempo a Google
         }
 
         function sendWA(r) {
