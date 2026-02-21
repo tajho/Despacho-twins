@@ -3,257 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS PRO V15</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>TWINS ELITE V15</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* Colores Mate - Menos chillones */
         :root {
             --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; 
-            --text: #f8fafc; --text-dim: #94a3b8;
+            --text: #f1f5f9; --text-dim: #94a3b8;
             --success: #22c55e; --danger: #ef4444; --warning: #f59e0b;
-            --border: #334155;
+            --border: rgba(255,255,255,0.08);
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.5; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
 
         .page { display: none; padding: 16px; padding-bottom: 100px; max-width: 500px; margin: 0 auto; }
         .active { display: block; }
 
-        .top-header { position: sticky; top: 0; z-index: 100; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(8px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: #0f172a; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-item { background: none; border: none; color: var(--text-dim); font-size: 11px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.7; }
-        .nav-item.active-nav { color: var(--accent); opacity: 1; }
+        .top-header { position: sticky; top: 0; z-index: 100; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0f172a; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { background: none; border: none; color: var(--text-dim); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item.active-nav { color: var(--accent); }
 
-        .card { background: var(--card); border-radius: 16px; border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
-        .stat-box { background: var(--card); padding: 14px; border-radius: 16px; border: 1px solid var(--border); text-align: center; }
-        .stat-val { font-size: 20px; font-weight: 700; color: var(--accent); }
-        .stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
-
-        input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: #0f172a; color: var(--text); font-size: 15px; }
-        input:focus { border-color: var(--accent); }
+        .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 18px; margin-bottom: 14px; }
+        .stat-box { background: var(--card); padding: 16px; border-radius: 20px; border: 1px solid var(--border); text-align: center; }
+        .stat-val { font-size: 22px; font-weight: 800; color: var(--accent); }
         
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #070b1a; color: var(--text); font-size: 15px; }
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--accent); color: #0f172a; }
-        .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
         
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-        .btn-del { color: var(--danger); font-size: 18px; font-weight: bold; padding: 5px 10px; }
-
-        #modal-pass, #modal-view { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        #modal-pass, #modal-view { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
     </style>
 </head>
 <body>
 
     <div id="modal-pass" onclick="this.style.display='none'">
-        <div class="card" style="width: 280px;" onclick="event.stopPropagation()">
-            <h3 style="margin:0 0 15px; text-align:center;">Acceso Admin</h3>
-            <input type="password" id="pass-input" inputmode="numeric" placeholder="Código" style="text-align:center;">
-            <button class="btn btn-main" onclick="checkPass()">ENTRAR</button>
+        <div class="card" style="width: 300px; text-align: center;" onclick="event.stopPropagation()">
+            <div style="font-weight: 800; margin-bottom: 20px;">ACCESO ADMIN</div>
+            <input type="password" id="pass-input" inputmode="numeric" placeholder="CÓDIGO" style="text-align: center;">
+            <button class="btn btn-main" onclick="checkPass()">INGRESAR</button>
         </div>
     </div>
 
-    <div id="p1" class="page active">
-        <div style="text-align: center; margin-top: 15vh;">
-            <h1 style="letter-spacing: -1px; margin-bottom: 40px;">TWINS <span style="color:var(--accent)">LOGISTICS</span></h1>
-            <div style="display: grid; gap: 10px; max-width: 280px; margin: 0 auto;">
-                <button class="btn btn-ghost" onclick="login('FRANCESCO')">FRANCESCO</button>
-                <button class="btn btn-ghost" onclick="login('OSCAR')">OSCAR</button>
-                <button class="btn btn-ghost" onclick="login('LUIS HERBER')">LUIS HERBER</button>
-                <button class="btn btn-ghost" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 ADMIN</button>
-            </div>
+    <div id="p1" class="page active" style="text-align: center; padding-top: 10vh;">
+        <h1 style="font-size: 40px; font-weight: 900; color: var(--accent);">TWINS</h1>
+        <div style="display: grid; gap: 12px; max-width: 300px; margin: 40px auto;">
+            <button class="btn" style="background: var(--card); color: white;" onclick="login('FRANCESCO')">FRANCESCO</button>
+            <button class="btn" style="background: var(--card); color: white;" onclick="login('OSCAR')">OSCAR</button>
+            <button class="btn" style="background: var(--card); color: white;" onclick="login('LUIS HERBER')">LUIS HERBER</button>
+            <button class="btn" style="background: var(--card); color: white;" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 ADMIN</button>
         </div>
     </div>
 
     <div id="header-app" class="top-header" style="display:none;">
-        <span id="user-display" style="font-weight:700; color:var(--accent); font-size:14px;">---</span>
-        <button onclick="cerrarSesion()" style="background:none; border:none; color:var(--text-dim); font-size:11px;">CERRAR SESIÓN</button>
+        <div id="user-display" style="font-weight: 800; color: var(--accent);">---</div>
+        <button onclick="cerrarSesion()" style="background:none; border:none; color: var(--danger); font-size: 11px; font-weight: 800;">SALIR</button>
     </div>
 
     <div id="p2" class="page">
-        <div class="stat-box" style="margin-bottom:15px; border-color: var(--accent);">
-            <div class="stat-label">Cajas en carga actual</div>
-            <div id="total-vivo" style="font-size: 32px; font-weight: 800;">0</div>
+        <div class="stat-box" style="margin-bottom: 15px; border-color: var(--accent);">
+            <div style="font-size: 9px; color: var(--text-dim);">CAJAS EN RUTA</div>
+            <div id="total-vivo" style="font-size: 44px; font-weight: 900;">0</div>
         </div>
         <div class="card">
-            <input type="text" id="cli" list="clientes-sugeridos" placeholder="Nombre del Cliente">
-            <input type="number" id="can" placeholder="Cantidad de cajas" inputmode="numeric">
-            <button class="btn btn-main" onclick="addItem()" style="margin-top:5px;">AÑADIR A RUTA</button>
-            <datalist id="clientes-sugeridos"></datalist>
+            <input type="text" id="cli" placeholder="Cliente...">
+            <input type="number" id="can" placeholder="Cant.">
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR</button>
         </div>
         <div id="area-envio" style="display:none;">
             <div class="card" id="lista-items"></div>
-            <div class="card">
-                <select id="pla"><option value="">Seleccionar Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
-                <select id="cho"><option value="">Seleccionar Chofer</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="TAJHO">TAJHO</option></select>
-                <select id="aux"><option value="">Seleccionar Auxiliar</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="DANIEL C">DANIEL C</option></select>
-                <button class="btn btn-main" style="background:var(--success); color:white; margin-top:10px;" onclick="guardar(true)">ENVIAR WHATSAPP</button>
-            </div>
+            <select id="pla"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
+            <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option></select>
+            <button class="btn btn-main" style="background: var(--success); color: white; margin-top:10px;" onclick="guardar(true)">ENVIAR WHATSAPP</button>
         </div>
-    </div>
-
-    <div id="p3" class="page">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px;">
-            <div class="stat-box"><div class="stat-label">Mes</div><div id="stat-mes" class="stat-val">0</div></div>
-            <div class="stat-box"><div class="stat-label">Hoy</div><div id="stat-dia" class="stat-val">0</div></div>
-        </div>
-        <div class="card">
-            <input type="text" id="f-search" placeholder="Buscar chofer o cliente..." onkeyup="renderH()">
-            <input type="date" id="f-dia" onchange="renderH()">
-        </div>
-        <div id="h-list"></div>
     </div>
 
     <div id="p4" class="page">
-        <h3 style="margin-bottom:15px;">Control de Unidades</h3>
+        <h3 style="color: var(--accent);">ESTADO DE DOCUMENTOS</h3>
         <div id="lista-flota"></div>
     </div>
 
     <div id="nav-app" class="bottom-nav" style="display:none;">
-        <button id="n2" class="nav-item" onclick="nav('p2')">📦 RUTA</button>
-        <button id="n3" class="nav-item" onclick="nav('p3')">📊 HISTORIAL</button>
-        <button id="n4" class="nav-item" onclick="nav('p4')">🚛 FLOTA</button>
+        <button class="nav-item" onclick="nav('p2')">📦 RUTA</button>
+        <button class="nav-item" onclick="nav('p4')">🚛 FLOTA</button>
     </div>
 
     <script>
-        const URL = "https://script.google.com/macros/s/AKfycbz9V0MzUuuAHTa9N4-xrsVJV7DbkWLtgJY5xHM7_JTfIDlBxCtimM6FHjRpVczuD2kM/exec";
+        const URL = "TU_URL_DE_SHEETS";
         let user = "", ruta = [], db = [];
 
-        // Datos oficiales actualizados
+        // Datos cargados de tus imágenes
         const flotaData = [
             { placa: "CEP-929", soat: "2026-07-22", rev: "2026-08-15" },
-            { placa: "BPN-711", soat: "2026-06-10", rev: "2026-09-20" },
-            { placa: "BVN-704", soat: "2026-07-02", rev: "2026-05-12" },
-            { placa: "BUL-742", soat: "2026-04-02", rev: "2026-04-25" },
-            { placa: "BVN-930", soat: "2026-07-02", rev: "2026-11-10" }
+            { placa: "BPN-711", soat: "2026-06-10", rev: "2026-09-10" },
+            { placa: "BVN-704", soat: "2026-07-02", rev: "2026-10-05" },
+            { placa: "BUL-742", soat: "2026-04-02", rev: "2026-04-20" },
+            { placa: "BVN-930", soat: "2026-07-02", rev: "2026-11-12" }
         ];
 
-        window.onload = () => {
-            const lastUser = localStorage.getItem('tw_u');
-            if(lastUser) login(lastUser, localStorage.getItem('tw_p') || 'p2');
-            document.getElementById('f-dia').value = new Date().toISOString().split('T')[0];
-        };
-
-        function login(n, target = 'p2') {
-            user = n; localStorage.setItem('tw_u', n);
-            document.getElementById('p1').style.display='none';
+        function login(n) {
+            user = n; document.getElementById('p1').style.display='none';
             document.getElementById('header-app').style.display='flex';
             document.getElementById('nav-app').style.display='flex';
-            document.getElementById('user-display').innerText = "OP: " + n;
-            nav(target); load(); loadDraft();
+            document.getElementById('user-display').innerText = n;
+            nav('p2'); loadDraft();
         }
 
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active-nav'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
-            localStorage.setItem('tw_p', id);
             if(id === 'p4') renderFlota();
         }
 
         function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
+            const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
             ruta.unshift({cl, ca});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderR();
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
         }
 
         function renderR() {
-            const container = document.getElementById('lista-items');
-            let total = 0; container.innerHTML = "";
-            ruta.forEach((item, index) => {
-                total += item.ca;
-                container.innerHTML += `
-                <div class="item-row">
-                    <span>${item.cl} <small style="color:var(--text-dim)">(${item.ca} CJ)</small></span>
-                    <span class="btn-del" onclick="removeItem(${index})">✕</span>
+            const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
+            ruta.forEach((i, x) => {
+                s += i.ca;
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
+                    <span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px" onclick="removeItem(${x})">✕</span></b>
                 </div>`;
             });
-            document.getElementById('total-vivo').innerText = total;
+            document.getElementById('total-vivo').innerText = s;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
             saveDraft();
         }
 
-        function removeItem(index) {
-            ruta.splice(index, 1);
-            renderR();
-        }
-
-        async function guardar(wa) {
-            const r = { 
-                chofer: document.getElementById('cho').value, 
-                auxiliar: document.getElementById('aux').value, 
-                placa: document.getElementById('pla').value, 
-                operario: user, 
-                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
-                total: ruta.reduce((a,b) => a+b.ca, 0) 
-            };
-            if(!r.chofer || !r.placa) return alert("Seleccione Chofer y Placa");
-            
-            if(wa) {
-                let msg = `*📦 DESPACHO TWINS*\n*Chofer:* ${r.chofer}\n*Placa:* ${r.placa}\n*Auxiliar:* ${r.auxiliar || 'NINGUNO'}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${ruta.map(i => "✅ " + i.cl + ": " + i.ca).join("\n")}`;
-                window.location.href = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-            }
-
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            ruta = []; renderR(); saveDraft();
-            setTimeout(load, 1500);
-        }
-
-        function renderH() {
-            const list = document.getElementById('h-list');
-            const fD = document.getElementById('f-dia').value;
-            const fS = document.getElementById('f-search').value.toUpperCase();
-            let htm = "", tM = 0, tD = 0;
-
-            db.slice().reverse().forEach(r => {
-                const rF = r.fecha ? r.fecha.split("T")[0] : "";
-                if(r.fecha && new Date(r.fecha).getMonth() === new Date().getMonth()) tM += r.total;
-                if(rF === fD) tD += r.total;
-
-                if((!fD || rF === fD) && (r.chofer.toUpperCase().includes(fS) || r.items.toUpperCase().includes(fS))) {
-                    htm += `<div class="card" style="padding:12px;">
-                        <div style="display:flex; justify-content:space-between;">
-                            <b>${r.chofer}</b> <span>${r.total} CJ</span>
-                        </div>
-                        <div style="font-size:11px; color:var(--text-dim); margin-top:4px;">${r.placa} • ${rF}</div>
-                    </div>`;
-                }
-            });
-            list.innerHTML = htm;
-            document.getElementById('stat-mes').innerText = Math.round(tM);
-            document.getElementById('stat-dia').innerText = Math.round(tD);
+        function removeItem(x) {
+            ruta.splice(x, 1);
+            renderR(); // Al llamar a renderR, también se ejecuta saveDraft() actualizado.
         }
 
         function renderFlota() {
-            const container = document.getElementById('lista-flota');
-            container.innerHTML = "";
-            const hoy = new Date();
-
+            const container = document.getElementById('lista-flota'); container.innerHTML = "";
             flotaData.forEach(v => {
-                const soat = new Date(v.soat);
-                const rev = new Date(v.rev);
-                const difS = Math.ceil((soat - hoy)/(1000*60*60*24));
-                const difR = Math.ceil((rev - hoy)/(1000*60*60*24));
-
                 container.innerHTML += `<div class="card">
-                    <div style="font-weight:bold; font-size:18px; color:var(--accent); margin-bottom:10px;">${v.placa}</div>
-                    <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:5px;">
-                        <span>SOAT</span>
-                        <b style="color:${difS < 15 ? 'var(--danger)' : 'var(--success)'}">${v.soat}</b>
+                    <b style="color:var(--accent); font-size:18px;">${v.placa}</b>
+                    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:13px;">
+                        <span>SOAT:</span><b>${v.soat}</b>
                     </div>
                     <div style="display:flex; justify-content:space-between; font-size:13px;">
-                        <span>Rev. Técnica</span>
-                        <b style="color:${difR < 15 ? 'var(--danger)' : 'var(--success)'}">${v.rev}</b>
+                        <span>REV. TÉCNICA:</span><b>${v.rev}</b>
                     </div>
                 </div>`;
             });
         }
 
-        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
-        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify(ruta)); }
-        function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { ruta = JSON.parse(s); renderR(); } }
+        function saveDraft() { localStorage.setItem('tw_ruta', JSON.stringify(ruta)); }
+        function loadDraft() { 
+            const saved = localStorage.getItem('tw_ruta');
+            if(saved) { ruta = JSON.parse(saved); renderR(); }
+        }
+
         function cerrarSesion() { localStorage.clear(); location.reload(); }
         function checkPass() { if(document.getElementById('pass-input').value === "2026") login('TAJHO'); else alert("Error"); }
     </script>
