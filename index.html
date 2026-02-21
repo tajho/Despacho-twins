@@ -102,16 +102,16 @@
                 <div class="stat-box"><div class="stat-label">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
             </div>
             <div class="stat-box" style="margin-bottom: 12px; border-bottom: 3px solid var(--twins-blue);">
-                <div class="stat-label">Clientes Mes (Puntos)</div>
+                <div class="stat-label">Puntos Despachados (Filtro)</div>
                 <div id="stat-clientes" class="stat-val" style="color:var(--text);">0</div>
             </div>
             <div class="card" style="padding:10px;">
-                <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
+                <input type="text" id="f-search" placeholder="🔍 Buscar Chofer, Placa o Cliente..." onkeyup="renderH()">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                     <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
-                    <input type="date" id="f-dia" onchange="renderH()">
+                    <input type="date" id="f-dia" onchange="renderH()" placeholder="Seleccionar Día">
                 </div>
-                <button id="btn-reporte-admin" class="btn" style="background:#e11d48; color:white; margin-top:10px; display:none;" onclick="generarPDF()">📄 PDF</button>
+                <button id="btn-reporte-admin" class="btn" style="background:#e11d48; color:white; margin-top:10px; display:none;" onclick="generarPDF()">📄 PDF REPORTE</button>
             </div>
             <div id="h-list"></div>
         </div>
@@ -128,7 +128,7 @@
 
         window.onload = () => {
             const h = new Date();
-            document.getElementById('f-dia').value = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
+            // Por defecto no ponemos día para que muestre el mes entero
             document.getElementById('f-mes').value = h.getMonth();
             loadDraft(); updateSugs();
         };
@@ -185,14 +185,10 @@
             };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
             saveClients(ruta); 
-            
-            // Envío con prioridad para evitar bloqueos
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            
             if(wa) sendWA(r); else alert("✅ Guardado solicitado");
-            
             ruta = []; localStorage.removeItem('tw_d'); renderR(); 
-            setTimeout(load, 2000); // Recarga después de 2 seg para dar tiempo a Google
+            setTimeout(load, 2000); 
         }
 
         function sendWA(r) {
@@ -204,10 +200,13 @@
 
         function renderH() {
             const list = document.getElementById('h-list');
-            const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
-            let tAcumulado = 0, tDiaIndividual = 0, tClientesMes = 0;
-            const targetDate = fD ? new Date(fD + "T12:00:00") : new Date();
-            const targetStr = targetDate.getFullYear() + '-' + String(targetDate.getMonth() + 1).padStart(2, '0') + '-' + String(targetDate.getDate()).padStart(2, '0');
+            const fM = document.getElementById('f-mes').value;
+            const fD = document.getElementById('f-dia').value;
+            const fS = document.getElementById('f-search').value.toUpperCase();
+            
+            let tAcumuladoRango = 0, tDiaActual = 0, tPuntosRango = 0;
+            const hoy = new Date();
+            const hoyStr = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0') + '-' + String(hoy.getDate()).padStart(2, '0');
 
             let html = "";
             for (let i = db.length - 1; i >= 0; i--) {
@@ -215,15 +214,19 @@
                 const rDate = new Date(r.fecha);
                 const rStr = rDate.getFullYear() + '-' + String(rDate.getMonth() + 1).padStart(2, '0') + '-' + String(rDate.getDate()).padStart(2, '0');
                 
-                if(rDate.getFullYear() === targetDate.getFullYear() && (fM === "ALL" || rDate.getMonth().toString() === fM)) {
-                    tAcumulado += parseFloat(r.total) || 0;
-                    const cantClientesRuta = (r.items.match(/:/g) || []).length;
-                    tClientesMes += cantClientesRuta;
+                // Lógica de Filtro
+                const matchMes = (fM === "ALL" || rDate.getMonth().toString() === fM);
+                const matchDia = (!fD || rStr === fD);
+                const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS));
+
+                if (matchMes && matchDia) {
+                    tAcumuladoRango += parseFloat(r.total) || 0;
+                    tPuntosRango += (r.items.match(/:/g) || []).length;
                 }
 
-                if(rStr === targetStr) tDiaIndividual += parseFloat(r.total) || 0;
+                if (rStr === hoyStr) tDiaActual += parseFloat(r.total) || 0;
 
-                if ((r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS)) && (fM === "ALL" || rDate.getMonth().toString() === fM) && (!fD || rStr === fD)) {
+                if (matchMes && matchDia && matchSearch) {
                     let nomAux = (r.auxiliar && r.auxiliar !== "") ? " + " + r.auxiliar : "";
                     html += `
                     <div class="card">
@@ -248,9 +251,9 @@
                 }
             }
             list.innerHTML = html;
-            document.getElementById('stat-mes').innerText = Math.round(tAcumulado); 
-            document.getElementById('stat-dia').innerText = Math.round(tDiaIndividual);
-            document.getElementById('stat-clientes').innerText = tClientesMes;
+            document.getElementById('stat-mes').innerText = Math.round(tAcumuladoRango); 
+            document.getElementById('stat-dia').innerText = Math.round(tDiaActual);
+            document.getElementById('stat-clientes').innerText = tPuntosRango;
         }
 
         function verSoloRuta(idx) {
@@ -264,7 +267,7 @@
             doc.text("REPORTE TWINS", 14, 20);
             const filas = db.map(r => [r.fecha.split("T")[0], r.chofer, r.placa, r.total + " CJ"]);
             doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas });
-            doc.save(`Reporte.pdf`);
+            doc.save(`Reporte_Twins.pdf`);
         }
     </script>
 </body>
