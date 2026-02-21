@@ -14,11 +14,11 @@
             --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
             --grad: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
         }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow: hidden; }
-        .app-container { height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
         .main-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 20px; }
-        .page { display: none; padding: 12px; padding-bottom: 100px; }
-        .active { display: block; }
+        .page { display: none; padding: 12px; padding-bottom: 90px; }
+        .active { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         #modal-pass, #modal-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
@@ -68,7 +68,7 @@
 
         <div id="header-app" class="top-header" style="display:none;">
             <div><small style="opacity:0.5; font-size:9px;">OPERARIO:</small> <b id="user-display" style="color:var(--twins-blue)">---</b></div>
-            <span onclick="location.reload()" style="color:var(--danger); font-size:10px; font-weight:800;">SALIR</span>
+            <span onclick="cerrarSesion()" style="color:var(--danger); font-size:10px; font-weight:800;">SALIR</span>
         </div>
 
         <div id="p2" class="page">
@@ -99,7 +99,7 @@
         <div id="p3" class="page">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
                 <div class="stat-box"><div class="stat-label">Acumulado Mes</div><div id="stat-mes" class="stat-val">0</div></div>
-                <div class="stat-box"><div class="stat-label" id="label-dia">Total Hoy</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
+                <div class="stat-box"><div class="stat-label" id="label-dia">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
             </div>
             <div class="stat-box" style="margin-bottom: 12px; border-bottom: 3px solid var(--twins-blue);">
                 <div class="stat-label">Puntos en Filtro</div>
@@ -116,8 +116,8 @@
         </div>
 
         <div id="nav-app" class="bottom-nav" style="display:none;">
-            <div id="n2" class="nav-item active-nav" onclick="nav('p2')"><span>📝</span><span>RUTA</span></div>
-            <div id="n3" class="nav-item" onclick="nav_hist()"><span>📊</span><span>HISTORIAL</span></div>
+            <div id="n2" class="nav-item" onclick="nav('p2')"><span>📝</span><span>RUTA</span></div>
+            <div id="n3" class="nav-item" onclick="nav('p3')"><span>📊</span><span>HISTORIAL</span></div>
         </div>
     </div>
 
@@ -130,6 +130,13 @@
             const hoyStr = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
             document.getElementById('f-dia').value = hoyStr;
             document.getElementById('f-mes').value = h.getMonth();
+            
+            // PERSISTENCIA: Si ya estaba logueado, vuelve a la misma página
+            const lastUser = localStorage.getItem('tw_u');
+            const lastPage = localStorage.getItem('tw_p');
+            if(lastUser) {
+                login(lastUser, lastPage || 'p2');
+            }
             loadDraft(); updateSugs();
         };
 
@@ -139,17 +146,29 @@
         function saveClients(it) { let c = JSON.parse(localStorage.getItem('tw_c') || "[]"); it.forEach(i => { if(!c.includes(i.cl)) c.push(i.cl); }); localStorage.setItem('tw_c', JSON.stringify(c.slice(-60))); updateSugs(); }
 
         function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
-        function login(n) { user = n; document.getElementById('p1').style.display='none'; document.getElementById('header-app').style.display='flex'; document.getElementById('nav-app').style.display='flex'; document.getElementById('user-display').innerText = n; nav('p2'); load(); }
         
+        function login(n, targetPage = 'p2') { 
+            user = n; 
+            localStorage.setItem('tw_u', n);
+            document.getElementById('p1').style.display='none'; 
+            document.getElementById('header-app').style.display='flex'; 
+            document.getElementById('nav-app').style.display='flex'; 
+            document.getElementById('user-display').innerText = n; 
+            nav(targetPage); load(); 
+        }
+
+        function cerrarSesion() { localStorage.removeItem('tw_u'); localStorage.removeItem('tw_p'); location.reload(); }
+
         function nav(id) { 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav')); 
             document.getElementById(id).classList.add('active'); 
             const nBtn = (id === 'p2') ? 'n2' : 'n3';
             document.getElementById(nBtn).classList.add('active-nav');
+            localStorage.setItem('tw_p', id); // Recordar página
+            if(id === 'p3') renderH();
         }
 
-        async function nav_hist() { nav('p3'); await load(); }
         async function load() { 
             try { 
                 const r = await fetch(URL, { cache: 'no-cache' }); 
@@ -190,27 +209,26 @@
         }
 
         function renderH() {
+            if (db.length === 0) return;
             const list = document.getElementById('h-list');
             const fM = document.getElementById('f-mes').value;
             const fD = document.getElementById('f-dia').value;
             const fS = document.getElementById('f-search').value.toUpperCase();
             
             let tMes = 0, tDiaFiltrado = 0, tPuntosFiltro = 0;
-            const hoy = new Date();
-            const hoyStr = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0') + '-' + String(hoy.getDate()).padStart(2, '0');
+            const hoyStr = new Date().toISOString().split('T')[0];
 
             let html = "";
             for (let i = db.length - 1; i >= 0; i--) {
                 const r = db[i];
                 if(!r.fecha) continue;
+                const rStr = r.fecha.split("T")[0];
                 const rDate = new Date(r.fecha);
-                const rStr = rDate.getFullYear() + '-' + String(rDate.getMonth() + 1).padStart(2, '0') + '-' + String(rDate.getDate()).padStart(2, '0');
                 
                 const matchMes = (fM === "ALL" || rDate.getMonth().toString() === fM);
                 const matchDia = (!fD || rStr === fD);
                 const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS));
 
-                // Cálculos de Totales
                 if (matchMes) tMes += parseFloat(r.total) || 0;
                 if (rStr === fD) tDiaFiltrado += parseFloat(r.total) || 0;
 
