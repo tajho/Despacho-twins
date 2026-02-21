@@ -15,13 +15,7 @@
             --grad: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
         }
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
-        
-        .main-title { 
-            font-size: 32px; font-weight: 900; letter-spacing: -1px;
-            background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            line-height: 1.1; margin-bottom: 20px;
-        }
-
+        .main-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 20px; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
         .active { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -33,9 +27,7 @@
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
-        
         .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; margin-bottom: 10px; }
-        
         input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
@@ -109,13 +101,17 @@
                 <div class="stat-box"><div class="stat-label">Acumulado Mes</div><div id="stat-mes" class="stat-val">0</div></div>
                 <div class="stat-box"><div class="stat-label">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
             </div>
+            <div class="stat-box" style="margin-bottom: 12px; border-bottom: 3px solid var(--twins-blue);">
+                <div class="stat-label">Clientes Mes (Puntos)</div>
+                <div id="stat-clientes" class="stat-val" style="color:var(--text);">0</div>
+            </div>
             <div class="card" style="padding:10px;">
-                <input type="text" id="f-search" placeholder="🔍 Buscar cliente, chofer..." onkeyup="renderH()">
+                <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                     <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
                     <input type="date" id="f-dia" onchange="renderH()">
                 </div>
-                <button id="btn-reporte-admin" class="btn" style="background:#e11d48; color:white; margin-top:10px; display:none;" onclick="generarPDF()">📄 DESCARGAR REPORTE PDF</button>
+                <button id="btn-reporte-admin" class="btn" style="background:#e11d48; color:white; margin-top:10px; display:none;" onclick="generarPDF()">📄 PDF</button>
             </div>
             <div id="h-list"></div>
         </div>
@@ -127,13 +123,12 @@
     </div>
 
     <script>
-        const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
+        const URL = "https://script.google.com/macros/s/AKfycbzOFQh4-y7jZknlgSquZtmOhw6m1pcle0z7hvkobvijkHFdHJhY3LDmdYr_VzKr_I0p/exec";
         let user = "", ruta = [], db = [];
 
         window.onload = () => {
             const h = new Date();
-            const local = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
-            document.getElementById('f-dia').value = local;
+            document.getElementById('f-dia').value = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
             document.getElementById('f-mes').value = h.getMonth();
             loadDraft(); updateSugs();
         };
@@ -170,20 +165,27 @@
 
         function editarRuta(idx) {
             const r = db[idx]; ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
-            document.getElementById('pla').value = r.placa; document.getElementById('cho').value = r.chofer; document.getElementById('aux').value = r.auxiliar; renderR(); saveDraft(); nav('p2');
+            document.getElementById('pla').value = r.placa; document.getElementById('cho').value = r.chofer; document.getElementById('aux').value = r.auxiliar || ""; renderR(); saveDraft(); nav('p2');
         }
 
         async function guardar(wa) {
-            const r = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value || "SIN AUX", placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0) };
+            const r = { 
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, 
+                operario: user, 
+                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
+                total: ruta.reduce((a,b) => a+b.ca, 0) 
+            };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
-            saveClients(ruta); fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            saveClients(ruta); 
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
             if(wa) sendWA(r); else alert("✅ Guardado");
             ruta = []; localStorage.removeItem('tw_d'); renderR(); load();
         }
 
-        /* WHATSAPP CORREGIDO: Muestra nombre de auxiliar siempre */
         function sendWA(r) {
-            let auxTexto = r.auxiliar || "SIN AUX";
+            let auxTexto = (r.auxiliar && r.auxiliar.trim() !== "") ? r.auxiliar : "NINGUNO";
             let lista = r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n");
             let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${auxTexto}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${lista}\n\n_Registrado por: ${r.operario}_`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`;
@@ -192,7 +194,7 @@
         function renderH() {
             const list = document.getElementById('h-list');
             const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
-            let tAcumulado = 0, tDiaIndividual = 0;
+            let tAcumulado = 0, tDiaIndividual = 0, tClientesMes = 0;
             const targetDate = fD ? new Date(fD + "T12:00:00") : new Date();
             const targetStr = targetDate.getFullYear() + '-' + String(targetDate.getMonth() + 1).padStart(2, '0') + '-' + String(targetDate.getDate()).padStart(2, '0');
 
@@ -201,16 +203,24 @@
                 const r = db[i];
                 const rDate = new Date(r.fecha);
                 const rStr = rDate.getFullYear() + '-' + String(rDate.getMonth() + 1).padStart(2, '0') + '-' + String(rDate.getDate()).padStart(2, '0');
-                if(rDate.getFullYear() === targetDate.getFullYear() && rDate.getMonth() === targetDate.getMonth() && rDate.getDate() <= targetDate.getDate()) tAcumulado += parseFloat(r.total) || 0;
+                
+                // Si coincide con el mes seleccionado
+                if(rDate.getFullYear() === targetDate.getFullYear() && (fM === "ALL" || rDate.getMonth().toString() === fM)) {
+                    tAcumulado += parseFloat(r.total) || 0;
+                    // CONTADOR DE CLIENTES: Contamos cuántas veces aparece el separador ":" en el string de items
+                    const cantClientesRuta = (r.items.match(/:/g) || []).length;
+                    tClientesMes += cantClientesRuta;
+                }
+
                 if(rStr === targetStr) tDiaIndividual += parseFloat(r.total) || 0;
 
                 if ((r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS)) && (fM === "ALL" || rDate.getMonth().toString() === fM) && (!fD || rStr === fD)) {
-                    /* HISTORIAL CORREGIDO: Muestra Chofer + Auxiliar en el título */
+                    let nomAux = (r.auxiliar && r.auxiliar !== "") ? " + " + r.auxiliar : "";
                     html += `
                     <div class="card">
                         <div style="display:flex; justify-content:space-between; align-items:start;">
                             <div>
-                                <div style="font-weight:800; font-size:13px;">${r.chofer} + ${r.auxiliar || 'SIN AUX'}</div>
+                                <div style="font-weight:800; font-size:13px;">${r.chofer}${nomAux}</div>
                                 <div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div>
                             </div>
                             <div style="display:flex; gap:6px;">
@@ -231,6 +241,7 @@
             list.innerHTML = html;
             document.getElementById('stat-mes').innerText = Math.round(tAcumulado); 
             document.getElementById('stat-dia').innerText = Math.round(tDiaIndividual);
+            document.getElementById('stat-clientes').innerText = tClientesMes;
         }
 
         function verSoloRuta(idx) {
@@ -242,12 +253,7 @@
         function generarPDF() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             doc.text("REPORTE TWINS", 14, 20);
-            const filas = [];
-            db.forEach(r => {
-                const rd = new Date(r.fecha);
-                const rfs = rd.getFullYear() + '-' + String(rd.getMonth() + 1).padStart(2, '0') + '-' + String(rd.getDate()).padStart(2, '0');
-                filas.push([rfs, r.chofer, r.placa, r.total + " CJ"]);
-            });
+            const filas = db.map(r => [r.fecha.split("T")[0], r.chofer, r.placa, r.total + " CJ"]);
             doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas });
             doc.save(`Reporte.pdf`);
         }
