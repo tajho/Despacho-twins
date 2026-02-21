@@ -17,14 +17,9 @@
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
         
         .main-title { 
-            font-size: 32px; 
-            font-weight: 900; 
-            letter-spacing: -1px;
-            background: var(--grad);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.1;
-            margin-bottom: 20px;
+            font-size: 32px; font-weight: 900; letter-spacing: -1px;
+            background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            line-height: 1.1; margin-bottom: 20px;
         }
 
         .page { display: none; padding: 12px; padding-bottom: 80px; }
@@ -39,8 +34,7 @@
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
         
-        .swipe-container { position: relative; background: var(--danger); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; z-index: 2; transition: transform 0.2s; margin-bottom: 0; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; margin-bottom: 10px; }
         
         input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
@@ -135,7 +129,6 @@
     <script>
         const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
         let user = "", ruta = [], db = [];
-        let tStartX = 0;
 
         window.onload = () => {
             const h = new Date();
@@ -188,33 +181,12 @@
             ruta = []; localStorage.removeItem('tw_d'); renderR(); load();
         }
 
-        /* AJUSTE WHATSAPP: window.location.href para evitar pantalla negra y manejo de auxiliar */
+        /* WHATSAPP CORREGIDO: Muestra nombre de auxiliar siempre */
         function sendWA(r) {
             let auxTexto = r.auxiliar || "SIN AUX";
             let lista = r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n");
             let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${auxTexto}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${lista}\n\n_Registrado por: ${r.operario}_`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`;
-        }
-
-        function hStart(e) { tStartX = e.touches[0].clientX; }
-        function hMove(e, id) { let d = e.touches[0].clientX - tStartX; if(d < 0 && d > -100) document.getElementById('c-'+id).style.transform = `translateX(${d}px)`; }
-        
-        async function hEnd(e, id) { 
-            let d = e.changedTouches[0].clientX - tStartX; 
-            let el = document.getElementById('c-'+id); 
-            if(d < -70) { 
-                if(confirm("¿Eliminar de la nube? (Evita rutas fantasma)")) {
-                    const rowToDelete = db[id];
-                    fetch(URL, { 
-                        method: 'POST', 
-                        mode: 'no-cors', 
-                        body: JSON.stringify({ action: 'DELETE_ROW', data: rowToDelete }) 
-                    });
-                    db.splice(id, 1); 
-                    renderH(); 
-                } 
-            } 
-            el.style.transform = `translateX(0)`; 
         }
 
         function renderH() {
@@ -233,23 +205,25 @@
                 if(rStr === targetStr) tDiaIndividual += parseFloat(r.total) || 0;
 
                 if ((r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS)) && (fM === "ALL" || rDate.getMonth().toString() === fM) && (!fD || rStr === fD)) {
+                    /* HISTORIAL CORREGIDO: Muestra Chofer + Auxiliar en el título */
                     html += `
-                    <div class="swipe-container">
-                        <div class="card" id="c-${i}" ontouchstart="hStart(event)" ontouchmove="hMove(event, ${i})" ontouchend="hEnd(event, ${i})">
-                            <div style="display:flex; justify-content:space-between; align-items:start;">
-                                <div><div style="font-weight:800; font-size:13px;">${r.chofer}</div><div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div></div>
-                                <div style="display:flex; gap:6px;">
-                                    <div class="action-btn" onclick="verSoloRuta(${i})">🔍</div>
-                                    <div class="action-btn" style="color:var(--warning)" onclick="editarRuta(${i})">✏️</div>
-                                    <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${i}])">🟢</div>
-                                </div>
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <div>
+                                <div style="font-weight:800; font-size:13px;">${r.chofer} + ${r.auxiliar || 'SIN AUX'}</div>
+                                <div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div>
                             </div>
-                            <div class="hist-footer">
-                                <span>🚚 ${r.placa}</span>
-                                <span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span>
-                                <span>👤 ${r.operario || '---'}</span>
-                                <span>${rStr}</span>
+                            <div style="display:flex; gap:6px;">
+                                <div class="action-btn" onclick="verSoloRuta(${i})">🔍</div>
+                                <div class="action-btn" style="color:var(--warning)" onclick="editarRuta(${i})">✏️</div>
+                                <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${i}])">🟢</div>
                             </div>
+                        </div>
+                        <div class="hist-footer">
+                            <span>🚚 ${r.placa}</span>
+                            <span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span>
+                            <span>👤 ${r.operario || '---'}</span>
+                            <span>${rStr}</span>
                         </div>
                     </div>`;
                 }
