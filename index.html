@@ -17,19 +17,19 @@
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
         .main-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 20px; }
         .page { display: none; padding: 12px; padding-bottom: 80px; }
-        .active { display: block; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .active { display: block; }
         #modal-pass, #modal-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { border: none; background: none; color: var(--text); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
+        .nav-item { border: none; background: none; color: var(--text); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; transition: 0.2s; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
         .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; margin-bottom: 10px; }
         input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
+        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); opacity: 0.8; }
         .btn-main { background: var(--twins-blue); color: white; }
         .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
         .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
@@ -109,7 +109,7 @@
                 <input type="text" id="f-search" placeholder="🔍 Buscar Chofer, Placa o Cliente..." onkeyup="renderH()">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                     <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
-                    <input type="date" id="f-dia" onchange="renderH()" placeholder="Seleccionar Día">
+                    <input type="date" id="f-dia" onchange="renderH()">
                 </div>
                 <button id="btn-reporte-admin" class="btn" style="background:#e11d48; color:white; margin-top:10px; display:none;" onclick="generarPDF()">📄 PDF REPORTE</button>
             </div>
@@ -128,7 +128,9 @@
 
         window.onload = () => {
             const h = new Date();
-            // Por defecto no ponemos día para que muestre el mes entero
+            // AJUSTE: Siempre inicia con la fecha de hoy establecida
+            const hoy = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
+            document.getElementById('f-dia').value = hoy;
             document.getElementById('f-mes').value = h.getMonth();
             loadDraft(); updateSugs();
         };
@@ -186,9 +188,9 @@
             if(!r.chofer || !r.placa) return alert("Faltan datos");
             saveClients(ruta); 
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            if(wa) sendWA(r); else alert("✅ Guardado solicitado");
+            if(wa) sendWA(r); else alert("✅ Registro enviado a la nube");
             ruta = []; localStorage.removeItem('tw_d'); renderR(); 
-            setTimeout(load, 2000); 
+            setTimeout(load, 1500); 
         }
 
         function sendWA(r) {
@@ -211,10 +213,10 @@
             let html = "";
             for (let i = db.length - 1; i >= 0; i--) {
                 const r = db[i];
+                if(!r.fecha) continue;
                 const rDate = new Date(r.fecha);
                 const rStr = rDate.getFullYear() + '-' + String(rDate.getMonth() + 1).padStart(2, '0') + '-' + String(rDate.getDate()).padStart(2, '0');
                 
-                // Lógica de Filtro
                 const matchMes = (fM === "ALL" || rDate.getMonth().toString() === fM);
                 const matchDia = (!fD || rStr === fD);
                 const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS));
@@ -223,7 +225,6 @@
                     tAcumuladoRango += parseFloat(r.total) || 0;
                     tPuntosRango += (r.items.match(/:/g) || []).length;
                 }
-
                 if (rStr === hoyStr) tDiaActual += parseFloat(r.total) || 0;
 
                 if (matchMes && matchDia && matchSearch) {
@@ -250,7 +251,7 @@
                     </div>`;
                 }
             }
-            list.innerHTML = html;
+            list.innerHTML = html || "<div style='text-align:center; opacity:0.5; padding:20px;'>Sin resultados</div>";
             document.getElementById('stat-mes').innerText = Math.round(tAcumuladoRango); 
             document.getElementById('stat-dia').innerText = Math.round(tDiaActual);
             document.getElementById('stat-clientes').innerText = tPuntosRango;
@@ -264,7 +265,7 @@
 
         function generarPDF() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.text("REPORTE TWINS", 14, 20);
+            doc.text("REPORTE DESPACHOS TWINS", 14, 20);
             const filas = db.map(r => [r.fecha.split("T")[0], r.chofer, r.placa, r.total + " CJ"]);
             doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas });
             doc.save(`Reporte_Twins.pdf`);
