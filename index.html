@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE V15</title>
+    <title>TWINS ELITE V16</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Colores Mate - Menos chillones */
         :root {
             --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; 
             --text: #f1f5f9; --text-dim: #94a3b8;
-            --success: #22c55e; --danger: #ef4444; --warning: #f59e0b;
+            --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
             --border: rgba(255,255,255,0.08);
         }
 
@@ -26,29 +25,21 @@
         .nav-item.active-nav { color: var(--accent); }
 
         .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 18px; margin-bottom: 14px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .stat-box { background: var(--card); padding: 16px; border-radius: 20px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 22px; font-weight: 800; color: var(--accent); }
         
         input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #070b1a; color: var(--text); font-size: 15px; }
-        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; }
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--accent); color: #0f172a; }
-        
-        #modal-pass, #modal-view { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
+        .btn-del { color: var(--danger); font-weight: 800; padding: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="modal-pass" onclick="this.style.display='none'">
-        <div class="card" style="width: 300px; text-align: center;" onclick="event.stopPropagation()">
-            <div style="font-weight: 800; margin-bottom: 20px;">ACCESO ADMIN</div>
-            <input type="password" id="pass-input" inputmode="numeric" placeholder="CÓDIGO" style="text-align: center;">
-            <button class="btn btn-main" onclick="checkPass()">INGRESAR</button>
-        </div>
-    </div>
-
     <div id="p1" class="page active" style="text-align: center; padding-top: 10vh;">
-        <h1 style="font-size: 40px; font-weight: 900; color: var(--accent);">TWINS</h1>
-        <div style="display: grid; gap: 12px; max-width: 300px; margin: 40px auto;">
+        <h1 style="font-size: 40px; font-weight: 900; color: var(--accent); margin-bottom: 40px;">TWINS</h1>
+        <div style="display: grid; gap: 12px; max-width: 300px; margin: 0 auto;">
             <button class="btn" style="background: var(--card); color: white;" onclick="login('FRANCESCO')">FRANCESCO</button>
             <button class="btn" style="background: var(--card); color: white;" onclick="login('OSCAR')">OSCAR</button>
             <button class="btn" style="background: var(--card); color: white;" onclick="login('LUIS HERBER')">LUIS HERBER</button>
@@ -58,113 +49,158 @@
 
     <div id="header-app" class="top-header" style="display:none;">
         <div id="user-display" style="font-weight: 800; color: var(--accent);">---</div>
-        <button onclick="cerrarSesion()" style="background:none; border:none; color: var(--danger); font-size: 11px; font-weight: 800;">SALIR</button>
+        <button onclick="cerrarSesion()" style="background:none; border:none; color: var(--danger); font-size: 11px;">SALIR</button>
     </div>
 
     <div id="p2" class="page">
-        <div class="stat-box" style="margin-bottom: 15px; border-color: var(--accent);">
-            <div style="font-size: 9px; color: var(--text-dim);">CAJAS EN RUTA</div>
-            <div id="total-vivo" style="font-size: 44px; font-weight: 900;">0</div>
+        <div class="stat-box" style="margin-bottom: 15px; border-left: 5px solid var(--accent);">
+            <div style="font-size: 10px; color: var(--text-dim);">CAJAS EN CARGA</div>
+            <div id="total-vivo" style="font-size: 40px; font-weight: 900;">0</div>
         </div>
         <div class="card">
-            <input type="text" id="cli" placeholder="Cliente...">
-            <input type="number" id="can" placeholder="Cant.">
-            <button class="btn btn-main" onclick="addItem()">+ AÑADIR</button>
+            <input type="text" id="cli" list="sugs" placeholder="Cliente...">
+            <input type="number" id="can" placeholder="Cantidad" inputmode="numeric">
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
+            <datalist id="sugs"></datalist>
         </div>
         <div id="area-envio" style="display:none;">
             <div class="card" id="lista-items"></div>
             <select id="pla"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
             <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option></select>
-            <button class="btn btn-main" style="background: var(--success); color: white; margin-top:10px;" onclick="guardar(true)">ENVIAR WHATSAPP</button>
+            <button class="btn" style="background: var(--success); color: white; margin-top:10px;" onclick="guardar(true)">ENVIAR WHATSAPP ✅</button>
         </div>
     </div>
 
+    <div id="p3" class="page">
+        <div class="stat-grid">
+            <div class="stat-box"><div style="font-size:9px; color:var(--text-dim);">MES</div><div id="stat-mes" class="stat-val">0</div></div>
+            <div class="stat-box"><div style="font-size:9px; color:var(--text-dim);">HOY</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
+        </div>
+        <div class="stat-box" style="margin-bottom:15px;"><div style="font-size:9px; color:var(--text-dim);">PUNTOS DESPACHADOS</div><div id="stat-clientes" class="stat-val" style="color:white;">0</div></div>
+        <div class="card">
+            <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
+            <input type="date" id="f-dia" onchange="renderH()">
+        </div>
+        <div id="h-list"></div>
+    </div>
+
     <div id="p4" class="page">
-        <h3 style="color: var(--accent);">ESTADO DE DOCUMENTOS</h3>
+        <h3 style="color: var(--accent);">ESTADO DE UNIDADES</h3>
         <div id="lista-flota"></div>
     </div>
 
     <div id="nav-app" class="bottom-nav" style="display:none;">
         <button class="nav-item" onclick="nav('p2')">📦 RUTA</button>
+        <button class="nav-item" onclick="nav('p3')">📊 HISTORIAL</button>
         <button class="nav-item" onclick="nav('p4')">🚛 FLOTA</button>
     </div>
 
     <script>
-        const URL = "TU_URL_DE_SHEETS";
+        const URL = "TU_URL_AQUÍ"; 
         let user = "", ruta = [], db = [];
 
-        // Datos cargados de tus imágenes
         const flotaData = [
-            { placa: "CEP-929", soat: "2026-07-22", rev: "2026-08-15" },
-            { placa: "BPN-711", soat: "2026-06-10", rev: "2026-09-10" },
-            { placa: "BVN-704", soat: "2026-07-02", rev: "2026-10-05" },
-            { placa: "BUL-742", soat: "2026-04-02", rev: "2026-04-20" },
-            { placa: "BVN-930", soat: "2026-07-02", rev: "2026-11-12" }
+            { p: "CEP-929", s: "22/07/2026", r: "15/08/2026" },
+            { p: "BPN-711", s: "10/06/2026", r: "20/09/2026" },
+            { p: "BVN-704", s: "02/07/2026", r: "12/05/2026" },
+            { p: "BUL-742", s: "02/04/2026", r: "25/04/2026" },
+            { p: "BVN-930", s: "02/07/2026", r: "10/11/2026" }
         ];
 
-        function login(n) {
-            user = n; document.getElementById('p1').style.display='none';
+        window.onload = () => {
+            const lastUser = localStorage.getItem('tw_u');
+            if(lastUser) login(lastUser, localStorage.getItem('tw_p') || 'p2');
+            document.getElementById('f-dia').value = new Date().toISOString().split('T')[0];
+        };
+
+        function login(n, target = 'p2') {
+            user = n; localStorage.setItem('tw_u', n);
+            document.getElementById('p1').style.display='none';
             document.getElementById('header-app').style.display='flex';
             document.getElementById('nav-app').style.display='flex';
             document.getElementById('user-display').innerText = n;
-            nav('p2'); loadDraft();
+            nav(target); load(); loadDraft();
         }
 
         function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            localStorage.setItem('tw_p', id);
+            if(id === 'p3') renderH();
             if(id === 'p4') renderFlota();
         }
 
+        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
+
         function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
+            const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
             ruta.unshift({cl, ca});
-            renderR();
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+            renderR();
+        }
+
+        function removeItem(index) {
+            ruta.splice(index, 1);
+            renderR(); // Actualiza visual y localStorage
         }
 
         function renderR() {
-            const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => {
-                s += i.ca;
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
-                    <span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px" onclick="removeItem(${x})">✕</span></b>
+            const container = document.getElementById('lista-items'); let total = 0; container.innerHTML = "";
+            ruta.forEach((item, index) => {
+                total += item.ca;
+                container.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border)">
+                    <span>${item.cl} (<b>${item.ca}</b>)</span>
+                    <span class="btn-del" onclick="removeItem(${index})">✕</span>
                 </div>`;
             });
-            document.getElementById('total-vivo').innerText = s;
+            document.getElementById('total-vivo').innerText = total;
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
             saveDraft();
         }
 
-        function removeItem(x) {
-            ruta.splice(x, 1);
-            renderR(); // Al llamar a renderR, también se ejecuta saveDraft() actualizado.
+        function renderH() {
+            const list = document.getElementById('h-list'); const fD = document.getElementById('f-dia').value; const fS = document.getElementById('f-search').value.toUpperCase();
+            let htm = "", tM = 0, tD = 0, tP = 0;
+            db.slice().reverse().forEach(r => {
+                const rF = r.fecha ? r.fecha.split("T")[0] : "";
+                if(r.fecha && new Date(r.fecha).getMonth() === new Date().getMonth()) tM += r.total;
+                if(rF === fD) { tD += r.total; tP += (r.items.match(/:/g) || []).length; }
+                if((!fD || rF === fD) && (r.chofer.toUpperCase().includes(fS) || r.items.toUpperCase().includes(fS))) {
+                    htm += `<div class="card" style="padding:12px; font-size:13px;">
+                        <div style="display:flex; justify-content:space-between;"><b>${r.chofer}</b> <span>${r.total} CJ</span></div>
+                        <div style="color:var(--text-dim); font-size:11px;">${r.placa} • ${rF}</div>
+                    </div>`;
+                }
+            });
+            list.innerHTML = htm; document.getElementById('stat-mes').innerText = Math.round(tM);
+            document.getElementById('stat-dia').innerText = Math.round(tD); document.getElementById('stat-clientes').innerText = tP;
         }
 
         function renderFlota() {
             const container = document.getElementById('lista-flota'); container.innerHTML = "";
             flotaData.forEach(v => {
                 container.innerHTML += `<div class="card">
-                    <b style="color:var(--accent); font-size:18px;">${v.placa}</b>
-                    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:13px;">
-                        <span>SOAT:</span><b>${v.soat}</b>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:13px;">
-                        <span>REV. TÉCNICA:</span><b>${v.rev}</b>
-                    </div>
+                    <div style="font-weight:800; color:var(--accent);">${v.p}</div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:8px;"><span>SOAT:</span> <b>${v.s}</b></div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px;"><span>REV. TÉCNICA:</span> <b>${v.r}</b></div>
                 </div>`;
             });
         }
 
-        function saveDraft() { localStorage.setItem('tw_ruta', JSON.stringify(ruta)); }
-        function loadDraft() { 
-            const saved = localStorage.getItem('tw_ruta');
-            if(saved) { ruta = JSON.parse(saved); renderR(); }
-        }
-
+        function saveDraft() { localStorage.setItem('tw_draft', JSON.stringify(ruta)); }
+        function loadDraft() { const d = localStorage.getItem('tw_draft'); if(d) { ruta = JSON.parse(d); renderR(); } }
         function cerrarSesion() { localStorage.clear(); location.reload(); }
-        function checkPass() { if(document.getElementById('pass-input').value === "2026") login('TAJHO'); else alert("Error"); }
+        async function guardar(wa) {
+            const p = document.getElementById('pla').value, c = document.getElementById('cho').value;
+            if(!p || !c) return alert("Faltan datos");
+            if(wa) {
+                let m = `*📦 DESPACHO*\n*Chofer:* ${c}\n*Placa:* ${p}\n*Total:* ${ruta.reduce((a,b)=>a+b.ca,0)} CJ\n\n${ruta.map(i=>"✅ "+i.cl+": "+i.ca).join("\n")}`;
+                window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`;
+            }
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({chofer:c, placa:p, items:ruta.map(i=>`${i.cl}:${i.ca}`).join(", "), total:ruta.reduce((a,b)=>a+b.ca,0)}) });
+            ruta = []; renderR(); setTimeout(load, 1500);
+        }
     </script>
 </body>
 </html>
