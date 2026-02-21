@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE V12 - TAJHO EDITION</title>
+    <title>TWINS ELITE V12 - TAJHO</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -85,7 +85,7 @@
                 <select id="pla"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
                 <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option></select>
                 <select id="aux"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="NELSON">NELSON</option><option value="JOFER">JOFER</option></select>
-                <button class="btn" style="background: var(--success); color:#000; margin-top:10px;" onclick="guardar(true)">ENVIAR WA ✅</button>
+                <button class="btn" style="background: var(--success); color:#000; margin-top:10px;" onclick="guardar(true)">WA ✅</button>
             </div>
         </div>
     </div>
@@ -95,13 +95,10 @@
             <div class="stat-box"><div class="stat-label">Mes</div><div id="stat-mes" class="stat-val">0</div></div>
             <div class="stat-box"><div class="stat-label" id="label-dia">Hoy</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
         </div>
-        
         <div id="area-pdf" style="display:none; margin-bottom:15px;">
-            <button class="btn" style="background: #fff; color: #000;" onclick="generarPDF()">📄 DESCARGAR REPORTE MENSUAL</button>
+            <button class="btn" style="background: #fff; color: #000;" onclick="generarPDF()">📄 REPORTE MENSUAL (TAJHO)</button>
         </div>
-
         <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados</div><div id="stat-puntos" class="stat-val" style="color:white;">0</div></div>
-        
         <div class="card">
             <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
             <div style="display: flex; gap: 8px;">
@@ -145,6 +142,7 @@
             if(id === 'p4') renderFlota();
         }
 
+        // LÓGICA V12 ORIGINAL
         function renderH() {
             const list = document.getElementById('h-list');
             const fM = document.getElementById('f-mes').value;
@@ -243,6 +241,7 @@
         function cerrarSesion() { localStorage.clear(); location.reload(); }
         async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
         function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { ruta = JSON.parse(s); renderR(); } }
+        async function guardar(wa) { /* Tu lógica de Google Sheets original aquí */ }
     </script>
 </body>
 </html>
