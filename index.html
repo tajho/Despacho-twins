@@ -3,121 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS V10 | FINAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <title>TWINS ELITE V11</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
-            --twins-blue: #3b82f6; --twins-green: #22c55e;
-            --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
-            --grad: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
+            --bg: #0b0f1a; --card: #161e31; --accent: #3b82f6; 
+            --text: #ffffff; --text-dim: #94a3b8;
+            --success: #10b981; --danger: #f43f5e; --warning: #f59e0b;
+            --border: rgba(255,255,255,0.08);
+            --grad: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
         }
-        body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
-        .main-title { font-size: 32px; font-weight: 900; letter-spacing: -1px; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; margin-bottom: 20px; }
-        .page { display: none; padding: 12px; padding-bottom: 90px; }
-        .active { display: block; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        #modal-pass, #modal-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
-        .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { border: none; background: none; color: var(--text); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
-        .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
-        .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
-        .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; margin-bottom: 10px; }
-        input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
-        .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
-        .btn-main { background: var(--twins-blue); color: white; }
-        .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
-        .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
-        .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { 
+            margin: 0; background: var(--bg); color: var(--text); 
+            font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        /* Títulos */
+        .main-title { 
+            font-size: 34px; font-weight: 800; letter-spacing: -1.5px; 
+            background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 30px; line-height: 1;
+        }
+
+        /* Estructura */
+        .page { display: none; padding: 16px; padding-bottom: 100px; max-width: 500px; margin: 0 auto; }
+        .active { display: block; animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Headers y Nav */
+        .top-header { 
+            position: sticky; top: 0; z-index: 100; background: rgba(11, 15, 26, 0.8);
+            backdrop-filter: blur(12px); padding: 14px 20px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 75px; 
+            background: rgba(22, 30, 49, 0.95); backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border); display: flex; 
+            justify-content: space-around; align-items: center; z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item { 
+            border: none; background: none; color: var(--text-dim); 
+            font-size: 11px; font-weight: 600; display: flex; 
+            flex-direction: column; align-items: center; transition: 0.3s;
+        }
+        .nav-item i { font-size: 20px; margin-bottom: 4px; }
+        .nav-item.active-nav { color: var(--accent); transform: translateY(-2px); }
+
+        /* Cards y Stats */
+        .card { 
+            background: var(--card); border-radius: 20px; border: 1px solid var(--border);
+            padding: 18px; margin-bottom: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+        }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+        .stat-box { 
+            background: var(--card); padding: 15px; border-radius: 18px; 
+            border: 1px solid var(--border); text-align: center;
+        }
+        .stat-val { font-size: 22px; font-weight: 800; color: var(--accent); }
+        .stat-label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Inputs y Botones */
+        input, select { 
+            width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; 
+            border: 1px solid var(--border); background: #0b0f1a; 
+            color: var(--text); font-size: 15px; transition: 0.2s;
+        }
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        
+        .btn { 
+            width: 100%; padding: 16px; border-radius: 14px; border: none; 
+            font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn:active { transform: scale(0.96); }
+        .btn-main { background: var(--grad); color: white; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        
+        /* Historial */
+        .hist-item { border-left: 4px solid var(--accent); margin-bottom: 12px; }
+        .action-btn { 
+            width: 40px; height: 40px; border-radius: 12px; 
+            background: #1e293b; display: flex; align-items: center; 
+            justify-content: center; font-size: 18px; border: 1px solid var(--border);
+        }
+
+        /* Modales */
+        #modal-pass, #modal-view { 
+            display: none; position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 20px;
+        }
     </style>
 </head>
 <body>
 
     <div id="modal-pass" onclick="this.style.display='none'">
-        <div class="card" style="width: 260px; text-align: center;" onclick="event.stopPropagation()">
-            <div style="font-weight: 800; margin-bottom: 10px;">🔒 ACCESO TAJHO</div>
-            <input type="password" id="pass-input" inputmode="numeric" placeholder="Código" style="text-align: center; font-size: 20px;">
-            <button class="btn btn-main" onclick="checkPass()">ENTRAR</button>
+        <div class="card" style="width: 100%; max-width: 300px;" onclick="event.stopPropagation()">
+            <div style="font-weight: 800; margin-bottom: 15px; text-align: center;">Acceso Administrativo</div>
+            <input type="password" id="pass-input" inputmode="numeric" placeholder="••••" style="text-align: center; font-size: 24px; letter-spacing: 10px;">
+            <button class="btn btn-main" onclick="checkPass()">DESBLOQUEAR</button>
         </div>
     </div>
 
     <div id="modal-view">
-        <div class="card" style="width: 85%; max-width: 350px;">
-            <div id="view-title" style="font-weight: 800; color: var(--twins-blue); text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;"></div>
-            <div id="view-content" style="max-height: 300px; overflow-y: auto; font-size: 14px;"></div>
-            <div id="view-footer" style="margin-top: 12px; font-weight: 900; text-align: right; color: var(--twins-green);"></div>
-            <button class="btn btn-main" style="margin-top: 15px;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR</button>
+        <div class="card" style="width: 100%; max-width: 400px;">
+            <div id="view-title" style="font-size: 18px; font-weight: 800; color: var(--accent); margin-bottom: 15px; text-align: center;"></div>
+            <div id="view-content" style="max-height: 50vh; overflow-y: auto;"></div>
+            <div id="view-footer" style="margin-top: 20px; font-size: 18px; font-weight: 800; text-align: right; color: var(--success);"></div>
+            <button class="btn btn-main" style="margin-top: 20px; background: #2d3748;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR</button>
         </div>
     </div>
 
-    <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
-            <div class="main-title">REGISTRO<br>DESPACHOS TWINS</div>
-            <div style="max-width: 260px; margin: 30px auto; display: grid; gap: 10px;">
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 TAJHO (Admin)</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('OSCAR')">👤 OSCAR</button>
-                <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="login('LUIS HERBER')">👤 LUIS H.</button>
+    <div id="p1" class="page active" style="text-align: center; padding-top: 15vh;">
+        <div class="main-title">TWINS<br>LOGISTICS</div>
+        <p style="color: var(--text-dim); margin-bottom: 40px;">Selecciona tu perfil de acceso</p>
+        <div style="display: grid; gap: 12px;">
+            <button class="btn" style="background: rgba(255,255,255,0.05); color: white;" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 Modo Admin (Tajho)</button>
+            <button class="btn" style="background: var(--card); color: white;" onclick="login('FRANCESCO')">👤 Francesco</button>
+            <button class="btn" style="background: var(--card); color: white;" onclick="login('OSCAR')">👤 Oscar</button>
+            <button class="btn" style="background: var(--card); color: white;" onclick="login('LUIS HERBER')">👤 Luis H.</button>
+        </div>
+    </div>
+
+    <div id="header-app" class="top-header" style="display:none;">
+        <div>
+            <div style="font-size: 10px; color: var(--text-dim); font-weight: 800; text-transform: uppercase;">Operador</div>
+            <div id="user-display" style="font-weight: 800; color: var(--accent);">---</div>
+        </div>
+        <button onclick="cerrarSesion()" style="background: rgba(244,63,94,0.1); color: var(--danger); border: none; padding: 8px 14px; border-radius: 10px; font-weight: 800; font-size: 11px;">SALIR</button>
+    </div>
+
+    <div id="p2" class="page">
+        <div class="stat-box" style="margin-bottom: 16px; background: var(--grad);">
+            <div class="stat-label" style="color: rgba(255,255,255,0.8);">Cajas en esta ruta</div>
+            <div id="total-vivo" class="stat-val" style="font-size: 42px; color: white;">0</div>
+        </div>
+        
+        <div class="card">
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="cli" list="clientes-sugeridos" placeholder="Cliente..." style="flex: 2;">
+                <input type="number" id="can" placeholder="Cant." inputmode="numeric" style="flex: 1;">
             </div>
+            <datalist id="clientes-sugeridos"></datalist>
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LA LISTA</button>
         </div>
 
-        <div id="header-app" class="top-header" style="display:none;">
-            <div><small style="opacity:0.5; font-size:9px;">OPERARIO:</small> <b id="user-display" style="color:var(--twins-blue)">---</b></div>
-            <span onclick="cerrarSesion()" style="color:var(--danger); font-size:10px; font-weight:800;">SALIR</span>
-        </div>
-
-        <div id="p2" class="page">
-            <div class="stat-box" style="margin-bottom: 12px; border-left: 4px solid var(--twins-blue);">
-                <div class="stat-label">Cajas en esta ruta</div>
-                <div id="total-vivo" class="stat-val" style="font-size: 32px;">0</div>
-            </div>
+        <div id="area-envio" style="display:none;">
+            <div class="card" id="lista-items"></div>
             <div class="card">
-                <input type="text" id="cli" list="clientes-sugeridos" placeholder="Nombre Cliente" oninput="saveDraft()">
-                <datalist id="clientes-sugeridos"></datalist>
-                <input type="number" id="can" placeholder="Cantidad" inputmode="numeric">
-                <button class="btn btn-main" onclick="addItem()">AGREGAR</button>
-            </div>
-            <div id="area-envio" style="display:none;">
-                <div class="card" id="lista-items"></div>
-                <div class="card">
-                    <select id="pla" onchange="saveDraft()"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
-                    <select id="cho" onchange="saveDraft()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                    <select id="aux" onchange="saveDraft()">
-                        <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
-                    </select>
-                    <button id="btn-wa" class="btn" style="background:var(--twins-green); color:white; margin-top:8px;" onclick="guardar(true)">💾 GUARDAR Y WHATSAPP</button>
-                    <button id="btn-cloud" class="btn" style="background:var(--twins-blue); color:white; margin-top:8px; opacity: 0.8;" onclick="guardar(false)">☁️ SOLO GUARDAR</button>
+                <select id="pla"><option value="">Seleccionar Placa</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
+                <select id="cho"><option value="">Seleccionar Chofer</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                <select id="aux">
+                    <option value="">Sin Auxiliar</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
+                </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                    <button class="btn" style="background: var(--success); color: white;" onclick="guardar(true)">WA ✅</button>
+                    <button class="btn" style="background: var(--accent); color: white;" onclick="guardar(false)">NUBE ☁️</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div id="p3" class="page">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-                <div class="stat-box"><div class="stat-label">Acumulado Mes</div><div id="stat-mes" class="stat-val">0</div></div>
-                <div class="stat-box"><div class="stat-label" id="label-dia">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
+    <div id="p3" class="page">
+        <div class="stat-grid">
+            <div class="stat-box">
+                <div class="stat-label">Acumulado Mes</div>
+                <div id="stat-mes" class="stat-val">0</div>
             </div>
-            <div class="stat-box" style="margin-bottom: 12px; border-bottom: 3px solid var(--twins-blue);">
-                <div class="stat-label">Puntos en Filtro</div>
-                <div id="stat-clientes" class="stat-val" style="color:var(--text);">0</div>
+            <div class="stat-box">
+                <div class="stat-label" id="label-dia">Total Hoy</div>
+                <div id="stat-dia" class="stat-val" style="color: var(--success);">0</div>
             </div>
-            <div class="card" style="padding:10px;">
-                <input type="text" id="f-search" placeholder="🔍 Buscar Chofer, Placa o Cliente..." onkeyup="renderH()">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                    <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
-                    <input type="date" id="f-dia" onchange="renderH()">
-                </div>
-            </div>
-            <div id="h-list"></div>
         </div>
 
-        <div id="nav-app" class="bottom-nav" style="display:none;">
-            <div id="n2" class="nav-item" onclick="nav('p2')"><span>📝</span><span>RUTA</span></div>
-            <div id="n3" class="nav-item" onclick="nav('p3')"><span>📊</span><span>HISTORIAL</span></div>
+        <div class="card" style="padding: 12px;">
+            <input type="text" id="f-search" placeholder="🔍 Buscar cliente, chofer o placa..." onkeyup="renderH()">
+            <div style="display: flex; gap: 8px;">
+                <select id="f-mes" onchange="renderH()" style="flex:1;"><option value="ALL">Todo el Año</option><option value="0">Ene</option><option value="1">Feb</option><option value="2">Mar</option><option value="3">Abr</option><option value="4">May</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Ago</option><option value="8">Set</option><option value="9">Oct</option><option value="10">Nov</option><option value="11">Dic</option></select>
+                <input type="date" id="f-dia" onchange="renderH()" style="flex:1;">
+            </div>
+        </div>
+
+        <div id="h-list"></div>
+    </div>
+
+    <div id="nav-app" class="bottom-nav" style="display:none;">
+        <div id="n2" class="nav-item" onclick="nav('p2')">
+            <span style="font-size: 24px;">📦</span>
+            <span>Ruta</span>
+        </div>
+        <div id="n3" class="nav-item" onclick="nav('p3')">
+            <span style="font-size: 24px;">📊</span>
+            <span>Historial</span>
         </div>
     </div>
 
@@ -127,37 +211,27 @@
 
         window.onload = () => {
             const h = new Date();
-            const hoyStr = h.getFullYear() + '-' + String(h.getMonth() + 1).padStart(2, '0') + '-' + String(h.getDate()).padStart(2, '0');
+            const hoyStr = h.toISOString().split('T')[0];
             document.getElementById('f-dia').value = hoyStr;
             document.getElementById('f-mes').value = h.getMonth();
             
-            // PERSISTENCIA: Si ya estaba logueado, vuelve a la misma página
             const lastUser = localStorage.getItem('tw_u');
             const lastPage = localStorage.getItem('tw_p');
-            if(lastUser) {
-                login(lastUser, lastPage || 'p2');
-            }
+            if(lastUser) login(lastUser, lastPage || 'p2');
             loadDraft(); updateSugs();
         };
 
-        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
-        function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { const d = JSON.parse(s); ruta = d.ruta||[]; document.getElementById('pla').value=d.p||""; document.getElementById('cho').value=d.c||""; document.getElementById('aux').value=d.a||""; renderR(); } }
-        function updateSugs() { const c = JSON.parse(localStorage.getItem('tw_c') || "[]"); const dl = document.getElementById('clientes-sugeridos'); dl.innerHTML = ""; c.forEach(x => { let o = document.createElement('option'); o.value = x; dl.appendChild(o); }); }
-        function saveClients(it) { let c = JSON.parse(localStorage.getItem('tw_c') || "[]"); it.forEach(i => { if(!c.includes(i.cl)) c.push(i.cl); }); localStorage.setItem('tw_c', JSON.stringify(c.slice(-60))); updateSugs(); }
-
-        function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
-        
         function login(n, targetPage = 'p2') { 
             user = n; 
             localStorage.setItem('tw_u', n);
-            document.getElementById('p1').style.display='none'; 
+            document.getElementById('p1').classList.remove('active');
             document.getElementById('header-app').style.display='flex'; 
             document.getElementById('nav-app').style.display='flex'; 
             document.getElementById('user-display').innerText = n; 
             nav(targetPage); load(); 
         }
 
-        function cerrarSesion() { localStorage.removeItem('tw_u'); localStorage.removeItem('tw_p'); location.reload(); }
+        function cerrarSesion() { localStorage.removeItem('tw_u'); location.reload(); }
 
         function nav(id) { 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
@@ -165,110 +239,98 @@
             document.getElementById(id).classList.add('active'); 
             const nBtn = (id === 'p2') ? 'n2' : 'n3';
             document.getElementById(nBtn).classList.add('active-nav');
-            localStorage.setItem('tw_p', id); // Recordar página
+            localStorage.setItem('tw_p', id);
             if(id === 'p3') renderH();
         }
 
-        async function load() { 
-            try { 
-                const r = await fetch(URL, { cache: 'no-cache' }); 
-                db = await r.json(); 
-                renderH(); 
-            } catch(e) { console.error("Error cargando base:", e); } 
-        }
+        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
 
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return; ruta.unshift({cl, ca}); document.getElementById('cli').value = ""; document.getElementById('can').value = ""; renderR(); saveDraft();
+            if(!cl || !ca) return; ruta.unshift({cl, ca}); 
+            document.getElementById('cli').value = ""; document.getElementById('can').value = ""; 
+            renderR(); saveDraft();
         }
 
         function renderR() {
             const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px;" onclick="ruta.splice(${x},1);renderR();saveDraft()">✕</span></b></div>`; });
-            document.getElementById('total-vivo').innerText = s; document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
-        }
-
-        function editarRuta(idx) {
-            const r = db[idx]; ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
-            document.getElementById('pla').value = r.placa; document.getElementById('cho').value = r.chofer; document.getElementById('aux').value = r.auxiliar || ""; renderR(); saveDraft(); nav('p2');
+            ruta.forEach((i, x) => { 
+                s += i.ca; 
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
+                    <span style="font-weight:600;">${i.cl}</span>
+                    <span style="color:var(--accent); font-weight:800;">${i.ca} CJ <span style="color:var(--danger); margin-left:15px;" onclick="ruta.splice(${x},1);renderR();">✕</span></span>
+                </div>`; 
+            });
+            document.getElementById('total-vivo').innerText = s; 
+            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
         async function guardar(wa) {
             const r = { chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, placa: document.getElementById('pla').value, operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0) };
             if(!r.chofer || !r.placa) return alert("Faltan datos");
-            saveClients(ruta); fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            if(wa) sendWA(r); else alert("✅ Guardado en la nube");
-            ruta = []; localStorage.removeItem('tw_d'); renderR(); setTimeout(load, 1500); 
-        }
-
-        function sendWA(r) {
-            let auxTexto = (r.auxiliar && r.auxiliar.trim() !== "") ? r.auxiliar : "NINGUNO";
-            let lista = r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n");
-            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${auxTexto}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${lista}\n\n_Registrado por: ${r.operario}_`;
-            window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`;
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            if(wa) sendWA(r); else alert("✅ Guardado");
+            ruta = []; renderR(); setTimeout(load, 1500); 
         }
 
         function renderH() {
-            if (db.length === 0) return;
             const list = document.getElementById('h-list');
             const fM = document.getElementById('f-mes').value;
             const fD = document.getElementById('f-dia').value;
             const fS = document.getElementById('f-search').value.toUpperCase();
-            
-            let tMes = 0, tDiaFiltrado = 0, tPuntosFiltro = 0;
             const hoyStr = new Date().toISOString().split('T')[0];
-
+            let tMes = 0, tDia = 0, tPuntos = 0;
             let html = "";
-            for (let i = db.length - 1; i >= 0; i--) {
-                const r = db[i];
-                if(!r.fecha) continue;
+
+            db.slice().reverse().forEach((r, i) => {
+                if(!r.fecha) return;
                 const rStr = r.fecha.split("T")[0];
                 const rDate = new Date(r.fecha);
-                
                 const matchMes = (fM === "ALL" || rDate.getMonth().toString() === fM);
                 const matchDia = (!fD || rStr === fD);
                 const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS));
 
                 if (matchMes) tMes += parseFloat(r.total) || 0;
-                if (rStr === fD) tDiaFiltrado += parseFloat(r.total) || 0;
+                if (rStr === fD) tDia += parseFloat(r.total) || 0;
 
                 if (matchMes && matchDia && matchSearch) {
-                    tPuntosFiltro += (r.items.match(/:/g) || []).length;
-                    let nomAux = (r.auxiliar && r.auxiliar !== "") ? " + " + r.auxiliar : "";
+                    tPuntos += (r.items.match(/:/g) || []).length;
                     html += `
-                    <div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                    <div class="card hist-item">
+                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px;">
                             <div>
-                                <div style="font-weight:800; font-size:13px;">${r.chofer}${nomAux}</div>
-                                <div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div>
+                                <div style="font-weight:800; font-size:15px;">${r.chofer}</div>
+                                <div style="font-size:11px; color:var(--text-dim);">${r.placa} • ${rStr}</div>
                             </div>
-                            <div style="display:flex; gap:6px;">
-                                <div class="action-btn" onclick="verSoloRuta(${i})">🔍</div>
-                                <div class="action-btn" style="color:var(--warning)" onclick="editarRuta(${i})">✏️</div>
-                                <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${i}])">🟢</div>
+                            <div style="display:flex; gap:8px;">
+                                <div class="action-btn" onclick="verSoloRuta(${db.length - 1 - i})">🔍</div>
+                                <div class="action-btn" style="color:var(--success)" onclick="sendWA(db[${db.length - 1 - i}])">🟢</div>
                             </div>
                         </div>
-                        <div class="hist-footer">
-                            <span>🚚 ${r.placa}</span>
-                            <span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span>
-                            <span>👤 ${r.operario || '---'}</span>
-                            <span>${rStr}</span>
+                        <div style="font-size:12px; color:var(--text-dim); background:rgba(0,0,0,0.2); padding:8px; border-radius:10px;">
+                            ${r.items.split(", ").slice(0,2).join(", ")}...
                         </div>
+                        <div style="margin-top:10px; text-align:right; font-weight:800; color:var(--accent);">${r.total} CAJAS</div>
                     </div>`;
                 }
-            }
-            list.innerHTML = html || "<div style='text-align:center; opacity:0.5; padding:20px;'>Sin datos</div>";
-            document.getElementById('stat-mes').innerText = Math.round(tMes); 
-            document.getElementById('stat-dia').innerText = Math.round(tDiaFiltrado);
-            document.getElementById('stat-clientes').innerText = tPuntosFiltro;
-            document.getElementById('label-dia').innerText = (fD === hoyStr) ? "Total Hoy" : "Total Día";
+            });
+            list.innerHTML = html || "<p style='text-align:center; opacity:0.5;'>No hay registros</p>";
+            document.getElementById('stat-mes').innerText = Math.round(tMes);
+            document.getElementById('stat-dia').innerText = Math.round(tDia);
+            document.getElementById('stat-clientes').innerText = tPuntos;
         }
 
         function verSoloRuta(idx) {
             const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
-            r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #334155;"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; });
+            r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border);"><span>${p[0]}</span><b style="color:var(--accent)">${p[1]} CJ</b></div>`; });
             document.getElementById('view-title').innerText = r.chofer; document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`; document.getElementById('modal-view').style.display = 'flex';
         }
+
+        function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
+        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
+        function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { const d = JSON.parse(s); ruta = d.ruta||[]; document.getElementById('pla').value=d.p||""; document.getElementById('cho').value=d.c||""; document.getElementById('aux').value=d.a||""; renderR(); } }
+        function sendWA(r) { let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`; window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`; }
+        function updateSugs() { const c = JSON.parse(localStorage.getItem('tw_c') || "[]"); const dl = document.getElementById('clientes-sugeridos'); dl.innerHTML = ""; c.forEach(x => { let o = document.createElement('option'); o.value = x; dl.appendChild(o); }); }
     </script>
 </body>
 </html>
