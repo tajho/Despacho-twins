@@ -1,4 +1,50 @@
-<div id="p1" class="page active" style="text-align: center; padding-top: 10vh;">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TWINS ELITE V16</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #040712; --card: #10162d; --accent: #00d4ff; 
+            --text: #ffffff; --text-dim: #94a3b8;
+            --success: #00f298; --danger: #ff477e; --warning: #ffb800;
+            --border: rgba(255,255,255,0.06);
+            --grad: linear-gradient(135deg, #00d4ff 0%, #7000ff 100%);
+        }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
+        .page { display: none; padding: 16px; padding-bottom: 100px; max-width: 500px; margin: 0 auto; }
+        .active { display: block; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .top-header { position: sticky; top: 0; z-index: 100; background: rgba(4, 7, 18, 0.85); backdrop-filter: blur(15px); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0a0e1f; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { background: none; border: none; color: var(--text-dim); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item.active-nav { color: var(--accent); }
+        .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 18px; margin-bottom: 14px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .stat-box { background: var(--card); padding: 16px; border-radius: 20px; border: 1px solid var(--border); text-align: center; }
+        .stat-val { font-size: 22px; font-weight: 800; color: var(--accent); }
+        .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+        input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #070b1a; color: var(--text); font-size: 15px; }
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; }
+        .btn-main { background: var(--grad); color: white; }
+        #modal-pass { display: none; position: fixed; inset: 0; background: rgba(2, 4, 10, 0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
+    </style>
+</head>
+<body>
+
+    <div id="modal-pass" onclick="this.style.display='none'">
+        <div class="card" style="width: 300px; text-align: center;" onclick="event.stopPropagation()">
+            <div style="font-weight: 800; margin-bottom: 20px;">ACCESO ADMINISTRADOR</div>
+            <input type="password" id="pass-input" inputmode="numeric" placeholder="CÓDIGO" style="text-align: center; font-size: 24px;">
+            <button class="btn btn-main" onclick="checkPass()">INGRESAR</button>
+        </div>
+    </div>
+
+    <div id="p1" class="page active" style="text-align: center; padding-top: 10vh;">
         <h1 style="font-size: 44px; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">TWINS</h1>
         <div style="display: grid; gap: 12px; max-width: 300px; margin: 40px auto;">
             <button class="btn" style="background: var(--card); color: white;" onclick="login('FRANCESCO')">👤 FRANCESCO</button>
@@ -8,59 +54,125 @@
         </div>
     </div>
 
-<div id="p3" class="page">
-        <div class="stat-grid">
-            <div class="stat-box"><div class="stat-label">Acumulado Mes</div><div id="stat-mes" class="stat-val">0</div></div>
-            <div class="stat-box"><div class="stat-label" id="label-dia">Total Hoy</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
-        </div>
-        
-        <div id="area-pdf" style="display:none; margin-bottom:15px;">
-            <button class="btn" style="background: #fff; color: #000;" onclick="generarPDF()">📄 GENERAR REPORTE PDF</button>
-        </div>
+    <div id="header-app" class="top-header" style="display:none;">
+        <div id="user-display" style="font-weight: 800; color: var(--accent);">---</div>
+        <button onclick="cerrarSesion()" style="background:none; border:none; color: var(--danger); font-weight: 800; font-size: 10px;">SALIR</button>
+    </div>
 
-        <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados</div><div id="stat-clientes" class="stat-val" style="color:white;">0</div></div>
+    <div id="p2" class="page">
+        <div class="stat-box" style="background: var(--grad); margin-bottom: 15px; border:none;">
+            <div class="stat-label" style="color:white; opacity:0.8;">Cajas en Ruta</div>
+            <div id="total-vivo" style="font-size: 44px; font-weight: 900; color:white;">0</div>
+        </div>
+        <div class="card">
+            <input type="text" id="cli" placeholder="Cliente...">
+            <input type="number" id="can" placeholder="Cant.">
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
+        </div>
+        <div id="area-envio" style="display:none;">
+            <div class="card" id="lista-items"></div>
+            <select id="pla"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
+            <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option></select>
+            <button class="btn" style="background: var(--success); color:#000; margin-top:10px;" onclick="guardar(true)">ENVIAR WA ✅</button>
+        </div>
+    </div>
+
+    <div id="p3" class="page">
+        <div class="stat-grid">
+            <div class="stat-box"><div class="stat-label">Mes</div><div id="stat-mes" class="stat-val">0</div></div>
+            <div class="stat-box"><div class="stat-label">Hoy</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
+        </div>
+        <div id="area-pdf" style="display:none; margin-bottom:15px;">
+            <button class="btn" style="background: #fff; color: #000;" onclick="generarPDF()">📄 DESCARGAR REPORTE MENSUAL</button>
+        </div>
+        <div class="card">
+            <input type="text" id="f-search" placeholder="Buscar..." onkeyup="renderH()">
+            <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="1">Febrero</option></select>
+        </div>
         <div id="h-list"></div>
     </div>
 
-<script>
-    // ... tus variables originales ...
+    <div id="p4" class="page">
+        <h2 style="font-size: 20px; color: var(--accent);">🚛 FLOTA</h2>
+        <div id="lista-flota"></div>
+    </div>
 
-    function login(n, targetPage = 'p2') { 
-        user = n; 
-        localStorage.setItem('tw_u', n);
-        document.getElementById('p1').style.display='none'; 
-        document.getElementById('header-app').style.display='flex'; 
-        document.getElementById('nav-app').style.display='flex'; 
-        document.getElementById('user-display').innerText = n; 
-        
-        // Solo Tajho ve el botón de PDF
-        document.getElementById('area-pdf').style.display = (n === 'TAJHO') ? 'block' : 'none';
-        
-        nav(targetPage); load(); 
-    }
+    <div id="nav-app" class="bottom-nav" style="display:none;">
+        <button class="nav-item" onclick="nav('p2')">📦 RUTA</button>
+        <button class="nav-item" onclick="nav('p3')">📊 HISTORIAL</button>
+        <button class="nav-item" onclick="nav('p4')">🚛 FLOTA</button>
+    </div>
 
-    // Función para el reporte solicitado
-    function generarPDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.text("REPORTE MENSUAL DE DESPACHOS - TWINS", 10, 10);
-        doc.text("Generado por: TAJHO", 10, 20);
-        // Aquí el código recorre tu db original para el PDF
-        let y = 30;
-        db.slice(-20).forEach(r => {
-            doc.text(`${r.fecha.split('T')[0]} - ${r.chofer}: ${r.total} CJ`, 10, y);
-            y += 10;
-        });
-        doc.save("Reporte_Twins.pdf");
-    }
+    <script>
+        const URL = "TU_URL_DE_SHEETS";
+        let user = "", ruta = [], db = [];
 
-    // ... el resto de tu código base se mantiene intacto ...
-    function checkPass() { 
-        if(document.getElementById('pass-input').value === "2026") {
-            document.getElementById('modal-pass').style.display='none';
-            login('TAJHO'); 
-        } else {
-            alert("Código incorrecto");
+        const flotaData = [
+            { p: "CEP-929", s: "22/07/2026", r: "Pendiente" },
+            { p: "BPN-711", s: "10/06/2026", r: "Pendiente" },
+            { p: "BVN-704", s: "02/07/2026", r: "Pendiente" },
+            { p: "BUL-742", s: "02/04/2026", r: "Pendiente" },
+            { p: "BVN-930", s: "02/07/2026", r: "Pendiente" }
+        ];
+
+        function login(n) {
+            user = n; localStorage.setItem('tw_u', n);
+            document.getElementById('p1').style.display='none';
+            document.getElementById('header-app').style.display='flex';
+            document.getElementById('nav-app').style.display='flex';
+            document.getElementById('user-display').innerText = n;
+            document.getElementById('area-pdf').style.display = (n === 'TAJHO') ? 'block' : 'none';
+            nav('p2'); load(); loadDraft();
         }
-    }
-</script>
+
+        function nav(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(id === 'p4') renderFlota();
+        }
+
+        function addItem() {
+            const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
+            if(!cl || !ca) return;
+            ruta.unshift({cl, ca}); renderR();
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+        }
+
+        function renderR() {
+            const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
+            ruta.forEach((i, x) => {
+                s += i.ca;
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
+                    <span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:15px;" onclick="ruta.splice(${x},1);renderR();">✕</span></b>
+                </div>`;
+            });
+            document.getElementById('total-vivo').innerText = s;
+            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
+            localStorage.setItem('tw_d', JSON.stringify(ruta));
+        }
+
+        function renderFlota() {
+            const list = document.getElementById('lista-flota'); list.innerHTML = "";
+            flotaData.forEach(v => {
+                list.innerHTML += `<div class="card"><b style="color:var(--accent)">${v.p}</b><br><small>SOAT: ${v.s}</small><br><small>RT: ${v.r}</small></div>`;
+            });
+        }
+
+        function generarPDF() {
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            doc.text("REPORTE MENSUAL TWINS - TAJHO", 10, 10);
+            doc.save("Reporte_Mensual.pdf");
+        }
+
+        function checkPass() {
+            if(document.getElementById('pass-input').value === "2026") {
+                document.getElementById('modal-pass').style.display='none'; login('TAJHO');
+            } else alert("Incorrecto");
+        }
+
+        function cerrarSesion() { localStorage.clear(); location.reload(); }
+        async function load() { try { const r = await fetch(URL); db = await r.json(); } catch(e){} }
+        function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { ruta = JSON.parse(s); renderR(); } }
+    </script>
+</body>
+</html>
