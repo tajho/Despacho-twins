@@ -123,7 +123,8 @@
     </div>
 
     <script>
-        const URL = "https://script.google.com/macros/s/AKfycbzOFQh4-y7jZknlgSquZtmOhw6m1pcle0z7hvkobvijkHFdHJhY3LDmdYr_VzKr_I0p/exec";
+        // TU NUEVO LINK INTEGRADO
+        const URL = "https://script.google.com/macros/s/AKfycbz9V0MzUuuAHTa9N4-xrsVJV7DbkWLtgJY5xHM7_JTfIDlBxCtimM6FHjRpVczuD2kM/exec";
         let user = "", ruta = [], db = [];
 
         window.onload = () => {
@@ -204,10 +205,8 @@
                 const rDate = new Date(r.fecha);
                 const rStr = rDate.getFullYear() + '-' + String(rDate.getMonth() + 1).padStart(2, '0') + '-' + String(rDate.getDate()).padStart(2, '0');
                 
-                // Si coincide con el mes seleccionado
                 if(rDate.getFullYear() === targetDate.getFullYear() && (fM === "ALL" || rDate.getMonth().toString() === fM)) {
                     tAcumulado += parseFloat(r.total) || 0;
-                    // CONTADOR DE CLIENTES: Contamos cuántas veces aparece el separador ":" en el string de items
                     const cantClientesRuta = (r.items.match(/:/g) || []).length;
                     tClientesMes += cantClientesRuta;
                 }
