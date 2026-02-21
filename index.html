@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TWINS ELITE V14.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --bg: #040712; --card: #10162d; --accent: #00d4ff; 
@@ -13,29 +14,23 @@
             --border: rgba(255,255,255,0.06);
             --grad: linear-gradient(135deg, #00d4ff 0%, #7000ff 100%);
         }
-
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
-
         .page { display: none; padding: 16px; padding-bottom: 100px; max-width: 500px; margin: 0 auto; }
         .active { display: block; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .top-header { position: sticky; top: 0; z-index: 100; background: rgba(4, 7, 18, 0.85); backdrop-filter: blur(15px); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: #0a0e1f; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav-item { background: none; border: none; color: var(--text-dim); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .nav-item.active-nav { color: var(--accent); }
-
         .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 18px; margin-bottom: 14px; }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .stat-box { background: var(--card); padding: 16px; border-radius: 20px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 22px; font-weight: 800; color: var(--accent); }
         .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-
         input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #070b1a; color: var(--text); font-size: 15px; }
         .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .btn-main { background: var(--grad); color: white; }
-        
         #modal-pass, #modal-view { display: none; position: fixed; inset: 0; background: rgba(2, 4, 10, 0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
     </style>
 </head>
@@ -110,6 +105,9 @@
             <div class="stat-box"><div class="stat-label">Mes</div><div id="stat-mes" class="stat-val">0</div></div>
             <div class="stat-box"><div class="stat-label" id="label-dia">Día</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
         </div>
+        <div id="reporte-tajho" style="display:none; margin-bottom: 15px;">
+            <button class="btn" style="background: white; color: black;" onclick="generarPDF()">📄 DESCARGAR REPORTE (ADMIN)</button>
+        </div>
         <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados</div><div id="stat-clientes" class="stat-val" style="color:white;">0</div></div>
         <div class="card">
             <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
@@ -159,6 +157,7 @@
             document.getElementById('header-app').style.display='flex'; 
             document.getElementById('nav-app').style.display='flex'; 
             document.getElementById('user-display').innerText = n; 
+            document.getElementById('reporte-tajho').style.display = (n === 'TAJHO') ? 'block' : 'none';
             nav(targetPage); load(); 
         }
 
@@ -227,9 +226,10 @@
                 if (rStr === fD) tDia += parseFloat(r.total) || 0;
                 if (matchMes && matchDia && matchSearch) {
                     tPuntos += (r.items.match(/:/g) || []).length;
+                    let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
                     html += `<div class="card">
                         <div style="display:flex; justify-content:space-between;">
-                            <div><b style="color:var(--accent)">${r.chofer}</b><br><small>${r.placa} • ${rStr}</small></div>
+                            <div><b style="color:var(--accent)">${r.chofer}${auxLabel}</b><br><small>${r.placa} • ${rStr}</small></div>
                             <div style="font-weight:900;">${r.total} CJ</div>
                         </div>
                         <div style="display:flex; gap:8px; margin-top:10px;">
@@ -272,6 +272,20 @@
             let aux = (r.auxiliar && r.auxiliar !== "") ? r.auxiliar : "NINGUNO";
             let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`; 
+        }
+
+        function generarPDF() {
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            doc.setFontSize(14); doc.text("REPORTE DESPACHOS TWINS - TAJHO", 10, 20);
+            let y = 30;
+            db.slice(-30).forEach(r => {
+                let fechaStr = r.fecha ? r.fecha.split('T')[0] : 'S/F';
+                doc.setFontSize(10);
+                doc.text(`${fechaStr} | ${r.chofer} (${r.auxiliar || 'S/A'}) | ${r.total} CJ`, 10, y);
+                y += 8;
+                if(y > 280) { doc.addPage(); y = 20; }
+            });
+            doc.save("Reporte_Twins_Admin.pdf");
         }
 
         function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
