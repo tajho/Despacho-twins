@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE V14.1</title>
+    <title>TWINS ELITE V12 - TAJHO EDITION</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -38,7 +38,7 @@
 
     <div id="modal-pass" onclick="this.style.display='none'">
         <div class="card" style="width: 300px; text-align: center;" onclick="event.stopPropagation()">
-            <div style="font-weight: 800; margin-bottom: 20px;">ACCESO ADMIN</div>
+            <div style="font-weight: 800; margin-bottom: 20px;">ACCESO ADMINISTRADOR</div>
             <input type="password" id="pass-input" inputmode="numeric" placeholder="CÓDIGO" style="text-align: center; font-size: 24px;">
             <button class="btn btn-main" onclick="checkPass()">INGRESAR</button>
         </div>
@@ -48,6 +48,7 @@
         <div class="card" style="width: 100%; max-width: 380px;">
             <div id="view-title" style="font-weight: 800; color: var(--accent); text-align: center; margin-bottom: 20px;"></div>
             <div id="view-content" style="max-height: 350px; overflow-y: auto;"></div>
+            <div id="view-footer" style="margin-top: 20px; font-weight: 800; text-align: right; color: var(--success); font-size: 20px;"></div>
             <button class="btn" style="background: #1e293b; color:white; margin-top: 20px;" onclick="document.getElementById('modal-view').style.display='none'">CERRAR</button>
         </div>
     </div>
@@ -73,18 +74,18 @@
             <div id="total-vivo" style="font-size: 44px; font-weight: 900; color:white;">0</div>
         </div>
         <div class="card">
-            <input type="text" id="cli" list="clientes-sugeridos" placeholder="Cliente...">
+            <input type="text" id="cli" list="sugs" placeholder="Cliente...">
             <input type="number" id="can" placeholder="Cant.">
-            <button class="btn btn-main" onclick="addItem()" style="margin-top:10px;">+ AÑADIR A LISTA</button>
-            <datalist id="clientes-sugeridos"></datalist>
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR A LISTA</button>
+            <datalist id="sugs"></datalist>
         </div>
         <div id="area-envio" style="display:none;">
             <div class="card" id="lista-items"></div>
             <div class="card">
                 <select id="pla"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
                 <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option></select>
-                <select id="aux"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option></select>
-                <button class="btn" style="background: var(--success); color:#000; margin-top:10px;" onclick="guardar(true)">WA ✅</button>
+                <select id="aux"><option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="NELSON">NELSON</option><option value="JOFER">JOFER</option></select>
+                <button class="btn" style="background: var(--success); color:#000; margin-top:10px;" onclick="guardar(true)">ENVIAR WA ✅</button>
             </div>
         </div>
     </div>
@@ -92,11 +93,15 @@
     <div id="p3" class="page">
         <div class="stat-grid">
             <div class="stat-box"><div class="stat-label">Mes</div><div id="stat-mes" class="stat-val">0</div></div>
-            <div class="stat-box"><div class="stat-label">Hoy</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
+            <div class="stat-box"><div class="stat-label" id="label-dia">Hoy</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
         </div>
+        
         <div id="area-pdf" style="display:none; margin-bottom:15px;">
-            <button class="btn" style="background: #fff; color: #000;" onclick="generarPDF()">📄 DESCARGAR REPORTE (TAJHO)</button>
+            <button class="btn" style="background: #fff; color: #000;" onclick="generarPDF()">📄 DESCARGAR REPORTE MENSUAL</button>
         </div>
+
+        <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados</div><div id="stat-puntos" class="stat-val" style="color:white;">0</div></div>
+        
         <div class="card">
             <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
             <div style="display: flex; gap: 8px;">
@@ -113,21 +118,15 @@
     </div>
 
     <div id="nav-app" class="bottom-nav" style="display:none;">
-        <button class="nav-item" id="n2" onclick="nav('p2')">📦 RUTA</button>
-        <button class="nav-item" id="n3" onclick="nav('p3')">📊 HISTORIAL</button>
-        <button class="nav-item" id="n4" onclick="nav('p4')">🚛 FLOTA</button>
+        <button class="nav-item" onclick="nav('p2')">📦 RUTA</button>
+        <button class="nav-item" onclick="nav('p3')">📊 HISTORIAL</button>
+        <button class="nav-item" onclick="nav('p4')">🚛 FLOTA</button>
     </div>
 
     <script>
         const URL = "TU_URL_DE_SHEETS";
         let user = "", ruta = [], db = [];
-        const flotaData = [
-            { p: "CEP-929", s: "2026-07-22", r: "Pendiente" },
-            { p: "BPN-711", s: "2026-06-10", r: "Pendiente" },
-            { p: "BVN-704", s: "2026-07-02", r: "Pendiente" },
-            { p: "BUL-742", s: "2026-04-02", r: "Pendiente" },
-            { p: "BVN-930", s: "2026-07-02", r: "Pendiente" }
-        ];
+        const flotaData = [{p:"CEP-929", s:"22/07/2026", r:"---"}, {p:"BPN-711", s:"10/06/2026", r:"---"}, {p:"BVN-704", s:"02/07/2026", r:"---"}, {p:"BUL-742", s:"02/04/2026", r:"---"}, {p:"BVN-930", s:"02/07/2026", r:"---"}];
 
         function login(n) {
             user = n; localStorage.setItem('tw_u', n);
@@ -144,6 +143,65 @@
             document.getElementById(id).classList.add('active');
             if(id === 'p3') renderH();
             if(id === 'p4') renderFlota();
+        }
+
+        function renderH() {
+            const list = document.getElementById('h-list');
+            const fM = document.getElementById('f-mes').value;
+            const fD = document.getElementById('f-dia').value;
+            const fS = document.getElementById('f-search').value.toUpperCase();
+            let tMes = 0, tDia = 0, tPuntos = 0; let html = "";
+
+            db.slice().reverse().forEach((r, idx) => {
+                const realIdx = db.length - 1 - idx;
+                const rFecha = r.fecha ? r.fecha.split("T")[0] : "";
+                const mMes = (fM === "ALL" || (new Date(r.fecha).getMonth().toString() === fM));
+                const mDia = (!fD || rFecha === fD);
+                const mSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
+
+                if (mMes) tMes += parseFloat(r.total) || 0;
+                if (rFecha === new Date().toISOString().split("T")[0]) {
+                    tDia += parseFloat(r.total) || 0;
+                    tPuntos += (r.items.match(/:/g) || []).length;
+                }
+
+                if (mMes && mDia && mSearch) {
+                    html += `<div class="card">
+                        <div style="display:flex; justify-content:space-between;">
+                            <div><b style="color:var(--accent)">${r.chofer}</b><br><small>${r.placa} • ${rFecha}</small></div>
+                            <div style="font-weight:900;">${r.total} CJ</div>
+                        </div>
+                        <div style="display:flex; gap:8px; margin-top:10px;">
+                            <button class="btn" style="padding:8px; font-size:11px; background:#1e293b; color:white;" onclick="verSoloRuta(${realIdx})">VER</button>
+                            <button class="btn" style="padding:8px; font-size:11px; background:rgba(255,184,0,0.2); color:var(--warning);" onclick="editarRuta(${realIdx})">EDITAR</button>
+                        </div>
+                    </div>`;
+                }
+            });
+            list.innerHTML = html;
+            document.getElementById('stat-mes').innerText = Math.round(tMes);
+            document.getElementById('stat-dia').innerText = Math.round(tDia);
+            document.getElementById('stat-puntos').innerText = tPuntos;
+        }
+
+        function verSoloRuta(idx) {
+            const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
+            r.items.split(", ").forEach(item => { 
+                const p = item.split(":"); 
+                content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; 
+            });
+            document.getElementById('view-title').innerText = r.chofer; 
+            document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`; 
+            document.getElementById('modal-view').style.display = 'flex';
+        }
+
+        function editarRuta(idx) {
+            const r = db[idx]; 
+            ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
+            document.getElementById('pla').value = r.placa; 
+            document.getElementById('cho').value = r.chofer; 
+            document.getElementById('aux').value = r.auxiliar || ""; 
+            renderR(); nav('p2');
         }
 
         function renderFlota() {
@@ -173,47 +231,15 @@
             localStorage.setItem('tw_d', JSON.stringify(ruta));
         }
 
-        // FUNCIÓN HISTORIAL ORIGINAL RECONSTRUIDA
-        function renderH() {
-            const list = document.getElementById('h-list');
-            const fM = document.getElementById('f-mes').value;
-            const fD = document.getElementById('f-dia').value;
-            const fS = document.getElementById('f-search').value.toUpperCase();
-            let tM = 0, tD = 0; let html = "";
-            
-            db.slice().reverse().forEach(r => {
-                const rF = r.fecha ? r.fecha.split("T")[0] : "";
-                const matchM = (fM === "ALL" || (new Date(r.fecha).getMonth().toString() === fM));
-                const matchD = (!fD || rF === fD);
-                const matchS = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
-
-                if (matchM) tM += r.total;
-                if (rF === new Date().toISOString().split("T")[0]) tD += r.total;
-
-                if (matchM && matchD && matchS) {
-                    html += `<div class="card">
-                        <b>${r.chofer}</b> - ${r.total} CJ<br>
-                        <small>${r.placa} • ${rF}</small>
-                    </div>`;
-                }
-            });
-            list.innerHTML = html;
-            document.getElementById('stat-mes').innerText = Math.round(tM);
-            document.getElementById('stat-dia').innerText = Math.round(tD);
-        }
-
         function generarPDF() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             doc.text("REPORTE MENSUAL TWINS - TAJHO", 10, 10);
+            let y = 20;
+            db.slice(-20).forEach(r => { doc.text(`${r.fecha.split('T')[0]} - ${r.chofer}: ${r.total} CJ`, 10, y); y+=10; });
             doc.save("Reporte_Twins.pdf");
         }
 
-        function checkPass() {
-            if(document.getElementById('pass-input').value === "2026") {
-                document.getElementById('modal-pass').style.display='none'; login('TAJHO');
-            } else alert("Incorrecto");
-        }
-
+        function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Incorrecto"); }
         function cerrarSesion() { localStorage.clear(); location.reload(); }
         async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
         function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { ruta = JSON.parse(s); renderR(); } }
