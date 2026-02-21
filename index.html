@@ -14,7 +14,7 @@
             --border: #334155; --input-bg: #0f172a; --danger: #ef4444; --warning: #f59e0b;
             --grad: linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%);
         }
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
         
         .main-title { 
             font-size: 32px; font-weight: 900; letter-spacing: -1px;
@@ -23,23 +23,20 @@
         }
 
         .page { display: none; padding: 12px; padding-bottom: 80px; }
-        .active { display: block !important; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
         #modal-pass, #modal-view { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; }
         .top-header { position: sticky; top: 0; z-index: 100; background: var(--card); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 65px; background: var(--card); border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { border: none; background: none; color: var(--text); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; }
         .nav-item.active-nav { color: var(--twins-blue); opacity: 1; }
         
-        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 14px; position: relative; z-index: 2; margin-bottom: 10px; }
         input, select { width: 100%; padding: 12px; margin: 6px 0; border-radius: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; box-sizing: border-box; }
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; }
         .btn-main { background: var(--twins-blue); color: white; }
-        .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
         .stat-box { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .stat-val { font-size: 20px; font-weight: 800; color: var(--twins-blue); }
         .stat-label { font-size: 9px; opacity: 0.6; text-transform: uppercase; font-weight: 700; }
+        .action-btn { font-size: 16px; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: #2d3748; display: flex; align-items: center; justify-content: center; color: var(--text); }
         .swipe-container { position: relative; background: var(--danger); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
         .hist-item-preview { font-size: 11px; color: #94a3b8; margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--twins-blue); line-height: 1.4; }
         .hist-footer { display: flex; justify-content: space-between; align-items: center; font-size: 10px; opacity: 0.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
@@ -47,12 +44,11 @@
 </head>
 <body>
 
-    <div id="modal-pass" style="display: none;">
-        <div class="card" style="width: 260px; text-align: center;">
+    <div id="modal-pass" onclick="this.style.display='none'">
+        <div class="card" style="width: 260px; text-align: center;" onclick="event.stopPropagation()">
             <div style="font-weight: 800; margin-bottom: 10px;">🔒 ACCESO TAJHO</div>
             <input type="password" id="pass-input" inputmode="numeric" placeholder="Código" style="text-align: center; font-size: 20px;">
             <button class="btn btn-main" onclick="checkPass()">ENTRAR</button>
-            <button class="btn" style="background:transparent; color:white; font-size:10px; margin-top:5px;" onclick="document.getElementById('modal-pass').style.display='none'">CANCELAR</button>
         </div>
     </div>
 
@@ -66,7 +62,7 @@
     </div>
 
     <div class="app-container">
-        <div id="p1" class="page active" style="text-align: center; padding-top: 12vh;">
+        <div id="p1" class="page" style="display: block; text-align: center; padding-top: 12vh;">
             <div class="main-title">REGISTRO<br>DESPACHOS TWINS</div>
             <div style="max-width: 260px; margin: 30px auto; display: grid; gap: 10px;">
                 <button class="btn" style="background:var(--card); color:var(--text); border:1px solid var(--border);" onclick="document.getElementById('modal-pass').style.display='flex'">🔑 TAJHO (Admin)</button>
@@ -87,7 +83,7 @@
                 <div id="total-vivo" class="stat-val" style="font-size: 32px;">0</div>
             </div>
             <div class="card">
-                <input type="text" id="cli" list="clientes-sugeridos" placeholder="Nombre Cliente" oninput="saveDraft()">
+                <input type="text" id="cli" list="clientes-sugeridos" placeholder="Nombre Cliente">
                 <datalist id="clientes-sugeridos"></datalist>
                 <input type="number" id="can" placeholder="Cantidad" inputmode="numeric">
                 <button class="btn btn-main" onclick="addItem()">AGREGAR</button>
@@ -95,5 +91,165 @@
             <div id="area-envio" style="display:none;">
                 <div class="card" id="lista-items"></div>
                 <div class="card">
-                    <select id="pla" onchange="saveDraft()"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
-                    <select id="cho" onchange="saveDraft()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                    <select id="pla"><option value="">Placa...</option><option value="BVN-930">BVN-930</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BPN-711">BPN-711</option><option value="FUSO">FUSO</option></select>
+                    <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                    <select id="aux">
+                        <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
+                    </select>
+                    <button class="btn" style="background:var(--twins-green); color:white; margin-top:8px;" onclick="guardar(true)">💾 GUARDAR Y WHATSAPP</button>
+                    <button class="btn" style="background:var(--twins-blue); color:white; margin-top:8px; opacity: 0.8;" onclick="guardar(false)">☁️ SOLO GUARDAR</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="p3" class="page">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
+                <div class="stat-box"><div class="stat-label">Acumulado Mes</div><div id="stat-mes" class="stat-val">0</div></div>
+                <div class="stat-box"><div class="stat-label">Total Día</div><div id="stat-dia" class="stat-val" style="color:var(--twins-green);">0</div></div>
+            </div>
+            <div class="card">
+                <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                    <select id="f-mes" onchange="renderH()"><option value="ALL">Todo el Año</option><option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option><option value="3">Abril</option><option value="4">Mayo</option><option value="5">Junio</option><option value="6">Julio</option><option value="7">Agosto</option><option value="8">Setiembre</option><option value="9">Octubre</option><option value="10">Noviembre</option><option value="11">Diciembre</option></select>
+                    <input type="date" id="f-dia" onchange="renderH()">
+                </div>
+                <button id="btn-reporte-admin" class="btn" style="background:#e11d48; color:white; margin-top:10px; display:none;" onclick="generarPDF()">📄 REPORTE PDF</button>
+            </div>
+            <div id="h-list"></div>
+        </div>
+
+        <div id="nav-app" class="bottom-nav" style="display:none;">
+            <div id="n2" class="nav-item" onclick="nav('p2')"><span>📝</span><span>RUTA</span></div>
+            <div id="n3" class="nav-item" onclick="nav_hist()"><span>📊</span><span>HISTORIAL</span></div>
+        </div>
+    </div>
+
+    <script>
+        const URL = "https://script.google.com/macros/s/AKfycbzF0SL2yZKLX3mclQoODIW1U8oumJWTjzcJs9NSivCz71PDIgUZIvWfmGS5wTQFy5b3/exec";
+        let user = "", ruta = [], db = [];
+        let tStartX = 0;
+
+        function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
+        
+        function login(n) { 
+            user = n; 
+            document.getElementById('p1').style.display = 'none'; 
+            document.getElementById('header-app').style.display = 'flex'; 
+            document.getElementById('nav-app').style.display = 'flex'; 
+            document.getElementById('user-display').innerText = n; 
+            if(n === 'TAJHO') document.getElementById('btn-reporte-admin').style.display = 'block'; 
+            nav('p2'); 
+            load(); 
+        }
+        
+        function nav(id) { 
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav')); 
+            document.getElementById(id).style.display = 'block'; 
+            const nBtn = (id === 'p2') ? 'n2' : 'n3';
+            document.getElementById(nBtn).classList.add('active-nav');
+        }
+
+        async function nav_hist() { nav('p3'); await load(); }
+        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e) { console.log(e); } }
+
+        function addItem() {
+            const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
+            if(!cl || !ca) return; ruta.unshift({cl, ca}); document.getElementById('cli').value = ""; document.getElementById('can').value = ""; renderR();
+        }
+
+        function renderR() {
+            const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
+            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span style="color:var(--danger); margin-left:10px;" onclick="ruta.splice(${x},1);renderR()">✕</span></b></div>`; });
+            document.getElementById('total-vivo').innerText = s; document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
+        }
+
+        async function guardar(wa) {
+            const r = { 
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value || "SIN AUX", 
+                placa: document.getElementById('pla').value, 
+                operario: user, 
+                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
+                total: ruta.reduce((a,b) => a+b.ca, 0) 
+            };
+            if(!r.chofer || !r.placa) return alert("Faltan datos");
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            if(wa) sendWA(r); else alert("✅ Guardado");
+            ruta = []; renderR(); load();
+        }
+
+        /* CORRECCIÓN WHATSAPP: Apertura directa para evitar pantalla negra */
+        function sendWA(r) {
+            let aux = r.auxiliar || "SIN AUX";
+            let lista = r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n");
+            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${lista}\n\n_Registrado por: ${r.operario}_`;
+            window.location.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(m)}`;
+        }
+
+        function renderH() {
+            const list = document.getElementById('h-list');
+            const fM = document.getElementById('f-mes').value, fD = document.getElementById('f-dia').value, fS = document.getElementById('f-search').value.toUpperCase();
+            let tAcumulado = 0, tDiaIndividual = 0;
+            const targetDate = fD ? new Date(fD + "T12:00:00") : new Date();
+            const targetStr = targetDate.getFullYear() + '-' + String(targetDate.getMonth() + 1).padStart(2, '0') + '-' + String(targetDate.getDate()).padStart(2, '0');
+
+            let html = "";
+            for (let i = db.length - 1; i >= 0; i--) {
+                const r = db[i];
+                const rDate = new Date(r.fecha);
+                const rStr = rDate.getFullYear() + '-' + String(rDate.getMonth() + 1).padStart(2, '0') + '-' + String(rDate.getDate()).padStart(2, '0');
+                if(rDate.getFullYear() === targetDate.getFullYear() && rDate.getMonth() === targetDate.getMonth() && rDate.getDate() <= targetDate.getDate()) tAcumulado += parseFloat(r.total) || 0;
+                if(rStr === targetStr) tDiaIndividual += parseFloat(r.total) || 0;
+
+                if ((r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS)) && (fM === "ALL" || rDate.getMonth().toString() === fM) && (!fD || rStr === fD)) {
+                    html += `<div class="swipe-container"><div class="card" id="c-${i}" ontouchstart="hStart(event)" ontouchmove="hMove(event, ${i})" ontouchend="hEnd(event, ${i})">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <div><div style="font-weight:800;">${r.chofer}</div><div class="hist-item-preview">${r.items.split(", ").slice(0, 2).join(", ")}...</div></div>
+                            <div style="display:flex; gap:6px;">
+                                <div class="action-btn" onclick="verSoloRuta(${i})">🔍</div>
+                                <div class="action-btn" style="color:var(--twins-green)" onclick="sendWA(db[${i}])">🟢</div>
+                            </div>
+                        </div>
+                        <div class="hist-footer"><span>🚚 ${r.placa}</span><span style="font-weight:800; color:var(--twins-blue);">${r.total} CJ</span><span>${rStr}</span></div>
+                    </div></div>`;
+                }
+            }
+            list.innerHTML = html;
+            document.getElementById('stat-mes').innerText = Math.round(tAcumulado); 
+            document.getElementById('stat-dia').innerText = Math.round(tDiaIndividual);
+        }
+
+        function hStart(e) { tStartX = e.touches[0].clientX; }
+        function hMove(e, id) { let d = e.touches[0].clientX - tStartX; if(d < 0 && d > -100) document.getElementById('c-'+id).style.transform = `translateX(${d}px)`; }
+        async function hEnd(e, id) { 
+            let d = e.changedTouches[0].clientX - tStartX; 
+            if(d < -70 && confirm("¿Eliminar?")) {
+                fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'DELETE_ROW', data: db[id] }) });
+                db.splice(id, 1); renderH();
+            } 
+            document.getElementById('c-'+id).style.transform = `translateX(0)`; 
+        }
+
+        function verSoloRuta(idx) {
+            const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
+            r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #334155;"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; });
+            document.getElementById('view-title').innerText = r.chofer; document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`; document.getElementById('modal-view').style.display = 'flex';
+        }
+
+        function generarPDF() {
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            doc.text("REPORTE TWINS", 14, 20);
+            const filas = db.map(r => [r.fecha.split("T")[0], r.chofer, r.placa, r.total + " CJ"]);
+            doc.autoTable({ startY: 30, head: [['Fecha', 'Chofer', 'Placa', 'Cajas']], body: filas });
+            doc.save(`Reporte.pdf`);
+        }
+        
+        window.onload = () => {
+            const h = new Date();
+            document.getElementById('f-dia').value = h.toISOString().split('T')[0];
+            document.getElementById('f-mes').value = h.getMonth();
+        };
+    </script>
+</body>
+</html>
