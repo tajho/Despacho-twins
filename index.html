@@ -136,7 +136,7 @@
     <div id="nav-app" class="bottom-nav" style="display:none;">
         <button id="n2" class="nav-item" onclick="nav('p2')"><span>📦</span>RUTA</button>
         <button id="n3" class="nav-item" onclick="nav('p3')"><span>📊</span>HISTORIAL</button>
-        <button id="n4" class="nav-item" onclick="nav('p4')"><span>🚛</span>FLOTA</button>
+        <button id="n4" class="nav-item" onclick="nav('p4')"><span></span>🚛</span>FLOTA</button>
     </div>
 
     <script>
@@ -160,7 +160,7 @@
 
         function resetFechas() {
             const h = new Date();
-            const hoyStr = h.toISOString().split('T')[0];
+            const hoyStr = h.toLocaleDateString('en-CA'); // Formato YYYY-MM-DD local
             document.getElementById('f-dia').value = hoyStr;
             document.getElementById('f-mes').value = h.getMonth();
         }
@@ -183,7 +183,7 @@
             localStorage.setItem('tw_p', id);
             
             if(id === 'p3') {
-                resetFechas();
+                resetFechas(); // Resetea a hoy al entrar
                 renderH();
             }
             if(id === 'p4') renderFlota();
@@ -225,15 +225,16 @@
         async function confirmarGuardado(esHoy) {
             document.getElementById('modal-ask').style.display = 'none';
             const ahora = new Date();
-            const horaActual = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+            const horaActual = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false });
             
-            let fechaGuardado = ahora.toISOString().split('T')[0];
+            let fechaGuardado = ahora.toLocaleDateString('en-CA');
             
             if(!esHoy) {
                 let sigDia = new Date(ahora);
                 sigDia.setDate(ahora.getDate() + 1);
+                // Si mañana es domingo, saltar a lunes
                 if(sigDia.getDay() === 0) sigDia.setDate(sigDia.getDate() + 1);
-                fechaGuardado = sigDia.toISOString().split('T')[0];
+                fechaGuardado = sigDia.toLocaleDateString('en-CA');
             }
 
             const r = { 
@@ -252,7 +253,7 @@
 
             if(esHoy) sendWA(r); else alert("✅ Registrada para: " + fechaGuardado);
 
-            // LIMPIEZA DE DATOS
+            // LIMPIEZA TOTAL
             ruta = []; 
             document.getElementById('cho').value = "";
             document.getElementById('pla').value = "";
@@ -290,7 +291,7 @@
                         <div style="display:flex; justify-content:space-between;">
                             <div>
                                 <b style="color:var(--accent)">${r.chofer}${auxLabel}</b><br>
-                                <span style="color:var(--success); font-size:11px; font-weight:800;">🕒 ${r.hora || '--:--'}</span><br>
+                                <span style="color:var(--success); font-size:12px; font-weight:800;">🕒 ${r.hora || '--:--'}</span><br>
                                 <small>${r.placa}</small>
                             </div>
                             <div style="text-align:right;">
