@@ -31,7 +31,6 @@
         input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #070b1a; color: var(--text); font-size: 15px; }
         .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .btn-main { background: var(--grad); color: white; }
-        
         #modal-pass, #modal-view, #modal-ask { display: none; position: fixed; inset: 0; background: rgba(2, 4, 10, 0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
     </style>
 </head>
@@ -136,7 +135,7 @@
     <div id="nav-app" class="bottom-nav" style="display:none;">
         <button id="n2" class="nav-item" onclick="nav('p2')"><span>📦</span>RUTA</button>
         <button id="n3" class="nav-item" onclick="nav('p3')"><span>📊</span>HISTORIAL</button>
-        <button id="n4" class="nav-item" onclick="nav('p4')"><span></span>🚛</span>FLOTA</button>
+        <button id="n4" class="nav-item" onclick="nav('p4')"><span>🚛</span>FLOTA</button>
     </div>
 
     <script>
@@ -152,7 +151,6 @@
         ];
 
         window.onload = () => {
-            resetFechas();
             const lastUser = localStorage.getItem('tw_u');
             if(lastUser) login(lastUser, localStorage.getItem('tw_p') || 'p2');
             loadDraft(); updateSugs();
@@ -160,7 +158,7 @@
 
         function resetFechas() {
             const h = new Date();
-            const hoyStr = h.toLocaleDateString('en-CA'); // Formato YYYY-MM-DD local
+            const hoyStr = h.toLocaleDateString('en-CA'); 
             document.getElementById('f-dia').value = hoyStr;
             document.getElementById('f-mes').value = h.getMonth();
         }
@@ -181,11 +179,7 @@
             document.getElementById(id).classList.add('active'); 
             document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
             localStorage.setItem('tw_p', id);
-            
-            if(id === 'p3') {
-                resetFechas(); // Resetea a hoy al entrar
-                renderH();
-            }
+            if(id === 'p3') { renderH(); }
             if(id === 'p4') renderFlota();
         }
 
@@ -198,11 +192,7 @@
             renderR(); saveDraft();
         }
 
-        function removeItem(index) {
-            ruta.splice(index, 1);
-            renderR();
-            saveDraft();
-        }
+        function removeItem(index) { ruta.splice(index, 1); renderR(); saveDraft(); }
 
         function renderR() {
             const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
@@ -225,14 +215,14 @@
         async function confirmarGuardado(esHoy) {
             document.getElementById('modal-ask').style.display = 'none';
             const ahora = new Date();
-            const horaActual = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false });
+            // MEJORA: Hora exacta en formato HH:MM (String forzado)
+            const horaActual = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
             
             let fechaGuardado = ahora.toLocaleDateString('en-CA');
             
             if(!esHoy) {
                 let sigDia = new Date(ahora);
                 sigDia.setDate(ahora.getDate() + 1);
-                // Si mañana es domingo, saltar a lunes
                 if(sigDia.getDay() === 0) sigDia.setDate(sigDia.getDate() + 1);
                 fechaGuardado = sigDia.toLocaleDateString('en-CA');
             }
@@ -248,23 +238,25 @@
                 hora: horaActual 
             };
 
+            // MEJORA VISUALIZACIÓN: Actualizar historial local y mover filtro de fecha
+            db.push(r);
+            document.getElementById('f-dia').value = fechaGuardado; 
+            nav('p3'); 
+
             saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-
+            
             if(esHoy) sendWA(r); else alert("✅ Registrada para: " + fechaGuardado);
 
-            // LIMPIEZA TOTAL
             ruta = []; 
-            document.getElementById('cho').value = "";
-            document.getElementById('pla').value = "";
-            document.getElementById('aux').value = "";
-            localStorage.removeItem('tw_d'); 
-            renderR(); 
-            setTimeout(load, 1500);
+            document.getElementById('cho').value = ""; document.getElementById('pla').value = ""; document.getElementById('aux').value = "";
+            localStorage.removeItem('tw_d'); renderR(); 
+            setTimeout(load, 3000); 
         }
 
         function renderH() {
             const list = document.getElementById('h-list');
+            if(!list) return;
             const fM = document.getElementById('f-mes').value;
             const fD = document.getElementById('f-dia').value;
             const fS = document.getElementById('f-search').value.toUpperCase();
@@ -272,18 +264,18 @@
             let html = "";
             
             db.slice().reverse().forEach((r, i) => {
-                const rStr = r.fecha ? r.fecha.split("T")[0] : "";
-                const rFechaObj = new Date(r.fecha);
+                let rawFecha = r.fecha ? r.fecha.toString() : "";
+                let rStr = rawFecha.includes("T") ? rawFecha.split("T")[0] : rawFecha.split(" ")[0];
+                // MEJORA: Priorizar el campo 'hora' guardado explícitamente
+                let rHora = r.hora || "--:--";
                 
-                const matchMes = (fM === "ALL" || (r.fecha && rFechaObj.getMonth().toString() === fM));
+                const rFechaObj = new Date(r.fecha);
+                const matchMes = (fM === "ALL" || (r.fecha && rFechaObj.getUTCMonth().toString() === fM));
                 const matchDia = (!fD || rStr === fD);
                 const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
 
                 if (matchMes) { envMes++; cajasMes += parseFloat(r.total) || 0; }
-                if (rStr === fD) {
-                    tDia += parseFloat(r.total) || 0;
-                    tPuntos += (r.items.match(/:/g) || []).length;
-                }
+                if (rStr === fD) { tDia += parseFloat(r.total) || 0; tPuntos += (r.items.match(/:/g) || []).length; }
 
                 if (matchMes && matchDia && matchSearch) {
                     let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
@@ -291,7 +283,7 @@
                         <div style="display:flex; justify-content:space-between;">
                             <div>
                                 <b style="color:var(--accent)">${r.chofer}${auxLabel}</b><br>
-                                <span style="color:var(--success); font-size:12px; font-weight:800;">🕒 ${r.hora || '--:--'}</span><br>
+                                <span style="color:var(--success); font-size:12px; font-weight:800;">🕒 ${rHora}</span><br>
                                 <small>${r.placa}</small>
                             </div>
                             <div style="text-align:right;">
@@ -313,6 +305,7 @@
             document.getElementById('stat-clientes').innerText = tPuntos;
         }
 
+        // Funciones auxiliares sin cambios
         function renderFlota() {
             const list = document.getElementById('lista-flota'); list.innerHTML = "";
             const hoy = new Date();
@@ -346,7 +339,7 @@
             doc.setFontSize(14); doc.text("REPORTE DESPACHOS TWINS - TAJHO", 10, 20);
             let y = 30;
             db.slice(-30).forEach(r => {
-                let fechaStr = r.fecha ? r.fecha.split('T')[0] : 'S/F';
+                let fechaStr = r.fecha ? r.fecha.toString().split('T')[0] : 'S/F';
                 doc.setFontSize(10);
                 doc.text(`${fechaStr} [${r.hora || '--:--'}] | ${r.chofer} | ${r.total} CJ`, 10, y);
                 y += 8; if(y > 280) { doc.addPage(); y = 20; }
@@ -363,24 +356,12 @@
             renderR(); saveDraft(); nav('p2');
         }
 
-        function saveDraft() { 
-            localStorage.setItem('tw_d', JSON.stringify({ 
-                ruta, 
-                p: document.getElementById('pla').value, 
-                c: document.getElementById('cho').value, 
-                a: document.getElementById('aux').value 
-            })); 
-        }
-
+        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
         function loadDraft() { 
             const s = localStorage.getItem('tw_d'); 
             if(s) { 
-                const d = JSON.parse(s); 
-                ruta = d.ruta||[]; 
-                document.getElementById('pla').value=d.p||""; 
-                document.getElementById('cho').value=d.c||""; 
-                document.getElementById('aux').value=d.a||""; 
-                renderR(); 
+                const d = JSON.parse(s); ruta = d.ruta||[]; 
+                document.getElementById('pla').value=d.p||""; document.getElementById('cho').value=d.c||""; document.getElementById('aux').value=d.a||""; renderR(); 
             } 
         }
 
