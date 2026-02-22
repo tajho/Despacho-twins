@@ -99,9 +99,9 @@
         <div id="area-envio" style="display:none;">
             <div class="card" id="lista-items"></div>
             <div class="card">
-                <select id="pla"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
-                <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                <select id="aux">
+                <select id="pla" onchange="saveDraft()"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
+                <select id="cho" onchange="saveDraft()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                <select id="aux" onchange="saveDraft()">
                     <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
                 </select>
                 <button class="btn btn-main" onclick="abrirModalGuardar()" style="margin-top: 10px;">💾 GUARDAR DESPACHO</button>
@@ -152,13 +152,18 @@
         ];
 
         window.onload = () => {
-            const h = new Date();
-            document.getElementById('f-dia').value = h.toISOString().split('T')[0];
-            document.getElementById('f-mes').value = h.getMonth();
+            resetFechas();
             const lastUser = localStorage.getItem('tw_u');
             if(lastUser) login(lastUser, localStorage.getItem('tw_p') || 'p2');
             loadDraft(); updateSugs();
         };
+
+        function resetFechas() {
+            const h = new Date();
+            const hoyStr = h.toISOString().split('T')[0];
+            document.getElementById('f-dia').value = hoyStr;
+            document.getElementById('f-mes').value = h.getMonth();
+        }
 
         function login(n, targetPage = 'p2') { 
             user = n; localStorage.setItem('tw_u', n);
@@ -176,7 +181,11 @@
             document.getElementById(id).classList.add('active'); 
             document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
             localStorage.setItem('tw_p', id);
-            if(id === 'p3') renderH();
+            
+            if(id === 'p3') {
+                resetFechas(); // Forzar hoy al entrar a historial
+                renderH();
+            }
             if(id === 'p4') renderFlota();
         }
 
@@ -189,13 +198,19 @@
             renderR(); saveDraft();
         }
 
+        function removeItem(index) {
+            ruta.splice(index, 1);
+            renderR();
+            saveDraft(); // Guardar cambios tras borrar
+        }
+
         function renderR() {
             const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
             ruta.forEach((i, x) => { 
                 s += i.ca; 
                 l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
                     <span style="font-weight:700;">${i.cl}</span>
-                    <span style="color:var(--accent); font-weight:800;">${i.ca} CJ <span style="color:var(--danger); margin-left:15px;" onclick="ruta.splice(${x},1);renderR();">✕</span></span>
+                    <span style="color:var(--accent); font-weight:800;">${i.ca} CJ <span style="color:var(--danger); margin-left:15px; cursor:pointer;" onclick="removeItem(${x})">✕</span></span>
                 </div>`; 
             });
             document.getElementById('total-vivo').innerText = s; 
@@ -203,7 +218,7 @@
         }
 
         function abrirModalGuardar() {
-            if(!document.getElementById('cho').value || !document.getElementById('pla').value) return alert("Faltan datos");
+            if(!document.getElementById('cho').value || !document.getElementById('pla').value) return alert("Faltan datos (Chofer/Placa)");
             document.getElementById('modal-ask').style.display = 'flex';
         }
 
@@ -217,7 +232,6 @@
             if(!esHoy) {
                 let sigDia = new Date(ahora);
                 sigDia.setDate(ahora.getDate() + 1);
-                // Si mañana es Domingo (0), saltar a Lunes
                 if(sigDia.getDay() === 0) sigDia.setDate(sigDia.getDate() + 1);
                 fechaGuardado = sigDia.toISOString().split('T')[0];
             }
@@ -236,7 +250,7 @@
             saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
 
-            if(esHoy) sendWA(r); else alert("✅ Registrada para mañana (" + fechaGuardado + ")");
+            if(esHoy) sendWA(r); else alert("✅ Registrada para: " + fechaGuardado);
 
             ruta = []; localStorage.removeItem('tw_d'); renderR(); 
             setTimeout(load, 1500);
@@ -258,7 +272,6 @@
                 const matchDia = (!fD || rStr === fD);
                 const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
 
-                // ESTADÍSTICAS: Solo contar si la fecha del registro coincide con el filtro de hoy/seleccionado
                 if (matchMes) { envMes++; cajasMes += parseFloat(r.total) || 0; }
                 if (rStr === fD) {
                     tDia += parseFloat(r.total) || 0;
@@ -293,7 +306,6 @@
             document.getElementById('stat-clientes').innerText = tPuntos;
         }
 
-        // Resto de funciones se mantienen iguales
         function renderFlota() {
             const list = document.getElementById('lista-flota'); list.innerHTML = "";
             const hoy = new Date();
@@ -309,16 +321,19 @@
                 </div>`;
             });
         }
+
         function verSoloRuta(idx) {
             const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
             r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; });
             document.getElementById('view-title').innerText = r.chofer; document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`; document.getElementById('modal-view').style.display = 'flex';
         }
+
         function sendWA(r) { 
             let aux = (r.auxiliar && r.auxiliar !== "") ? r.auxiliar : "NINGUNO";
             let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`; 
         }
+
         function generarPDF() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             doc.setFontSize(14); doc.text("REPORTE DESPACHOS TWINS - TAJHO", 10, 20);
@@ -331,6 +346,7 @@
             });
             doc.save("Reporte_Twins_Admin.pdf");
         }
+
         function editarRuta(idx) {
             const r = db[idx]; 
             ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
@@ -339,8 +355,28 @@
             document.getElementById('aux').value = r.auxiliar || ""; 
             renderR(); saveDraft(); nav('p2');
         }
-        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
-        function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { const d = JSON.parse(s); ruta = d.ruta||[]; document.getElementById('pla').value=d.p||""; document.getElementById('cho').value=d.c||""; document.getElementById('aux').value=d.a||""; renderR(); } }
+
+        function saveDraft() { 
+            localStorage.setItem('tw_d', JSON.stringify({ 
+                ruta, 
+                p: document.getElementById('pla').value, 
+                c: document.getElementById('cho').value, 
+                a: document.getElementById('aux').value 
+            })); 
+        }
+
+        function loadDraft() { 
+            const s = localStorage.getItem('tw_d'); 
+            if(s) { 
+                const d = JSON.parse(s); 
+                ruta = d.ruta||[]; 
+                document.getElementById('pla').value=d.p||""; 
+                document.getElementById('cho').value=d.c||""; 
+                document.getElementById('aux').value=d.a||""; 
+                renderR(); 
+            } 
+        }
+
         function saveClients(it) { let c = JSON.parse(localStorage.getItem('tw_c') || "[]"); it.forEach(i => { if(!c.includes(i.cl)) c.push(i.cl); }); localStorage.setItem('tw_c', JSON.stringify(c.slice(-60))); updateSugs(); }
         function updateSugs() { const c = JSON.parse(localStorage.getItem('tw_c') || "[]"); const dl = document.getElementById('clientes-sugeridos'); dl.innerHTML = ""; c.forEach(x => { let o = document.createElement('option'); o.value = x; dl.appendChild(o); }); }
         function cerrarSesion() { localStorage.removeItem('tw_u'); location.reload(); }
