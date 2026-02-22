@@ -113,10 +113,6 @@
             <div class="stat-box"><div class="stat-label">Envíos Mes (Cajas)</div><div id="stat-mes" class="stat-val">0</div></div>
             <div class="stat-box"><div class="stat-label" id="label-dia">Cajas del Día</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
         </div>
-        <div id="reporte-tajho" style="display:none; margin-bottom: 15px;">
-            <button class="btn" style="background: white; color: black;" onclick="generarPDF()">📄 DESCARGAR REPORTE (ADMIN)</button>
-        </div>
-        <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados</div><div id="stat-clientes" class="stat-val" style="color:white;">0</div></div>
         <div class="card">
             <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
             <div style="display: flex; gap: 8px;">
@@ -127,45 +123,181 @@
         <div id="h-list"></div>
     </div>
 
-    <div id="p4" class="page">
-        <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 20px;">ESTADO DE FLOTA</h2>
-        <div id="lista-flota"></div>
-    </div>
-
     <div id="nav-app" class="bottom-nav" style="display:none;">
         <button id="n2" class="nav-item" onclick="nav('p2')"><span>📦</span>RUTA</button>
         <button id="n3" class="nav-item" onclick="nav('p3')"><span>📊</span>HISTORIAL</button>
-        <button id="n4" class="nav-item" onclick="nav('p4')"><span>🚛</span>FLOTA</button>
     </div>
 
     <script>
         const URL = "https://script.google.com/macros/s/AKfycbz9V0MzUuuAHTa9N4-xrsVJV7DbkWLtgJY5xHM7_JTfIDlBxCtimM6FHjRpVczuD2kM/exec";
         let user = "", ruta = [], db = [];
 
-        const flotaData = [
-            { placa: "CEP-929", clase: "CAMION", soat: "2026-07-22", cia: "Pacifico" },
-            { placa: "BPN-711", clase: "CAMION", soat: "2026-06-10", cia: "Pacifico" },
-            { placa: "BVN-704", clase: "CAMIONETA", soat: "2026-07-02", cia: "Pacifico" },
-            { placa: "BUL-742", clase: "CAMIONETA", soat: "2026-04-02", cia: "Mapfre" },
-            { placa: "BVN-930", clase: "CAMIONETA", soat: "2026-07-02", cia: "Pacifico" }
-        ];
-
         window.onload = () => {
+            const savedUser = localStorage.getItem('tw_u');
+            if(savedUser) {
+                login(savedUser, localStorage.getItem('tw_p') || 'p2');
+            }
             resetFechas();
-            const lastUser = localStorage.getItem('tw_u');
-            if(lastUser) login(lastUser, localStorage.getItem('tw_p') || 'p2');
-            loadDraft(); updateSugs();
+            loadDraft(); 
+            updateSugs();
         };
 
         function resetFechas() {
             const ahora = new Date();
-            const offset = ahora.getTimezoneOffset() * 60000;
-            const localHoy = new Date(ahora.getTime() - offset).toISOString().split('T')[0];
-            document.getElementById('f-dia').value = localHoy;
+            const year = ahora.getFullYear();
+            const month = String(ahora.getMonth() + 1).padStart(2, '0');
+            const day = String(ahora.getDate()).padStart(2, '0');
+            const hoyStr = `${year}-${month}-${day}`;
+            
+            document.getElementById('f-dia').value = hoyStr;
             document.getElementById('f-mes').value = ahora.getMonth();
         }
 
         function login(n, targetPage = 'p2') { 
-            user = n; localStorage.setItem('tw_u', n);
+            user = n; 
+            localStorage.setItem('tw_u', n);
             document.getElementById('p1').style.display='none'; 
-            document.getElementById('header-app
+            document.getElementById('header-app').style.display='flex'; 
+            document.getElementById('nav-app').style.display='flex'; 
+            document.getElementById('user-display').innerText = n; 
+            nav(targetPage); 
+            load(); 
+        }
+
+        function nav(id) { 
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none'); 
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav')); 
+            document.getElementById(id).style.display = 'block'; 
+            document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
+            localStorage.setItem('tw_p', id);
+            if(id === 'p3') { resetFechas(); renderH(); }
+        }
+
+        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
+
+        function addItem() {
+            const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
+            if(!cl || !ca) return; ruta.unshift({cl, ca}); 
+            document.getElementById('cli').value = ""; document.getElementById('can').value = ""; 
+            renderR(); saveDraft();
+        }
+
+        function removeItem(index) {
+            ruta.splice(index, 1);
+            renderR(); saveDraft();
+        }
+
+        function renderR() {
+            const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
+            ruta.forEach((i, x) => { 
+                s += i.ca; 
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
+                    <span style="font-weight:700;">${i.cl}</span>
+                    <span style="color:var(--accent); font-weight:800;">${i.ca} CJ <span style="color:var(--danger); margin-left:15px; cursor:pointer;" onclick="removeItem(${x})">✕</span></span>
+                </div>`; 
+            });
+            document.getElementById('total-vivo').innerText = s; 
+            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
+        }
+
+        function abrirModalGuardar() {
+            if(!document.getElementById('cho').value || !document.getElementById('pla').value) return alert("Seleccione Chofer y Placa");
+            document.getElementById('modal-ask').style.display = 'flex';
+        }
+
+        async function confirmarGuardado(esHoy) {
+            document.getElementById('modal-ask').style.display = 'none';
+            const ahora = new Date();
+            const horaActual = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+            
+            let fechaGuardado = ahora.toISOString().split('T')[0];
+            if(!esHoy) {
+                let sigDia = new Date(ahora);
+                sigDia.setDate(ahora.getDate() + 1);
+                if(sigDia.getDay() === 0) sigDia.setDate(sigDia.getDate() + 1);
+                fechaGuardado = sigDia.toISOString().split('T')[0];
+            }
+
+            const r = { 
+                fecha: fechaGuardado,
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, 
+                operario: user, 
+                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
+                total: ruta.reduce((a,b) => a+b.ca, 0),
+                hora: horaActual 
+            };
+
+            saveClients(ruta);
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            if(esHoy) sendWA(r); else alert("✅ Registrada: " + fechaGuardado);
+
+            // Limpieza TOTAL después de guardar
+            ruta = []; 
+            document.getElementById('cho').value = "";
+            document.getElementById('pla').value = "";
+            document.getElementById('aux').value = "";
+            localStorage.removeItem('tw_d'); 
+            renderR(); 
+            setTimeout(load, 1500);
+        }
+
+        function renderH() {
+            const list = document.getElementById('h-list');
+            const fM = document.getElementById('f-mes').value;
+            const fD = document.getElementById('f-dia').value;
+            const fS = document.getElementById('f-search').value.toUpperCase();
+            let envMes = 0, cajasMes = 0, tDia = 0;
+            let html = "";
+            
+            db.slice().reverse().forEach((r, i) => {
+                const rStr = r.fecha ? r.fecha.split("T")[0] : "";
+                const rFechaObj = new Date(r.fecha);
+                const matchMes = (fM === "ALL" || (r.fecha && rFechaObj.getMonth().toString() === fM));
+                const matchDia = (!fD || rStr === fD);
+                const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
+
+                if (matchMes) { envMes++; cajasMes += parseFloat(r.total) || 0; }
+                if (rStr === fD) { tDia += parseFloat(r.total) || 0; }
+
+                if (matchMes && matchDia && matchSearch) {
+                    let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
+                    html += `<div class="card">
+                        <div style="display:flex; justify-content:space-between;">
+                            <div>
+                                <b style="color:var(--accent)">${r.chofer}${auxLabel}</b><br>
+                                <span style="color:var(--success); font-size:11px; font-weight:800;">🕒 ${r.hora || '--:--'}</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-weight:900;">${r.total} CJ</div>
+                                <div style="font-size:9px;">${rStr}</div>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+            });
+            list.innerHTML = html;
+            document.getElementById('stat-mes').innerText = `${envMes} (${Math.round(cajasMes)})`;
+            document.getElementById('stat-dia').innerText = Math.round(tDia);
+        }
+
+        function sendWA(r) { 
+            let aux = (r.auxiliar && r.auxiliar !== "") ? r.auxiliar : "NINGUNO";
+            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
+            window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`; 
+        }
+
+        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta })); }
+        function loadDraft() { 
+            const s = localStorage.getItem('tw_d'); 
+            if(s) { const d = JSON.parse(s); ruta = d.ruta||[]; renderR(); } 
+        }
+
+        function saveClients(it) { let c = JSON.parse(localStorage.getItem('tw_c') || "[]"); it.forEach(i => { if(!c.includes(i.cl)) c.push(i.cl); }); localStorage.setItem('tw_c', JSON.stringify(c.slice(-60))); updateSugs(); }
+        function updateSugs() { const c = JSON.parse(localStorage.getItem('tw_c') || "[]"); const dl = document.getElementById('clientes-sugeridos'); dl.innerHTML = ""; c.forEach(x => { let o = document.createElement('option'); o.value = x; dl.appendChild(o); }); }
+        function cerrarSesion() { localStorage.removeItem('tw_u'); location.reload(); }
+        function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
+    </script>
+</body>
+</html>
