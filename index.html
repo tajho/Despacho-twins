@@ -26,26 +26,24 @@
         .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 18px; margin-bottom: 14px; }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .stat-box { background: var(--card); padding: 16px; border-radius: 20px; border: 1px solid var(--border); text-align: center; }
-        .stat-val { font-size: 22px; font-weight: 800; color: var(--accent); }
+        .stat-val { font-size: 18px; font-weight: 800; color: var(--accent); }
         .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
         input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #070b1a; color: var(--text); font-size: 15px; }
         .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .btn-main { background: var(--grad); color: white; }
         
-        /* Modales */
         #modal-pass, #modal-view, #modal-ask { display: none; position: fixed; inset: 0; background: rgba(2, 4, 10, 0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
-        .ask-box { width: 100%; max-width: 320px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="modal-ask">
-        <div class="card ask-box">
+        <div class="card" style="width: 100%; max-width: 320px; text-align: center;">
             <div style="font-size: 24px; margin-bottom: 10px;">📅</div>
             <div style="font-weight: 800; margin-bottom: 5px;">PROGRAMAR DESPACHO</div>
             <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 20px;">¿Cuándo sale esta ruta?</p>
             <button class="btn" style="background: var(--success); color: #000; margin-bottom: 10px;" onclick="confirmarGuardado(true)">HOY (Mandar WA)</button>
-            <button class="btn" style="background: var(--accent); color: #000;" onclick="confirmarGuardado(false)">MAÑANA (Solo Guardar)</button>
+            <button class="btn" style="background: var(--accent); color: #000;" onclick="confirmarGuardado(false)">MAÑANA / PRÓX. ÚTIL</button>
             <button class="btn" style="background: transparent; color: var(--danger); margin-top: 10px; font-size: 12px;" onclick="document.getElementById('modal-ask').style.display='none'">CANCELAR</button>
         </div>
     </div>
@@ -113,8 +111,8 @@
 
     <div id="p3" class="page">
         <div class="stat-grid">
-            <div class="stat-box"><div class="stat-label">Mes</div><div id="stat-mes" class="stat-val">0</div></div>
-            <div class="stat-box"><div class="stat-label" id="label-dia">Día</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
+            <div class="stat-box"><div class="stat-label">Envíos Mes (Cajas)</div><div id="stat-mes" class="stat-val">0</div></div>
+            <div class="stat-box"><div class="stat-label" id="label-dia">Cajas del Día</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
         </div>
         <div id="reporte-tajho" style="display:none; margin-bottom: 15px;">
             <button class="btn" style="background: white; color: black;" onclick="generarPDF()">📄 DESCARGAR REPORTE (ADMIN)</button>
@@ -213,8 +211,19 @@
             document.getElementById('modal-ask').style.display = 'none';
             const ahora = new Date();
             const horaActual = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
+            
+            let fechaGuardado = ahora.toISOString().split('T')[0];
+            
+            if(!esHoy) {
+                let sigDia = new Date(ahora);
+                sigDia.setDate(ahora.getDate() + 1);
+                // Si mañana es Domingo (0), saltar a Lunes
+                if(sigDia.getDay() === 0) sigDia.setDate(sigDia.getDate() + 1);
+                fechaGuardado = sigDia.toISOString().split('T')[0];
+            }
 
             const r = { 
+                fecha: fechaGuardado,
                 chofer: document.getElementById('cho').value, 
                 auxiliar: document.getElementById('aux').value, 
                 placa: document.getElementById('pla').value, 
@@ -227,7 +236,7 @@
             saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
 
-            if(esHoy) sendWA(r); else alert("✅ Guardado para Mañana");
+            if(esHoy) sendWA(r); else alert("✅ Registrada para mañana (" + fechaGuardado + ")");
 
             ruta = []; localStorage.removeItem('tw_d'); renderR(); 
             setTimeout(load, 1500);
@@ -238,25 +247,37 @@
             const fM = document.getElementById('f-mes').value;
             const fD = document.getElementById('f-dia').value;
             const fS = document.getElementById('f-search').value.toUpperCase();
-            let tMes = 0, tDia = 0, tPuntos = 0;
+            let envMes = 0, cajasMes = 0, tDia = 0, tPuntos = 0;
             let html = "";
+            
             db.slice().reverse().forEach((r, i) => {
                 const rStr = r.fecha ? r.fecha.split("T")[0] : "";
-                const matchMes = (fM === "ALL" || (r.fecha && new Date(r.fecha).getMonth().toString() === fM));
+                const rFechaObj = new Date(r.fecha);
+                
+                const matchMes = (fM === "ALL" || (r.fecha && rFechaObj.getMonth().toString() === fM));
                 const matchDia = (!fD || rStr === fD);
                 const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
-                if (matchMes) tMes += parseFloat(r.total) || 0;
-                if (rStr === fD) tDia += parseFloat(r.total) || 0;
-                if (matchMes && matchDia && matchSearch) {
+
+                // ESTADÍSTICAS: Solo contar si la fecha del registro coincide con el filtro de hoy/seleccionado
+                if (matchMes) { envMes++; cajasMes += parseFloat(r.total) || 0; }
+                if (rStr === fD) {
+                    tDia += parseFloat(r.total) || 0;
                     tPuntos += (r.items.match(/:/g) || []).length;
+                }
+
+                if (matchMes && matchDia && matchSearch) {
                     let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
-                    // VISUALIZACIÓN DE HORA CORREGIDA
-                    let horaTxt = r.hora ? `<span style="color:var(--success); margin-left:8px; font-size:11px;">🕒 ${r.hora}</span>` : "";
-                    
                     html += `<div class="card">
                         <div style="display:flex; justify-content:space-between;">
-                            <div><b style="color:var(--accent)">${r.chofer}${auxLabel}</b>${horaTxt}<br><small>${r.placa} • ${rStr}</small></div>
-                            <div style="font-weight:900;">${r.total} CJ</div>
+                            <div>
+                                <b style="color:var(--accent)">${r.chofer}${auxLabel}</b><br>
+                                <span style="color:var(--success); font-size:11px; font-weight:800;">🕒 ${r.hora || '--:--'}</span><br>
+                                <small>${r.placa}</small>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-weight:900;">${r.total} CJ</div>
+                                <div style="font-size:9px; color:var(--text-dim);">${rStr}</div>
+                            </div>
                         </div>
                         <div style="display:flex; gap:8px; margin-top:10px;">
                             <button class="btn" style="padding:8px; font-size:11px; background:#1e293b; color:white;" onclick="verSoloRuta(${db.length-1-i})">VER</button>
@@ -267,11 +288,12 @@
                 }
             });
             list.innerHTML = html;
-            document.getElementById('stat-mes').innerText = Math.round(tMes);
+            document.getElementById('stat-mes').innerText = `${envMes} (${Math.round(cajasMes)})`;
             document.getElementById('stat-dia').innerText = Math.round(tDia);
             document.getElementById('stat-clientes').innerText = tPuntos;
         }
 
+        // Resto de funciones se mantienen iguales
         function renderFlota() {
             const list = document.getElementById('lista-flota'); list.innerHTML = "";
             const hoy = new Date();
@@ -287,19 +309,16 @@
                 </div>`;
             });
         }
-
         function verSoloRuta(idx) {
             const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
             r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; });
             document.getElementById('view-title').innerText = r.chofer; document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`; document.getElementById('modal-view').style.display = 'flex';
         }
-
         function sendWA(r) { 
             let aux = (r.auxiliar && r.auxiliar !== "") ? r.auxiliar : "NINGUNO";
             let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`; 
         }
-
         function generarPDF() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             doc.setFontSize(14); doc.text("REPORTE DESPACHOS TWINS - TAJHO", 10, 20);
@@ -312,7 +331,6 @@
             });
             doc.save("Reporte_Twins_Admin.pdf");
         }
-
         function editarRuta(idx) {
             const r = db[idx]; 
             ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
@@ -321,7 +339,6 @@
             document.getElementById('aux').value = r.auxiliar || ""; 
             renderR(); saveDraft(); nav('p2');
         }
-
         function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
         function loadDraft() { const s = localStorage.getItem('tw_d'); if(s) { const d = JSON.parse(s); ruta = d.ruta||[]; document.getElementById('pla').value=d.p||""; document.getElementById('cho').value=d.c||""; document.getElementById('aux').value=d.a||""; renderR(); } }
         function saveClients(it) { let c = JSON.parse(localStorage.getItem('tw_c') || "[]"); it.forEach(i => { if(!c.includes(i.cl)) c.push(i.cl); }); localStorage.setItem('tw_c', JSON.stringify(c.slice(-60))); updateSugs(); }
