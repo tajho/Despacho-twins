@@ -31,7 +31,6 @@
         input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #070b1a; color: var(--text); font-size: 15px; }
         .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; }
         .btn-main { background: var(--grad); color: white; }
-        
         #modal-pass, #modal-view, #modal-ask { display: none; position: fixed; inset: 0; background: rgba(2, 4, 10, 0.95); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; padding: 25px; }
     </style>
 </head>
@@ -99,9 +98,9 @@
         <div id="area-envio" style="display:none;">
             <div class="card" id="lista-items"></div>
             <div class="card">
-                <select id="pla" onchange="saveDraft()"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
-                <select id="cho" onchange="saveDraft()"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
-                <select id="aux" onchange="saveDraft()">
+                <select id="pla"><option value="">Placa...</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
+                <select id="cho"><option value="">Chofer...</option><option value="LUIS H.">LUIS H.</option><option value="ROMARIO">ROMARIO</option><option value="CESAR C.">CESAR C.</option><option value="WALDIR">WALDIR</option><option value="MARCELO">MARCELO</option><option value="TAJHO">TAJHO</option></select>
+                <select id="aux">
                     <option value="">Auxiliar...</option><option value="CRISTOPHER">CRISTOPHER</option><option value="PLACIDO">PLACIDO</option><option value="RODOLFO">RODOLFO</option><option value="MARTIN">MARTIN</option><option value="RICARDO">RICARDO</option><option value="PERCY">PERCY</option><option value="DANIEL C">DANIEL C</option><option value="NELSON">NELSON</option><option value="JULIO P.">JULIO P.</option><option value="JOFER">JOFER</option>
                 </select>
                 <button class="btn btn-main" onclick="abrirModalGuardar()" style="margin-top: 10px;">💾 GUARDAR DESPACHO</button>
@@ -159,228 +158,14 @@
         };
 
         function resetFechas() {
-            const h = new Date();
-            const hoyStr = h.toISOString().split('T')[0];
-            document.getElementById('f-dia').value = hoyStr;
-            document.getElementById('f-mes').value = h.getMonth();
+            const ahora = new Date();
+            const offset = ahora.getTimezoneOffset() * 60000;
+            const localHoy = new Date(ahora.getTime() - offset).toISOString().split('T')[0];
+            document.getElementById('f-dia').value = localHoy;
+            document.getElementById('f-mes').value = ahora.getMonth();
         }
 
         function login(n, targetPage = 'p2') { 
             user = n; localStorage.setItem('tw_u', n);
             document.getElementById('p1').style.display='none'; 
-            document.getElementById('header-app').style.display='flex'; 
-            document.getElementById('nav-app').style.display='flex'; 
-            document.getElementById('user-display').innerText = n; 
-            document.getElementById('reporte-tajho').style.display = (n === 'TAJHO') ? 'block' : 'none';
-            nav(targetPage); load(); 
-        }
-
-        function nav(id) { 
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav')); 
-            document.getElementById(id).classList.add('active'); 
-            document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
-            localStorage.setItem('tw_p', id);
-            
-            if(id === 'p3') {
-                resetFechas(); // Forzar hoy al entrar a historial
-                renderH();
-            }
-            if(id === 'p4') renderFlota();
-        }
-
-        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
-
-        function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return; ruta.unshift({cl, ca}); 
-            document.getElementById('cli').value = ""; document.getElementById('can').value = ""; 
-            renderR(); saveDraft();
-        }
-
-        function removeItem(index) {
-            ruta.splice(index, 1);
-            renderR();
-            saveDraft(); // Guardar cambios tras borrar
-        }
-
-        function renderR() {
-            const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { 
-                s += i.ca; 
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
-                    <span style="font-weight:700;">${i.cl}</span>
-                    <span style="color:var(--accent); font-weight:800;">${i.ca} CJ <span style="color:var(--danger); margin-left:15px; cursor:pointer;" onclick="removeItem(${x})">✕</span></span>
-                </div>`; 
-            });
-            document.getElementById('total-vivo').innerText = s; 
-            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
-        }
-
-        function abrirModalGuardar() {
-            if(!document.getElementById('cho').value || !document.getElementById('pla').value) return alert("Faltan datos (Chofer/Placa)");
-            document.getElementById('modal-ask').style.display = 'flex';
-        }
-
-        async function confirmarGuardado(esHoy) {
-            document.getElementById('modal-ask').style.display = 'none';
-            const ahora = new Date();
-            const horaActual = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-            
-            let fechaGuardado = ahora.toISOString().split('T')[0];
-            
-            if(!esHoy) {
-                let sigDia = new Date(ahora);
-                sigDia.setDate(ahora.getDate() + 1);
-                if(sigDia.getDay() === 0) sigDia.setDate(sigDia.getDate() + 1);
-                fechaGuardado = sigDia.toISOString().split('T')[0];
-            }
-
-            const r = { 
-                fecha: fechaGuardado,
-                chofer: document.getElementById('cho').value, 
-                auxiliar: document.getElementById('aux').value, 
-                placa: document.getElementById('pla').value, 
-                operario: user, 
-                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
-                total: ruta.reduce((a,b) => a+b.ca, 0),
-                hora: horaActual 
-            };
-
-            saveClients(ruta);
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-
-            if(esHoy) sendWA(r); else alert("✅ Registrada para: " + fechaGuardado);
-
-            ruta = []; localStorage.removeItem('tw_d'); renderR(); 
-            setTimeout(load, 1500);
-        }
-
-        function renderH() {
-            const list = document.getElementById('h-list');
-            const fM = document.getElementById('f-mes').value;
-            const fD = document.getElementById('f-dia').value;
-            const fS = document.getElementById('f-search').value.toUpperCase();
-            let envMes = 0, cajasMes = 0, tDia = 0, tPuntos = 0;
-            let html = "";
-            
-            db.slice().reverse().forEach((r, i) => {
-                const rStr = r.fecha ? r.fecha.split("T")[0] : "";
-                const rFechaObj = new Date(r.fecha);
-                
-                const matchMes = (fM === "ALL" || (r.fecha && rFechaObj.getMonth().toString() === fM));
-                const matchDia = (!fD || rStr === fD);
-                const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
-
-                if (matchMes) { envMes++; cajasMes += parseFloat(r.total) || 0; }
-                if (rStr === fD) {
-                    tDia += parseFloat(r.total) || 0;
-                    tPuntos += (r.items.match(/:/g) || []).length;
-                }
-
-                if (matchMes && matchDia && matchSearch) {
-                    let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
-                    html += `<div class="card">
-                        <div style="display:flex; justify-content:space-between;">
-                            <div>
-                                <b style="color:var(--accent)">${r.chofer}${auxLabel}</b><br>
-                                <span style="color:var(--success); font-size:11px; font-weight:800;">🕒 ${r.hora || '--:--'}</span><br>
-                                <small>${r.placa}</small>
-                            </div>
-                            <div style="text-align:right;">
-                                <div style="font-weight:900;">${r.total} CJ</div>
-                                <div style="font-size:9px; color:var(--text-dim);">${rStr}</div>
-                            </div>
-                        </div>
-                        <div style="display:flex; gap:8px; margin-top:10px;">
-                            <button class="btn" style="padding:8px; font-size:11px; background:#1e293b; color:white;" onclick="verSoloRuta(${db.length-1-i})">VER</button>
-                            <button class="btn" style="padding:8px; font-size:11px; background:rgba(255,184,0,0.2); color:var(--warning);" onclick="editarRuta(${db.length-1-i})">EDITAR</button>
-                            <button class="btn" style="padding:8px; font-size:11px; background:rgba(0,242,152,0.2); color:var(--success);" onclick="sendWA(db[${db.length-1-i}])">WA</button>
-                        </div>
-                    </div>`;
-                }
-            });
-            list.innerHTML = html;
-            document.getElementById('stat-mes').innerText = `${envMes} (${Math.round(cajasMes)})`;
-            document.getElementById('stat-dia').innerText = Math.round(tDia);
-            document.getElementById('stat-clientes').innerText = tPuntos;
-        }
-
-        function renderFlota() {
-            const list = document.getElementById('lista-flota'); list.innerHTML = "";
-            const hoy = new Date();
-            flotaData.forEach(v => {
-                const fin = new Date(v.soat);
-                const dif = Math.ceil((fin - hoy) / (1000 * 60 * 60 * 24));
-                list.innerHTML += `<div class="card" style="border-left:5px solid ${dif < 30 ? 'var(--warning)' : 'var(--success)'}">
-                    <b style="font-size:18px; color:var(--accent)">${v.placa}</b><br>
-                    <small>${v.clase} • Faltan ${dif} días</small>
-                    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:13px;">
-                        <span>SOAT:</span><b>${v.soat.split('-').reverse().join('/')}</b>
-                    </div>
-                </div>`;
-            });
-        }
-
-        function verSoloRuta(idx) {
-            const r = db[idx]; const content = document.getElementById('view-content'); content.innerHTML = "";
-            r.items.split(", ").forEach(item => { const p = item.split(":"); content.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${p[0]}</span><b>${p[1]} CJ</b></div>`; });
-            document.getElementById('view-title').innerText = r.chofer; document.getElementById('view-footer').innerText = `TOTAL: ${r.total} CJ`; document.getElementById('modal-view').style.display = 'flex';
-        }
-
-        function sendWA(r) { 
-            let aux = (r.auxiliar && r.auxiliar !== "") ? r.auxiliar : "NINGUNO";
-            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
-            window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`; 
-        }
-
-        function generarPDF() {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.setFontSize(14); doc.text("REPORTE DESPACHOS TWINS - TAJHO", 10, 20);
-            let y = 30;
-            db.slice(-30).forEach(r => {
-                let fechaStr = r.fecha ? r.fecha.split('T')[0] : 'S/F';
-                doc.setFontSize(10);
-                doc.text(`${fechaStr} [${r.hora || '--:--'}] | ${r.chofer} | ${r.total} CJ`, 10, y);
-                y += 8; if(y > 280) { doc.addPage(); y = 20; }
-            });
-            doc.save("Reporte_Twins_Admin.pdf");
-        }
-
-        function editarRuta(idx) {
-            const r = db[idx]; 
-            ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
-            document.getElementById('pla').value = r.placa; 
-            document.getElementById('cho').value = r.chofer; 
-            document.getElementById('aux').value = r.auxiliar || ""; 
-            renderR(); saveDraft(); nav('p2');
-        }
-
-        function saveDraft() { 
-            localStorage.setItem('tw_d', JSON.stringify({ 
-                ruta, 
-                p: document.getElementById('pla').value, 
-                c: document.getElementById('cho').value, 
-                a: document.getElementById('aux').value 
-            })); 
-        }
-
-        function loadDraft() { 
-            const s = localStorage.getItem('tw_d'); 
-            if(s) { 
-                const d = JSON.parse(s); 
-                ruta = d.ruta||[]; 
-                document.getElementById('pla').value=d.p||""; 
-                document.getElementById('cho').value=d.c||""; 
-                document.getElementById('aux').value=d.a||""; 
-                renderR(); 
-            } 
-        }
-
-        function saveClients(it) { let c = JSON.parse(localStorage.getItem('tw_c') || "[]"); it.forEach(i => { if(!c.includes(i.cl)) c.push(i.cl); }); localStorage.setItem('tw_c', JSON.stringify(c.slice(-60))); updateSugs(); }
-        function updateSugs() { const c = JSON.parse(localStorage.getItem('tw_c') || "[]"); const dl = document.getElementById('clientes-sugeridos'); dl.innerHTML = ""; c.forEach(x => { let o = document.createElement('option'); o.value = x; dl.appendChild(o); }); }
-        function cerrarSesion() { localStorage.removeItem('tw_u'); location.reload(); }
-        function checkPass() { if(document.getElementById('pass-input').value === "2026") { document.getElementById('modal-pass').style.display='none'; login('TAJHO'); } else alert("Error"); }
-    </script>
-</body>
-</html>
+            document.getElementById('header-app
