@@ -264,7 +264,6 @@
                 
                 if (rStr === fD) { 
                     tDia += parseFloat(r.total) || 0; 
-                    // CORRECCIÓN CONTEO PUNTOS: Cuenta clientes reales
                     let itemsArray = r.items.split(",");
                     tPuntos += itemsArray.length;
                 }
@@ -344,7 +343,7 @@
             renderR(); saveDraft(); nav('p2');
         }
 
-        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux').value })); }
+        function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('auxiliar')?.value || document.getElementById('aux').value })); }
         function loadDraft() { 
             const s = localStorage.getItem('tw_d'); 
             if(s) { 
