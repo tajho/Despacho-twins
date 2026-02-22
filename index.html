@@ -156,13 +156,6 @@
             loadDraft(); updateSugs();
         };
 
-        function resetFechas() {
-            const h = new Date();
-            const hoyStr = h.toLocaleDateString('en-CA'); 
-            document.getElementById('f-dia').value = hoyStr;
-            document.getElementById('f-mes').value = h.getMonth();
-        }
-
         function login(n, targetPage = 'p2') { 
             user = n; localStorage.setItem('tw_u', n);
             document.getElementById('p1').style.display='none'; 
@@ -208,18 +201,14 @@
         }
 
         function abrirModalGuardar() {
-            if(!document.getElementById('cho').value || !document.getElementById('pla').value) return alert("Faltan datos (Chofer/Placa)");
+            if(!document.getElementById('cho').value || !document.getElementById('pla').value) return alert("Faltan datos");
             document.getElementById('modal-ask').style.display = 'flex';
         }
 
         async function confirmarGuardado(esHoy) {
             document.getElementById('modal-ask').style.display = 'none';
             const ahora = new Date();
-            // MEJORA: Hora exacta en formato HH:MM (String forzado)
-            const horaActual = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-            
             let fechaGuardado = ahora.toLocaleDateString('en-CA');
-            
             if(!esHoy) {
                 let sigDia = new Date(ahora);
                 sigDia.setDate(ahora.getDate() + 1);
@@ -234,24 +223,21 @@
                 placa: document.getElementById('pla').value, 
                 operario: user, 
                 items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
-                total: ruta.reduce((a,b) => a+b.ca, 0),
-                hora: horaActual 
+                total: ruta.reduce((a,b) => a+b.ca, 0)
             };
 
-            // MEJORA VISUALIZACIÓN: Actualizar historial local y mover filtro de fecha
             db.push(r);
-            document.getElementById('f-dia').value = fechaGuardado; 
-            nav('p3'); 
+            document.getElementById('f-dia').value = fechaGuardado;
+            nav('p3');
 
             saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            if(esHoy) sendWA(r);
             
-            if(esHoy) sendWA(r); else alert("✅ Registrada para: " + fechaGuardado);
-
             ruta = []; 
             document.getElementById('cho').value = ""; document.getElementById('pla').value = ""; document.getElementById('aux').value = "";
             localStorage.removeItem('tw_d'); renderR(); 
-            setTimeout(load, 3000); 
+            setTimeout(load, 2000); 
         }
 
         function renderH() {
@@ -264,10 +250,10 @@
             let html = "";
             
             db.slice().reverse().forEach((r, i) => {
+                if(!r || !r.items) return; 
+
                 let rawFecha = r.fecha ? r.fecha.toString() : "";
                 let rStr = rawFecha.includes("T") ? rawFecha.split("T")[0] : rawFecha.split(" ")[0];
-                // MEJORA: Priorizar el campo 'hora' guardado explícitamente
-                let rHora = r.hora || "--:--";
                 
                 const rFechaObj = new Date(r.fecha);
                 const matchMes = (fM === "ALL" || (r.fecha && rFechaObj.getUTCMonth().toString() === fM));
@@ -275,7 +261,13 @@
                 const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
 
                 if (matchMes) { envMes++; cajasMes += parseFloat(r.total) || 0; }
-                if (rStr === fD) { tDia += parseFloat(r.total) || 0; tPuntos += (r.items.match(/:/g) || []).length; }
+                
+                if (rStr === fD) { 
+                    tDia += parseFloat(r.total) || 0; 
+                    // CORRECCIÓN CONTEO PUNTOS: Cuenta clientes reales
+                    let itemsArray = r.items.split(",");
+                    tPuntos += itemsArray.length;
+                }
 
                 if (matchMes && matchDia && matchSearch) {
                     let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
@@ -283,7 +275,6 @@
                         <div style="display:flex; justify-content:space-between;">
                             <div>
                                 <b style="color:var(--accent)">${r.chofer}${auxLabel}</b><br>
-                                <span style="color:var(--success); font-size:12px; font-weight:800;">🕒 ${rHora}</span><br>
                                 <small>${r.placa}</small>
                             </div>
                             <div style="text-align:right;">
@@ -305,7 +296,6 @@
             document.getElementById('stat-clientes').innerText = tPuntos;
         }
 
-        // Funciones auxiliares sin cambios
         function renderFlota() {
             const list = document.getElementById('lista-flota'); list.innerHTML = "";
             const hoy = new Date();
@@ -336,15 +326,13 @@
 
         function generarPDF() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.setFontSize(14); doc.text("REPORTE DESPACHOS TWINS - TAJHO", 10, 20);
+            doc.text("REPORTE DESPACHOS TWINS", 10, 20);
             let y = 30;
-            db.slice(-30).forEach(r => {
-                let fechaStr = r.fecha ? r.fecha.toString().split('T')[0] : 'S/F';
-                doc.setFontSize(10);
-                doc.text(`${fechaStr} [${r.hora || '--:--'}] | ${r.chofer} | ${r.total} CJ`, 10, y);
-                y += 8; if(y > 280) { doc.addPage(); y = 20; }
+            db.filter(r => r && r.items).slice(-30).forEach(r => {
+                doc.text(`${r.fecha.split('T')[0]} | ${r.chofer} | ${r.total} CJ`, 10, y);
+                y += 10;
             });
-            doc.save("Reporte_Twins_Admin.pdf");
+            doc.save("Reporte.pdf");
         }
 
         function editarRuta(idx) {
