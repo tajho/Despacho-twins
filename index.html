@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS LOGISTICS - CONEXIÓN ACTIVA</title>
+    <title>TWINS LOGISTICS - V28.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        :root { --bg: #f4f7fa; --card: #ffffff; --accent: #007aff; --text: #1f2937; --border: #e5e7eb; }
+        :root { --bg: #f0f4f8; --card: #ffffff; --accent: #007aff; --text: #1f2937; --border: #e2e8f0; }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
         .page { display: none; padding: 20px; padding-bottom: 120px; max-width: 500px; margin: 0 auto; }
         .active { display: block !important; }
-        .top-header { position: sticky; top: 0; z-index: 100; background: #1c2b46; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: white; }
-        .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); background: #fff; font-size: 15px; }
+        .top-header { position: sticky; top: 0; z-index: 100; background: #1c2b46; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); background: #f8fafc; font-size: 15px; color: var(--text); }
         .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-main { background: var(--accent); color: white; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { background: none; border: none; color: #6b7280; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 85px; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: 15px; }
+        .nav-item { background: none; border: none; color: #94a3b8; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
         .nav-item.active-nav { color: var(--accent); }
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: white; border-radius: 30px; padding: 25px; width: 100%; max-width: 360px; text-align: center; }
+        .status-offline { color: #ef4444; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 10px; display: none; }
     </style>
 </head>
 <body>
@@ -30,19 +31,22 @@
         <div class="modal-content">
             <h3 style="margin-top:0">REGISTRAR RUTA</h3>
             <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado('HOY')">📦 PARA HOY</button>
-            <button class="btn" style="background:#34c759; color:white" onclick="confirmarGuardado('MAÑANA')">📅 PARA MAÑANA</button>
+            <button class="btn" style="background:#10b981; color:white" onclick="confirmarGuardado('MAÑANA')">📅 PARA MAÑANA</button>
+            <button class="btn" style="background:none; color:gray; font-size:12px;" onclick="document.getElementById('modal-ask').style.display='none'">CANCELAR</button>
         </div>
     </div>
 
     <div id="header-app" class="top-header" style="display:none">
-        <div id="user-display" style="font-size:12px; font-weight:800; background:rgba(255,255,255,0.1); padding:5px 12px; border-radius:20px;">---</div>
-        <div style="font-weight:900;">TWINS LOGISTICS</div>
-        <i class="ph ph-power" onclick="cerrarSesion()" style="font-size:22px;"></i>
+        <div id="user-display" style="font-size:11px; font-weight:800; background:rgba(255,255,255,0.1); padding:6px 15px; border-radius:20px; text-transform:uppercase;">---</div>
+        <div style="font-weight:900; letter-spacing: -0.5px;">TWINS <span style="color:#38bdf8">LOGISTICS</span></div>
+        <i class="ph-bold ph-power" onclick="cerrarSesion()" style="font-size:22px; color:#fb7185"></i>
     </div>
 
-    <div id="p1" class="page active" style="text-align:center; padding-top:10vh">
-        <h1 style="color:#1c2b46; font-size:30px; font-weight:900;">TWINS LOGISTICS</h1>
-        <div style="display:grid; gap:12px; padding: 20px;">
+    <div id="p1" class="page active" style="text-align:center; padding-top:12vh">
+        <i class="ph-fill ph-truck" style="font-size: 60px; color: var(--accent); margin-bottom: 20px;"></i>
+        <h1 style="color:#1c2b46; font-size:32px; font-weight:900; margin:0;">BIENVENIDO</h1>
+        <p style="color:#64748b; margin-bottom:40px;">Gestión de Inventario y Rutas</p>
+        <div style="display:grid; gap:12px; padding: 0 20px;">
             <button class="btn" style="background:white; border:1px solid var(--border);" onclick="login('TAJHO ADMIN')">💎 TAJHO ADMIN</button>
             <button class="btn" style="background:white; border:1px solid var(--border);" onclick="login('FRANCESCO')">FRANCESCO</button>
             <button class="btn" style="background:white; border:1px solid var(--border);" onclick="login('OSCAR')">OSCAR</button>
@@ -51,33 +55,37 @@
     </div>
 
     <div id="p2" class="page">
-        <div class="card" style="background:var(--accent); color:white; text-align:center; border:none;">
-            <div id="total-vivo" style="font-size:48px; font-weight:900;">0</div>
-            <span style="font-size:10px; font-weight:800; opacity:0.8">CAJAS EN LISTA</span>
+        <div class="card" style="background:var(--accent); color:white; text-align:center; border:none; box-shadow: 0 10px 20px rgba(0,122,255,0.2);">
+            <div id="total-vivo" style="font-size:52px; font-weight:900;">0</div>
+            <span style="font-size:11px; font-weight:800; opacity:0.9; letter-spacing: 1px;">CAJAS EN LISTA</span>
         </div>
         <div class="card">
-            <input type="text" id="cli" placeholder="Nombre del Cliente">
-            <input type="number" id="can" placeholder="Cantidad de Cajas">
-            <button class="btn btn-main" onclick="addItem()">AÑADIR A LA RUTA</button>
+            <input type="text" id="cli" placeholder="Nombre del Cliente / Destino">
+            <input type="number" id="can" placeholder="Cantidad">
+            <button class="btn btn-main" onclick="addItem()"><i class="ph-bold ph-plus"></i>AÑADIR</button>
         </div>
         <div id="area-envio" style="display:none">
-            <div id="lista-items" class="card" style="font-size:13px; max-height:150px; overflow-y:auto;"></div>
+            <div id="lista-items" class="card" style="font-size:13px; background:#f1f5f9;"></div>
             <div class="card">
-                <select id="pla"><option value="">Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
-                <select id="cho"><option value="">Chofer</option><option value="LUIS H.">Luis H.</option><option value="ROMARIO">Romario</option><option value="CESAR C.">Cesar C.</option><option value="WALDIR">Waldir</option><option value="MARCELO">Marcelo</option></select>
+                <select id="pla"><option value="">Seleccionar Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
+                <select id="cho"><option value="">Seleccionar Chofer</option><option value="LUIS H.">Luis H.</option><option value="ROMARIO">Romario</option><option value="CESAR C.">Cesar C.</option><option value="WALDIR">Waldir</option><option value="MARCELO">Marcelo</option></select>
                 <select id="aux"><option value="">Auxiliar</option><option value="CRISTOPHER">Cristopher</option><option value="PLACIDO">Placido</option><option value="RODOLFO">Rodolfo</option></select>
-                <button class="btn" style="background:#34c759; color:white;" onclick="abrirModalGuardar()">ENVIAR A EXCEL</button>
+                <button class="btn" style="background:#10b981; color:white;" onclick="abrirModalGuardar()">GUARDAR EN EXCEL</button>
             </div>
         </div>
     </div>
 
     <div id="p3" class="page">
-        <input type="date" id="f-dia" onchange="renderH()" style="margin-bottom:15px;">
+        <div id="conn-status" class="status-offline">⚠️ SIN CONEXIÓN - REINTENTANDO...</div>
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
+            <input type="date" id="f-dia" onchange="renderH()" style="margin:0">
+            <button onclick="load()" style="background:var(--accent); color:white; border:none; padding:15px; border-radius:12px;"><i class="ph-bold ph-arrows-clockwise"></i></button>
+        </div>
         <div id="h-list"></div>
     </div>
 
     <div id="p4" class="page">
-        <h3 style="margin-bottom:20px;">Disponibilidad</h3>
+        <h3 style="font-weight:800;">Estado de Flota</h3>
         <div id="lista-flota"></div>
     </div>
 
@@ -93,10 +101,9 @@
 
         window.onload = () => {
             const u = localStorage.getItem('tw_u');
-            document.getElementById('f-dia').value = new Date().toLocaleDateString('en-CA');
+            document.getElementById('f-dia').value = new Date().toISOString().split('T')[0];
             if(u) login(u);
             load();
-            setInterval(load, 10000); 
         };
 
         function login(n) { 
@@ -119,10 +126,14 @@
 
         async function load() { 
             try { 
-                const response = await fetch(URL); 
-                const data = await response.json();
-                if(data) { db = data; renderH(); renderFlota(); }
-            } catch(e) { console.log("Error de conexión"); } 
+                const res = await fetch(URL + "?read=true"); 
+                const data = await res.json();
+                db = data;
+                document.getElementById('conn-status').style.display = 'none';
+                renderH(); renderFlota();
+            } catch(e) { 
+                document.getElementById('conn-status').style.display = 'block';
+            } 
         }
 
         function addItem() {
@@ -133,20 +144,23 @@
 
         function renderR() {
             const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <span onclick="removeItem(${x})" style="color:red">✕</span></b></div>`; });
+            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <i class="ph-bold ph-x-circle" onclick="removeItem(${x})" style="color:#ef4444; margin-left:8px;"></i></b></div>`; });
             document.getElementById('total-vivo').innerText = s; 
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
         function removeItem(x) { ruta.splice(x,1); renderR(); }
 
-        function abrirModalGuardar() { document.getElementById('modal-ask').style.display = 'flex'; }
+        function abrirModalGuardar() { 
+            if(!document.getElementById('pla').value || !document.getElementById('cho').value) return alert("Completa Placa y Chofer");
+            document.getElementById('modal-ask').style.display = 'flex'; 
+        }
 
         async function confirmarGuardado(opcion) {
             document.getElementById('modal-ask').style.display = 'none';
             let d = new Date();
             if(opcion === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
-            let fT = d.toLocaleDateString('en-CA');
+            let fT = d.toISOString().split('T')[0];
 
             const reg = { 
                 fecha: fT, chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, 
@@ -154,9 +168,15 @@
                 items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0)
             };
 
-            db.push(reg); document.getElementById('f-dia').value = fT; nav('p3'); renderH();
+            // Inyectar localmente para respuesta rápida
+            db.push(reg); 
+            document.getElementById('f-dia').value = fT;
+            nav('p3'); 
+
+            // Envío forzado al Excel
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) })
+            .then(() => { setTimeout(load, 2000); });
             
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
             ruta = []; renderR();
             document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
         }
@@ -166,13 +186,14 @@
             let html = "";
             db.slice().reverse().forEach(r => {
                 if(r.fecha.split("T")[0] === fD) {
-                    html += `<div class="card">
-                        <div style="display:flex; justify-content:space-between"><b>${r.placa}</b><b style="color:var(--accent)">${r.total} CJ</b></div>
-                        <div style="margin-top:5px; font-size:14px">${r.chofer}</div>
+                    html += `<div class="card" style="border-left:4px solid var(--accent)">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><b>${r.placa}</b><b style="color:var(--accent)">${r.total} CJ</b></div>
+                        <div style="font-size:14px; font-weight:600">${r.chofer}</div>
+                        <div style="font-size:11px; color:#64748b; margin-top:5px; line-height:1.4">${r.items}</div>
                     </div>`;
                 }
             });
-            list.innerHTML = html || "<p style='text-align:center; color:gray'>Sin rutas</p>";
+            list.innerHTML = html || "<p style='text-align:center; color:gray; padding:20px;'>No hay datos para esta fecha.</p>";
         }
 
         function renderFlota() {
@@ -181,8 +202,9 @@
             list.innerHTML = "";
             pl.forEach(p => {
                 let rH = db.find(r => r.placa === p && r.fecha.split('T')[0] === fD);
-                list.innerHTML += `<div class="card" style="border-left:5px solid ${rH ? 'red':'#34c759'}">
-                    <b>${p}</b><br><small>${rH ? 'OCUPADO: '+rH.chofer : 'DISPONIBLE'}</small>
+                list.innerHTML += `<div class="card" style="border-left:5px solid ${rH ? '#f43f5e':'#10b981'}">
+                    <div style="display:flex; justify-content:space-between"><b>${p}</b> <span>${rH ? '🔴':'🟢'}</span></div>
+                    <small style="color:#64748b">${rH ? 'OCUPADO: '+rH.chofer : 'DISPONIBLE'}</small>
                 </div>`;
             });
         }
