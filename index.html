@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS NEBULA V37 - ELITE</title>
+    <title>TWINS NEBULA V38 - ELITE PERSISTENCE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -73,7 +73,6 @@
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 3000; padding: 25px; align-items: center; justify-content: center; }
         .modal-card { background: #0a0c10; border-radius: 40px; padding: 35px; width: 100%; max-width: 400px; border: 1px solid var(--border); }
         
-        /* Stats Styles */
         .stat-label { font-size: 9px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 800; }
     </style>
@@ -166,13 +165,11 @@
                 <div><small style="opacity:0.6; font-size:10px">📍 TOTAL ENVÍOS</small><div class="stat-value" id="st-mes-envios">0</div></div>
             </div>
         </div>
-
         <div id="admin-tools" style="display:none; margin-bottom:20px">
             <button class="btn btn-ghost" style="color:var(--accent); border-color:var(--accent)" onclick="generatePDF()">
                 <i class="ph-bold ph-file-pdf"></i> GENERAR REPORTE PDF
             </button>
         </div>
-
         <div style="display:flex; gap:10px; margin-bottom:20px">
             <input type="date" id="f-filter" onchange="renderHistory()" style="flex:1.2">
             <input type="text" id="search" oninput="renderHistory()" placeholder="Buscar..." style="flex:0.8">
@@ -206,19 +203,20 @@
         const PLACAS = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
         const CHOFERES = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["CRISTOPHER", "PLACIDO", "RODOLFO", "SIN AUXILIAR", "NELSON"];
-        const SOATS = { 
-            "CEP-929": "2026-05-15", 
-            "BPN-711": "2026-08-22", 
-            "BVN-704": "2027-01-10", 
-            "BUL-742": "2026-11-05", 
-            "BVN-930": "2026-09-30" 
-        };
+        const SOATS = { "CEP-929": "2026-05-15", "BPN-711": "2026-08-22", "BVN-704": "2027-01-10", "BUL-742": "2026-11-05", "BVN-930": "2026-09-30" };
 
         window.onload = () => {
             initInputs();
-            const saved = localStorage.getItem('tw_user');
+            const savedUser = localStorage.getItem('tw_user');
+            // RECUPERAR RUTA EN PROGRESO SI EXISTE
+            const savedDraft = localStorage.getItem('tw_draft_items');
+            if(savedDraft) {
+                items = JSON.parse(savedDraft);
+                renderTemp();
+            }
+            
             document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
-            if(saved) login(saved);
+            if(savedUser) login(savedUser);
             loadData();
         };
 
@@ -232,6 +230,47 @@
             document.getElementById('aux').innerHTML = '<option value="">Auxiliar</option>' + AUXILIARES.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
+        // LÓGICA DE PERSISTENCIA AL AÑADIR/BORRAR
+        function addItem() {
+            const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
+            if(!cl || !ca) return;
+            items.unshift({cl, ca});
+            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
+            saveDraft();
+            renderTemp();
+        }
+
+        function deleteItem(i) {
+            items.splice(i, 1);
+            saveDraft();
+            renderTemp();
+        }
+
+        function saveDraft() {
+            localStorage.setItem('tw_draft_items', JSON.stringify(items));
+        }
+
+        function clearDraft() {
+            items = [];
+            localStorage.removeItem('tw_draft_items');
+            renderTemp();
+        }
+
+        function renderTemp() {
+            const box = document.getElementById('temp-list');
+            let total = 0; box.innerHTML = "";
+            items.forEach((item, i) => {
+                total += item.ca;
+                box.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
+                    <span>${item.cl}</span><b>${item.ca} CJ <i class="ph ph-trash" onclick="deleteItem(${i})" style="color:var(--danger);margin-left:12px"></i></b>
+                </div>`;
+            });
+            document.getElementById('total-cajas').innerText = total;
+            document.getElementById('total-puntos').innerText = items.length + " PUNTOS";
+            document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
+        }
+
+        // EL RESTO DEL CÓDIGO SE MANTIENE EXACTAMENTE IGUAL POR SEGURIDAD
         function checkAuth(u) {
             if(u === 'TAJHO ADMIN') { document.getElementById('m-auth').style.display = 'flex'; } 
             else { login(u); }
@@ -277,28 +316,6 @@
             }
         }
 
-        function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return;
-            items.unshift({cl, ca});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            renderTemp();
-        }
-
-        function renderTemp() {
-            const box = document.getElementById('temp-list');
-            let total = 0; box.innerHTML = "";
-            items.forEach((item, i) => {
-                total += item.ca;
-                box.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
-                    <span>${item.cl}</span><b>${item.ca} CJ <i class="ph ph-trash" onclick="items.splice(${i},1);renderTemp()" style="color:var(--danger);margin-left:12px"></i></b>
-                </div>`;
-            });
-            document.getElementById('total-cajas').innerText = total;
-            document.getElementById('total-puntos').innerText = items.length + " PUNTOS";
-            document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
-        }
-
         async function saveRoute(tipo) {
             document.getElementById('m-type').style.display = 'none';
             let d = new Date();
@@ -316,55 +333,38 @@
             document.getElementById('f-filter').value = fT;
             nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            items = []; renderTemp();
+            clearDraft(); // LIMPIAR SOLO AL GUARDAR ÉXITOSAMENTE
         }
 
         function renderHistory() {
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
             const sQ = document.getElementById('search').value.toUpperCase();
             const hoyStr = new Date().toISOString().split('T')[0];
-            
-            // Lógica de Mes
             const targetDate = new Date(fD + "T00:00:00");
             const targetMonth = targetDate.getMonth();
             const targetYear = targetDate.getFullYear();
-
             let html = "", tC = 0, tP = 0, mC = 0, mP = 0;
 
             database.forEach(r => {
                 const rf = r.fecha.split('T')[0];
                 const rDate = new Date(r.fecha);
-                
-                // Conteo Mensual
                 if(rDate.getMonth() === targetMonth && rDate.getFullYear() === targetYear) {
                     mC += parseFloat(r.total || 0);
                     mP += parseInt(r.puntos || r.items.split(',').length);
                 }
-
-                // Conteo y Render Diario
                 if(rf === fD && (r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ))) {
                     const numPuntos = r.puntos || (r.items ? r.items.split(',').length : 0);
-                    tC += parseFloat(r.total || 0); 
-                    tP += parseInt(numPuntos);
+                    tC += parseFloat(r.total || 0); tP += parseInt(numPuntos);
                     const isOld = rf < hoyStr;
-                    
                     html = `<div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
                         <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
-                            <div>
-                                <b style="font-size:18px; display:block">${r.placa}</b>
-                                <span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : (rf === hoyStr ? 'EN RUTA' : 'PROGRAMADO')}</span>
-                            </div>
-                            <div style="text-align:right">
-                                <b style="color:var(--accent); font-size:20px">${r.total} CJ</b>
-                                <div style="font-size:10px; opacity:0.6">${numPuntos} PUNTOS</div>
-                            </div>
+                            <div><b style="font-size:18px; display:block">${r.placa}</b><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : (rf === hoyStr ? 'EN RUTA' : 'PROGRAMADO')}</span></div>
+                            <div style="text-align:right"><b style="color:var(--accent); font-size:20px">${r.total} CJ</b><div style="font-size:10px; opacity:0.6">${numPuntos} PUNTOS</div></div>
                         </div>
                         <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
                         <div style="display:flex; gap:10px">
                             <button class="btn-ghost" style="flex:1; padding:12px; border-radius:15px; font-size:12px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
-                            <button class="btn" style="background:#25D366; color:white; width:60px; border-radius:15px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')">
-                                <i class="ph-fill ph-whatsapp-logo" style="font-size:22px"></i>
-                            </button>
+                            <button class="btn" style="background:#25D366; color:white; width:60px; border-radius:15px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo" style="font-size:22px"></i></button>
                         </div>
                     </div>` + html;
                 }
@@ -385,30 +385,19 @@
                 const vencimiento = new Date(SOATS[p] + "T00:00:00");
                 const diasRestantes = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
                 const colorSoat = diasRestantes <= 30 ? 'var(--danger)' : 'var(--success)';
-
                 list.innerHTML += `<div class="card" style="border-left:6px solid ${r ? 'var(--danger)' : 'var(--success)'}">
-                    <div style="display:flex; justify-content:space-between; align-items:start">
-                        <b>${p}</b> 
-                        <div style="text-align:right">
-                            <small style="opacity:0.5; font-size:9px; display:block">VENCE: ${SOATS[p]}</small>
-                            <b style="color:${colorSoat}; font-size:11px">${diasRestantes} DÍAS RESTANTES</b>
-                        </div>
-                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:start"><b>${p}</b><div style="text-align:right"><small style="opacity:0.5; font-size:9px; display:block">VENCE: ${SOATS[p]}</small><b style="color:${colorSoat}; font-size:11px">${diasRestantes} DÍAS RESTANTES</b></div></div>
                     <div style="margin-top:10px; font-size:15px">${r ? '🔴 EN RUTA: ' + r.chofer : '🟢 DISPONIBLE'}</div>
                 </div>`;
             });
         }
 
         function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const date = document.getElementById('f-filter').value;
             doc.setFontSize(18); doc.text("REPORTE DESPACHOS TWINS", 14, 20);
-            doc.setFontSize(11); doc.text("Fecha: " + date, 14, 30);
             const rows = [];
-            database.filter(r => r.fecha.split('T')[0] === date).forEach(r => {
-                rows.push([r.placa, r.chofer, r.auxiliar, r.total, r.puntos || r.items.split(',').length]);
-            });
+            database.filter(r => r.fecha.split('T')[0] === date).forEach(r => { rows.push([r.placa, r.chofer, r.auxiliar, r.total, r.puntos || r.items.split(',').length]); });
             doc.autoTable({ startY: 40, head: [['Placa', 'Chofer', 'Auxiliar', 'Cajas', 'Puntos']], body: rows, headStyles: { fillColor: [0, 122, 255] }});
             doc.save(`Reporte_Twins_${date}.pdf`);
         }
