@@ -154,7 +154,20 @@
             const lastUser = localStorage.getItem('tw_u');
             if(lastUser) login(lastUser, localStorage.getItem('tw_p') || 'p2');
             loadDraft(); updateSugs();
+            setTodayFilters(); // Nueva función para setear fecha actual al cargar
         };
+
+        function setTodayFilters() {
+            const hoy = new Date();
+            const mesActual = hoy.getMonth().toString();
+            const diaActual = hoy.toLocaleDateString('en-CA'); // Formato YYYY-MM-DD
+            
+            const selMes = document.getElementById('f-mes');
+            const selDia = document.getElementById('f-dia');
+            
+            if(selMes) selMes.value = mesActual;
+            if(selDia) selDia.value = diaActual;
+        }
 
         function login(n, targetPage = 'p2') { 
             user = n; localStorage.setItem('tw_u', n);
@@ -172,7 +185,10 @@
             document.getElementById(id).classList.add('active'); 
             document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
             localStorage.setItem('tw_p', id);
-            if(id === 'p3') { renderH(); }
+            if(id === 'p3') { 
+                setTodayFilters(); // Asegura que al entrar al historial vea lo de hoy
+                renderH(); 
+            }
             if(id === 'p4') renderFlota();
         }
 
