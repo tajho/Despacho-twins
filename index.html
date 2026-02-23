@@ -1,355 +1,66 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHO V41 - ULTRA FAST</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    <style>
-        :root {
-            --bg: #010204; --glass: rgba(255, 255, 255, 0.04);
-            --accent: #007aff; --accent-glow: rgba(0, 122, 255, 0.4);
-            --text: #f5f5f7; --text-dim: #86868b;
-            --border: rgba(255, 255, 255, 0.1);
-            --success: #2ed158; --danger: #ff453a;
+function renderHistory() {
+    const cont = document.getElementById('history-container');
+    const fD = document.getElementById('f-filter').value; // Fecha seleccionada
+    const sQ = document.getElementById('search').value.toUpperCase();
+    const targetDate = new Date(fD + "T00:00:00");
+    const targetMonth = targetDate.getMonth();
+    const targetYear = targetDate.getFullYear();
+    const hoyStr = new Date().toISOString().split('T')[0];
+
+    let html = "", 
+        diaCajas = 0, diaEnvios = 0, 
+        mesCajas = 0, mesEnvios = 0;
+
+    // Procesamos la base de datos de forma eficiente
+    for (let i = 0; i < database.length; i++) {
+        const r = database[i];
+        const rf = r.fecha.split('T')[0];
+        const rDate = new Date(r.fecha + "T00:00:00");
+
+        // 1. CÁLCULO MENSUAL (Independiente del filtro de búsqueda o día)
+        if (rDate.getMonth() === targetMonth && rDate.getFullYear() === targetYear) {
+            mesCajas += parseFloat(r.total || 0);
+            mesEnvios += parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
         }
 
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        body { 
-            margin: 0; background: var(--bg); color: var(--text); 
-            font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh;
-            background-image: radial-gradient(circle at 50% 0%, #0f172a, #010204);
-        }
+        // 2. FILTRO DE DÍA Y BÚSQUEDA
+        if (rf === fD) {
+            const matchSearch = !sQ || 
+                r.items.toUpperCase().includes(sQ) || 
+                r.chofer.toUpperCase().includes(sQ) || 
+                r.placa.toUpperCase().includes(sQ);
 
-        .page { display: none; padding: 20px; padding-bottom: 120px; max-width: 500px; margin: 0 auto; animation: scaleIn 0.2s ease-out; }
-        .active { display: block !important; }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        .top-header { 
-            position: sticky; top: 0; z-index: 1000; 
-            background: rgba(1, 2, 4, 0.8); backdrop-filter: blur(20px);
-            padding: 20px; display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid var(--border);
-        }
-        .logo { font-weight: 800; font-size: 19px; letter-spacing: -1px; }
-        .logo span { color: var(--accent); }
-
-        .card { 
-            background: var(--glass); border: 1px solid var(--border); 
-            border-radius: 30px; padding: 22px; margin-bottom: 18px;
-            backdrop-filter: blur(15px); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        input, select { 
-            width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--border); 
-            background: rgba(255,255,255,0.02); color: white; font-size: 15px;
-        }
-
-        .btn { 
-            width: 100%; padding: 18px; border-radius: 22px; border: none; 
-            font-size: 15px; font-weight: 700; cursor: pointer; 
-            display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s;
-        }
-        .btn-main { background: var(--accent); color: white; box-shadow: 0 10px 25px var(--accent-glow); }
-        .btn-ghost { background: var(--glass); color: var(--text); border: 1px solid var(--border); }
-
-        .badge { font-size: 10px; padding: 5px 12px; border-radius: 50px; font-weight: 800; }
-        .bg-done { background: rgba(46, 209, 88, 0.15); color: var(--success); }
-        .bg-route { background: rgba(0, 122, 255, 0.15); color: var(--accent); }
-
-        .nav-bar { 
-            position: fixed; bottom: 25px; left: 20px; right: 20px; 
-            background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(30px);
-            height: 80px; border-radius: 35px; border: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center; z-index: 2000;
-        }
-        .nav-link { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); border: none; background: none; flex: 1; font-size: 10px; font-weight: 700; }
-        .nav-link.active { color: var(--accent); }
-        .nav-link i { font-size: 26px; }
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 3000; padding: 25px; align-items: center; justify-content: center; }
-        .modal-card { background: #0a0c10; border-radius: 40px; padding: 35px; width: 100%; max-width: 400px; border: 1px solid var(--border); }
-        
-        .stat-label { font-size: 9px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-value { font-size: 20px; font-weight: 800; }
-    </style>
-</head>
-<body>
-
-    <div id="m-auth" class="modal">
-        <div class="modal-card">
-            <h2 style="text-align:center; margin:0">Admin Auth</h2>
-            <p style="text-align:center; color:var(--text-dim); margin-bottom:30px">Ingresa pin de seguridad</p>
-            <input type="password" id="admin-pass" placeholder="••••" style="text-align:center; font-size:28px; letter-spacing:10px; margin-bottom:25px">
-            <button class="btn btn-main" onclick="verifyAuth()">DESBLOQUEAR</button>
-            <button class="btn" style="background:none; color:var(--text-dim)" onclick="location.reload()">VOLVER</button>
-        </div>
-    </div>
-
-    <div id="m-list" class="modal" onclick="this.style.display='none'">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 id="m-title" style="margin:0 0 5px 0">Detalle</h3>
-            <div id="m-container" style="max-height: 300px; overflow-y: auto; margin-top:20px"></div>
-            <button class="btn btn-main" style="margin-top:25px" onclick="document.getElementById('m-list').style.display='none'">CERRAR</button>
-        </div>
-    </div>
-
-    <header id="app-header" class="top-header" style="display:none">
-        <div class="logo">TWINS <span>NEBULA</span></div>
-        <div style="display:flex; align-items:center; gap:12px">
-            <div style="font-size:11px; font-weight:800; color:var(--accent)" id="user-display">---</div>
-            <i class="ph-bold ph-power" onclick="logout()" style="color:var(--danger); font-size:22px"></i>
-        </div>
-    </header>
-
-    <div id="page-login" class="page active" style="text-align:center; padding-top:10vh">
-        <div style="width: 85px; height: 85px; background: var(--accent); border-radius: 28px; display:flex; align-items:center; justify-content:center; margin: 0 auto 30px; box-shadow: 0 15px 35px var(--accent-glow)">
-            <i class="ph-fill ph-shield-check" style="font-size: 45px; color: white;"></i>
-        </div>
-        <h1 style="font-weight: 800; font-size: 28px; margin: 0;">TWINS DESPACHO</h1>
-        <p style="color:var(--text-dim); margin-bottom: 40px">Selecciona tu perfil de acceso</p>
-        <div id="login-grid" style="display:grid; gap:14px; padding: 0 20px;"></div>
-    </div>
-
-    <div id="page-route" class="page">
-        <div class="card" style="background: linear-gradient(135deg, #007aff, #0033aa); border:none; color:white; overflow:hidden; position:relative">
-            <div style="position:relative; z-index:2">
-                <span style="font-size:11px; font-weight:800; opacity:0.8; letter-spacing:1px">CARGA ACTUAL</span>
-                <div id="total-cajas" style="font-size:55px; font-weight:800; margin:5px 0">0</div>
-                <div id="total-puntos" style="font-size:12px; font-weight:700; background:rgba(255,255,255,0.15); padding:6px 15px; border-radius:12px; display:inline-block">0 PUNTOS</div>
-            </div>
-            <i class="ph-fill ph-package" style="position:absolute; right:-20px; bottom:-20px; font-size:160px; opacity:0.1"></i>
-        </div>
-
-        <div class="card">
-            <input type="text" id="cli" placeholder="Cliente o Destino" style="margin-bottom:12px">
-            <div style="display:flex; gap:12px">
-                <input type="number" id="can" placeholder="Cant." style="flex:0.8">
-                <button class="btn btn-main" onclick="addItem()" style="flex:1.2"><i class="ph-bold ph-plus"></i>AÑADIR</button>
-            </div>
-        </div>
-
-        <div id="send-zone" style="display:none">
-            <div id="temp-list" class="card" style="border-style:dashed; background:transparent; font-size:14px"></div>
-            <div class="card">
-                <select id="pla" onchange="smartPredict()" style="margin-bottom:12px"></select>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px">
-                    <select id="cho"></select>
-                    <select id="aux"></select>
-                </div>
-                <button class="btn" style="background:var(--success); color:black" onclick="document.getElementById('m-type').style.display='flex'">
-                    <i class="ph-fill ph-paper-plane-tilt"></i> GUARDAR DESPACHO
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="page-history" class="page">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px">
-            <div class="card" style="margin:0; padding:15px; text-align:center">
-                <div class="stat-label">Cajas (Selección)</div>
-                <div class="stat-value" id="st-cajas" style="color:var(--accent)">0</div>
-            </div>
-            <div class="card" style="margin:0; padding:15px; text-align:center">
-                <div class="stat-label">Envíos (Selección)</div>
-                <div class="stat-value" id="st-puntos" style="color:var(--success)">0</div>
-            </div>
-        </div>
-        <div class="card" style="padding:15px; text-align:center; margin-bottom:20px">
-            <div class="stat-label">Acumulado Mensual</div>
-            <div style="display:flex; justify-content:space-around; margin-top:8px">
-                <div><small style="opacity:0.6; font-size:10px">📦 TOTAL CAJAS</small><div class="stat-value" id="st-mes-cajas">0</div></div>
-                <div><small style="opacity:0.6; font-size:10px">📍 TOTAL ENVÍOS</small><div class="stat-value" id="st-mes-envios">0</div></div>
-            </div>
-        </div>
-        <div id="admin-tools" style="display:none; margin-bottom:20px">
-            <button class="btn btn-ghost" style="color:var(--accent); border-color:var(--accent)" onclick="generatePDF()">
-                <i class="ph-bold ph-file-pdf"></i> GENERAR REPORTE PDF
-            </button>
-        </div>
-        <div style="display:flex; gap:10px; margin-bottom:20px">
-            <input type="date" id="f-filter" onchange="renderHistory()" style="flex:1.2">
-            <input type="text" id="search" oninput="renderHistory()" placeholder="Buscar por chofer o placa..." style="flex:0.8">
-        </div>
-        <div id="history-container"></div>
-    </div>
-
-    <div id="page-fleet" class="page">
-        <div id="fleet-list"></div>
-    </div>
-
-    <div id="m-type" class="modal">
-        <div class="modal-card">
-            <h3 style="text-align:center; margin-top:0">Fecha de Salida</h3>
-            <button class="btn btn-main" style="margin-bottom:15px" onclick="saveRoute('HOY')">HOY</button>
-            <button class="btn btn-ghost" style="color:var(--success)" onclick="saveRoute('MAÑANA')">MAÑANA</button>
-            <button class="btn" style="background:none; color:var(--text-dim)" onclick="document.getElementById('m-type').style.display='none'">CANCELAR</button>
-        </div>
-    </div>
-
-    <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-link" id="n-route" onclick="nav('page-route')"><i class="ph ph-plus-circle"></i>Ruta</button>
-        <button class="nav-link" id="n-history" onclick="nav('page-history')"><i class="ph ph-database"></i>Data</button>
-        <button class="nav-link" id="n-fleet" onclick="nav('page-fleet')"><i class="ph ph-truck"></i>Flota</button>
-    </nav>
-
-    <script>
-        const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
-        let user = "", items = [], database = [];
-        
-        const PLACAS = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
-        const CHOFERES = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
-        const AUXILIARES = ["CRISTOPHER", "PLACIDO", "RODOLFO", "SIN AUXILIAR", "NELSON"];
-        
-        const SOATS = { 
-            "CEP-929": "2026-07-22", "BPN-711": "2026-06-10", "BVN-704": "2026-07-02", 
-            "BUL-742": "2026-04-02", "BVN-930": "2026-07-02"
-        };
-
-        window.onload = () => {
-            initInputs();
-            const savedUser = localStorage.getItem('tw_user');
-            const savedDraft = localStorage.getItem('tw_draft_items');
-            if(savedDraft) { items = JSON.parse(savedDraft); renderTemp(); }
-            document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
-            if(savedUser) login(savedUser);
-            loadData();
-        };
-
-        function initInputs() {
-            const grid = document.getElementById('login-grid');
-            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => { grid.innerHTML += `<button class="btn btn-ghost" onclick="checkAuth('${u}')">${u}</button>`; });
-            document.getElementById('pla').innerHTML = '<option value="">Placa</option>' + PLACAS.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('cho').innerHTML = '<option value="">Chofer</option>' + CHOFERES.map(c => `<option value="${c}">${c}</option>`).join('');
-            document.getElementById('aux').innerHTML = '<option value="">Auxiliar</option>' + AUXILIARES.map(a => `<option value="${a}">${a}</option>`).join('');
-        }
-
-        // --- OPTIMIZACIÓN DE CARGA (Milisegundos) ---
-        async function loadData() {
-            const cache = localStorage.getItem('tw_db_cache');
-            if (cache) {
-                database = JSON.parse(cache);
-                renderHistory();
-                renderFleet();
+            if (matchSearch) {
+                const nP = parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
+                diaCajas += parseFloat(r.total || 0); 
+                diaEnvios += nP;
+                
+                const isOld = rf < hoyStr;
+                // Construcción visual de la tarjeta
+                html = `
+                <div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
+                    <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
+                        <div><b style="font-size:18px; display:block">${r.placa}</b><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : (rf === hoyStr ? 'EN RUTA' : 'PROGRAMADO')}</span></div>
+                        <div style="text-align:right"><b style="color:var(--accent); font-size:20px">${r.total} CJ</b><div style="font-size:10px; opacity:0.6">${nP} PUNTOS</div></div>
+                    </div>
+                    <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
+                    <div style="display:flex; gap:10px">
+                        <button class="btn-ghost" style="flex:1; padding:12px; border-radius:15px; font-size:12px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
+                        <button class="btn" style="background:#25D366; color:white; width:60px; border-radius:15px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo" style="font-size:22px"></i></button>
+                    </div>
+                </div>` + html;
             }
-
-            try {
-                const r = await fetch(API);
-                const freshData = await r.json();
-                if (JSON.stringify(freshData) !== cache) {
-                    database = freshData;
-                    localStorage.setItem('tw_db_cache', JSON.stringify(database));
-                    renderHistory();
-                    renderFleet();
-                }
-            } catch(e) { console.log("Offline mode"); }
         }
+    }
 
-        // --- RENDERIZADO DE HISTORIAL ULTRA RÁPIDO ---
-        function renderHistory() {
-            const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
-            const sQ = document.getElementById('search').value.toUpperCase();
-            const hoyStr = new Date().toISOString().split('T')[0];
-            const targetDate = new Date(fD + "T00:00:00");
-            const tM = targetDate.getMonth(), tY = targetDate.getFullYear();
-
-            let html = "", tC = 0, tP = 0, mC = 0, mP = 0;
-
-            for (let i = 0; i < database.length; i++) {
-                const r = database[i];
-                const rf = r.fecha.split('T')[0];
-                const rDate = new Date(r.fecha);
-
-                if(rDate.getMonth() === tM && rDate.getFullYear() === tY) {
-                    mC += parseFloat(r.total || 0);
-                    mP += parseInt(r.puntos || 0);
-                }
-
-                if(rf === fD) {
-                    if(!sQ || r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ) || r.placa.toUpperCase().includes(sQ)) {
-                        const nP = r.puntos || (r.items ? r.items.split(',').length : 0);
-                        tC += parseFloat(r.total || 0); tP += parseInt(nP);
-                        const isOld = rf < hoyStr;
-                        html = `
-                        <div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
-                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
-                                <div><b style="font-size:18px; display:block">${r.placa}</b><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : (rf === hoyStr ? 'EN RUTA' : 'PROGRAMADO')}</span></div>
-                                <div style="text-align:right"><b style="color:var(--accent); font-size:20px">${r.total} CJ</b><div style="font-size:10px; opacity:0.6">${nP} PUNTOS</div></div>
-                            </div>
-                            <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
-                            <div style="display:flex; gap:10px">
-                                <button class="btn-ghost" style="flex:1; padding:12px; border-radius:15px; font-size:12px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
-                                <button class="btn" style="background:#25D366; color:white; width:60px; border-radius:15px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo" style="font-size:22px"></i></button>
-                            </div>
-                        </div>` + html;
-                    }
-                }
-            }
-            cont.innerHTML = html || "<p style='text-align:center; opacity:0.5; padding:50px'>No hay registros</p>";
-            document.getElementById('st-cajas').innerText = tC; document.getElementById('st-puntos').innerText = tP;
-            document.getElementById('st-mes-cajas').innerText = mC; document.getElementById('st-mes-envios').innerText = mP;
-        }
-
-        // --- FUNCIONES DE NAVEGACIÓN Y ACCIÓN ---
-        function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return;
-            items.unshift({cl, ca});
-            document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            saveDraft(); renderTemp();
-        }
-
-        function renderTemp() {
-            const box = document.getElementById('temp-list');
-            let total = 0; box.innerHTML = "";
-            items.forEach((item, i) => {
-                total += item.ca;
-                box.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)"><span>${item.cl}</span><b>${item.ca} CJ <i class="ph ph-trash" onclick="deleteItem(${i})" style="color:var(--danger);margin-left:12px"></i></b></div>`;
-            });
-            document.getElementById('total-cajas').innerText = total;
-            document.getElementById('total-puntos').innerText = items.length + " PUNTOS";
-            document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
-        }
-
-        async function saveRoute(tipo) {
-            document.getElementById('m-type').style.display = 'none';
-            let d = new Date();
-            if(tipo === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
-            const fT = d.toISOString().split('T')[0];
-            const reg = { fecha: fT, chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, placa: document.getElementById('pla').value, items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), total: items.reduce((a,b)=>a+b.ca,0), operario: user, puntos: items.length };
-            database.unshift(reg);
-            localStorage.setItem('tw_db_cache', JSON.stringify(database));
-            document.getElementById('f-filter').value = fT;
-            nav('page-history');
-            fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            clearDraft();
-        }
-
-        function renderFleet() { 
-            const list = document.getElementById('fleet-list'), hoy = new Date(), fD = document.getElementById('f-filter').value;
-            list.innerHTML = `<h2 style="margin-bottom:25px; font-weight:800">Estado de Flota</h2>`; 
-            PLACAS.forEach(p => { 
-                const r = database.find(x => x.placa === p && x.fecha.split('T')[0] === fD); 
-                const v = new Date(SOATS[p] + "T00:00:00"), dR = Math.ceil((v - hoy) / 86400000); 
-                list.innerHTML += `<div class="card" style="border-left:6px solid ${r ? 'var(--danger)' : 'var(--success)'}"><div style="display:flex; justify-content:space-between"><b>${p}</b><div style="text-align:right"><small style="opacity:0.5; font-size:9px; display:block">SOAT VENCE: ${SOATS[p]}</small><b style="color:${dR<=30?'var(--danger)':'var(--success)'}; font-size:11px">${dR} DÍAS</b></div></div><div style="margin-top:10px">${r ? '🔴 EN RUTA: ' + r.chofer : '🟢 DISPONIBLE'}</div></div>`; 
-            }); 
-        }
-
-        function deleteItem(i) { items.splice(i, 1); saveDraft(); renderTemp(); }
-        function saveDraft() { localStorage.setItem('tw_draft_items', JSON.stringify(items)); }
-        function clearDraft() { items = []; localStorage.removeItem('tw_draft_items'); renderTemp(); }
-        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('n-' + id.split('-')[1]).classList.add('active'); if(id === 'page-history') renderHistory(); if(id === 'page-fleet') renderFleet(); }
-        function checkAuth(u) { if(u === 'TAJHO ADMIN') document.getElementById('m-auth').style.display='flex'; else login(u); }
-        function verifyAuth() { if(document.getElementById('admin-pass').value === '1234') { document.getElementById('m-auth').style.display='none'; login('TAJHO ADMIN'); } else alert("PIN Incorrecto"); }
-        function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-display').innerText = u; if(u === 'TAJHO ADMIN') document.getElementById('admin-tools').style.display = 'block'; nav('page-route'); }
-        function logout() { localStorage.clear(); location.reload(); }
-        function smartPredict() { const p = document.getElementById('pla').value; if(!p) return; const last = database.find(r => r.placa === p); if(last) { document.getElementById('cho').value = last.chofer; } }
-        function viewItems(txt, ch) { document.getElementById('m-title').innerText = "Ruta: " + ch; document.getElementById('m-container').innerHTML = txt.split(", ").map(i => { const [cl, ca] = i.split(":"); return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)"><span>${cl}</span><b>${ca}</b></div>`; }).join(''); document.getElementById('m-list').style.display = 'flex'; }
-        function wa(c, a, p, t, i) { const d = i.split(", ").map(x => `✅ ${x.toUpperCase().trim()}`).join("%0A"); const msg = `*📦 DESPACHO TWINS*%0A%0A*Chofer:* ${c}%0A*Auxiliar:* ${a}%0A*Placa:* ${p}%0A*Total:* ${t} CJ%0A%0A*DETALLE:*%0A${d}`; window.location.href = `https://wa.me/?text=${msg}`; }
-        function generatePDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); const date = document.getElementById('f-filter').value; doc.text("REPORTE DESPACHOS TWINS - " + date, 14, 20); const rows = []; database.filter(r => r.fecha.split('T')[0] === date).forEach(r => { rows.push([r.chofer, r.placa, r.items, r.total, r.operario]); }); doc.autoTable({ startY: 30, head: [['CHOFER', 'PLACA', 'DETALLES', 'TOTAL', 'OPERARIO']], body: rows }); doc.save(`Twins_${date}.pdf`); }
-    </script>
-</body>
-</html>
+    // Actualizamos los contadores en pantalla con los valores exactos
+    cont.innerHTML = html || "<p style='text-align:center; opacity:0.5; padding:50px'>No hay registros para este filtro</p>";
+    
+    // Contadores del día filtrado
+    document.getElementById('st-cajas').innerText = diaCajas.toLocaleString();
+    document.getElementById('st-puntos').innerText = diaEnvios;
+    
+    // Contadores del mes completo
+    document.getElementById('st-mes-cajas').innerText = mesCajas.toLocaleString();
+    document.getElementById('st-mes-envios').innerText = mesEnvios;
+}
