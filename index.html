@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS LOGISTICS ELITE V22.0</title>
+    <title>TWINS LOGISTICS ELITE V23.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -36,33 +36,23 @@
         .btn-main { background: var(--grad); color: white; }
         .btn-mini { padding: 10px; border-radius: 12px; font-size: 10px; flex: 1; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: white; font-weight: 700; cursor: pointer; }
 
-        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 75px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 75px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .nav-item { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
         .nav-item i { font-size: 24px; }
         .nav-item.active-nav { color: var(--accent); transform: translateY(-3px); transition: 0.2s; }
 
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: var(--card); border-radius: 30px; padding: 25px; width: 100%; max-width: 360px; border: 1px solid var(--border); }
-        .list-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div id="modal-list" class="modal-overlay" onclick="this.style.display='none'">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="margin:0">Detalle de Carga</h3>
-            <p id="list-sub" style="color:var(--text-dim); font-size:11px; margin-bottom:20px;"></p>
-            <div id="list-container" style="max-height: 300px; overflow-y: auto; margin-bottom:20px;"></div >
-            <button class="btn btn-main" onclick="document.getElementById('modal-list').style.display='none'">CERRAR</button>
-        </div>
-    </div>
-
     <div id="modal-ask" class="modal-overlay" onclick="this.style.display='none'">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3>Asignar Fecha de Salida</h3>
-            <p style="color:var(--text-dim); font-size:14px; margin-bottom:20px;">Indica la fecha exacta para el registro:</p>
-            <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado('HOY')">📦 REGISTRAR PARA HOY</button>
-            <button class="btn" style="background:var(--success); color:black" onclick="confirmarGuardado('MAÑANA')">📅 REGISTRAR PARA MAÑANA</button>
+            <h3>FECHA DE DESPACHO</h3>
+            <p style="color:var(--text-dim); font-size:14px; margin-bottom:20px;">¿Cuándo sale esta ruta?</p>
+            <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado('HOY')">📦 SALE HOY</button>
+            <button class="btn" style="background:var(--success); color:black" onclick="confirmarGuardado('MAÑANA')">📅 SALE MAÑANA</button>
         </div>
     </div>
 
@@ -84,23 +74,23 @@
 
     <div id="p2" class="page">
         <div class="stat-card" style="background:var(--grad); border:none; margin-bottom:20px; text-align:center;">
-            <span class="stat-label" style="color:white;">Carga en Proceso</span>
+            <span class="stat-label" style="color:white;">Carga Actual</span>
             <span id="total-vivo" style="font-size:45px; font-weight:900; color:white;">0</span>
         </div>
         <div class="card">
             <div style="display:flex; gap:10px">
-                <input type="text" id="cli" placeholder="Destino / Cliente">
-                <input type="number" id="can" placeholder="Cajas" style="width:100px">
+                <input type="text" id="cli" placeholder="Cliente">
+                <input type="number" id="can" placeholder="Cant" style="width:100px">
             </div>
-            <button class="btn btn-main" onclick="addItem()">AÑADIR A RUTA</button>
+            <button class="btn btn-main" onclick="addItem()">AÑADIR</button>
         </div>
         <div id="area-envio" style="display:none">
-            <div id="lista-items" class="card"></div>
+            <div id="lista-items" class="card" style="font-size:13px;"></div>
             <div class="card">
-                <select id="pla"><option value="">Camión</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
+                <select id="pla"><option value="">Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
                 <select id="cho"><option value="">Chofer</option><option value="LUIS H.">Luis H.</option><option value="ROMARIO">Romario</option><option value="CESAR C.">Cesar C.</option><option value="WALDIR">Waldir</option><option value="MARCELO">Marcelo</option></select>
                 <select id="aux"><option value="">Auxiliar</option><option value="CRISTOPHER">Cristopher</option><option value="PLACIDO">Placido</option><option value="RODOLFO">Rodolfo</option></select>
-                <button class="btn btn-main" style="background:var(--success); color:black;" onclick="abrirModalGuardar()">ENVIAR A EXCEL</button>
+                <button class="btn btn-main" style="background:var(--success); color:black;" onclick="abrirModalGuardar()">GUARDAR RUTA</button>
             </div>
         </div>
     </div>
@@ -109,17 +99,11 @@
         <div class="stat-grid">
             <div class="stat-card">
                 <span class="stat-label">TOTAL MES</span>
-                <div style="display:flex; gap:15px;">
-                    <div><small style="font-size:8px;">ENVÍOS</small><span id="stat-mes-env" class="stat-num">0</span></div>
-                    <div><small style="font-size:8px;">CAJAS</small><span id="stat-mes-caj" class="stat-num">0</span></div>
-                </div>
+                <span id="stat-mes-caj" class="stat-num">0</span>
             </div>
             <div class="stat-card">
                 <span class="stat-label">TOTAL DÍA</span>
-                <div style="display:flex; gap:15px;">
-                    <div><small style="font-size:8px;">ENVÍOS</small><span id="stat-dia-env" class="stat-num" style="color:var(--success)">0</span></div>
-                    <div><small style="font-size:8px;">CAJAS</small><span id="stat-dia-caj" class="stat-num" style="color:var(--success)">0</span></div>
-                </div>
+                <span id="stat-dia-caj" class="stat-num" style="color:var(--success)">0</span>
             </div>
         </div>
         <input type="date" id="f-dia" onchange="renderH()" style="margin-bottom:20px;">
@@ -127,13 +111,13 @@
     </div>
 
     <div id="p4" class="page">
-        <h3 style="font-weight:800;">Estado de Flota</h3>
+        <h3 style="font-weight:800;">Flota</h3>
         <div id="lista-flota"></div>
     </div>
 
     <nav id="nav-app" class="bottom-nav" style="display:none">
         <button class="nav-item" id="nav-p2" onclick="nav('p2')"><i class="ph ph-package"></i>Ruta</button>
-        <button class="nav-item" id="nav-p3" onclick="nav('p3')"><i class="ph ph-calendar"></i>Historial</button>
+        <button class="nav-item" id="nav-p3" onclick="nav('p3')"><i class="ph ph-clock-counter-clockwise"></i>Historial</button>
         <button class="nav-item" id="nav-p4" onclick="nav('p4')"><i class="ph ph-truck"></i>Flota</button>
     </nav>
 
@@ -145,10 +129,10 @@
         window.onload = () => {
             const u = localStorage.getItem('tw_u');
             if(u) login(u);
-            const hoy = new Date().toLocaleDateString('en-CA'); 
-            document.getElementById('f-dia').value = hoy;
+            // Iniciar con la fecha de hoy por defecto
+            document.getElementById('f-dia').value = new Date().toLocaleDateString('en-CA');
             load();
-            setInterval(load, 30000); 
+            setInterval(load, 15000); 
         };
 
         function login(n) { 
@@ -170,7 +154,12 @@
         }
 
         async function load() { 
-            try { const r = await fetch(URL); db = await r.json(); renderH(); renderFlota(); } catch(e){} 
+            try { 
+                const r = await fetch(URL); 
+                db = await r.json(); 
+                // Al cargar la base de datos, NO reseteamos la fecha del input f-dia
+                renderH(); renderFlota(); 
+            } catch(e){} 
         }
 
         function addItem() {
@@ -182,32 +171,26 @@
 
         function renderR() {
             const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div class="list-row"><span>${i.cl}</span><b>${i.ca} CJ <span onclick="removeItem(${x})" style="color:var(--danger); cursor:pointer">✕</span></b></div>`; });
+            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ</b></div>`; });
             document.getElementById('total-vivo').innerText = s; 
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
 
-        function removeItem(x) { ruta.splice(x,1); renderR(); }
-
-        function abrirModalGuardar() { 
-            if(!document.getElementById('pla').value || !document.getElementById('cho').value) return alert("Faltan datos");
-            document.getElementById('modal-ask').style.display = 'flex'; 
-        }
+        function abrirModalGuardar() { document.getElementById('modal-ask').style.display = 'flex'; }
 
         async function confirmarGuardado(opcion) {
             document.getElementById('modal-ask').style.display = 'none';
             
-            // CÁLCULO DE FECHA EXPLÍCITO PARA EL EXCEL
+            // CÁLCULO DE FECHA PROGRAMADA
             let d = new Date();
             if(opcion === 'MAÑANA') {
                 d.setDate(d.getDate() + 1);
                 if(d.getDay() === 0) d.setDate(d.getDate() + 1); 
             }
-            // Formato YYYY-MM-DD estricto que Google Sheets debe leer
-            let fechaFinal = d.toLocaleDateString('en-CA'); 
+            let fechaTexto = d.toLocaleDateString('en-CA'); // YYYY-MM-DD fijo
 
             const registro = { 
-                fecha: fechaFinal, 
+                fecha: fechaTexto, // ENVIAMOS EL TEXTO EXACTO AL EXCEL
                 chofer: document.getElementById('cho').value, 
                 auxiliar: document.getElementById('aux').value, 
                 placa: document.getElementById('pla').value, 
@@ -216,85 +199,52 @@
                 total: ruta.reduce((a,b) => a+b.ca, 0)
             };
 
-            // Inyectar en DB local para visualización inmediata
+            // ACTUALIZACIÓN INMEDIATA EN APP
             db.push(registro);
-            
-            // CLAVE: Cambiamos el calendario de la App a la fecha programada
-            document.getElementById('f-dia').value = fechaFinal;
-            
+            document.getElementById('f-dia').value = fechaTexto; // BLOQUEAMOS LA VISTA EN LA FECHA PROGRAMADA
             nav('p3'); 
             renderH();
 
-            // ENVIAR AL EXCEL (Asegurando que la variable fechaFinal sea lo que se mande)
-            try {
-                await fetch(URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: JSON.stringify(registro) 
-                });
-            } catch(e) { alert("Error de conexión con Excel"); }
+            // ENVÍO AL EXCEL (POST)
+            await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(registro) });
             
-            // Limpiar formulario
             ruta = []; renderR();
-            document.getElementById('pla').value = "";
-            document.getElementById('cho').value = "";
-            document.getElementById('aux').value = "";
+            document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
         }
 
         function renderH() {
             const list = document.getElementById('h-list'), fD = document.getElementById('f-dia').value;
-            let cMes = 0, eMes = 0, cDia = 0, eDia = 0, html = "";
+            let cMes = 0, cDia = 0, html = "";
             const mesActual = new Date().getMonth();
 
             db.slice().reverse().forEach(r => {
-                let rF = r.fecha.split("T")[0]; 
-                let rDate = new Date(r.fecha + "T00:00:00"); 
+                let rF = r.fecha.split("T")[0];
+                let rDate = new Date(r.fecha + "T00:00:00");
 
-                if(rDate.getMonth() === mesActual) { cMes += parseFloat(r.total); eMes++; }
+                if(rDate.getMonth() === mesActual) cMes += parseFloat(r.total);
 
                 if(fD === rF) {
-                    cDia += parseFloat(r.total); eDia++;
+                    cDia += parseFloat(r.total);
                     html += `<div class="card">
                         <div style="display:flex; justify-content:space-between">
                             <span style="background:var(--accent); color:black; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:800">${r.placa}</span>
                             <b style="color:var(--accent)">${r.total} CJ</b>
                         </div>
-                        <div style="font-weight:700; margin-top:8px">${r.chofer} <small style="color:var(--text-dim)">/ ${r.auxiliar || 'Sin Aux'}</small></div>
+                        <div style="font-weight:700; margin-top:8px">${r.chofer}</div>
                         <div style="display:flex; gap:8px; margin-top:12px">
-                            <button class="btn-mini" onclick="verLista('${r.items}', '${r.chofer}')">📋 VER LISTA</button>
-                            <button class="btn-mini" onclick="editarRuta('${r.items}', '${r.chofer}', '${r.placa}', '${r.auxiliar}')">✏️ EDITAR</button>
-                            <button class="btn-mini" onclick="sendWA('${r.fecha}', '${r.chofer}', '${r.total}', '${r.items}')">WA</button>
+                            <button class="btn-mini" onclick="sendWA('${r.fecha}', '${r.chofer}', '${r.total}', '${r.items}')">WHATSAPP</button>
                         </div>
                     </div>`;
                 }
             });
 
-            list.innerHTML = html || `<p style='text-align:center; color:gray; padding:20px;'>No hay rutas para este día</p>`;
-            document.getElementById('stat-mes-env').innerText = eMes;
+            list.innerHTML = html || `<p style='text-align:center; color:gray;'>No hay rutas para el día seleccionado</p>`;
             document.getElementById('stat-mes-caj').innerText = Math.round(cMes);
-            document.getElementById('stat-dia-env').innerText = eDia;
             document.getElementById('stat-dia-caj').innerText = Math.round(cDia);
         }
 
-        function verLista(items, chofer) {
-            document.getElementById('list-sub').innerText = "Chofer: " + chofer;
-            const container = document.getElementById('list-container');
-            container.innerHTML = "";
-            items.split(", ").forEach(i => {
-                const [cl, ca] = i.split(":");
-                container.innerHTML += `<div class="list-row"><span>${cl}</span><b>${ca} CJ</b></div>`;
-            });
-            document.getElementById('modal-list').style.display = 'flex';
-        }
-
-        function editarRuta(items, cho, pla, aux) {
-            ruta = items.split(", ").map(i => { const [cl, ca] = i.split(":"); return {cl, ca: parseInt(ca)}; });
-            document.getElementById('cho').value = cho; document.getElementById('pla').value = pla; document.getElementById('aux').value = aux;
-            renderR(); nav('p2');
-        }
-
         function sendWA(f, c, t, i) {
-            let m = `*TWINS LOGISTICS*\n*Ruta:* ${f.split('T')[0]}\n*Chofer:* ${c}\n*Cajas:* ${t}\n\n*Detalle:*\n${i.replace(/:/g, ': ').replace(/,/g, '\n')}`;
+            let m = `*TWINS LOGISTICS*\n*Ruta:* ${f.split('T')[0]}\n*Chofer:* ${c}\n*Total:* ${t} CJ\n\n*Detalle:* ${i}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`;
         }
 
@@ -305,8 +255,7 @@
             placas.forEach(p => {
                 let rH = db.find(r => r.placa === p && r.fecha.split('T')[0] === fD);
                 list.innerHTML += `<div class="card" style="border-left:5px solid ${rH ? 'var(--danger)':'var(--success)'}">
-                    <div style="display:flex; justify-content:space-between"><b>${p}</b><small>SOAT: ${soats[p]}</small></div>
-                    <div style="font-size:12px; margin-top:5px">${rH ? 'RUTA: ' + rH.chofer : 'CAMIÓN DISPONIBLE'}</div>
+                    <b>${p}</b><br><small>${rH ? 'OCUPADO: '+rH.chofer : 'DISPONIBLE'}</small>
                 </div>`;
             });
         }
