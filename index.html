@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS NEBULA V37</title>
+    <title>TWINS NEBULA V38 - OFFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -102,7 +102,7 @@
 
     <div id="page-login" class="page active" style="text-align:center; padding-top:10vh">
         <div style="width: 85px; height: 85px; background: var(--accent); border-radius: 28px; display:flex; align-items:center; justify-content:center; margin: 0 auto 30px; box-shadow: 0 15px 35px var(--accent-glow)">
-            <i class="ph-fill ph-truck" style="font-size: 45px; color: white;"></i>
+            <i class="ph-fill ph-rocket-launch" style="font-size: 45px; color: white;"></i>
         </div>
         <h1 style="font-weight: 800; font-size: 28px; margin: 0;">DESPACHO</h1>
         <div id="login-grid" style="display:grid; gap:14px; padding: 40px 20px;"></div>
@@ -111,7 +111,7 @@
     <div id="page-route" class="page">
         <div class="card" style="background: linear-gradient(135deg, #007aff, #0033aa); border:none; color:white; overflow:hidden; position:relative">
             <div style="position:relative; z-index:2">
-                <span style="font-size:11px; font-weight:800; opacity:0.8; letter-spacing:1px">CARGA EN PROCESO</span>
+                <span style="font-size:11px; font-weight:800; opacity:0.8; letter-spacing:1px">CARGA PREPARADA</span>
                 <div id="total-cajas" style="font-size:55px; font-weight:800; margin:5px 0">0</div>
                 <div id="total-puntos" style="font-size:12px; font-weight:700; background:rgba(255,255,255,0.15); padding:6px 15px; border-radius:12px; display:inline-block">0 PUNTOS</div>
             </div>
@@ -158,19 +158,19 @@
         <div id="history-container"></div>
     </div>
 
+    <div id="m-type" class="modal">
+        <div class="modal-card">
+            <h3 style="text-align:center; margin-top:0">Fecha de Salida</h3>
+            <button class="btn btn-main" style="margin-bottom:15px" onclick="saveRoute('HOY')">HOY</button>
+            <button class="btn btn-ghost" onclick="saveRoute('MAÑANA')">MAÑANA</button>
+            <button class="btn" style="background:none; margin-top:10px; color:var(--text-dim)" onclick="document.getElementById('m-type').style.display='none'">CANCELAR</button>
+        </div>
+    </div>
+
     <nav id="app-nav" class="nav-bar" style="display:none">
         <button class="nav-link" id="n-route" onclick="nav('page-route')"><i class="ph ph-plus-circle"></i>Ruta</button>
         <button class="nav-link" id="n-history" onclick="nav('page-history')"><i class="ph ph-database"></i>Data</button>
-        <button class="nav-link" id="n-fleet" onclick="nav('page-fleet')"><i class="ph ph-truck"></i>Flota</button>
     </nav>
-
-    <div id="m-type" class="modal">
-        <div class="modal-card">
-            <h3 style="text-align:center; margin-top:0">Programación</h3>
-            <button class="btn btn-main" style="margin-bottom:15px" onclick="saveRoute('HOY')">HOY</button>
-            <button class="btn btn-ghost" onclick="saveRoute('MAÑANA')">MAÑANA</button>
-        </div>
-    </div>
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
@@ -183,8 +183,9 @@
         window.onload = () => {
             initInputs();
             const savedUser = localStorage.getItem('tw_user');
+            document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
             if(savedUser) login(savedUser);
-            loadDraft(); // Recuperar borrador
+            loadDraft(); // Cargar borrador si existe
             loadData();
         };
 
@@ -198,7 +199,7 @@
             document.getElementById('aux').innerHTML = '<option value="">Auxiliar</option>' + AUXILIARES.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
-        // PERSISTENCIA DE DATOS
+        // --- FUNCIONES DE BORRADOR (NUEVAS) ---
         function saveDraft() {
             const draft = {
                 items: items,
@@ -221,15 +222,7 @@
             }
         }
 
-        function clearDraft() {
-            localStorage.removeItem('tw_draft');
-            items = [];
-            document.getElementById('pla').value = "";
-            document.getElementById('cho').value = "";
-            document.getElementById('aux').value = "";
-            renderTemp();
-        }
-
+        // --- FUNCIONES CORE (ORIGINALES) ---
         function checkAuth(u) {
             if(u === 'TAJHO ADMIN') document.getElementById('m-auth').style.display = 'flex';
             else login(u);
@@ -239,7 +232,7 @@
             if(document.getElementById('admin-pass').value === '1234') {
                 document.getElementById('m-auth').style.display = 'none';
                 login('TAJHO ADMIN');
-            } else alert("Error");
+            } else alert("Error de PIN");
         }
 
         function login(u) {
@@ -260,14 +253,21 @@
         }
 
         async function loadData() {
-            try { const r = await fetch(API); database = await r.json(); renderHistory(); } catch(e){}
+            try { 
+                const r = await fetch(API); 
+                database = await r.json(); 
+                renderHistory(); 
+            } catch(e){ console.error("Error cargando base de datos"); }
         }
 
         function smartPredict() {
             const p = document.getElementById('pla').value;
             if(!p) return;
             const last = database.slice().reverse().find(r => r.placa === p);
-            if(last) document.getElementById('cho').value = last.chofer;
+            if(last) {
+                document.getElementById('cho').value = last.chofer;
+                document.getElementById('aux').value = ""; // No sugiere auxiliar
+            }
         }
 
         function addItem() {
@@ -307,36 +307,38 @@
             };
 
             database.push(reg);
-            clearDraft(); // Borrar borrador solo al guardar éxito
+            localStorage.removeItem('tw_draft'); // Limpiar borrador al guardar
+            items = []; renderTemp();
             nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
         }
 
         function renderHistory() {
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
+            const sQ = document.getElementById('search').value.toUpperCase();
             const hoyStr = new Date().toISOString().split('T')[0];
             let html = "", tC = 0, tP = 0;
 
             database.slice().reverse().forEach(r => {
                 const rf = r.fecha.split('T')[0];
-                if(rf === fD) {
-                    const numPuntos = r.puntos || (r.items ? r.items.split(',').length : 0);
-                    tC += parseFloat(r.total); tP += parseInt(numPuntos);
+                if(rf === fD && (r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ))) {
+                    const numP = r.puntos || r.items.split(',').length;
+                    tC += parseFloat(r.total); tP += parseInt(numP);
                     const isOld = rf < hoyStr;
                     html += `<div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
                         <div style="display:flex; justify-content:space-between; align-items:start">
                             <div><b>${r.placa}</b><br><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : 'EN RUTA'}</span></div>
-                            <div style="text-align:right"><b style="color:var(--accent); font-size:18px">${r.total} CJ</b><br><small>${numPuntos} PUNTOS</small></div>
+                            <div style="text-align:right"><b style="color:var(--accent); font-size:20px">${r.total} CJ</b><br><small>${numP} PUNTOS</small></div>
                         </div>
-                        <div style="font-size:13px; margin:15px 0">${r.chofer} • ${r.auxiliar}</div>
+                        <div style="font-size:14px; margin:15px 0; color:var(--text-dim)">${r.chofer} • ${r.auxiliar}</div>
                         <div style="display:flex; gap:10px">
-                            <button class="btn-ghost" style="flex:1; padding:10px; font-size:11px" onclick="viewItems('${r.items}', '${r.chofer}')">DETALLE</button>
-                            <button class="btn" style="background:#25D366; width:50px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')"><i class="ph ph-whatsapp-logo"></i></button>
+                            <button class="btn-ghost" style="flex:1; padding:12px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
+                            <button class="btn" style="background:#25D366; width:60px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i></button>
                         </div>
                     </div>`;
                 }
             });
-            cont.innerHTML = html;
+            cont.innerHTML = html || "<p style='text-align:center; opacity:0.5; padding:50px'>No hay registros</p>";
             document.getElementById('st-cajas').innerText = tC;
             document.getElementById('st-puntos').innerText = tP;
         }
@@ -349,7 +351,7 @@
 
         function viewItems(txt, ch) {
             document.getElementById('m-title').innerText = "Ruta: " + ch;
-            document.getElementById('m-container').innerHTML = txt.split(", ").map(i => `<div style="padding:10px 0; border-bottom:1px solid var(--border)">${i}</div>`).join('');
+            document.getElementById('m-container').innerHTML = txt.split(", ").map(i => `<div style="padding:12px 0; border-bottom:1px solid var(--border)">${i}</div>`).join('');
             document.getElementById('m-list').style.display = 'flex';
         }
 
