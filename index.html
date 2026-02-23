@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS LOGISTICS ELITE V19.0</title>
+    <title>TWINS LOGISTICS ELITE V20.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -36,10 +36,10 @@
         .btn-main { background: var(--grad); color: white; }
         .btn-mini { padding: 10px; border-radius: 12px; font-size: 10px; flex: 1; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: white; font-weight: 700; cursor: pointer; }
 
-        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 75px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
-        .nav-item { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; transition: 0.2s; }
+        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 75px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
         .nav-item i { font-size: 24px; }
-        .nav-item.active-nav { color: var(--accent); transform: translateY(-3px); }
+        .nav-item.active-nav { color: var(--accent); transform: translateY(-3px); transition: 0.2s; }
 
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: var(--card); border-radius: 30px; padding: 25px; width: 100%; max-width: 360px; border: 1px solid var(--border); }
@@ -50,26 +50,26 @@
 
     <div id="modal-list" class="modal-overlay" onclick="this.style.display='none'">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 id="list-title" style="margin:0 0 5px 0;">Lista de Envío</h3>
+            <h3 style="margin:0">Contenido de Ruta</h3>
             <p id="list-sub" style="color:var(--text-dim); font-size:11px; margin-bottom:20px;"></p>
             <div id="list-container" style="max-height: 300px; overflow-y: auto; margin-bottom:20px;"></div>
-            <button class="btn btn-main" onclick="document.getElementById('modal-list').style.display='none'">CERRAR</button>
+            <button class="btn btn-main" onclick="document.getElementById('modal-list').style.display='none'">ENTENDIDO</button>
         </div>
     </div>
 
     <div id="modal-ask" class="modal-overlay" onclick="this.style.display='none'">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3>Programar Ruta</h3>
-            <p style="color:var(--text-dim); font-size:14px; margin-bottom:20px;">¿Cuándo sale este despacho?</p>
-            <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado(true)">📦 SALIDA HOY</button>
-            <button class="btn" style="background:var(--success); color:black" onclick="confirmarGuardado(false)">📅 SALIDA MAÑANA</button>
+            <h3>Programar Despacho</h3>
+            <p style="color:var(--text-dim); font-size:14px; margin-bottom:20px;">Selecciona la fecha para el Excel:</p>
+            <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado(true)">📦 PARA HOY</button>
+            <button class="btn" style="background:var(--success); color:black" onclick="confirmarGuardado(false)">📅 PARA MAÑANA</button>
         </div>
     </div>
 
     <div id="header-app" class="top-header" style="display:none">
         <div class="user-pill"><span id="user-display">---</span></div>
         <div style="font-weight:900; font-size:14px;">TWINS <span style="color:var(--accent)">ELITE</span></div>
-        <button onclick="cerrarSesion()" style="background:none; border:none; color:var(--danger); font-weight:800;"><i class="ph ph-sign-out" style="font-size: 20px;"></i></button>
+        <button onclick="cerrarSesion()" style="background:none; border:none; color:var(--danger);"><i class="ph ph-power" style="font-size:22px;"></i></button>
     </div>
 
     <div id="p1" class="page active" style="text-align:center; padding-top:10vh">
@@ -84,23 +84,23 @@
 
     <div id="p2" class="page">
         <div class="stat-card" style="background:var(--grad); border:none; margin-bottom:20px; text-align:center;">
-            <span class="stat-label" style="color:white;">Cajas en Carga Actual</span>
+            <span class="stat-label" style="color:white;">Carga en Preparación</span>
             <span id="total-vivo" style="font-size:45px; font-weight:900; color:white;">0</span>
         </div>
         <div class="card">
             <div style="display:flex; gap:10px">
-                <input type="text" id="cli" placeholder="Cliente" style="flex:2">
-                <input type="number" id="can" placeholder="Cant" style="flex:1">
+                <input type="text" id="cli" placeholder="Cliente">
+                <input type="number" id="can" placeholder="Cant" style="width:100px">
             </div>
-            <button class="btn btn-main" onclick="addItem()">AÑADIR</button>
+            <button class="btn btn-main" onclick="addItem()">+ AÑADIR ITEM</button>
         </div>
         <div id="area-envio" style="display:none">
             <div id="lista-items" class="card"></div>
             <div class="card">
-                <select id="pla"><option value="">Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
-                <select id="cho"><option value="">Chofer</option><option value="LUIS H.">Luis H.</option><option value="ROMARIO">Romario</option><option value="CESAR C.">Cesar C.</option><option value="WALDIR">Waldir</option><option value="MARCELO">Marcelo</option></select>
-                <select id="aux"><option value="">Auxiliar</option><option value="CRISTOPHER">Cristopher</option><option value="PLACIDO">Placido</option><option value="RODOLFO">Rodolfo</option></select>
-                <button class="btn btn-main" style="background:var(--success); color:black;" onclick="abrirModalGuardar()">GUARDAR RUTA</button>
+                <select id="pla"><option value="">Seleccionar Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
+                <select id="cho"><option value="">Seleccionar Chofer</option><option value="LUIS H.">Luis H.</option><option value="ROMARIO">Romario</option><option value="CESAR C.">Cesar C.</option><option value="WALDIR">Waldir</option><option value="MARCELO">Marcelo</option></select>
+                <select id="aux"><option value="">Seleccionar Auxiliar</option><option value="CRISTOPHER">Cristopher</option><option value="PLACIDO">Placido</option><option value="RODOLFO">Rodolfo</option></select>
+                <button class="btn btn-main" style="background:var(--success); color:black;" onclick="abrirModalGuardar()">ENVIAR A EXCEL</button>
             </div>
         </div>
     </div>
@@ -108,47 +108,46 @@
     <div id="p3" class="page">
         <div class="stat-grid">
             <div class="stat-card">
-                <span class="stat-label">REPORTE MENSUAL</span>
+                <span class="stat-label">TOTAL MES</span>
                 <div style="display:flex; gap:15px;">
-                    <div><small style="font-size:8px; display:block">ENVÍOS</small><span id="stat-mes-env" class="stat-num">0</span></div>
-                    <div><small style="font-size:8px; display:block">CAJAS</small><span id="stat-mes-caj" class="stat-num">0</span></div>
+                    <div><small style="font-size:8px;">ENVÍOS</small><span id="stat-mes-env" class="stat-num">0</span></div>
+                    <div><small style="font-size:8px;">CAJAS</small><span id="stat-mes-caj" class="stat-num">0</span></div>
                 </div>
             </div>
             <div class="stat-card">
-                <span class="stat-label">REPORTE DEL DÍA</span>
+                <span class="stat-label">TOTAL DÍA</span>
                 <div style="display:flex; gap:15px;">
-                    <div><small style="font-size:8px; display:block">ENVÍOS</small><span id="stat-dia-env" class="stat-num" style="color:var(--success)">0</span></div>
-                    <div><small style="font-size:8px; display:block">CAJAS</small><span id="stat-dia-caj" class="stat-num" style="color:var(--success)">0</span></div>
+                    <div><small style="font-size:8px;">ENVÍOS</small><span id="stat-dia-env" class="stat-num" style="color:var(--success)">0</span></div>
+                    <div><small style="font-size:8px;">CAJAS</small><span id="stat-dia-caj" class="stat-num" style="color:var(--success)">0</span></div>
                 </div>
             </div>
         </div>
-        <input type="date" id="f-dia" onchange="cambiarFechaManual()" style="margin-bottom:20px;">
+        <input type="date" id="f-dia" onchange="bloquearAutoUpdate()" style="margin-bottom:20px;">
         <div id="h-list"></div>
     </div>
 
     <div id="p4" class="page">
-        <h3 style="font-weight:800;">Estado de Flota</h3>
+        <h3 style="font-weight:800;">Estado de Unidades</h3>
         <div id="lista-flota"></div>
     </div>
 
     <nav id="nav-app" class="bottom-nav" style="display:none">
-        <button class="nav-item" id="btn-p2" onclick="nav('p2')"><i class="ph ph-package"></i>Ruta</button>
-        <button class="nav-item" id="btn-p3" onclick="nav('p3')"><i class="ph ph-chart-bar"></i>Historial</button>
-        <button class="nav-item" id="btn-p4" onclick="nav('p4')"><i class="ph ph-truck"></i>Flota</button>
+        <button class="nav-item" id="nav-p2" onclick="nav('p2')"><i class="ph ph-steering-wheel"></i>Ruta</button>
+        <button class="nav-item" id="nav-p3" onclick="nav('p3')"><i class="ph ph-calendar-check"></i>Historial</button>
+        <button class="nav-item" id="nav-p4" onclick="nav('p4')"><i class="ph ph-truck"></i>Flota</button>
     </nav>
 
     <script>
         const URL = "https://script.google.com/macros/s/AKfycbz9V0MzUuuAHTa9N4-xrsVJV7DbkWLtgJY5xHM7_JTfIDlBxCtimM6FHjRpVczuD2kM/exec";
-        let user = "", ruta = [], db = [];
-        let manualDateSet = false; // Bloqueo para evitar que load() cambie la fecha
+        let user = "", ruta = [], db = [], lockDate = false;
         const soats = { "CEP-929": "15/05/26", "BPN-711": "22/08/26", "BVN-704": "10/01/27", "BUL-742": "05/11/26", "BVN-930": "30/09/26" };
 
         window.onload = () => {
             const u = localStorage.getItem('tw_u');
             if(u) login(u);
-            const hoy = new Date().toISOString().split('T')[0];
-            document.getElementById('f-dia').value = hoy;
+            document.getElementById('f-dia').value = new Date().toISOString().split('T')[0];
             load();
+            setInterval(load, 15000);
         };
 
         function login(n) { 
@@ -164,17 +163,13 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active-nav'));
             document.getElementById(id).classList.add('active'); 
-            document.getElementById('btn-' + id).classList.add('active-nav');
+            document.getElementById('nav-' + id).classList.add('active-nav');
             if(id === 'p3') renderH();
             if(id === 'p4') renderFlota();
         }
 
         async function load() { 
-            try { 
-                const r = await fetch(URL); 
-                db = await r.json(); 
-                renderH(); renderFlota(); 
-            } catch(e){} 
+            try { const r = await fetch(URL); db = await r.json(); renderH(); renderFlota(); } catch(e){} 
         }
 
         function addItem() {
@@ -193,39 +188,43 @@
 
         function removeItem(x) { ruta.splice(x,1); renderR(); }
 
-        function abrirModalGuardar() { 
-            if(!document.getElementById('cho').value || !document.getElementById('pla').value) return alert("Faltan datos");
-            document.getElementById('modal-ask').style.display = 'flex'; 
-        }
+        function abrirModalGuardar() { document.getElementById('modal-ask').style.display = 'flex'; }
 
-        function cambiarFechaManual() {
-            manualDateSet = true; // El usuario eligió una fecha, no la muevas al actualizar
-            renderH();
-        }
+        function bloquearAutoUpdate() { lockDate = true; renderH(); }
 
         async function confirmarGuardado(esHoy) {
             document.getElementById('modal-ask').style.display = 'none';
-            let d = new Date();
+            
+            // LOGICA DE FECHA REAL
+            let fechaObjetivo = new Date();
             if(!esHoy) {
-                d.setDate(d.getDate() + 1);
-                if(d.getDay() === 0) d.setDate(d.getDate() + 1);
+                fechaObjetivo.setDate(fechaObjetivo.getDate() + 1);
+                if(fechaObjetivo.getDay() === 0) fechaObjetivo.setDate(fechaObjetivo.getDate() + 1);
             }
-            let fFinal = d.toISOString().split('T')[0];
+            // Formatear a YYYY-MM-DD para el Excel
+            let fechaString = fechaObjetivo.toISOString().split('T')[0];
 
-            const r = { 
-                fecha: fFinal, chofer: document.getElementById('cho').value, 
-                auxiliar: document.getElementById('aux').value, placa: document.getElementById('pla').value, 
-                operario: user, items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
+            const payload = { 
+                fecha: fechaString, // ESTA ES LA FECHA QUE VA AL EXCEL
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, 
+                operario: user, 
+                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
                 total: ruta.reduce((a,b) => a+b.ca, 0)
             };
 
-            db.push(r);
-            manualDateSet = true; // Bloqueamos la fecha para que se quede en la programada
-            document.getElementById('f-dia').value = fFinal;
+            // Mostrar en historial de inmediato
+            db.push(payload);
+            lockDate = true;
+            document.getElementById('f-dia').value = fechaString;
             nav('p3'); renderH();
 
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            // Envío real al Excel
+            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            
             ruta = []; renderR();
+            document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
             setTimeout(load, 2000);
         }
 
@@ -237,11 +236,7 @@
             db.slice().reverse().forEach(r => {
                 let rDate = new Date(r.fecha);
                 let rF = r.fecha.split("T")[0];
-
-                if(rDate.getMonth() === mesActual) {
-                    cMes += parseFloat(r.total); eMes++;
-                }
-
+                if(rDate.getMonth() === mesActual) { cMes += parseFloat(r.total); eMes++; }
                 if(fD === rF) {
                     cDia += parseFloat(r.total); eDia++;
                     html += `<div class="card">
@@ -249,16 +244,16 @@
                             <span style="background:var(--accent); color:black; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:800">${r.placa}</span>
                             <b style="color:var(--accent)">${r.total} CJ</b>
                         </div>
-                        <div style="font-weight:700; margin-top:8px">${r.chofer} <span style="font-weight:400; font-size:12px; color:var(--text-dim)">/ ${r.auxiliar || 'Sin Aux'}</span></div>
+                        <div style="font-weight:700; margin-top:8px">${r.chofer} <small style="color:var(--text-dim)">/ ${r.auxiliar || 'Sin Aux'}</small></div>
                         <div style="display:flex; gap:8px; margin-top:12px">
-                            <button class="btn-mini" onclick="verLista('${r.items}', '${r.chofer}')">📋 VER LISTA</button>
+                            <button class="btn-mini" onclick="verLista('${r.items}', '${r.chofer}')">📋 LISTA</button>
                             <button class="btn-mini" onclick="editarRuta('${r.items}', '${r.chofer}', '${r.placa}', '${r.auxiliar}')">✏️ EDITAR</button>
                             <button class="btn-mini" onclick="sendWA('${r.fecha}', '${r.chofer}', '${r.total}', '${r.items}')">WA</button>
                         </div>
                     </div>`;
                 }
             });
-            list.innerHTML = html || "<p style='text-align:center; color:gray'>No hay rutas para este día</p>";
+            list.innerHTML = html || "<p style='text-align:center; color:gray'>Sin registros</p>";
             document.getElementById('stat-mes-env').innerText = eMes;
             document.getElementById('stat-mes-caj').innerText = Math.round(cMes);
             document.getElementById('stat-dia-env').innerText = eDia;
@@ -266,7 +261,7 @@
         }
 
         function verLista(items, chofer) {
-            document.getElementById('list-sub').innerText = "Responsable: " + chofer;
+            document.getElementById('list-sub').innerText = "Chofer: " + chofer;
             const container = document.getElementById('list-container');
             container.innerHTML = "";
             items.split(", ").forEach(i => {
@@ -277,16 +272,13 @@
         }
 
         function editarRuta(items, cho, pla, aux) {
-            if(!confirm("¿Cargar esta ruta para editar?")) return;
             ruta = items.split(", ").map(i => { const [cl, ca] = i.split(":"); return {cl, ca: parseInt(ca)}; });
-            document.getElementById('cho').value = cho;
-            document.getElementById('pla').value = pla;
-            document.getElementById('aux').value = aux;
+            document.getElementById('cho').value = cho; document.getElementById('pla').value = pla; document.getElementById('aux').value = aux;
             renderR(); nav('p2');
         }
 
         function sendWA(f, c, t, i) {
-            let m = `*📦 DESPACHO TWINS*\n*Fecha:* ${f.split('T')[0]}\n*Chofer:* ${c}\n*Total:* ${t} CJ\n\n*CLIENTES:*\n${i.replace(/:/g, ': ').replace(/,/g, '\n')}`;
+            let m = `*TWINS ELITE*\n*Fecha:* ${f.split('T')[0]}\n*Chofer:* ${c}\n*Total:* ${t} CJ\n\n*CLIENTES:*\n${i.replace(/:/g, ': ').replace(/,/g, '\n')}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`;
         }
 
@@ -297,16 +289,13 @@
             placas.forEach(p => {
                 let rH = db.find(r => r.placa === p && r.fecha.split('T')[0] === fD);
                 list.innerHTML += `<div class="card" style="border-left:5px solid ${rH ? 'var(--danger)':'var(--success)'}">
-                    <div style="display:flex; justify-content:space-between"><b>${p}</b><small style="color:var(--warning)">SOAT: ${soats[p]}</small></div>
+                    <div style="display:flex; justify-content:space-between"><b>${p}</b><small>SOAT: ${soats[p]}</small></div>
                     <div style="font-size:12px; margin-top:5px">${rH ? 'OCUPADO: ' + rH.chofer : 'DISPONIBLE'}</div>
                 </div>`;
             });
         }
 
         function cerrarSesion() { localStorage.clear(); location.reload(); }
-        
-        // Carga automática cada 15 segundos pero sin resetear la fecha
-        setInterval(load, 15000);
     </script>
 </body>
 </html>
