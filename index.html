@@ -161,10 +161,8 @@
             const hoy = new Date();
             const mesActual = hoy.getMonth().toString();
             const diaActual = hoy.toLocaleDateString('en-CA');
-            const selMes = document.getElementById('f-mes');
-            const selDia = document.getElementById('f-dia');
-            if(selMes) selMes.value = mesActual;
-            if(selDia) selDia.value = diaActual;
+            if(document.getElementById('f-mes')) document.getElementById('f-mes').value = mesActual;
+            if(document.getElementById('f-dia')) document.getElementById('f-dia').value = diaActual;
         }
 
         function login(n, targetPage = 'p2') { 
@@ -183,7 +181,7 @@
             document.getElementById(id).classList.add('active'); 
             document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
             localStorage.setItem('tw_p', id);
-            if(id === 'p3') { setTodayFilters(); renderH(); }
+            if(id === 'p3') renderH();
             if(id === 'p4') renderFlota();
         }
 
@@ -241,9 +239,13 @@
             };
 
             db.push(r);
+            
+            // ESTA ES LA CLAVE: Forzamos el filtro a la fecha guardada
             document.getElementById('f-dia').value = fechaFinalString;
             document.getElementById('f-mes').value = fechaObjetivo.getMonth().toString();
-            nav('p3');
+            
+            nav('p3'); // Ir al historial
+            renderH(); // Refrescar historial con el nuevo filtro
 
             saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
