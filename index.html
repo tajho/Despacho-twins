@@ -3,49 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS LOGISTICS - V28.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>TWINS LOGISTICS - SISTEMA DE RUTAS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        :root { --bg: #f0f4f8; --card: #ffffff; --accent: #007aff; --text: #1f2937; --border: #e2e8f0; }
+        :root {
+            --bg: #f5f7fa; /* Fondo claro para mejor visibilidad */
+            --card: #ffffff;
+            --accent: #007aff;
+            --header: #1c2b46;
+            --text: #1f2937;
+            --border: #e5e7eb;
+            --success: #34c759;
+            --danger: #ff3b30;
+        }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        
+        /* Sistema de Páginas */
         .page { display: none; padding: 20px; padding-bottom: 120px; max-width: 500px; margin: 0 auto; }
         .active { display: block !important; }
-        .top-header { position: sticky; top: 0; z-index: 100; background: #1c2b46; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); background: #f8fafc; font-size: 15px; color: var(--text); }
-        .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
+
+        /* Header Principal */
+        .top-header { position: sticky; top: 0; z-index: 100; background: var(--header); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .user-pill { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 50px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+
+        /* Tarjetas */
+        .card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 12px; border: 1px solid var(--border); background: #fff; font-size: 15px; font-family: inherit; }
+
+        /* Botones */
+        .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
         .btn-main { background: var(--accent); color: white; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 85px; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: 15px; }
-        .nav-item { background: none; border: none; color: #94a3b8; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+        .btn-mini { padding: 10px; border-radius: 10px; font-size: 10px; border: 1px solid var(--border); background: #f9fafb; color: var(--text); font-weight: 700; width: 100%; margin-top: 10px; }
+
+        /* Navegación Inferior */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: white; border-top: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-item { background: none; border: none; color: #9ca3af; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+        .nav-item i { font-size: 24px; }
         .nav-item.active-nav { color: var(--accent); }
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: white; border-radius: 30px; padding: 25px; width: 100%; max-width: 360px; text-align: center; }
-        .status-offline { color: #ef4444; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 10px; display: none; }
+
+        /* Modales */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: white; border-radius: 24px; padding: 25px; width: 100%; max-width: 360px; text-align: center; }
     </style>
 </head>
 <body>
 
     <div id="modal-ask" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="margin-top:0">REGISTRAR RUTA</h3>
-            <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado('HOY')">📦 PARA HOY</button>
-            <button class="btn" style="background:#10b981; color:white" onclick="confirmarGuardado('MAÑANA')">📅 PARA MAÑANA</button>
-            <button class="btn" style="background:none; color:gray; font-size:12px;" onclick="document.getElementById('modal-ask').style.display='none'">CANCELAR</button>
+            <h3 style="margin-top:0">PROGRAMAR ENVÍO</h3>
+            <p style="color:gray; font-size:14px; margin-bottom:20px;">¿Cuándo se realiza este despacho?</p>
+            <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado('HOY')">📦 DESPACHAR HOY</button>
+            <button class="btn" style="background:var(--success); color:white" onclick="confirmarGuardado('MAÑANA')">📅 DESPACHAR MAÑANA</button>
+            <button class="btn" style="background:none; color:gray; margin-top:10px;" onclick="document.getElementById('modal-ask').style.display='none'">CANCELAR</button>
         </div>
     </div>
 
     <div id="header-app" class="top-header" style="display:none">
-        <div id="user-display" style="font-size:11px; font-weight:800; background:rgba(255,255,255,0.1); padding:6px 15px; border-radius:20px; text-transform:uppercase;">---</div>
-        <div style="font-weight:900; letter-spacing: -0.5px;">TWINS <span style="color:#38bdf8">LOGISTICS</span></div>
-        <i class="ph-bold ph-power" onclick="cerrarSesion()" style="font-size:22px; color:#fb7185"></i>
+        <div class="user-pill"><span id="user-display">---</span></div>
+        <div style="font-weight:900; letter-spacing: -0.5px;">TWINS <span style="color:var(--accent)">LOGISTICS</span></div>
+        <i class="ph-bold ph-power" onclick="cerrarSesion()" style="font-size:20px; color:#ff4d4d"></i>
     </div>
 
-    <div id="p1" class="page active" style="text-align:center; padding-top:12vh">
+    <div id="p1" class="page active" style="text-align:center; padding-top:10vh">
         <i class="ph-fill ph-truck" style="font-size: 60px; color: var(--accent); margin-bottom: 20px;"></i>
-        <h1 style="color:#1c2b46; font-size:32px; font-weight:900; margin:0;">BIENVENIDO</h1>
-        <p style="color:#64748b; margin-bottom:40px;">Gestión de Inventario y Rutas</p>
+        <h1 style="font-size:28px; font-weight:900; color:var(--header); margin:0">SISTEMA ELITE</h1>
+        <p style="color:gray; margin-bottom:30px;">Selecciona tu usuario para entrar</p>
         <div style="display:grid; gap:12px; padding: 0 20px;">
             <button class="btn" style="background:white; border:1px solid var(--border);" onclick="login('TAJHO ADMIN')">💎 TAJHO ADMIN</button>
             <button class="btn" style="background:white; border:1px solid var(--border);" onclick="login('FRANCESCO')">FRANCESCO</button>
@@ -55,37 +80,40 @@
     </div>
 
     <div id="p2" class="page">
-        <div class="card" style="background:var(--accent); color:white; text-align:center; border:none; box-shadow: 0 10px 20px rgba(0,122,255,0.2);">
+        <div class="card" style="background:var(--accent); color:white; text-align:center; border:none; box-shadow: 0 8px 16px rgba(0,122,255,0.2);">
             <div id="total-vivo" style="font-size:52px; font-weight:900;">0</div>
-            <span style="font-size:11px; font-weight:800; opacity:0.9; letter-spacing: 1px;">CAJAS EN LISTA</span>
+            <span style="font-size:10px; font-weight:800; opacity:0.8; letter-spacing: 1px;">CAJAS CARGADAS</span>
         </div>
+
         <div class="card">
-            <input type="text" id="cli" placeholder="Nombre del Cliente / Destino">
-            <input type="number" id="can" placeholder="Cantidad">
-            <button class="btn btn-main" onclick="addItem()"><i class="ph-bold ph-plus"></i>AÑADIR</button>
+            <div style="display:flex; gap:10px">
+                <input type="text" id="cli" placeholder="Destino / Cliente">
+                <input type="number" id="can" placeholder="Cant" style="width:100px">
+            </div>
+            <button class="btn btn-main" onclick="addItem()"><i class="ph-bold ph-plus"></i>AÑADIR A LISTA</button>
         </div>
+
         <div id="area-envio" style="display:none">
-            <div id="lista-items" class="card" style="font-size:13px; background:#f1f5f9;"></div>
+            <div id="lista-items" class="card" style="font-size:13px; background:#f8fafc; border-style:dashed;"></div>
             <div class="card">
                 <select id="pla"><option value="">Seleccionar Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
                 <select id="cho"><option value="">Seleccionar Chofer</option><option value="LUIS H.">Luis H.</option><option value="ROMARIO">Romario</option><option value="CESAR C.">Cesar C.</option><option value="WALDIR">Waldir</option><option value="MARCELO">Marcelo</option></select>
                 <select id="aux"><option value="">Auxiliar</option><option value="CRISTOPHER">Cristopher</option><option value="PLACIDO">Placido</option><option value="RODOLFO">Rodolfo</option></select>
-                <button class="btn" style="background:#10b981; color:white;" onclick="abrirModalGuardar()">GUARDAR EN EXCEL</button>
+                <button class="btn" style="background:var(--success); color:white;" onclick="abrirModalGuardar()">GUARDAR RUTA EN EXCEL</button>
             </div>
         </div>
     </div>
 
     <div id="p3" class="page">
-        <div id="conn-status" class="status-offline">⚠️ SIN CONEXIÓN - REINTENTANDO...</div>
-        <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="date" id="f-dia" onchange="renderH()" style="margin:0">
-            <button onclick="load()" style="background:var(--accent); color:white; border:none; padding:15px; border-radius:12px;"><i class="ph-bold ph-arrows-clockwise"></i></button>
+            <button onclick="load()" style="background:white; border:1px solid var(--border); padding:10px; border-radius:12px; width:50px"><i class="ph-bold ph-arrows-clockwise"></i></button>
         </div>
         <div id="h-list"></div>
     </div>
 
     <div id="p4" class="page">
-        <h3 style="font-weight:800;">Estado de Flota</h3>
+        <h3 style="font-weight:800;">Estado de Unidades</h3>
         <div id="lista-flota"></div>
     </div>
 
@@ -96,14 +124,18 @@
     </nav>
 
     <script>
-        const URL = "https://script.google.com/macros/s/AKfycbw9ypjzVpVoB7KkRlTb2vo2tJhw-4d4OgVRaLdtVQbftie1LUo_mrLGXLmD6Zf1vwxz/exec";
+        // TU URL ACTUALIZADA
+        const URL = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
         let user = "", ruta = [], db = [];
 
         window.onload = () => {
-            const u = localStorage.getItem('tw_u');
+            const savedUser = localStorage.getItem('tw_u');
             document.getElementById('f-dia').value = new Date().toISOString().split('T')[0];
-            if(u) login(u);
+            if(savedUser) {
+                login(savedUser);
+            }
             load();
+            setInterval(load, 20000); 
         };
 
         function login(n) { 
@@ -126,25 +158,28 @@
 
         async function load() { 
             try { 
-                const res = await fetch(URL + "?read=true"); 
-                const data = await res.json();
-                db = data;
-                document.getElementById('conn-status').style.display = 'none';
-                renderH(); renderFlota();
-            } catch(e) { 
-                document.getElementById('conn-status').style.display = 'block';
-            } 
+                const r = await fetch(URL); 
+                db = await r.json(); 
+                renderH(); renderFlota(); 
+            } catch(e){ console.error("Error cargando base de datos"); } 
         }
 
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return; ruta.unshift({cl, ca}); 
-            document.getElementById('cli').value = ""; document.getElementById('can').value = ""; renderR(); 
+            if(!cl || !ca) return; 
+            ruta.unshift({cl, ca}); 
+            document.getElementById('cli').value = ""; document.getElementById('can').value = ""; 
+            renderR(); 
         }
 
         function renderR() {
             const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ <i class="ph-bold ph-x-circle" onclick="removeItem(${x})" style="color:#ef4444; margin-left:8px;"></i></b></div>`; });
+            ruta.forEach((i, x) => { 
+                s += i.ca; 
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">
+                    <span>${i.cl}</span><b>${i.ca} CJ <i class="ph-bold ph-x" onclick="removeItem(${x})" style="color:var(--danger); margin-left:8px"></i></b>
+                </div>`; 
+            });
             document.getElementById('total-vivo').innerText = s; 
             document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
         }
@@ -152,30 +187,38 @@
         function removeItem(x) { ruta.splice(x,1); renderR(); }
 
         function abrirModalGuardar() { 
-            if(!document.getElementById('pla').value || !document.getElementById('cho').value) return alert("Completa Placa y Chofer");
+            if(!document.getElementById('pla').value || !document.getElementById('cho').value) return alert("Por favor selecciona Placa y Chofer");
             document.getElementById('modal-ask').style.display = 'flex'; 
         }
 
         async function confirmarGuardado(opcion) {
             document.getElementById('modal-ask').style.display = 'none';
             let d = new Date();
-            if(opcion === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
-            let fT = d.toISOString().split('T')[0];
+            if(opcion === 'MAÑANA') {
+                d.setDate(d.getDate() + 1);
+                if(d.getDay() === 0) d.setDate(d.getDate() + 1); 
+            }
+            let fechaEnvio = d.toISOString().split('T')[0];
 
-            const reg = { 
-                fecha: fT, chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, 
-                placa: document.getElementById('pla').value, operario: user, 
-                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), total: ruta.reduce((a,b) => a+b.ca, 0)
+            const registro = { 
+                fecha: fechaEnvio, 
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, 
+                operario: user, 
+                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
+                total: ruta.reduce((a,b) => a+b.ca, 0)
             };
 
-            // Inyectar localmente para respuesta rápida
-            db.push(reg); 
-            document.getElementById('f-dia').value = fT;
-            nav('p3'); 
+            // Guardado local inmediato para visualización
+            db.push(registro);
+            document.getElementById('f-dia').value = fechaEnvio;
+            nav('p3'); renderH();
 
-            // Envío forzado al Excel
-            fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) })
-            .then(() => { setTimeout(load, 2000); });
+            // Envío real al Excel
+            try {
+                await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(registro) });
+            } catch(e) { alert("Error al conectar con Excel"); }
             
             ruta = []; renderR();
             document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
@@ -186,25 +229,37 @@
             let html = "";
             db.slice().reverse().forEach(r => {
                 if(r.fecha.split("T")[0] === fD) {
-                    html += `<div class="card" style="border-left:4px solid var(--accent)">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><b>${r.placa}</b><b style="color:var(--accent)">${r.total} CJ</b></div>
-                        <div style="font-size:14px; font-weight:600">${r.chofer}</div>
-                        <div style="font-size:11px; color:#64748b; margin-top:5px; line-height:1.4">${r.items}</div>
+                    html += `<div class="card">
+                        <div style="display:flex; justify-content:space-between">
+                            <b style="color:var(--accent)">${r.placa}</b>
+                            <b>${r.total} CJ</b>
+                        </div>
+                        <div style="margin-top:5px; font-weight:600">${r.chofer}</div>
+                        <div style="font-size:11px; color:gray; margin-top:8px">${r.items}</div>
+                        <button class="btn-mini" onclick="sendWA('${r.fecha}', '${r.chofer}', '${r.total}', '${r.items}')">COMPARTIR RUTA</button>
                     </div>`;
                 }
             });
-            list.innerHTML = html || "<p style='text-align:center; color:gray; padding:20px;'>No hay datos para esta fecha.</p>";
+            list.innerHTML = html || `<p style='text-align:center; color:gray; padding:20px;'>No hay registros para este día</p>`;
+        }
+
+        function sendWA(f, c, t, i) {
+            let m = `*TWINS LOGISTICS*%0A*Fecha:* ${f.split('T')[0]}%0A*Chofer:* ${c}%0A*Total:* ${t} CJ%0A%0A*Detalle:* ${i}`;
+            window.location.href = `https://wa.me/?text=${m}`;
         }
 
         function renderFlota() {
             const list = document.getElementById('lista-flota'), fD = document.getElementById('f-dia').value;
-            const pl = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
+            const placas = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
             list.innerHTML = "";
-            pl.forEach(p => {
-                let rH = db.find(r => r.placa === p && r.fecha.split('T')[0] === fD);
-                list.innerHTML += `<div class="card" style="border-left:5px solid ${rH ? '#f43f5e':'#10b981'}">
-                    <div style="display:flex; justify-content:space-between"><b>${p}</b> <span>${rH ? '🔴':'🟢'}</span></div>
-                    <small style="color:#64748b">${rH ? 'OCUPADO: '+rH.chofer : 'DISPONIBLE'}</small>
+            placas.forEach(p => {
+                let ocupado = db.find(r => r.placa === p && r.fecha.split('T')[0] === fD);
+                list.innerHTML += `<div class="card" style="border-left:5px solid ${ocupado ? 'var(--danger)':'var(--success)'}">
+                    <div style="display:flex; justify-content:space-between">
+                        <b>${p}</b>
+                        <small style="font-weight:800; color:${ocupado ? 'var(--danger)':'var(--success)'}">${ocupado ? 'OCUPADO':'LIBRE'}</small>
+                    </div>
+                    <small>${ocupado ? 'Ruta: ' + ocupado.chofer : 'Sin asignar'}</small>
                 </div>`;
             });
         }
