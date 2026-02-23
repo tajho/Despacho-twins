@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS LOGISTICS ELITE V18.0</title>
+    <title>TWINS LOGISTICS ELITE V19.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
             --bg: #030712; --card: #111827; --accent: #22d3ee; 
@@ -16,30 +17,29 @@
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        .page { display: none; padding: 20px; padding-bottom: 110px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s ease; }
+        .page { display: none; padding: 20px; padding-bottom: 120px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.4s ease; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .top-header { position: sticky; top: 0; z-index: 100; background: rgba(3, 7, 18, 0.8); backdrop-filter: blur(15px); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .user-pill { background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.2); padding: 6px 14px; border-radius: 50px; color: var(--accent); font-size: 12px; font-weight: 800; }
 
-        /* Stats Optimizadas */
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .stat-card { background: var(--card); border: 1px solid var(--border); padding: 15px; border-radius: 20px; }
         .stat-num { font-size: 18px; font-weight: 800; display: block; color: var(--accent); }
         .stat-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block;}
 
         .card { background: var(--card); border-radius: 24px; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; }
-        
         input, select { width: 100%; padding: 15px; margin: 8px 0; border-radius: 14px; border: 1px solid var(--border); background: #1f2937; color: #fff; font-size: 15px; }
 
         .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-main { background: var(--grad); color: white; }
         .btn-mini { padding: 10px; border-radius: 12px; font-size: 10px; flex: 1; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: white; font-weight: 700; cursor: pointer; }
 
-        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 75px; background: rgba(17, 24, 39, 0.9); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .nav-item.active-nav { color: var(--accent); }
+        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 75px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .nav-item { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; transition: 0.2s; }
+        .nav-item i { font-size: 24px; }
+        .nav-item.active-nav { color: var(--accent); transform: translateY(-3px); }
 
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: var(--card); border-radius: 30px; padding: 25px; width: 100%; max-width: 360px; border: 1px solid var(--border); }
@@ -50,18 +50,10 @@
 
     <div id="modal-list" class="modal-overlay" onclick="this.style.display='none'">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 id="list-title" style="margin:0 0 5px 0; font-size:18px;">Lista de Envío</h3>
+            <h3 id="list-title" style="margin:0 0 5px 0;">Lista de Envío</h3>
             <p id="list-sub" style="color:var(--text-dim); font-size:11px; margin-bottom:20px;"></p>
             <div id="list-container" style="max-height: 300px; overflow-y: auto; margin-bottom:20px;"></div>
             <button class="btn btn-main" onclick="document.getElementById('modal-list').style.display='none'">CERRAR</button>
-        </div>
-    </div>
-
-    <div id="modal-pass" class="modal-overlay" onclick="this.style.display='none'">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h2 style="text-align:center;">Seguridad</h2>
-            <input type="password" id="pass-input" placeholder="CÓDIGO ADMIN" style="text-align:center; font-size:24px;">
-            <button class="btn btn-main" onclick="checkPass()">ENTRAR</button>
         </div>
     </div>
 
@@ -77,13 +69,13 @@
     <div id="header-app" class="top-header" style="display:none">
         <div class="user-pill"><span id="user-display">---</span></div>
         <div style="font-weight:900; font-size:14px;">TWINS <span style="color:var(--accent)">ELITE</span></div>
-        <button onclick="cerrarSesion()" style="background:none; border:none; color:var(--danger); font-weight:800;">SALIR</button>
+        <button onclick="cerrarSesion()" style="background:none; border:none; color:var(--danger); font-weight:800;"><i class="ph ph-sign-out" style="font-size: 20px;"></i></button>
     </div>
 
     <div id="p1" class="page active" style="text-align:center; padding-top:10vh">
-        <h1 style="font-size:32px; font-weight:900; margin-bottom:40px;">TWINS <span style="color:var(--accent)">LOGISTICS</span></h1>
+        <h1 style="font-size:32px; font-weight:900; margin-bottom:40px;">TWINS <span style="color:var(--accent)">ELITE</span></h1>
         <div style="display:grid; gap:12px;">
-            <button class="btn" style="background:var(--card); border:1px solid var(--border);" onclick="document.getElementById('modal-pass').style.display='flex'">💎 TAJHO ADMIN</button>
+            <button class="btn" style="background:var(--card); border:1px solid var(--border);" onclick="login('TAJHO ADMIN')">💎 TAJHO ADMIN</button>
             <button class="btn" style="background:var(--card); border:1px solid var(--border);" onclick="login('FRANCESCO')">FRANCESCO</button>
             <button class="btn" style="background:var(--card); border:1px solid var(--border);" onclick="login('OSCAR')">OSCAR</button>
             <button class="btn" style="background:var(--card); border:1px solid var(--border);" onclick="login('LUIS HERBER')">LUIS HERBER</button>
@@ -95,7 +87,6 @@
             <span class="stat-label" style="color:white;">Cajas en Carga Actual</span>
             <span id="total-vivo" style="font-size:45px; font-weight:900; color:white;">0</span>
         </div>
-
         <div class="card">
             <div style="display:flex; gap:10px">
                 <input type="text" id="cli" placeholder="Cliente" style="flex:2">
@@ -103,7 +94,6 @@
             </div>
             <button class="btn btn-main" onclick="addItem()">AÑADIR</button>
         </div>
-
         <div id="area-envio" style="display:none">
             <div id="lista-items" class="card"></div>
             <div class="card">
@@ -118,22 +108,21 @@
     <div id="p3" class="page">
         <div class="stat-grid">
             <div class="stat-card">
-                <span class="stat-label">RESUMEN MENSUAL</span>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><small style="font-size:9px">ENVÍOS</small><span id="stat-mes-env" class="stat-num">0</span></div>
-                    <div><small style="font-size:9px">CAJAS</small><span id="stat-mes-caj" class="stat-num">0</span></div>
+                <span class="stat-label">REPORTE MENSUAL</span>
+                <div style="display:flex; gap:15px;">
+                    <div><small style="font-size:8px; display:block">ENVÍOS</small><span id="stat-mes-env" class="stat-num">0</span></div>
+                    <div><small style="font-size:8px; display:block">CAJAS</small><span id="stat-mes-caj" class="stat-num">0</span></div>
                 </div>
             </div>
             <div class="stat-card">
                 <span class="stat-label">REPORTE DEL DÍA</span>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><small style="font-size:9px">ENVÍOS</small><span id="stat-dia-env" class="stat-num" style="color:var(--success)">0</span></div>
-                    <div><small style="font-size:9px">CAJAS</small><span id="stat-dia-caj" class="stat-num" style="color:var(--success)">0</span></div>
+                <div style="display:flex; gap:15px;">
+                    <div><small style="font-size:8px; display:block">ENVÍOS</small><span id="stat-dia-env" class="stat-num" style="color:var(--success)">0</span></div>
+                    <div><small style="font-size:8px; display:block">CAJAS</small><span id="stat-dia-caj" class="stat-num" style="color:var(--success)">0</span></div>
                 </div>
             </div>
         </div>
-
-        <input type="date" id="f-dia" onchange="renderH()" style="margin-bottom:20px;">
+        <input type="date" id="f-dia" onchange="cambiarFechaManual()" style="margin-bottom:20px;">
         <div id="h-list"></div>
     </div>
 
@@ -143,20 +132,22 @@
     </div>
 
     <nav id="nav-app" class="bottom-nav" style="display:none">
-        <button class="nav-item" onclick="nav('p2')">Ruta</button>
-        <button class="nav-item" onclick="nav('p3')">Historial</button>
-        <button class="nav-item" onclick="nav('p4')">Flota</button>
+        <button class="nav-item" id="btn-p2" onclick="nav('p2')"><i class="ph ph-package"></i>Ruta</button>
+        <button class="nav-item" id="btn-p3" onclick="nav('p3')"><i class="ph ph-chart-bar"></i>Historial</button>
+        <button class="nav-item" id="btn-p4" onclick="nav('p4')"><i class="ph ph-truck"></i>Flota</button>
     </nav>
 
     <script>
         const URL = "https://script.google.com/macros/s/AKfycbz9V0MzUuuAHTa9N4-xrsVJV7DbkWLtgJY5xHM7_JTfIDlBxCtimM6FHjRpVczuD2kM/exec";
         let user = "", ruta = [], db = [];
+        let manualDateSet = false; // Bloqueo para evitar que load() cambie la fecha
         const soats = { "CEP-929": "15/05/26", "BPN-711": "22/08/26", "BVN-704": "10/01/27", "BUL-742": "05/11/26", "BVN-930": "30/09/26" };
 
         window.onload = () => {
             const u = localStorage.getItem('tw_u');
             if(u) login(u);
-            document.getElementById('f-dia').value = new Date().toISOString().split('T')[0];
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('f-dia').value = hoy;
             load();
         };
 
@@ -169,22 +160,21 @@
             nav('p2'); 
         }
 
-        function checkPass() {
-            if(document.getElementById('pass-input').value === "2026") {
-                document.getElementById('modal-pass').style.display='none';
-                login('TAJHO');
-            } else alert("Código Incorrecto");
-        }
-
         function nav(id) { 
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active-nav'));
             document.getElementById(id).classList.add('active'); 
+            document.getElementById('btn-' + id).classList.add('active-nav');
             if(id === 'p3') renderH();
             if(id === 'p4') renderFlota();
         }
 
         async function load() { 
-            try { const r = await fetch(URL); db = await r.json(); renderH(); renderFlota(); } catch(e){} 
+            try { 
+                const r = await fetch(URL); 
+                db = await r.json(); 
+                renderH(); renderFlota(); 
+            } catch(e){} 
         }
 
         function addItem() {
@@ -208,6 +198,11 @@
             document.getElementById('modal-ask').style.display = 'flex'; 
         }
 
+        function cambiarFechaManual() {
+            manualDateSet = true; // El usuario eligió una fecha, no la muevas al actualizar
+            renderH();
+        }
+
         async function confirmarGuardado(esHoy) {
             document.getElementById('modal-ask').style.display = 'none';
             let d = new Date();
@@ -225,7 +220,7 @@
             };
 
             db.push(r);
-            // CORRECCIÓN: Forzamos la fecha del historial a la fecha guardada
+            manualDateSet = true; // Bloqueamos la fecha para que se quede en la programada
             document.getElementById('f-dia').value = fFinal;
             nav('p3'); renderH();
 
@@ -271,7 +266,7 @@
         }
 
         function verLista(items, chofer) {
-            document.getElementById('list-sub').innerText = "Chofer: " + chofer;
+            document.getElementById('list-sub').innerText = "Responsable: " + chofer;
             const container = document.getElementById('list-container');
             container.innerHTML = "";
             items.split(", ").forEach(i => {
@@ -309,6 +304,9 @@
         }
 
         function cerrarSesion() { localStorage.clear(); location.reload(); }
+        
+        // Carga automática cada 15 segundos pero sin resetear la fecha
+        setInterval(load, 15000);
     </script>
 </body>
 </html>
