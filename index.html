@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE V14.2</title>
+    <title>TWINS ELITE V14.5</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -42,7 +42,7 @@
             <div style="font-weight: 800; margin-bottom: 5px;">PROGRAMAR DESPACHO</div>
             <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 20px;">¿Cuándo sale esta ruta?</p>
             <button class="btn" style="background: var(--success); color: #000; margin-bottom: 10px;" onclick="confirmarGuardado(true)">HOY (Mandar WA)</button>
-            <button class="btn" style="background: var(--accent); color: #000;" onclick="confirmarGuardado(false)">MAÑANA / PRÓX. ÚTIL</button>
+            <button class="btn" style="background: var(--accent); color: #000;" onclick="confirmarGuardado(false)">PRÓX. DÍA ÚTIL</button>
             <button class="btn" style="background: transparent; color: var(--danger); margin-top: 10px; font-size: 12px;" onclick="document.getElementById('modal-ask').style.display='none'">CANCELAR</button>
         </div>
     </div>
@@ -84,7 +84,7 @@
 
     <div id="p2" class="page">
         <div class="stat-box" style="background: var(--grad); margin-bottom: 15px; border:none;">
-            <div class="stat-label" style="color:white; opacity:0.8;">Cajas en Ruta</div>
+            <div class="stat-label" style="color:white; opacity:0.8;">Cajas en Lista</div>
             <div id="total-vivo" style="font-size: 44px; font-weight: 900; color:white;">0</div>
         </div>
         <div class="card">
@@ -110,15 +110,15 @@
 
     <div id="p3" class="page">
         <div class="stat-grid">
-            <div class="stat-box"><div class="stat-label">Envíos Mes (Cajas)</div><div id="stat-mes" class="stat-val">0</div></div>
-            <div class="stat-box"><div class="stat-label" id="label-dia">Cajas del Día</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
+            <div class="stat-box"><div class="stat-label">Envíos Mes (Rutas)</div><div id="stat-mes" class="stat-val">0</div></div>
+            <div class="stat-box"><div class="stat-label" id="label-dia">Cajas totales del Filtro</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
         </div>
         <div id="reporte-tajho" style="display:none; margin-bottom: 15px;">
             <button class="btn" style="background: white; color: black;" onclick="generarPDF()">📄 DESCARGAR REPORTE (ADMIN)</button>
         </div>
-        <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados</div><div id="stat-clientes" class="stat-val" style="color:white;">0</div></div>
+        <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados (Día)</div><div id="stat-clientes" class="stat-val" style="color:white;">0</div></div>
         <div class="card">
-            <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
+            <input type="text" id="f-search" placeholder="🔍 Buscar por Chofer o Cliente..." onkeyup="renderH()">
             <div style="display: flex; gap: 8px;">
                 <select id="f-mes" onchange="renderH()" style="flex:1;"><option value="ALL">Todo el Año</option><option value="0">Ene</option><option value="1">Feb</option><option value="2">Mar</option><option value="3">Abr</option><option value="4">May</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Ago</option><option value="8">Set</option><option value="9">Oct</option><option value="10">Nov</option><option value="11">Dic</option></select>
                 <input type="date" id="f-dia" onchange="renderH()" style="flex:1;">
@@ -142,14 +142,6 @@
         const URL = "https://script.google.com/macros/s/AKfycbz9V0MzUuuAHTa9N4-xrsVJV7DbkWLtgJY5xHM7_JTfIDlBxCtimM6FHjRpVczuD2kM/exec";
         let user = "", ruta = [], db = [];
 
-        const flotaData = [
-            { placa: "CEP-929", clase: "CAMION", soat: "2026-07-22", cia: "Pacifico" },
-            { placa: "BPN-711", clase: "CAMION", soat: "2026-06-10", cia: "Pacifico" },
-            { placa: "BVN-704", clase: "CAMIONETA", soat: "2026-07-02", cia: "Pacifico" },
-            { placa: "BUL-742", clase: "CAMIONETA", soat: "2026-04-02", cia: "Mapfre" },
-            { placa: "BVN-930", clase: "CAMIONETA", soat: "2026-07-02", cia: "Pacifico" }
-        ];
-
         window.onload = () => {
             const lastUser = localStorage.getItem('tw_u');
             if(lastUser) login(lastUser, localStorage.getItem('tw_p') || 'p2');
@@ -159,13 +151,9 @@
 
         function setTodayFilters() {
             const hoy = new Date();
-            const anio = hoy.getFullYear();
-            const mes = String(hoy.getMonth() + 1).padStart(2, '0');
-            const dia = String(hoy.getDate()).padStart(2, '0');
-            const diaActual = `${anio}-${mes}-${dia}`;
-            
-            if(document.getElementById('f-mes')) document.getElementById('f-mes').value = hoy.getMonth().toString();
-            if(document.getElementById('f-dia')) document.getElementById('f-dia').value = diaActual;
+            const fStr = hoy.toISOString().split('T')[0];
+            document.getElementById('f-dia').value = fStr;
+            document.getElementById('f-mes').value = hoy.getMonth().toString();
         }
 
         function login(n, targetPage = 'p2') { 
@@ -185,7 +173,6 @@
             document.getElementById('n' + id.charAt(1)).classList.add('active-nav');
             localStorage.setItem('tw_p', id);
             if(id === 'p3') renderH();
-            if(id === 'p4') renderFlota();
         }
 
         async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
@@ -219,23 +206,19 @@
 
         async function confirmarGuardado(esHoy) {
             document.getElementById('modal-ask').style.display = 'none';
-            
             let f = new Date();
+            
             if(!esHoy) {
-                // Sumamos 1 día al calendario de forma manual
+                // Cálculo de próximo día útil
                 f.setDate(f.getDate() + 1);
-                // Si es domingo, saltamos a lunes
-                if(f.getDay() === 0) f.setDate(f.getDate() + 1);
+                if(f.getDay() === 0) f.setDate(f.getDate() + 1); // Si es domingo -> lunes
+                if(f.getDay() === 6) f.setDate(f.getDate() + 2); // Si es sábado -> lunes (opcional, según tu almacén)
             }
 
-            // Generar fecha limpia YYYY-MM-DD
-            const y = f.getFullYear();
-            const m = String(f.getMonth() + 1).padStart(2, '0');
-            const d = String(f.getDate()).padStart(2, '0');
-            const fFinal = `${y}-${m}-${d}`;
+            const fStr = f.toISOString().split('T')[0];
 
             const r = { 
-                fecha: fFinal,
+                fecha: fStr,
                 chofer: document.getElementById('cho').value, 
                 auxiliar: document.getElementById('aux').value, 
                 placa: document.getElementById('pla').value, 
@@ -244,28 +227,23 @@
                 total: ruta.reduce((a,b) => a+b.ca, 0)
             };
 
-            // 1. Guardar localmente para respuesta inmediata
+            // Local push para ver inmediato
             db.push(r);
             
-            // 2. Mover el filtro a la fecha del registro (Mañana o Hoy)
-            document.getElementById('f-dia').value = fFinal;
+            // Forzar filtros a la fecha guardada
+            document.getElementById('f-dia').value = fStr;
             document.getElementById('f-mes').value = f.getMonth().toString();
             
-            // 3. Ir al historial y renderizar
             nav('p3');
             renderH();
 
-            // 4. Mandar a la nube
             saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
             if(esHoy) sendWA(r);
             
-            // Limpieza
             ruta = []; 
             document.getElementById('cho').value = ""; document.getElementById('pla').value = ""; document.getElementById('aux').value = "";
             localStorage.removeItem('tw_d'); renderR(); 
-            
-            // Recarga final de seguridad
             setTimeout(load, 2500); 
         }
 
@@ -275,28 +253,25 @@
             const fM = document.getElementById('f-mes').value;
             const fD = document.getElementById('f-dia').value;
             const fS = document.getElementById('f-search').value.toUpperCase();
-            let envMes = 0, cajasMes = 0, tDia = 0, tPuntos = 0;
+            
+            let rutasContadas = 0, cajasTotalesFiltro = 0, puntosDia = 0;
             let html = "";
             
             db.slice().reverse().forEach((r, i) => {
                 if(!r || !r.items) return; 
                 
-                // Extraer fecha limpia del registro
                 let rStr = r.fecha.toString().split("T")[0].split(" ")[0];
+                const rFechaObj = new Date(r.fecha + "T12:00:00");
                 
-                // Comparar meses (usamos UTC para evitar desfases de horario)
-                const fObj = new Date(r.fecha + "T12:00:00");
-                const matchMes = (fM === "ALL" || fObj.getMonth().toString() === fM);
+                const matchMes = (fM === "ALL" || rFechaObj.getMonth().toString() === fM);
                 const matchDia = (!fD || rStr === fD);
-                const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
-
-                if (matchMes) { envMes++; cajasMes += parseFloat(r.total) || 0; }
-                if (rStr === fD) { 
-                    tDia += parseFloat(r.total) || 0; 
-                    tPuntos += r.items.split(",").length;
-                }
+                const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS));
 
                 if (matchMes && matchDia && matchSearch) {
+                    rutasContadas++;
+                    cajasTotalesFiltro += (parseFloat(r.total) || 0);
+                    if(rStr === fD) puntosDia += r.items.split(",").length;
+
                     let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
                     html += `<div class="card">
                         <div style="display:flex; justify-content:space-between;">
@@ -311,32 +286,16 @@
                         </div>
                         <div style="display:flex; gap:8px; margin-top:10px;">
                             <button class="btn" style="padding:8px; font-size:11px; background:#1e293b; color:white;" onclick="verSoloRuta(${db.length-1-i})">VER</button>
-                            <button class="btn" style="padding:8px; font-size:11px; background:rgba(255,184,0,0.2); color:var(--warning);" onclick="editarRuta(${db.length-1-i})">EDITAR</button>
                             <button class="btn" style="padding:8px; font-size:11px; background:rgba(0,242,152,0.2); color:var(--success);" onclick="sendWA(db[${db.length-1-i}])">WA</button>
                         </div>
                     </div>`;
                 }
             });
-            list.innerHTML = html;
-            document.getElementById('stat-mes').innerText = `${envMes} (${Math.round(cajasMes)})`;
-            document.getElementById('stat-dia').innerText = Math.round(tDia);
-            document.getElementById('stat-clientes').innerText = tPuntos;
-        }
 
-        function renderFlota() {
-            const list = document.getElementById('lista-flota'); list.innerHTML = "";
-            const hoy = new Date();
-            flotaData.forEach(v => {
-                const fin = new Date(v.soat);
-                const dif = Math.ceil((fin - hoy) / (1000 * 60 * 60 * 24));
-                list.innerHTML += `<div class="card" style="border-left:5px solid ${dif < 30 ? 'var(--warning)' : 'var(--success)'}">
-                    <b style="font-size:18px; color:var(--accent)">${v.placa}</b><br>
-                    <small>${v.clase} • Faltan ${dif} días</small>
-                    <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:13px;">
-                        <span>SOAT:</span><b>${v.soat.split('-').reverse().join('/')}</b>
-                    </div>
-                </div>`;
-            });
+            list.innerHTML = html;
+            document.getElementById('stat-mes').innerText = rutasContadas;
+            document.getElementById('stat-dia').innerText = Math.round(cajasTotalesFiltro);
+            document.getElementById('stat-clientes').innerText = puntosDia;
         }
 
         function verSoloRuta(idx) {
@@ -347,28 +306,8 @@
 
         function sendWA(r) { 
             let aux = (r.auxiliar && r.auxiliar !== "") ? r.auxiliar : "NINGUNO";
-            let m = `*📦 DESPACHO TWINS*\n\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
+            let m = `*📦 DESPACHO TWINS*\n\n*Fecha:* ${r.fecha.split('T')[0]}\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`; 
-        }
-
-        function generarPDF() {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.text("REPORTE DESPACHOS TWINS", 10, 20);
-            let y = 30;
-            db.filter(r => r && r.items).slice(-30).forEach(r => {
-                doc.text(`${r.fecha.split('T')[0]} | ${r.chofer} | ${r.total} CJ`, 10, y);
-                y += 10;
-            });
-            doc.save("Reporte.pdf");
-        }
-
-        function editarRuta(idx) {
-            const r = db[idx]; 
-            ruta = r.items.split(", ").map(str => { const [cl, ca] = str.split(":"); return { cl, ca: parseInt(ca) }; });
-            document.getElementById('pla').value = r.placa; 
-            document.getElementById('cho').value = r.chofer; 
-            document.getElementById('aux').value = r.auxiliar || ""; 
-            renderR(); saveDraft(); nav('p2');
         }
 
         function saveDraft() { localStorage.setItem('tw_d', JSON.stringify({ ruta, p: document.getElementById('pla').value, c: document.getElementById('cho').value, a: document.getElementById('aux')?.value || "" })); }
