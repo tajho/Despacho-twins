@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS NEBULA V34</title>
+    <title>TWINS NEBULA V37</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -53,7 +53,6 @@
             display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s;
         }
         .btn-main { background: var(--accent); color: white; box-shadow: 0 10px 25px var(--accent-glow); }
-        .btn-main:active { transform: scale(0.96); }
         .btn-ghost { background: var(--glass); color: var(--text); border: 1px solid var(--border); }
 
         .badge { font-size: 10px; padding: 5px 12px; border-radius: 50px; font-weight: 800; }
@@ -79,16 +78,15 @@
     <div id="m-auth" class="modal">
         <div class="modal-card">
             <h2 style="text-align:center; margin:0">Admin Auth</h2>
-            <p style="text-align:center; color:var(--text-dim); margin-bottom:30px">Ingresa pin de seguridad</p>
-            <input type="password" id="admin-pass" placeholder="••••" style="text-align:center; font-size:28px; letter-spacing:10px; margin-bottom:25px">
-            <button class="btn btn-main" onclick="verifyAuth()">DESBLOQUEAR</button>
-            <button class="btn" style="background:none; color:var(--text-dim)" onclick="location.reload()">VOLVER</button>
+            <input type="password" id="admin-pass" placeholder="••••" style="text-align:center; font-size:28px; letter-spacing:10px; margin:25px 0">
+            <button class="btn btn-main" onclick="verifyAuth()">INGRESAR</button>
+            <button class="btn" style="background:none; color:var(--text-dim)" onclick="location.reload()">CERRAR</button>
         </div>
     </div>
 
     <div id="m-list" class="modal" onclick="this.style.display='none'">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 id="m-title" style="margin:0 0 5px 0">Detalle</h3>
+            <h3 id="m-title" style="margin:0">Detalle</h3>
             <div id="m-container" style="max-height: 300px; overflow-y: auto; margin-top:20px"></div>
             <button class="btn btn-main" style="margin-top:25px" onclick="document.getElementById('m-list').style.display='none'">CERRAR</button>
         </div>
@@ -103,25 +101,20 @@
     </header>
 
     <div id="page-login" class="page active" style="text-align:center; padding-top:10vh">
-        <div style="width: 90px; height: 90px; background: var(--accent); border-radius: 32px; display:flex; align-items:center; justify-content:center; margin: 0 auto 35px; box-shadow: 0 20px 50px var(--accent-glow)">
-            <i class="ph-fill ph-rocket-launch" style="font-size: 45px; color: white;"></i>
+        <div style="width: 85px; height: 85px; background: var(--accent); border-radius: 28px; display:flex; align-items:center; justify-content:center; margin: 0 auto 30px; box-shadow: 0 15px 35px var(--accent-glow)">
+            <i class="ph-fill ph-truck" style="font-size: 45px; color: white;"></i>
         </div>
-        <h1 style="font-weight: 800; font-size: 30px; margin: 0;">DESPACHO</h1>
-        <p style="color:var(--text-dim); margin-bottom: 45px">Inicia sesión para continuar</p>
-        <div id="login-grid" style="display:grid; gap:14px; padding: 0 20px;"></div>
+        <h1 style="font-weight: 800; font-size: 28px; margin: 0;">DESPACHO</h1>
+        <div id="login-grid" style="display:grid; gap:14px; padding: 40px 20px;"></div>
     </div>
 
     <div id="page-route" class="page">
         <div class="card" style="background: linear-gradient(135deg, #007aff, #0033aa); border:none; color:white; overflow:hidden; position:relative">
             <div style="position:relative; z-index:2">
-                <div style="display:flex; justify-content:space-between; align-items:center">
-                    <span style="font-size:11px; font-weight:800; opacity:0.8; letter-spacing:1px">TOTAL PREPARADO</span>
-                    <i class="ph ph-list-numbers" style="font-size:20px"></i>
-                </div>
-                <div id="total-cajas" style="font-size:60px; font-weight:800; margin:10px 0">0</div>
-                <div id="total-puntos" style="font-size:13px; font-weight:600; background:rgba(255,255,255,0.15); padding:6px 15px; border-radius:12px; display:inline-block">0 Puntos de Entrega</div>
+                <span style="font-size:11px; font-weight:800; opacity:0.8; letter-spacing:1px">CARGA EN PROCESO</span>
+                <div id="total-cajas" style="font-size:55px; font-weight:800; margin:5px 0">0</div>
+                <div id="total-puntos" style="font-size:12px; font-weight:700; background:rgba(255,255,255,0.15); padding:6px 15px; border-radius:12px; display:inline-block">0 PUNTOS</div>
             </div>
-            <i class="ph-fill ph-package" style="position:absolute; right:-30px; bottom:-30px; font-size:180px; opacity:0.1"></i>
         </div>
 
         <div class="card">
@@ -135,10 +128,10 @@
         <div id="send-zone" style="display:none">
             <div id="temp-list" class="card" style="border-style:dashed; background:transparent; font-size:14px"></div>
             <div class="card">
-                <select id="pla" onchange="smartPredict()" style="margin-bottom:12px"></select>
+                <select id="pla" onchange="smartPredict(); saveDraft()" style="margin-bottom:12px"></select>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px">
-                    <select id="cho"></select>
-                    <select id="aux"></select>
+                    <select id="cho" onchange="saveDraft()"></select>
+                    <select id="aux" onchange="saveDraft()"></select>
                 </div>
                 <button class="btn" style="background:var(--success); color:black" onclick="document.getElementById('m-type').style.display='flex'">
                     <i class="ph-fill ph-paper-plane-tilt"></i> GUARDAR RUTA
@@ -158,31 +151,11 @@
                 <div style="font-size:24px; font-weight:800; color:var(--success)" id="st-puntos">0</div>
             </div>
         </div>
-
-        <div id="admin-tools" style="display:none; margin-bottom:20px">
-            <button class="btn btn-ghost" style="color:var(--accent); border-color:var(--accent)" onclick="alert('Generando reporte Excel...')">
-                <i class="ph-bold ph-file-arrow-down"></i> EXPORTAR DATA
-            </button>
-        </div>
-
         <div style="display:flex; gap:10px; margin-bottom:20px">
             <input type="date" id="f-filter" onchange="renderHistory()" style="flex:1.2">
             <input type="text" id="search" oninput="renderHistory()" placeholder="Buscar..." style="flex:0.8">
         </div>
         <div id="history-container"></div>
-    </div>
-
-    <div id="page-fleet" class="page">
-        <div id="fleet-list"></div>
-    </div>
-
-    <div id="m-type" class="modal">
-        <div class="modal-card">
-            <h3 style="text-align:center; margin-top:0">Programación</h3>
-            <button class="btn btn-main" style="margin-bottom:15px" onclick="saveRoute('HOY')">DESPACHAR HOY</button>
-            <button class="btn btn-ghost" style="color:var(--success)" onclick="saveRoute('MAÑANA')">PROGRAMAR MAÑANA</button>
-            <button class="btn" style="background:none; color:var(--text-dim)" onclick="document.getElementById('m-type').style.display='none'">CANCELAR</button>
-        </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
@@ -191,20 +164,27 @@
         <button class="nav-link" id="n-fleet" onclick="nav('page-fleet')"><i class="ph ph-truck"></i>Flota</button>
     </nav>
 
+    <div id="m-type" class="modal">
+        <div class="modal-card">
+            <h3 style="text-align:center; margin-top:0">Programación</h3>
+            <button class="btn btn-main" style="margin-bottom:15px" onclick="saveRoute('HOY')">HOY</button>
+            <button class="btn btn-ghost" onclick="saveRoute('MAÑANA')">MAÑANA</button>
+        </div>
+    </div>
+
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
         let user = "", items = [], database = [];
         
         const PLACAS = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
         const CHOFERES = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
-        const AUXILIARES = ["CRISTOPHER", "PLACIDO", "RODOLFO", "SIN AUXILIAR", "NELSON"];
-        const SOATS = { "CEP-929": "15/05/26", "BPN-711": "22/08/26", "BVN-704": "10/01/27", "BUL-742": "05/11/26", "BVN-930": "30/09/26" };
+        const AUXILIARES = ["CRISTOPHER", "ELIO", "PLACIDO", "PERCY", "MARTIN", "RICARDO", "RODOLFO", "JOFER", "DANIEL C.", "NELSON", "JULIO", "SIN AUXILIAR"];
 
         window.onload = () => {
             initInputs();
-            const saved = localStorage.getItem('tw_user');
-            document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
-            if(saved) login(saved);
+            const savedUser = localStorage.getItem('tw_user');
+            if(savedUser) login(savedUser);
+            loadDraft(); // Recuperar borrador
             loadData();
         };
 
@@ -213,21 +193,53 @@
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
                 grid.innerHTML += `<button class="btn btn-ghost" onclick="checkAuth('${u}')">${u}</button>`;
             });
-            document.getElementById('pla').innerHTML = '<option value="">Unidad</option>' + PLACAS.map(p => `<option value="${p}">${p}</option>`).join('');
+            document.getElementById('pla').innerHTML = '<option value="">Placa</option>' + PLACAS.map(p => `<option value="${p}">${p}</option>`).join('');
             document.getElementById('cho').innerHTML = '<option value="">Chofer</option>' + CHOFERES.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('aux').innerHTML = '<option value="">Auxiliar</option>' + AUXILIARES.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
+        // PERSISTENCIA DE DATOS
+        function saveDraft() {
+            const draft = {
+                items: items,
+                placa: document.getElementById('pla').value,
+                chofer: document.getElementById('cho').value,
+                auxiliar: document.getElementById('aux').value
+            };
+            localStorage.setItem('tw_draft', JSON.stringify(draft));
+        }
+
+        function loadDraft() {
+            const saved = localStorage.getItem('tw_draft');
+            if(saved) {
+                const draft = JSON.parse(saved);
+                items = draft.items || [];
+                document.getElementById('pla').value = draft.placa || "";
+                document.getElementById('cho').value = draft.chofer || "";
+                document.getElementById('aux').value = draft.auxiliar || "";
+                renderTemp();
+            }
+        }
+
+        function clearDraft() {
+            localStorage.removeItem('tw_draft');
+            items = [];
+            document.getElementById('pla').value = "";
+            document.getElementById('cho').value = "";
+            document.getElementById('aux').value = "";
+            renderTemp();
+        }
+
         function checkAuth(u) {
-            if(u === 'TAJHO ADMIN') { document.getElementById('m-auth').style.display = 'flex'; } 
-            else { login(u); }
+            if(u === 'TAJHO ADMIN') document.getElementById('m-auth').style.display = 'flex';
+            else login(u);
         }
 
         function verifyAuth() {
             if(document.getElementById('admin-pass').value === '1234') {
                 document.getElementById('m-auth').style.display = 'none';
                 login('TAJHO ADMIN');
-            } else { alert("Error de PIN"); }
+            } else alert("Error");
         }
 
         function login(u) {
@@ -236,7 +248,6 @@
             document.getElementById('app-header').style.display = 'flex';
             document.getElementById('app-nav').style.display = 'flex';
             document.getElementById('user-display').innerText = u;
-            if(u === 'TAJHO ADMIN') document.getElementById('admin-tools').style.display = 'block';
             nav('page-route');
         }
 
@@ -246,22 +257,17 @@
             document.getElementById(id).classList.add('active');
             document.getElementById('n-' + id.split('-')[1]).classList.add('active');
             if(id === 'page-history') renderHistory();
-            if(id === 'page-fleet') renderFleet();
         }
 
         async function loadData() {
-            try { const r = await fetch(API); database = await r.json(); renderHistory(); renderFleet(); } catch(e){}
+            try { const r = await fetch(API); database = await r.json(); renderHistory(); } catch(e){}
         }
 
-        // INTELIGENCIA V34: Sugiere solo Chofer
         function smartPredict() {
             const p = document.getElementById('pla').value;
             if(!p) return;
             const last = database.slice().reverse().find(r => r.placa === p);
-            if(last) {
-                document.getElementById('cho').value = last.chofer;
-                document.getElementById('aux').value = ""; // Inteligencia: no sugiere auxiliar
-            }
+            if(last) document.getElementById('cho').value = last.chofer;
         }
 
         function addItem() {
@@ -270,6 +276,7 @@
             items.unshift({cl, ca});
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderTemp();
+            saveDraft();
         }
 
         function renderTemp() {
@@ -278,18 +285,18 @@
             items.forEach((item, i) => {
                 total += item.ca;
                 box.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
-                    <span>${item.cl}</span><b>${item.ca} CJ <i class="ph ph-trash" onclick="items.splice(${i},1);renderTemp()" style="color:var(--danger);margin-left:12px"></i></b>
+                    <span>${item.cl}</span><b>${item.ca} CJ <i class="ph ph-trash" onclick="items.splice(${i},1);renderTemp();saveDraft()" style="color:var(--danger);margin-left:12px"></i></b>
                 </div>`;
             });
             document.getElementById('total-cajas').innerText = total;
-            document.getElementById('total-puntos').innerText = items.length + " Puntos de Entrega";
+            document.getElementById('total-puntos').innerText = items.length + " PUNTOS";
             document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
         }
 
         async function saveRoute(tipo) {
             document.getElementById('m-type').style.display = 'none';
             let d = new Date();
-            if(tipo === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
+            if(tipo === 'MAÑANA') d.setDate(d.getDate() + 1);
             const fT = d.toISOString().split('T')[0];
 
             const reg = {
@@ -300,76 +307,50 @@
             };
 
             database.push(reg);
-            document.getElementById('f-filter').value = fT;
+            clearDraft(); // Borrar borrador solo al guardar éxito
             nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            items = []; renderTemp();
         }
 
         function renderHistory() {
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
-            const sQ = document.getElementById('search').value.toUpperCase();
-            const hoy = new Date().toISOString().split('T')[0];
+            const hoyStr = new Date().toISOString().split('T')[0];
             let html = "", tC = 0, tP = 0;
 
             database.slice().reverse().forEach(r => {
                 const rf = r.fecha.split('T')[0];
-                if(rf === fD && (r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ))) {
-                    tC += parseFloat(r.total); tP += parseInt(r.puntos || 0);
-                    const isOld = rf < hoy;
-                    
+                if(rf === fD) {
+                    const numPuntos = r.puntos || (r.items ? r.items.split(',').length : 0);
+                    tC += parseFloat(r.total); tP += parseInt(numPuntos);
+                    const isOld = rf < hoyStr;
                     html += `<div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
-                        <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
-                            <div>
-                                <b style="font-size:18px; display:block">${r.placa}</b>
-                                <span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : 'EN PROCESO'}</span>
-                            </div>
-                            <div style="text-align:right">
-                                <b style="color:var(--accent); font-size:20px">${r.total} CJ</b>
-                                <div style="font-size:10px; opacity:0.6">${r.puntos || 0} PUNTOS</div>
-                            </div>
+                        <div style="display:flex; justify-content:space-between; align-items:start">
+                            <div><b>${r.placa}</b><br><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : 'EN RUTA'}</span></div>
+                            <div style="text-align:right"><b style="color:var(--accent); font-size:18px">${r.total} CJ</b><br><small>${numPuntos} PUNTOS</small></div>
                         </div>
-                        <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
+                        <div style="font-size:13px; margin:15px 0">${r.chofer} • ${r.auxiliar}</div>
                         <div style="display:flex; gap:10px">
-                            <button class="btn-ghost" style="flex:1; padding:12px; border-radius:15px; font-size:12px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
-                            <button class="btn" style="background:#25D366; color:white; width:60px; border-radius:15px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')">
-                                <i class="ph-fill ph-whatsapp-logo" style="font-size:22px"></i>
-                            </button>
+                            <button class="btn-ghost" style="flex:1; padding:10px; font-size:11px" onclick="viewItems('${r.items}', '${r.chofer}')">DETALLE</button>
+                            <button class="btn" style="background:#25D366; width:50px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')"><i class="ph ph-whatsapp-logo"></i></button>
                         </div>
                     </div>`;
                 }
             });
-            cont.innerHTML = html || "<p style='text-align:center; opacity:0.5; padding:50px'>No hay registros</p>";
+            cont.innerHTML = html;
             document.getElementById('st-cajas').innerText = tC;
             document.getElementById('st-puntos').innerText = tP;
         }
 
-        function viewItems(txt, ch) {
-            document.getElementById('m-title').innerText = "Ruta: " + ch;
-            document.getElementById('m-container').innerHTML = txt.split(", ").map(i => {
-                const [cl, ca] = i.split(":");
-                return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)"><span>${cl}</span><b>${ca}</b></div>`;
-            }).join('');
-            document.getElementById('m-list').style.display = 'flex';
-        }
-
-        // FORMATO WHATSAPP V34 REQUERIDO
         function wa(c, a, p, t, i) {
-            const detalle = i.split(", ").map(item => `✅ ${item.toUpperCase()}`).join("%0A");
+            const detalle = i.split(", ").map(item => `✅ ${item.toUpperCase().trim()}`).join("%0A");
             const msg = `*📦 DESPACHO TWINS*%0A%0A*Chofer:* ${c}%0A*Auxiliar:* ${a}%0A*Placa:* ${p}%0A*Total:* ${t} CJ%0A%0A*DETALLE:*%0A${detalle}`;
             window.location.href = `https://wa.me/?text=${msg}`;
         }
 
-        function renderFleet() {
-            const list = document.getElementById('fleet-list'), fD = document.getElementById('f-filter').value;
-            list.innerHTML = `<h2 style="margin-bottom:25px; font-weight:800">Estado de Flota</h2>`;
-            PLACAS.forEach(p => {
-                const r = database.find(x => x.placa === p && x.fecha.split('T')[0] === fD);
-                list.innerHTML += `<div class="card" style="border-left:6px solid ${r ? 'var(--danger)' : 'var(--success)'}">
-                    <div style="display:flex; justify-content:space-between"><b>${p}</b> <small style="opacity:0.5">SOAT: ${SOATS[p]}</small></div>
-                    <div style="margin-top:10px; font-size:15px">${r ? '🔴 EN RUTA: ' + r.chofer : '🟢 DISPONIBLE'}</div>
-                </div>`;
-            });
+        function viewItems(txt, ch) {
+            document.getElementById('m-title').innerText = "Ruta: " + ch;
+            document.getElementById('m-container').innerHTML = txt.split(", ").map(i => `<div style="padding:10px 0; border-bottom:1px solid var(--border)">${i}</div>`).join('');
+            document.getElementById('m-list').style.display = 'flex';
         }
 
         function logout() { localStorage.clear(); location.reload(); }
