@@ -219,23 +219,23 @@
 
         async function confirmarGuardado(esHoy) {
             document.getElementById('modal-ask').style.display = 'none';
-            let f = new Date();
             
+            let f = new Date();
             if(!esHoy) {
-                // Sumamos 24 horas para garantizar el cambio de día
-                f.setHours(f.getHours() + 24);
-                // Si cae domingo (0), saltamos al lunes (+24h más)
-                if(f.getDay() === 0) f.setHours(f.getHours() + 24);
+                // Sumamos 1 día al calendario de forma manual
+                f.setDate(f.getDate() + 1);
+                // Si es domingo, saltamos a lunes
+                if(f.getDay() === 0) f.setDate(f.getDate() + 1);
             }
 
-            // Construcción manual de la cadena YYYY-MM-DD
-            let anio = f.getFullYear();
-            let mes = String(f.getMonth() + 1).padStart(2, '0');
-            let dia = String(f.getDate()).padStart(2, '0');
-            let fechaFinalString = `${anio}-${mes}-${dia}`;
+            // Generar fecha limpia YYYY-MM-DD
+            const y = f.getFullYear();
+            const m = String(f.getMonth() + 1).padStart(2, '0');
+            const d = String(f.getDate()).padStart(2, '0');
+            const fFinal = `${y}-${m}-${d}`;
 
             const r = { 
-                fecha: fechaFinalString,
+                fecha: fFinal,
                 chofer: document.getElementById('cho').value, 
                 auxiliar: document.getElementById('aux').value, 
                 placa: document.getElementById('pla').value, 
@@ -244,26 +244,29 @@
                 total: ruta.reduce((a,b) => a+b.ca, 0)
             };
 
-            // Guardamos en la lista temporal para verlo de inmediato
+            // 1. Guardar localmente para respuesta inmediata
             db.push(r);
             
-            // Movemos los filtros para ver lo que acabamos de guardar
-            document.getElementById('f-dia').value = fechaFinalString;
+            // 2. Mover el filtro a la fecha del registro (Mañana o Hoy)
+            document.getElementById('f-dia').value = fFinal;
             document.getElementById('f-mes').value = f.getMonth().toString();
             
+            // 3. Ir al historial y renderizar
             nav('p3');
             renderH();
 
-            // Sincronización
+            // 4. Mandar a la nube
             saveClients(ruta);
             fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
             if(esHoy) sendWA(r);
             
-            // Reset
+            // Limpieza
             ruta = []; 
             document.getElementById('cho').value = ""; document.getElementById('pla').value = ""; document.getElementById('aux').value = "";
             localStorage.removeItem('tw_d'); renderR(); 
-            setTimeout(load, 2000); 
+            
+            // Recarga final de seguridad
+            setTimeout(load, 2500); 
         }
 
         function renderH() {
@@ -277,9 +280,13 @@
             
             db.slice().reverse().forEach((r, i) => {
                 if(!r || !r.items) return; 
+                
+                // Extraer fecha limpia del registro
                 let rStr = r.fecha.toString().split("T")[0].split(" ")[0];
-                const rFechaObj = new Date(r.fecha + "T00:00:00");
-                const matchMes = (fM === "ALL" || (r.fecha && rFechaObj.getMonth().toString() === fM));
+                
+                // Comparar meses (usamos UTC para evitar desfases de horario)
+                const fObj = new Date(r.fecha + "T12:00:00");
+                const matchMes = (fM === "ALL" || fObj.getMonth().toString() === fM);
                 const matchDia = (!fD || rStr === fD);
                 const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
 
