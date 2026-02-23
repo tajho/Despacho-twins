@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS LOGISTICS ELITE V23.0</title>
+    <title>TWINS LOGISTICS ELITE V24.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -36,7 +36,7 @@
         .btn-main { background: var(--grad); color: white; }
         .btn-mini { padding: 10px; border-radius: 12px; font-size: 10px; flex: 1; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: white; font-weight: 700; cursor: pointer; }
 
-        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 75px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; height: 75px; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
         .nav-item { background: none; border: none; color: var(--text-dim); font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
         .nav-item i { font-size: 24px; }
         .nav-item.active-nav { color: var(--accent); transform: translateY(-3px); transition: 0.2s; }
@@ -49,10 +49,10 @@
 
     <div id="modal-ask" class="modal-overlay" onclick="this.style.display='none'">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3>FECHA DE DESPACHO</h3>
-            <p style="color:var(--text-dim); font-size:14px; margin-bottom:20px;">¿Cuándo sale esta ruta?</p>
-            <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado('HOY')">📦 SALE HOY</button>
-            <button class="btn" style="background:var(--success); color:black" onclick="confirmarGuardado('MAÑANA')">📅 SALE MAÑANA</button>
+            <h3 style="margin-top:0">PROGRAMAR RUTA</h3>
+            <p style="color:var(--text-dim); font-size:14px; margin-bottom:20px;">¿Para qué fecha es este despacho?</p>
+            <button class="btn btn-main" style="margin-bottom:12px" onclick="confirmarGuardado('HOY')">📦 PARA HOY</button>
+            <button class="btn" style="background:var(--success); color:black" onclick="confirmarGuardado('MAÑANA')">📅 PARA MAÑANA</button>
         </div>
     </div>
 
@@ -74,7 +74,7 @@
 
     <div id="p2" class="page">
         <div class="stat-card" style="background:var(--grad); border:none; margin-bottom:20px; text-align:center;">
-            <span class="stat-label" style="color:white;">Carga Actual</span>
+            <span class="stat-label" style="color:white;">Cajas en Ruta</span>
             <span id="total-vivo" style="font-size:45px; font-weight:900; color:white;">0</span>
         </div>
         <div class="card">
@@ -82,15 +82,15 @@
                 <input type="text" id="cli" placeholder="Cliente">
                 <input type="number" id="can" placeholder="Cant" style="width:100px">
             </div>
-            <button class="btn btn-main" onclick="addItem()">AÑADIR</button>
+            <button class="btn btn-main" onclick="addItem()">AÑADIR ITEM</button>
         </div>
         <div id="area-envio" style="display:none">
-            <div id="lista-items" class="card" style="font-size:13px;"></div>
+            <div id="lista-items" class="card" style="font-size:13px; max-height: 200px; overflow-y: auto;"></div>
             <div class="card">
-                <select id="pla"><option value="">Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
-                <select id="cho"><option value="">Chofer</option><option value="LUIS H.">Luis H.</option><option value="ROMARIO">Romario</option><option value="CESAR C.">Cesar C.</option><option value="WALDIR">Waldir</option><option value="MARCELO">Marcelo</option></select>
-                <select id="aux"><option value="">Auxiliar</option><option value="CRISTOPHER">Cristopher</option><option value="PLACIDO">Placido</option><option value="RODOLFO">Rodolfo</option></select>
-                <button class="btn btn-main" style="background:var(--success); color:black;" onclick="abrirModalGuardar()">GUARDAR RUTA</button>
+                <select id="pla"><option value="">Seleccionar Placa</option><option value="CEP-929">CEP-929</option><option value="BPN-711">BPN-711</option><option value="BVN-704">BVN-704</option><option value="BUL-742">BUL-742</option><option value="BVN-930">BVN-930</option></select>
+                <select id="cho"><option value="">Seleccionar Chofer</option><option value="LUIS H.">Luis H.</option><option value="ROMARIO">Romario</option><option value="CESAR C.">Cesar C.</option><option value="WALDIR">Waldir</option><option value="MARCELO">Marcelo</option></select>
+                <select id="aux"><option value="">Seleccionar Auxiliar</option><option value="CRISTOPHER">Cristopher</option><option value="PLACIDO">Placido</option><option value="RODOLFO">Rodolfo</option></select>
+                <button class="btn btn-main" style="background:var(--success); color:black;" onclick="abrirModalGuardar()">ENVIAR A EXCEL</button>
             </div>
         </div>
     </div>
@@ -98,11 +98,11 @@
     <div id="p3" class="page">
         <div class="stat-grid">
             <div class="stat-card">
-                <span class="stat-label">TOTAL MES</span>
+                <span class="stat-label">TOTAL CAJAS MES</span>
                 <span id="stat-mes-caj" class="stat-num">0</span>
             </div>
             <div class="stat-card">
-                <span class="stat-label">TOTAL DÍA</span>
+                <span class="stat-label">TOTAL CAJAS DÍA</span>
                 <span id="stat-dia-caj" class="stat-num" style="color:var(--success)">0</span>
             </div>
         </div>
@@ -111,156 +111,9 @@
     </div>
 
     <div id="p4" class="page">
-        <h3 style="font-weight:800;">Flota</h3>
+        <h3 style="font-weight:800;">Estado de Unidades</h3>
         <div id="lista-flota"></div>
     </div>
 
     <nav id="nav-app" class="bottom-nav" style="display:none">
-        <button class="nav-item" id="nav-p2" onclick="nav('p2')"><i class="ph ph-package"></i>Ruta</button>
-        <button class="nav-item" id="nav-p3" onclick="nav('p3')"><i class="ph ph-clock-counter-clockwise"></i>Historial</button>
-        <button class="nav-item" id="nav-p4" onclick="nav('p4')"><i class="ph ph-truck"></i>Flota</button>
-    </nav>
-
-    <script>
-        const URL = "https://script.google.com/macros/s/AKfycbz9V0MzUuuAHTa9N4-xrsVJV7DbkWLtgJY5xHM7_JTfIDlBxCtimM6FHjRpVczuD2kM/exec";
-        let user = "", ruta = [], db = [];
-        const soats = { "CEP-929": "15/05/26", "BPN-711": "22/08/26", "BVN-704": "10/01/27", "BUL-742": "05/11/26", "BVN-930": "30/09/26" };
-
-        window.onload = () => {
-            const u = localStorage.getItem('tw_u');
-            if(u) login(u);
-            // Iniciar con la fecha de hoy por defecto
-            document.getElementById('f-dia').value = new Date().toLocaleDateString('en-CA');
-            load();
-            setInterval(load, 15000); 
-        };
-
-        function login(n) { 
-            user = n; localStorage.setItem('tw_u', n);
-            document.getElementById('p1').style.display='none'; 
-            document.getElementById('header-app').style.display='flex'; 
-            document.getElementById('nav-app').style.display='flex'; 
-            document.getElementById('user-display').innerText = n; 
-            nav('p2'); 
-        }
-
-        function nav(id) { 
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active-nav'));
-            document.getElementById(id).classList.add('active'); 
-            document.getElementById('nav-' + id).classList.add('active-nav');
-            if(id === 'p3') renderH();
-            if(id === 'p4') renderFlota();
-        }
-
-        async function load() { 
-            try { 
-                const r = await fetch(URL); 
-                db = await r.json(); 
-                // Al cargar la base de datos, NO reseteamos la fecha del input f-dia
-                renderH(); renderFlota(); 
-            } catch(e){} 
-        }
-
-        function addItem() {
-            const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
-            if(!cl || !ca) return; ruta.unshift({cl, ca}); 
-            document.getElementById('cli').value = ""; document.getElementById('can').value = ""; 
-            renderR(); 
-        }
-
-        function renderR() {
-            const l = document.getElementById('lista-items'); let s = 0; l.innerHTML = "";
-            ruta.forEach((i, x) => { s += i.ca; l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${i.cl}</span><b>${i.ca} CJ</b></div>`; });
-            document.getElementById('total-vivo').innerText = s; 
-            document.getElementById('area-envio').style.display = ruta.length > 0 ? 'block' : 'none';
-        }
-
-        function abrirModalGuardar() { document.getElementById('modal-ask').style.display = 'flex'; }
-
-        async function confirmarGuardado(opcion) {
-            document.getElementById('modal-ask').style.display = 'none';
-            
-            // CÁLCULO DE FECHA PROGRAMADA
-            let d = new Date();
-            if(opcion === 'MAÑANA') {
-                d.setDate(d.getDate() + 1);
-                if(d.getDay() === 0) d.setDate(d.getDate() + 1); 
-            }
-            let fechaTexto = d.toLocaleDateString('en-CA'); // YYYY-MM-DD fijo
-
-            const registro = { 
-                fecha: fechaTexto, // ENVIAMOS EL TEXTO EXACTO AL EXCEL
-                chofer: document.getElementById('cho').value, 
-                auxiliar: document.getElementById('aux').value, 
-                placa: document.getElementById('pla').value, 
-                operario: user, 
-                items: ruta.map(i => `${i.cl}:${i.ca}`).join(", "), 
-                total: ruta.reduce((a,b) => a+b.ca, 0)
-            };
-
-            // ACTUALIZACIÓN INMEDIATA EN APP
-            db.push(registro);
-            document.getElementById('f-dia').value = fechaTexto; // BLOQUEAMOS LA VISTA EN LA FECHA PROGRAMADA
-            nav('p3'); 
-            renderH();
-
-            // ENVÍO AL EXCEL (POST)
-            await fetch(URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(registro) });
-            
-            ruta = []; renderR();
-            document.getElementById('pla').value = ""; document.getElementById('cho').value = "";
-        }
-
-        function renderH() {
-            const list = document.getElementById('h-list'), fD = document.getElementById('f-dia').value;
-            let cMes = 0, cDia = 0, html = "";
-            const mesActual = new Date().getMonth();
-
-            db.slice().reverse().forEach(r => {
-                let rF = r.fecha.split("T")[0];
-                let rDate = new Date(r.fecha + "T00:00:00");
-
-                if(rDate.getMonth() === mesActual) cMes += parseFloat(r.total);
-
-                if(fD === rF) {
-                    cDia += parseFloat(r.total);
-                    html += `<div class="card">
-                        <div style="display:flex; justify-content:space-between">
-                            <span style="background:var(--accent); color:black; padding:2px 8px; border-radius:6px; font-size:10px; font-weight:800">${r.placa}</span>
-                            <b style="color:var(--accent)">${r.total} CJ</b>
-                        </div>
-                        <div style="font-weight:700; margin-top:8px">${r.chofer}</div>
-                        <div style="display:flex; gap:8px; margin-top:12px">
-                            <button class="btn-mini" onclick="sendWA('${r.fecha}', '${r.chofer}', '${r.total}', '${r.items}')">WHATSAPP</button>
-                        </div>
-                    </div>`;
-                }
-            });
-
-            list.innerHTML = html || `<p style='text-align:center; color:gray;'>No hay rutas para el día seleccionado</p>`;
-            document.getElementById('stat-mes-caj').innerText = Math.round(cMes);
-            document.getElementById('stat-dia-caj').innerText = Math.round(cDia);
-        }
-
-        function sendWA(f, c, t, i) {
-            let m = `*TWINS LOGISTICS*\n*Ruta:* ${f.split('T')[0]}\n*Chofer:* ${c}\n*Total:* ${t} CJ\n\n*Detalle:* ${i}`;
-            window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`;
-        }
-
-        function renderFlota() {
-            const list = document.getElementById('lista-flota'), fD = document.getElementById('f-dia').value;
-            const placas = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
-            list.innerHTML = "";
-            placas.forEach(p => {
-                let rH = db.find(r => r.placa === p && r.fecha.split('T')[0] === fD);
-                list.innerHTML += `<div class="card" style="border-left:5px solid ${rH ? 'var(--danger)':'var(--success)'}">
-                    <b>${p}</b><br><small>${rH ? 'OCUPADO: '+rH.chofer : 'DISPONIBLE'}</small>
-                </div>`;
-            });
-        }
-
-        function cerrarSesion() { localStorage.clear(); location.reload(); }
-    </script>
-</body>
-</html>
+        <button class="nav-item
