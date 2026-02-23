@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE V14.5</title>
+    <title>TWINS ELITE V14.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -84,7 +84,7 @@
 
     <div id="p2" class="page">
         <div class="stat-box" style="background: var(--grad); margin-bottom: 15px; border:none;">
-            <div class="stat-label" style="color:white; opacity:0.8;">Cajas en Lista</div>
+            <div class="stat-label" style="color:white; opacity:0.8;">Cajas en Ruta</div>
             <div id="total-vivo" style="font-size: 44px; font-weight: 900; color:white;">0</div>
         </div>
         <div class="card">
@@ -110,15 +110,15 @@
 
     <div id="p3" class="page">
         <div class="stat-grid">
-            <div class="stat-box"><div class="stat-label">Envíos Mes (Rutas)</div><div id="stat-mes" class="stat-val">0</div></div>
-            <div class="stat-box"><div class="stat-label" id="label-dia">Cajas totales del Filtro</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
+            <div class="stat-box"><div class="stat-label">Envíos Mes (Cajas)</div><div id="stat-mes" class="stat-val">0</div></div>
+            <div class="stat-box"><div class="stat-label" id="label-dia">Cajas del Día</div><div id="stat-dia" class="stat-val" style="color:var(--success);">0</div></div>
         </div>
         <div id="reporte-tajho" style="display:none; margin-bottom: 15px;">
             <button class="btn" style="background: white; color: black;" onclick="generarPDF()">📄 DESCARGAR REPORTE (ADMIN)</button>
         </div>
-        <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados (Día)</div><div id="stat-clientes" class="stat-val" style="color:white;">0</div></div>
+        <div class="stat-box" style="margin-bottom:15px; border-bottom:2px solid var(--accent);"><div class="stat-label">Puntos Despachados</div><div id="stat-clientes" class="stat-val" style="color:white;">0</div></div>
         <div class="card">
-            <input type="text" id="f-search" placeholder="🔍 Buscar por Chofer o Cliente..." onkeyup="renderH()">
+            <input type="text" id="f-search" placeholder="🔍 Buscar..." onkeyup="renderH()">
             <div style="display: flex; gap: 8px;">
                 <select id="f-mes" onchange="renderH()" style="flex:1;"><option value="ALL">Todo el Año</option><option value="0">Ene</option><option value="1">Feb</option><option value="2">Mar</option><option value="3">Abr</option><option value="4">May</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Ago</option><option value="8">Set</option><option value="9">Oct</option><option value="10">Nov</option><option value="11">Dic</option></select>
                 <input type="date" id="f-dia" onchange="renderH()" style="flex:1;">
@@ -175,7 +175,14 @@
             if(id === 'p3') renderH();
         }
 
-        async function load() { try { const r = await fetch(URL); db = await r.json(); renderH(); } catch(e){} }
+        async function load() { 
+            try { 
+                const r = await fetch(URL); 
+                const raw = await r.json();
+                db = Array.isArray(raw) ? raw : []; // Asegura que db siempre sea un array
+                renderH(); 
+            } catch(e){ console.error("Error cargando base de datos", e); } 
+        }
 
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase().trim(), ca = parseInt(document.getElementById('can').value);
@@ -209,10 +216,9 @@
             let f = new Date();
             
             if(!esHoy) {
-                // Cálculo de próximo día útil
                 f.setDate(f.getDate() + 1);
-                if(f.getDay() === 0) f.setDate(f.getDate() + 1); // Si es domingo -> lunes
-                if(f.getDay() === 6) f.setDate(f.getDate() + 2); // Si es sábado -> lunes (opcional, según tu almacén)
+                if(f.getDay() === 0) f.setDate(f.getDate() + 1); // Domingo -> Lunes
+                if(f.getDay() === 6) f.setDate(f.getDate() + 2); // Sábado -> Lunes
             }
 
             const fStr = f.toISOString().split('T')[0];
@@ -227,10 +233,7 @@
                 total: ruta.reduce((a,b) => a+b.ca, 0)
             };
 
-            // Local push para ver inmediato
-            db.push(r);
-            
-            // Forzar filtros a la fecha guardada
+            db.push(r); 
             document.getElementById('f-dia').value = fStr;
             document.getElementById('f-mes').value = f.getMonth().toString();
             
@@ -244,34 +247,37 @@
             ruta = []; 
             document.getElementById('cho').value = ""; document.getElementById('pla').value = ""; document.getElementById('aux').value = "";
             localStorage.removeItem('tw_d'); renderR(); 
-            setTimeout(load, 2500); 
+            setTimeout(load, 3000); 
         }
 
         function renderH() {
             const list = document.getElementById('h-list');
-            if(!list) return;
+            if(!list || !db) return;
             const fM = document.getElementById('f-mes').value;
             const fD = document.getElementById('f-dia').value;
             const fS = document.getElementById('f-search').value.toUpperCase();
             
-            let rutasContadas = 0, cajasTotalesFiltro = 0, puntosDia = 0;
+            let envMes = 0, cajasMes = 0, tDia = 0, tPuntos = 0;
             let html = "";
             
             db.slice().reverse().forEach((r, i) => {
                 if(!r || !r.items) return; 
                 
-                let rStr = r.fecha.toString().split("T")[0].split(" ")[0];
+                // Limpieza de fecha para comparación
+                let rStr = r.fecha ? r.fecha.toString().split("T")[0].split(" ")[0] : "";
                 const rFechaObj = new Date(r.fecha + "T12:00:00");
                 
                 const matchMes = (fM === "ALL" || rFechaObj.getMonth().toString() === fM);
                 const matchDia = (!fD || rStr === fD);
-                const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS) || r.placa.toUpperCase().includes(fS));
+                const matchSearch = (r.items.toUpperCase().includes(fS) || r.chofer.toUpperCase().includes(fS));
+
+                if (matchMes) { envMes++; cajasMes += (parseFloat(r.total) || 0); }
+                if (rStr === fD) { 
+                    tDia += (parseFloat(r.total) || 0); 
+                    tPuntos += r.items.split(",").length;
+                }
 
                 if (matchMes && matchDia && matchSearch) {
-                    rutasContadas++;
-                    cajasTotalesFiltro += (parseFloat(r.total) || 0);
-                    if(rStr === fD) puntosDia += r.items.split(",").length;
-
                     let auxLabel = (r.auxiliar && r.auxiliar !== "") ? ` (${r.auxiliar})` : "";
                     html += `<div class="card">
                         <div style="display:flex; justify-content:space-between;">
@@ -293,9 +299,9 @@
             });
 
             list.innerHTML = html;
-            document.getElementById('stat-mes').innerText = rutasContadas;
-            document.getElementById('stat-dia').innerText = Math.round(cajasTotalesFiltro);
-            document.getElementById('stat-clientes').innerText = puntosDia;
+            document.getElementById('stat-mes').innerText = Math.round(cajasMes);
+            document.getElementById('stat-dia').innerText = Math.round(tDia);
+            document.getElementById('stat-clientes').innerText = tPuntos;
         }
 
         function verSoloRuta(idx) {
@@ -306,7 +312,8 @@
 
         function sendWA(r) { 
             let aux = (r.auxiliar && r.auxiliar !== "") ? r.auxiliar : "NINGUNO";
-            let m = `*📦 DESPACHO TWINS*\n\n*Fecha:* ${r.fecha.split('T')[0]}\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
+            let fClean = r.fecha.toString().split("T")[0];
+            let m = `*📦 DESPACHO TWINS*\n\n*Fecha:* ${fClean}\n*Chofer:* ${r.chofer}\n*Auxiliar:* ${aux}\n*Placa:* ${r.placa}\n*Total:* ${r.total} CJ\n\n*DETALLE:*\n${r.items.split(", ").map(i => "✅ " + i.replace(":", ": ")).join("\n")}`;
             window.location.href = `https://wa.me/?text=${encodeURIComponent(m)}`; 
         }
 
