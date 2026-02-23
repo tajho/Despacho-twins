@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS NEBULA V35 - ELITE</title>
+    <title>TWINS NEBULA V36 - ANALYTICS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         :root {
             --bg: #010204; --glass: rgba(255, 255, 255, 0.04);
@@ -71,6 +74,10 @@
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 3000; padding: 25px; align-items: center; justify-content: center; }
         .modal-card { background: #0a0c10; border-radius: 40px; padding: 35px; width: 100%; max-width: 400px; border: 1px solid var(--border); }
+        
+        /* Dashboard adicional */
+        .dash-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .dash-full { width: 100%; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -144,20 +151,27 @@
     </div>
 
     <div id="page-history" class="page">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px">
-            <div class="card" style="margin:0; padding:18px; text-align:center">
-                <span style="font-size:10px; color:var(--text-dim); font-weight:800">TOTAL CAJAS</span>
-                <div style="font-size:24px; font-weight:800; color:var(--accent)" id="st-cajas">0</div>
+        <div class="dash-row">
+            <div class="card" style="margin:0; padding:15px; text-align:center">
+                <span style="font-size:9px; color:var(--text-dim); font-weight:800">CAJAS (HOY)</span>
+                <div style="font-size:22px; font-weight:800; color:var(--accent)" id="st-cajas">0</div>
             </div>
-            <div class="card" style="margin:0; padding:18px; text-align:center">
-                <span style="font-size:10px; color:var(--text-dim); font-weight:800">TOTAL PUNTOS</span>
-                <div style="font-size:24px; font-weight:800; color:var(--success)" id="st-puntos">0</div>
+            <div class="card" style="margin:0; padding:15px; text-align:center">
+                <span style="font-size:9px; color:var(--text-dim); font-weight:800">ENVÍOS (HOY)</span>
+                <div style="font-size:22px; font-weight:800; color:var(--success)" id="st-puntos">0</div>
+            </div>
+        </div>
+        <div class="card dash-full" style="padding:15px; text-align:center">
+            <span style="font-size:10px; color:var(--text-dim); font-weight:800">ACUMULADO MENSUAL</span>
+            <div style="display:flex; justify-content:center; gap:20px; margin-top:5px">
+                <div><small style="font-size:10px; opacity:0.6">📦 CAJAS:</small> <b id="st-mes-cajas" style="color:var(--accent)">0</b></div>
+                <div><small style="font-size:10px; opacity:0.6">📍 ENVÍOS:</small> <b id="st-mes-envios" style="color:var(--success)">0</b></div>
             </div>
         </div>
 
         <div id="admin-tools" style="display:none; margin-bottom:20px">
-            <button class="btn btn-ghost" style="color:var(--accent); border-color:var(--accent)" onclick="alert('Generando reporte Excel...')">
-                <i class="ph-bold ph-file-arrow-down"></i> GENERAR REPORTE
+            <button class="btn btn-ghost" style="color:var(--accent); border-color:var(--accent)" onclick="generatePDF()">
+                <i class="ph-bold ph-file-pdf"></i> GENERAR REPORTE PDF
             </button>
         </div>
 
@@ -193,7 +207,6 @@
         
         const PLACAS = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
         const CHOFERES = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
-        // LISTA OFICIAL DE AUXILIARES REPARADA
         const AUXILIARES = ["CRISTOPHER", "PLACIDO", "RODOLFO", "SIN AUXILIAR", "NELSON"];
         const SOATS = { "CEP-929": "15/05/26", "BPN-711": "22/08/26", "BVN-704": "10/01/27", "BUL-742": "05/11/26", "BVN-930": "30/09/26" };
 
@@ -256,7 +269,7 @@
             const last = database.slice().reverse().find(r => r.placa === p);
             if(last) {
                 document.getElementById('cho').value = last.chofer;
-                document.getElementById('aux').value = ""; // No sugiere auxiliar por diseño
+                document.getElementById('aux').value = ""; 
             }
         }
 
@@ -306,17 +319,24 @@
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
             const sQ = document.getElementById('search').value.toUpperCase();
             const hoyStr = new Date().toISOString().split('T')[0];
-            let html = "", tC = 0, tP = 0;
+            const filterDate = new Date(fD + "T00:00:00");
+            
+            let html = "", tC = 0, tP = 0, mC = 0, mP = 0;
 
             database.slice().reverse().forEach(r => {
                 const rf = r.fecha.split('T')[0];
+                const rowDate = new Date(r.fecha);
+                
+                // Calculo Mensual
+                if(rowDate.getMonth() === filterDate.getMonth() && rowDate.getFullYear() === filterDate.getFullYear()){
+                    mC += parseFloat(r.total);
+                    mP += parseInt(r.puntos || r.items.split(',').length);
+                }
+
                 if(rf === fD && (r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ))) {
-                    
-                    // CORRECCIÓN DE CONTEO DE PUNTOS DINÁMICO
                     const numPuntos = r.puntos || (r.items ? r.items.split(',').length : 0);
                     tC += parseFloat(r.total); 
                     tP += parseInt(numPuntos);
-                    
                     const isOld = rf < hoyStr;
                     
                     html += `<div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
@@ -341,8 +361,43 @@
                 }
             });
             cont.innerHTML = html || "<p style='text-align:center; opacity:0.5; padding:50px'>No hay registros</p>";
+            
+            // Actualizar Dashboards
             document.getElementById('st-cajas').innerText = tC;
             document.getElementById('st-puntos').innerText = tP;
+            document.getElementById('st-mes-cajas').innerText = mC;
+            document.getElementById('st-mes-envios').innerText = mP;
+        }
+
+        // GENERADOR DE REPORTE PDF
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const date = document.getElementById('f-filter').value;
+            
+            doc.setFontSize(18);
+            doc.text("REPORTE DE DESPACHOS TWINS", 14, 20);
+            doc.setFontSize(11);
+            doc.text("Fecha del Reporte: " + date, 14, 30);
+            doc.text("Generado por: " + user, 14, 36);
+
+            const rows = [];
+            database.filter(r => r.fecha.split('T')[0] === date).forEach(r => {
+                rows.push([r.placa, r.chofer, r.auxiliar, r.total, r.puntos || r.items.split(',').length]);
+            });
+
+            doc.autoTable({
+                startY: 45,
+                head: [['Placa', 'Chofer', 'Auxiliar', 'Cajas', 'Puntos']],
+                body: rows,
+                theme: 'grid',
+                headStyles: { fillColor: [0, 122, 255] }
+            });
+
+            doc.text(`Total Cajas: ${document.getElementById('st-cajas').innerText}`, 14, doc.lastAutoTable.finalY + 10);
+            doc.text(`Total Envíos: ${document.getElementById('st-puntos').innerText}`, 14, doc.lastAutoTable.finalY + 16);
+
+            doc.save(`TWINS_REPORTE_${date}.pdf`);
         }
 
         function viewItems(txt, ch) {
