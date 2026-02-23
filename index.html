@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS NEBULA V38 - ELITE PERSISTENCE</title>
+    <title>TWINS NEBULA V39 - EXCEL ALIGNED</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -45,7 +45,7 @@
 
         input, select { 
             width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--border); 
-            background: rgba(255,255,255,0.02); color: white; font-size: 15px; transition: 0.3s;
+            background: rgba(255,255,255,0.02); color: white; font-size: 15px;
         }
 
         .btn { 
@@ -208,13 +208,8 @@
         window.onload = () => {
             initInputs();
             const savedUser = localStorage.getItem('tw_user');
-            // RECUPERAR RUTA EN PROGRESO SI EXISTE
             const savedDraft = localStorage.getItem('tw_draft_items');
-            if(savedDraft) {
-                items = JSON.parse(savedDraft);
-                renderTemp();
-            }
-            
+            if(savedDraft) { items = JSON.parse(savedDraft); renderTemp(); }
             document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
             if(savedUser) login(savedUser);
             loadData();
@@ -222,39 +217,23 @@
 
         function initInputs() {
             const grid = document.getElementById('login-grid');
-            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                grid.innerHTML += `<button class="btn btn-ghost" onclick="checkAuth('${u}')">${u}</button>`;
-            });
+            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => { grid.innerHTML += `<button class="btn btn-ghost" onclick="checkAuth('${u}')">${u}</button>`; });
             document.getElementById('pla').innerHTML = '<option value="">Placa</option>' + PLACAS.map(p => `<option value="${p}">${p}</option>`).join('');
             document.getElementById('cho').innerHTML = '<option value="">Chofer</option>' + CHOFERES.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('aux').innerHTML = '<option value="">Auxiliar</option>' + AUXILIARES.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
-        // LÓGICA DE PERSISTENCIA AL AÑADIR/BORRAR
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
             items.unshift({cl, ca});
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            saveDraft();
-            renderTemp();
+            saveDraft(); renderTemp();
         }
 
-        function deleteItem(i) {
-            items.splice(i, 1);
-            saveDraft();
-            renderTemp();
-        }
-
-        function saveDraft() {
-            localStorage.setItem('tw_draft_items', JSON.stringify(items));
-        }
-
-        function clearDraft() {
-            items = [];
-            localStorage.removeItem('tw_draft_items');
-            renderTemp();
-        }
+        function deleteItem(i) { items.splice(i, 1); saveDraft(); renderTemp(); }
+        function saveDraft() { localStorage.setItem('tw_draft_items', JSON.stringify(items)); }
+        function clearDraft() { items = []; localStorage.removeItem('tw_draft_items'); renderTemp(); }
 
         function renderTemp() {
             const box = document.getElementById('temp-list');
@@ -270,70 +249,29 @@
             document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
         }
 
-        // EL RESTO DEL CÓDIGO SE MANTIENE EXACTAMENTE IGUAL POR SEGURIDAD
-        function checkAuth(u) {
-            if(u === 'TAJHO ADMIN') { document.getElementById('m-auth').style.display = 'flex'; } 
-            else { login(u); }
-        }
-
-        function verifyAuth() {
-            if(document.getElementById('admin-pass').value === '1234') {
-                document.getElementById('m-auth').style.display = 'none';
-                login('TAJHO ADMIN');
-            } else { alert("PIN Incorrecto"); }
-        }
-
-        function login(u) {
-            user = u; localStorage.setItem('tw_user', u);
-            document.getElementById('page-login').classList.remove('active');
-            document.getElementById('app-header').style.display = 'flex';
-            document.getElementById('app-nav').style.display = 'flex';
-            document.getElementById('user-display').innerText = u;
-            if(u === 'TAJHO ADMIN') document.getElementById('admin-tools').style.display = 'block';
-            nav('page-route');
-        }
-
-        function nav(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
-            if(id === 'page-history') renderHistory();
-            if(id === 'page-fleet') renderFleet();
-        }
-
-        async function loadData() {
-            try { const r = await fetch(API); database = await r.json(); renderHistory(); renderFleet(); } catch(e){}
-        }
-
-        function smartPredict() {
-            const p = document.getElementById('pla').value;
-            if(!p) return;
-            const last = database.slice().reverse().find(r => r.placa === p);
-            if(last) {
-                document.getElementById('cho').value = last.chofer;
-                document.getElementById('aux').value = ""; 
-            }
-        }
-
         async function saveRoute(tipo) {
             document.getElementById('m-type').style.display = 'none';
             let d = new Date();
             if(tipo === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
             const fT = d.toISOString().split('T')[0];
 
+            // ALINEACIÓN CON TU EXCEL: Fecha | CHOFER | AUXILIAR | PLACA | DETALLES | TOTAL | OPERARIO
             const reg = {
-                fecha: fT, chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value,
-                placa: document.getElementById('pla').value, operario: user,
+                fecha: fT,
+                chofer: document.getElementById('cho').value,
+                auxiliar: document.getElementById('aux').value,
+                placa: document.getElementById('pla').value,
                 items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), 
-                total: items.reduce((a,b)=>a+b.ca,0), puntos: items.length
+                total: items.reduce((a,b)=>a+b.ca,0),
+                operario: user,
+                puntos: items.length // Mantenido para cálculos internos
             };
 
             database.push(reg);
             document.getElementById('f-filter').value = fT;
             nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            clearDraft(); // LIMPIAR SOLO AL GUARDAR ÉXITOSAMENTE
+            clearDraft();
         }
 
         function renderHistory() {
@@ -341,25 +279,23 @@
             const sQ = document.getElementById('search').value.toUpperCase();
             const hoyStr = new Date().toISOString().split('T')[0];
             const targetDate = new Date(fD + "T00:00:00");
-            const targetMonth = targetDate.getMonth();
-            const targetYear = targetDate.getFullYear();
+            const targetMonth = targetDate.getMonth(), targetYear = targetDate.getFullYear();
             let html = "", tC = 0, tP = 0, mC = 0, mP = 0;
 
             database.forEach(r => {
-                const rf = r.fecha.split('T')[0];
-                const rDate = new Date(r.fecha);
+                const rf = r.fecha.split('T')[0], rDate = new Date(r.fecha);
                 if(rDate.getMonth() === targetMonth && rDate.getFullYear() === targetYear) {
                     mC += parseFloat(r.total || 0);
-                    mP += parseInt(r.puntos || r.items.split(',').length);
+                    mP += parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
                 }
-                if(rf === fD && (r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ))) {
-                    const numPuntos = r.puntos || (r.items ? r.items.split(',').length : 0);
-                    tC += parseFloat(r.total || 0); tP += parseInt(numPuntos);
+                if(rf === fD && (r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ) || r.placa.toUpperCase().includes(sQ))) {
+                    const nP = r.puntos || (r.items ? r.items.split(',').length : 0);
+                    tC += parseFloat(r.total || 0); tP += parseInt(nP);
                     const isOld = rf < hoyStr;
                     html = `<div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
                         <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
                             <div><b style="font-size:18px; display:block">${r.placa}</b><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : (rf === hoyStr ? 'EN RUTA' : 'PROGRAMADO')}</span></div>
-                            <div style="text-align:right"><b style="color:var(--accent); font-size:20px">${r.total} CJ</b><div style="font-size:10px; opacity:0.6">${numPuntos} PUNTOS</div></div>
+                            <div style="text-align:right"><b style="color:var(--accent); font-size:20px">${r.total} CJ</b><div style="font-size:10px; opacity:0.6">${nP} PUNTOS</div></div>
                         </div>
                         <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
                         <div style="display:flex; gap:10px">
@@ -370,26 +306,8 @@
                 }
             });
             cont.innerHTML = html || "<p style='text-align:center; opacity:0.5; padding:50px'>No hay registros</p>";
-            document.getElementById('st-cajas').innerText = tC;
-            document.getElementById('st-puntos').innerText = tP;
-            document.getElementById('st-mes-cajas').innerText = mC;
-            document.getElementById('st-mes-envios').innerText = mP;
-        }
-
-        function renderFleet() {
-            const list = document.getElementById('fleet-list'), fD = document.getElementById('f-filter').value;
-            const hoy = new Date();
-            list.innerHTML = `<h2 style="margin-bottom:25px; font-weight:800">Estado de Flota</h2>`;
-            PLACAS.forEach(p => {
-                const r = database.find(x => x.placa === p && x.fecha.split('T')[0] === fD);
-                const vencimiento = new Date(SOATS[p] + "T00:00:00");
-                const diasRestantes = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
-                const colorSoat = diasRestantes <= 30 ? 'var(--danger)' : 'var(--success)';
-                list.innerHTML += `<div class="card" style="border-left:6px solid ${r ? 'var(--danger)' : 'var(--success)'}">
-                    <div style="display:flex; justify-content:space-between; align-items:start"><b>${p}</b><div style="text-align:right"><small style="opacity:0.5; font-size:9px; display:block">VENCE: ${SOATS[p]}</small><b style="color:${colorSoat}; font-size:11px">${diasRestantes} DÍAS RESTANTES</b></div></div>
-                    <div style="margin-top:10px; font-size:15px">${r ? '🔴 EN RUTA: ' + r.chofer : '🟢 DISPONIBLE'}</div>
-                </div>`;
-            });
+            document.getElementById('st-cajas').innerText = tC; document.getElementById('st-puntos').innerText = tP;
+            document.getElementById('st-mes-cajas').innerText = mC; document.getElementById('st-mes-envios').innerText = mP;
         }
 
         function generatePDF() {
@@ -397,26 +315,23 @@
             const date = document.getElementById('f-filter').value;
             doc.setFontSize(18); doc.text("REPORTE DESPACHOS TWINS", 14, 20);
             const rows = [];
-            database.filter(r => r.fecha.split('T')[0] === date).forEach(r => { rows.push([r.placa, r.chofer, r.auxiliar, r.total, r.puntos || r.items.split(',').length]); });
-            doc.autoTable({ startY: 40, head: [['Placa', 'Chofer', 'Auxiliar', 'Cajas', 'Puntos']], body: rows, headStyles: { fillColor: [0, 122, 255] }});
+            database.filter(r => r.fecha.split('T')[0] === date).forEach(r => { 
+                // ALINEADO AL EXCEL EN EL PDF
+                rows.push([r.fecha.split('T')[0], r.chofer, r.auxiliar, r.placa, r.items, r.total, r.operario]); 
+            });
+            doc.autoTable({ startY: 40, head: [['Fecha', 'CHOFER', 'AUXILIAR', 'PLACA', 'DETALLES', 'TOTAL', 'OPERARIO']], body: rows, headStyles: { fillColor: [0, 122, 255] }});
             doc.save(`Reporte_Twins_${date}.pdf`);
         }
 
-        function viewItems(txt, ch) {
-            document.getElementById('m-title').innerText = "Ruta: " + ch;
-            document.getElementById('m-container').innerHTML = txt.split(", ").map(i => {
-                const [cl, ca] = i.split(":");
-                return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)"><span>${cl}</span><b>${ca}</b></div>`;
-            }).join('');
-            document.getElementById('m-list').style.display = 'flex';
-        }
-
-        function wa(c, a, p, t, i) {
-            const detalle = i.split(", ").map(item => `✅ ${item.toUpperCase().trim()}`).join("%0A");
-            const msg = `*📦 DESPACHO TWINS*%0A%0A*Chofer:* ${c}%0A*Auxiliar:* ${a}%0A*Placa:* ${p}%0A*Total:* ${t} CJ%0A%0A*DETALLE:*%0A${detalle}`;
-            window.location.href = `https://wa.me/?text=${msg}`;
-        }
-
+        function checkAuth(u) { if(u === 'TAJHO ADMIN') { document.getElementById('m-auth').style.display = 'flex'; } else { login(u); } }
+        function verifyAuth() { if(document.getElementById('admin-pass').value === '1234') { document.getElementById('m-auth').style.display = 'none'; login('TAJHO ADMIN'); } else { alert("PIN Incorrecto"); } }
+        function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-display').innerText = u; if(u === 'TAJHO ADMIN') document.getElementById('admin-tools').style.display = 'block'; nav('page-route'); }
+        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('n-' + id.split('-')[1]).classList.add('active'); if(id === 'page-history') renderHistory(); if(id === 'page-fleet') renderFleet(); }
+        async function loadData() { try { const r = await fetch(API); database = await r.json(); renderHistory(); renderFleet(); } catch(e){} }
+        function smartPredict() { const p = document.getElementById('pla').value; if(!p) return; const last = database.slice().reverse().find(r => r.placa === p); if(last) { document.getElementById('cho').value = last.chofer; document.getElementById('aux').value = ""; } }
+        function renderFleet() { const list = document.getElementById('fleet-list'), fD = document.getElementById('f-filter').value, hoy = new Date(); list.innerHTML = `<h2 style="margin-bottom:25px; font-weight:800">Estado de Flota</h2>`; PLACAS.forEach(p => { const r = database.find(x => x.placa === p && x.fecha.split('T')[0] === fD); const vencimiento = new Date(SOATS[p] + "T00:00:00"); const diasRestantes = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24)); const colorSoat = diasRestantes <= 30 ? 'var(--danger)' : 'var(--success)'; list.innerHTML += `<div class="card" style="border-left:6px solid ${r ? 'var(--danger)' : 'var(--success)'}"><div style="display:flex; justify-content:space-between; align-items:start"><b>${p}</b><div style="text-align:right"><small style="opacity:0.5; font-size:9px; display:block">VENCE: ${SOATS[p]}</small><b style="color:${colorSoat}; font-size:11px">${diasRestantes} DÍAS RESTANTES</b></div></div><div style="margin-top:10px; font-size:15px">${r ? '🔴 EN RUTA: ' + r.chofer : '🟢 DISPONIBLE'}</div></div>`; }); }
+        function viewItems(txt, ch) { document.getElementById('m-title').innerText = "Ruta: " + ch; document.getElementById('m-container').innerHTML = txt.split(", ").map(i => { const [cl, ca] = i.split(":"); return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)"><span>${cl}</span><b>${ca}</b></div>`; }).join(''); document.getElementById('m-list').style.display = 'flex'; }
+        function wa(c, a, p, t, i) { const detalle = i.split(", ").map(item => `✅ ${item.toUpperCase().trim()}`).join("%0A"); const msg = `*📦 DESPACHO TWINS*%0A%0A*Chofer:* ${c}%0A*Auxiliar:* ${a}%0A*Placa:* ${p}%0A*Total:* ${t} CJ%0A%0A*DETALLE:*%0A${detalle}`; window.location.href = `https://wa.me/?text=${msg}`; }
         function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
