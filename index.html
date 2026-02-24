@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHO V43 - ANALYTICS PRO</title>
+    <title>TWINS DESPACHO V44 - DASHBOARD SLIDER</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -38,10 +38,45 @@
         .logo { font-weight: 800; font-size: 19px; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
 
+        /* Estilos del Slider de Gráficos */
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .slider-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            gap: 15px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .slider-container::-webkit-scrollbar { display: none; }
+        .slide {
+            min-width: 100%;
+            scroll-snap-align: start;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+        }
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); transition: 0.3s; }
+        .dot.active { width: 20px; background: var(--accent); border-radius: 10px; }
+
         .card { 
             background: var(--glass); border: 1px solid var(--border); 
             border-radius: 30px; padding: 22px; margin-bottom: 18px;
-            backdrop-filter: blur(15px); box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            backdrop-filter: blur(15px);
         }
 
         input, select { 
@@ -52,14 +87,10 @@
         .btn { 
             width: 100%; padding: 18px; border-radius: 22px; border: none; 
             font-size: 15px; font-weight: 700; cursor: pointer; 
-            display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
         }
         .btn-main { background: var(--accent); color: white; box-shadow: 0 10px 25px var(--accent-glow); }
         .btn-ghost { background: var(--glass); color: var(--text); border: 1px solid var(--border); }
-
-        .badge { font-size: 10px; padding: 5px 12px; border-radius: 50px; font-weight: 800; }
-        .bg-done { background: rgba(46, 209, 88, 0.15); color: var(--success); }
-        .bg-route { background: rgba(0, 122, 255, 0.15); color: var(--accent); }
 
         .nav-bar { 
             position: fixed; bottom: 25px; left: 20px; right: 20px; 
@@ -76,8 +107,7 @@
         
         .stat-label { font-size: 9px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 800; }
-
-        .chart-box { height: 180px; width: 100%; margin-top: 10px; }
+        .chart-container { position: relative; height: 180px; width: 100%; }
     </style>
 </head>
 <body>
@@ -85,57 +115,45 @@
     <div id="m-auth" class="modal">
         <div class="modal-card">
             <h2 style="text-align:center; margin:0">Admin Auth</h2>
-            <p style="text-align:center; color:var(--text-dim); margin-bottom:30px">Ingresa pin de seguridad</p>
             <input type="password" id="admin-pass" placeholder="••••" style="text-align:center; font-size:28px; letter-spacing:10px; margin-bottom:25px">
             <button class="btn btn-main" onclick="verifyAuth()">DESBLOQUEAR</button>
-            <button class="btn" style="background:none; color:var(--text-dim)" onclick="location.reload()">VOLVER</button>
         </div>
     </div>
 
     <div id="m-list" class="modal" onclick="this.style.display='none'">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 id="m-title" style="margin:0 0 5px 0">Detalle</h3>
+            <h3 id="m-title" style="margin:0">Detalle</h3>
             <div id="m-container" style="max-height: 300px; overflow-y: auto; margin-top:20px"></div>
-            <button class="btn btn-main" style="margin-top:25px" onclick="document.getElementById('m-list').style.display='none'">CERRAR</button>
         </div>
     </div>
 
     <header id="app-header" class="top-header" style="display:none">
         <div class="logo">TWINS <span>NEBULA</span></div>
-        <div style="display:flex; align-items:center; gap:12px">
-            <div style="font-size:11px; font-weight:800; color:var(--accent)" id="user-display">---</div>
-            <i class="ph-bold ph-power" onclick="logout()" style="color:var(--danger); font-size:22px"></i>
-        </div>
+        <div id="user-display" style="font-size:11px; font-weight:800; color:var(--accent)">---</div>
     </header>
 
-    <div id="page-login" class="page active" style="text-align:center; padding-top:10vh">
-        <div style="width: 85px; height: 85px; background: var(--accent); border-radius: 28px; display:flex; align-items:center; justify-content:center; margin: 0 auto 30px; box-shadow: 0 15px 35px var(--accent-glow)">
-            <i class="ph-fill ph-shield-check" style="font-size: 45px; color: white;"></i>
-        </div>
-        <h1 style="font-weight: 800; font-size: 28px; margin: 0;">TWINS DESPACHO</h1>
+    <div id="page-login" class="page active">
+        <h1 style="text-align:center; margin-top:15vh">TWINS DESPACHO</h1>
         <div id="login-grid" style="display:grid; gap:14px; padding: 20px;"></div>
     </div>
 
     <div id="page-route" class="page">
-        <div class="card" style="background: linear-gradient(135deg, #007aff, #0033aa); border:none; color:white; overflow:hidden; position:relative">
-            <div style="position:relative; z-index:2">
-                <span style="font-size:11px; font-weight:800; opacity:0.8; letter-spacing:1px">CARGA ACTUAL</span>
-                <div id="total-cajas" style="font-size:55px; font-weight:800; margin:5px 0">0</div>
-                <div id="total-puntos" style="font-size:12px; font-weight:700; background:rgba(255,255,255,0.15); padding:6px 15px; border-radius:12px; display:inline-block">0 PUNTOS</div>
-            </div>
-            <i class="ph-fill ph-package" style="position:absolute; right:-20px; bottom:-20px; font-size:160px; opacity:0.1"></i>
+        <div class="card" style="background: linear-gradient(135deg, #007aff, #0033aa); color:white;">
+            <span style="font-size:11px; font-weight:800; opacity:0.8">CARGA ACTUAL</span>
+            <div id="total-cajas" style="font-size:55px; font-weight:800">0</div>
+            <div id="total-puntos" style="font-size:12px; font-weight:700;">0 PUNTOS</div>
         </div>
 
         <div class="card">
             <input type="text" id="cli" placeholder="Cliente o Destino" style="margin-bottom:12px">
             <div style="display:flex; gap:12px">
                 <input type="number" id="can" placeholder="Cant." style="flex:0.8">
-                <button class="btn btn-main" onclick="addItem()" style="flex:1.2"><i class="ph-bold ph-plus"></i>AÑADIR</button>
+                <button class="btn btn-main" onclick="addItem()" style="flex:1.2">AÑADIR</button>
             </div>
         </div>
 
         <div id="send-zone" style="display:none">
-            <div id="temp-list" class="card" style="border-style:dashed; background:transparent; font-size:14px"></div>
+            <div id="temp-list" class="card" style="border-style:dashed; background:transparent;"></div>
             <div class="card">
                 <select id="pla" onchange="smartPredict()" style="margin-bottom:12px"></select>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px">
@@ -143,28 +161,37 @@
                     <select id="aux"></select>
                 </div>
                 <button class="btn" style="background:var(--success); color:black" onclick="document.getElementById('m-type').style.display='flex'">
-                    <i class="ph-fill ph-paper-plane-tilt"></i> GUARDAR DESPACHO
+                    GUARDAR DESPACHO
                 </button>
             </div>
         </div>
     </div>
 
     <div id="page-history" class="page">
-        <div class="card" style="padding:15px; margin-bottom:15px">
-            <div class="stat-label">Productividad Mensual</div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
-                <div class="chart-box"><canvas id="choferChart"></canvas></div>
-                <div class="chart-box"><canvas id="auxiliarChart"></canvas></div>
+        <div class="slider-wrapper">
+            <div class="slider-container" id="slider">
+                <div class="slide">
+                    <div class="stat-label" style="margin-bottom:10px">Productividad Choferes</div>
+                    <div class="chart-container"><canvas id="choferChart"></canvas></div>
+                </div>
+                <div class="slide">
+                    <div class="stat-label" style="margin-bottom:10px">Productividad Auxiliares</div>
+                    <div class="chart-container"><canvas id="auxiliarChart"></canvas></div>
+                </div>
+            </div>
+            <div class="slider-dots">
+                <div class="dot active" id="dot0"></div>
+                <div class="dot" id="dot1"></div>
             </div>
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px">
             <div class="card" style="margin:0; padding:15px; text-align:center">
-                <div class="stat-label">Cajas (Día)</div>
+                <div class="stat-label">Cajas Día</div>
                 <div class="stat-value" id="st-cajas" style="color:var(--accent)">0</div>
             </div>
             <div class="card" style="margin:0; padding:15px; text-align:center">
-                <div class="stat-label">Acum. Mes</div>
+                <div class="stat-label">Acumulado Mes</div>
                 <div class="stat-value" id="st-mes-cajas">0</div>
             </div>
         </div>
@@ -182,15 +209,14 @@
 
     <div id="m-type" class="modal">
         <div class="modal-card">
-            <h3 style="text-align:center; margin-top:0">Fecha de Salida</h3>
+            <h3 style="text-align:center">Fecha de Salida</h3>
             <button class="btn btn-main" style="margin-bottom:15px" onclick="saveRoute('HOY')">HOY</button>
-            <button class="btn btn-ghost" style="color:var(--success)" onclick="saveRoute('MAÑANA')">MAÑANA</button>
-            <button class="btn" style="background:none; color:var(--text-dim)" onclick="document.getElementById('m-type').style.display='none'">CANCELAR</button>
+            <button class="btn btn-ghost" onclick="saveRoute('MAÑANA')">MAÑANA</button>
         </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-link" id="n-route" onclick="nav('page-route')"><i class="ph ph-plus-circle"></i>Ruta</button>
+        <button class="nav-link active" id="n-route" onclick="nav('page-route')"><i class="ph ph-plus-circle"></i>Ruta</button>
         <button class="nav-link" id="n-history" onclick="nav('page-history')"><i class="ph ph-database"></i>Data</button>
         <button class="nav-link" id="n-fleet" onclick="nav('page-fleet')"><i class="ph ph-truck"></i>Flota</button>
     </nav>
@@ -210,6 +236,14 @@
             if(savedUser) login(savedUser);
             document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
             loadData();
+            
+            // Listener para los puntos del slider
+            document.getElementById('slider').addEventListener('scroll', (e) => {
+                const scroll = e.target.scrollLeft;
+                const width = e.target.offsetWidth;
+                const activeSlide = Math.round(scroll / width);
+                document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === activeSlide));
+            });
         };
 
         function initInputs() {
@@ -234,7 +268,8 @@
         function renderHistory() {
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
             const sQ = document.getElementById('search').value.toUpperCase();
-            const tM = new Date(fD + "T00:00:00").getMonth(), tY = new Date(fD + "T00:00:00").getFullYear();
+            const tM = new Date(fD + "T00:00:00").getMonth();
+            const tY = new Date(fD + "T00:00:00").getFullYear();
 
             let html = "", diaCajas = 0, mesCajas = 0;
             let dataC = {}, dataA = {};
@@ -254,6 +289,7 @@
                     if (!sQ || r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ) || r.placa.toUpperCase().includes(sQ)) {
                         diaCajas += totalCj;
                         const hora = r.hora || "--:--";
+                        // NO TOCAMOS LA TARJETA DE RUTA
                         html = `
                         <div class="card" style="border-left:6px solid var(--accent)">
                             <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px">
@@ -274,20 +310,30 @@
         }
 
         function updateCharts(dataC, dataA) {
-            const config = (ctx, label, data, color) => {
-                return new Chart(ctx, {
-                    type: 'bar',
-                    data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: color, borderRadius: 5 }] },
-                    options: { 
-                        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                        plugins: { legend: { display: false }, title: { display: true, text: label, color: '#86868b', font: { size: 9 } } },
-                        scales: { x: { display: false }, y: { ticks: { color: '#f5f5f7', font: { size: 8 } } } }
-                    }
-                });
-            };
-            if(cChart) cChart.destroy(); if(aChart) aChart.destroy();
-            cChart = config(document.getElementById('choferChart').getContext('2d'), 'CHOFERES', dataC, '#007aff');
-            aChart = config(document.getElementById('auxiliarChart').getContext('2d'), 'AUXILIARES', dataA, '#2ed158');
+            const chartOptions = (color) => ({
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    x: { grid: { display: false }, ticks: { color: '#86868b' } },
+                    y: { grid: { display: false }, ticks: { color: '#f5f5f7', font: { size: 10 } } } 
+                }
+            });
+
+            if(cChart) cChart.destroy();
+            cChart = new Chart(document.getElementById('choferChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: Object.keys(dataC), datasets: [{ data: Object.values(dataC), backgroundColor: '#007aff', borderRadius: 8 }] },
+                options: chartOptions('#007aff')
+            });
+
+            if(aChart) aChart.destroy();
+            aChart = new Chart(document.getElementById('auxiliarChart').getContext('2d'), {
+                type: 'bar',
+                data: { labels: Object.keys(dataA), datasets: [{ data: Object.values(dataA), backgroundColor: '#2ed158', borderRadius: 8 }] },
+                options: chartOptions('#2ed158')
+            });
         }
 
         async function saveRoute(tipo) {
@@ -297,20 +343,25 @@
             
             const hT = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
             const reg = { 
-                fecha: d.toISOString().split('T')[0], hora: hT,
-                chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, 
-                placa: document.getElementById('pla').value, items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), 
-                total: items.reduce((a,b)=>a+b.ca,0), operario: user, puntos: items.length 
+                fecha: d.toISOString().split('T')[0], 
+                hora: hT, // REGISTRO DE HORA
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, 
+                items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), 
+                total: items.reduce((a,b)=>a+b.ca,0), 
+                operario: user, 
+                puntos: items.length 
             };
             
             database.unshift(reg);
             localStorage.setItem('tw_db_cache', JSON.stringify(database));
-            renderHistory(); nav('page-history');
+            renderHistory(); 
+            nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
             items = []; renderTemp();
         }
 
-        // Funciones de utilidad (addItem, renderTemp, nav, etc. se mantienen igual)
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
@@ -321,7 +372,7 @@
         function renderTemp() {
             const box = document.getElementById('temp-list');
             let total = 0; box.innerHTML = "";
-            items.forEach((item, i) => {
+            items.forEach((item) => {
                 total += item.ca;
                 box.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${item.cl}</span><b>${item.ca} CJ</b></div>`;
             });
@@ -337,7 +388,14 @@
                 list.innerHTML += `<div class="card" style="padding:15px; border-left:4px solid ${dR<30?'var(--danger)':'var(--success)'}"><b>${p}</b><div style="font-size:10px; opacity:0.6">SOAT: ${dR} días</div></div>`;
             });
         }
-        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id === 'page-history') renderHistory(); if(id === 'page-fleet') renderFleet(); }
+        function nav(id) { 
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id).classList.add('active'); 
+            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
+            if(id === 'page-history') renderHistory(); 
+            if(id === 'page-fleet') renderFleet(); 
+        }
         function checkAuth(u) { if(u === 'TAJHO ADMIN') document.getElementById('m-auth').style.display='flex'; else login(u); }
         function verifyAuth() { if(document.getElementById('admin-pass').value === '1234') { document.getElementById('m-auth').style.display='none'; login('TAJHO ADMIN'); } else alert("PIN Incorrecto"); }
         function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-display').innerText = u; nav('page-route'); }
