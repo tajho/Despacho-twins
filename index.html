@@ -4,82 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TWINS LOGISTICS PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg: #05070a; --surface: #0f1218;
-            --accent: #0066ff; --text: #ffffff; --text-dim: #94a3b8;
+            --accent: #0066ff; --accent-glow: rgba(0, 102, 255, 0.3);
+            --text: #ffffff; --text-dim: #94a3b8;
             --border: #1e293b; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
 
-        .page { display: none; padding: 15px; padding-bottom: 100px; max-width: 600px; margin: 0 auto; }
-        .active { display: block !important; animation: pageFade 0.2s ease; }
-        @keyframes pageFade { from { opacity: 0; } to { opacity: 1; } }
+        .page { display: none; padding: 15px; padding-bottom: 100px; max-width: 600px; margin: 0 auto; animation: pageFade 0.3s ease; }
+        .active { display: block !important; }
+        @keyframes pageFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(5, 7, 10, 0.9); backdrop-filter: blur(12px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(12px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 12px; }
-        
-        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .stat-val { font-size: 38px; font-weight: 800; line-height: 1; }
         .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.8; }
 
         .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
-        input, select { background: #1a1f26; border: 1px solid var(--border); padding: 14px; border-radius: 14px; color: white; font-size: 15px; width: 100%; }
+        input, select { background: #1a1f26; border: 1px solid var(--border); padding: 14px; border-radius: 14px; color: white; font-size: 15px; font-weight: 500; width: 100%; }
         
         .point-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 12px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.05); }
-        .btn { border: none; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .point-info b { color: var(--accent); }
+
+        .btn { border: none; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
         .btn-add { background: var(--accent); color: white; padding: 14px 20px; }
         .btn-save { background: var(--success); color: white; padding: 16px; width: 100%; font-size: 15px; margin-top: 10px; }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); width: 32px; height: 32px; border-radius: 10px; }
         
-        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #161b22; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; }
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #161b22; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
 
         .history-card { border-left: 4px solid var(--accent); }
-        .history-puntos { display: none; font-size: 12px; background: #05070a; padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px dashed #334155; }
+        .history-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--text-dim); }
+        .history-puntos { display: none; font-size: 12px; color: #e2e8f0; background: #05070a; padding: 12px; border-radius: 12px; margin: 10px 0; border: 1px dashed #334155; }
         .history-puntos.show { display: block; }
         .point-line { border-bottom: 1px solid #1a1f26; padding: 4px 0; display: block; }
 
         .fleet-progress { height: 6px; background: #1a1f26; border-radius: 10px; margin-top: 10px; overflow: hidden; }
-        .fleet-bar { height: 100%; transition: width 0.5s; }
+        .fleet-bar { height: 100%; border-radius: 10px; transition: width 0.5s; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--surface); border-radius: 28px; padding: 25px; width: 100%; max-width: 400px; border: 1px solid var(--border); }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 25px; width: 100%; max-width: 400px; }
     </style>
 </head>
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
-        <div style="font-weight:900;">TWINS LOGISTICS <span style="color:var(--accent)">PRO</span></div>
-        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px;">---</div>
+        <div style="font-weight:900; letter-spacing: -0.5px">TWINS LOGISTICS <span style="color:var(--accent)">PRO</span></div>
+        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px; cursor:pointer">---</div>
     </header>
 
     <div id="page-login" class="page active">
         <div style="text-align:center; padding:40px 0">
             <i class="ph-fill ph-package" style="font-size:60px; color:var(--accent)"></i>
-            <h1>Warehouse Login</h1>
+            <h1 style="margin:10px 0">Warehouse Login</h1>
+            <p style="color:var(--text-dim)">Gestión de Inventario</p>
         </div>
         <div id="login-options" style="display:grid; gap:10px"></div>
     </div>
 
     <div id="page-route" class="page">
         <div class="stat-banner">
-            <div><div class="stat-label">Carga Actual</div><div id="count-cajas" class="stat-val">0</div></div>
+            <div><div class="stat-label">Carga Actual</div><div id="count-cajas" class="stat-val">0</div><div class="stat-label" style="margin-top:5px">Cajas totales</div></div>
             <div style="text-align:right">
-                <div class="stat-label">Puntos</div><div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
-                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; font-size:10px">RESETEAR</button>
+                <div class="stat-label">Envíos</div><div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
+                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:8px; font-size:10px; font-weight:700">RESETEAR</button>
             </div>
         </div>
         <div class="card">
-            <input type="text" id="inp-cli" placeholder="Cliente" style="margin-bottom:10px">
+            <div class="stat-label" style="margin-bottom:10px">Agregar Destino</div>
+            <input type="text" id="inp-cli" placeholder="Nombre del Cliente o Punto" style="margin-bottom:10px">
             <div class="input-group">
-                <input type="number" id="inp-can" placeholder="Cajas" style="flex:0.6">
-                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR</button>
+                <input type="number" id="inp-can" placeholder="Cant. Cajas" style="flex:0.6">
+                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR A CARGA</button>
             </div>
         </div>
         <div id="list-container" style="display:none">
@@ -140,14 +146,12 @@
         };
 
         window.onload = () => {
-            try {
-                setupUI();
-                const savedUser = localStorage.getItem('tw_logged');
-                if(savedUser) login(savedUser);
-                const savedCarga = localStorage.getItem('tw_pending_carga');
-                if(savedCarga) { currentCarga = JSON.parse(savedCarga); refreshCargaUI(); }
-                syncData();
-            } catch(e) { console.error("Error en carga inicial", e); }
+            setupUI();
+            const savedUser = localStorage.getItem('tw_logged');
+            if(savedUser) login(savedUser);
+            const savedCarga = localStorage.getItem('tw_pending_carga');
+            if(savedCarga) { currentCarga = JSON.parse(savedCarga); refreshCargaUI(); }
+            syncData();
         };
 
         function setupUI() {
@@ -161,42 +165,41 @@
         }
 
         async function syncData() {
-            const cache = localStorage.getItem('tw_db');
-            if(cache) { db = JSON.parse(cache); renderHistory(); updateFleet(); }
             try {
                 const res = await fetch(API);
-                const data = await res.json();
-                if(data && data.length > 0) {
-                    db = data;
-                    localStorage.setItem('tw_db', JSON.stringify(db));
-                    renderHistory(); updateFleet();
-                }
-            } catch(e) { console.log("Modo offline o error de red"); }
+                db = await res.json();
+                localStorage.setItem('tw_db', JSON.stringify(db));
+                renderHistory(); updateFleet();
+            } catch(e) {
+                const cache = localStorage.getItem('tw_db');
+                if(cache) { db = JSON.parse(cache); renderHistory(); updateFleet(); }
+            }
         }
 
         function addPoint() {
-            const cli = document.getElementById('inp-cli').value.toUpperCase().trim();
+            const cli = document.getElementById('inp-cli').value.toUpperCase();
             const can = parseInt(document.getElementById('inp-can').value);
-            if(!cli || isNaN(can)) return;
+            if(!cli || !can) return;
             currentCarga.push({ cli, can });
             document.getElementById('inp-cli').value = ""; document.getElementById('inp-can').value = "";
             localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga));
             refreshCargaUI();
         }
 
+        function removePoint(idx) { currentCarga.splice(idx, 1); localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga)); refreshCargaUI(); }
+
         function refreshCargaUI() {
             const container = document.getElementById('live-list');
             let total = 0; container.innerHTML = "";
             currentCarga.forEach((item, i) => {
                 total += item.can;
-                container.innerHTML += `<div class="point-item"><div><b>${item.can}</b> CJ - ${item.cli}</div><button style="background:none; border:none; color:var(--danger)" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button></div>`;
+                container.innerHTML += `<div class="point-item"><div class="point-info"><b>${item.can}</b> CJ - ${item.cli}</div><button class="btn-delete" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button></div>`;
             });
             document.getElementById('count-cajas').innerText = total;
             document.getElementById('count-puntos').innerText = currentCarga.length;
             document.getElementById('list-container').style.display = currentCarga.length > 0 ? 'block' : 'none';
         }
 
-        function removePoint(idx) { currentCarga.splice(idx, 1); localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga)); refreshCargaUI(); }
         function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
         function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
 
@@ -206,7 +209,7 @@
             closeConfirm();
             let f = new Date(); if(tipo === 'MAÑANA') f.setDate(f.getDate() + 1);
             const registro = {
-                fecha: f.toISOString().split('T')[0],
+                fecha: f.toLocaleDateString('en-CA'),
                 hora: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
                 placa: document.getElementById('sel-pla').value,
                 chofer: document.getElementById('sel-cho').value,
@@ -215,7 +218,7 @@
                 total: currentCarga.reduce((a,b) => a + b.can, 0),
                 operario: activeUser
             };
-            db.unshift(registro);
+            if(editIdx !== null) { db[editIdx] = registro; editIdx = null; } else { db.unshift(registro); }
             localStorage.setItem('tw_db', JSON.stringify(db));
             localStorage.removeItem('tw_pending_carga');
             go('page-history');
@@ -226,37 +229,43 @@
         function renderHistory() {
             const container = document.getElementById('history-feed');
             const filterDate = document.getElementById('filter-date').value;
-            if(!container) return;
             let html = "", dTotal = 0, mTotal = 0;
-            const now = new Date();
-            const currentMonth = now.getMonth();
+            const nowF = new Date(filterDate + "T12:00:00");
 
             db.forEach((r, i) => {
                 const rDate = new Date(r.fecha + "T12:00:00");
-                if(rDate.getMonth() === currentMonth) mTotal += parseFloat(r.total);
-                if(r.fecha === filterDate) {
+                if(rDate.getMonth() === nowF.getMonth() && rDate.getFullYear() === nowF.getFullYear()) mTotal += parseFloat(r.total);
+                if(r.fecha.split('T')[0] === filterDate) {
                     dTotal += parseFloat(r.total);
                     const lista = r.items.split(", ").map(li => `<span class="point-line">• ${li}</span>`).join("");
-                    html += `<div class="card history-card">
-                        <div class="history-meta"><span><i class="ph ph-clock"></i> ${r.hora}</span><span style="color:var(--accent); font-weight:800">${r.placa}</span></div>
-                        <div style="font-weight:700; font-size:16px">${r.total} CJ TOTALES</div>
+                    html = `<div class="card history-card">
+                        <div class="history-meta"><span><i class="ph ph-clock"></i> ${r.hora || '---'}</span><span style="color:var(--accent); font-weight:800">${r.placa}</span></div>
+                        <div style="font-weight:700; font-size:16px; margin-bottom:4px">${r.total} CJ TOTALES</div>
                         <div style="font-size:11px; color:var(--text-dim)">Eq: ${r.chofer} / ${r.auxiliar}</div>
                         <div id="hist-list-${i}" class="history-puntos">${lista}</div>
                         <div style="display:flex; gap:8px; margin-top:10px">
                             <button class="btn" style="flex:1; background:var(--accent); color:white; font-size:11px; padding:10px" onclick="toggleList(${i})">VER CARGA</button>
+                            <button class="btn" style="background:var(--border); width:40px" onclick="loadToEdit(${i})"><i class="ph ph-pencil"></i></button>
                             <button class="btn" style="background:#25D366; width:45px; color:white" onclick="share('${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i></button>
                         </div>
-                    </div>`;
+                    </div>` + html;
                 }
             });
-            container.innerHTML = html || `<p style="text-align:center; opacity:0.3; padding:40px">Sin datos</p>`;
+            container.innerHTML = html || `<p style="text-align:center; opacity:0.3; padding:40px">Sin datos el ${filterDate}</p>`;
             document.getElementById('st-day').innerText = dTotal;
             document.getElementById('st-month').innerText = mTotal;
         }
 
+        function loadToEdit(i) {
+            const r = db[i]; editIdx = i;
+            currentCarga = r.items.split(", ").map(item => { const [cli, can] = item.split(": "); return { cli, can: parseInt(can) }; });
+            document.getElementById('sel-pla').value = r.placa; document.getElementById('sel-cho').value = r.chofer; document.getElementById('sel-aux').value = r.auxiliar;
+            document.getElementById('btn-main-action').innerText = "ACTUALIZAR DATOS";
+            refreshCargaUI(); go('page-route');
+        }
+
         function updateFleet() {
-            const grid = document.getElementById('fleet-grid'); if(!grid) return;
-            const hoy = new Date();
+            const grid = document.getElementById('fleet-grid'); const hoy = new Date();
             grid.innerHTML = '<h3 style="margin-bottom:15px">Seguros (SOAT)</h3>';
             DATA.placas.forEach(p => {
                 const dias = Math.ceil((new Date(DATA.soats[p]) - hoy) / 86400000);
@@ -276,16 +285,13 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            const navBtn = document.getElementById('n-' + id.split('-')[1]);
-            if(navBtn) navBtn.classList.add('active');
-            
+            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
             if(id === 'page-history') { 
-                const hoy = new Date().toLocaleDateString('en-CA');
-                document.getElementById('filter-date').value = hoy;
+                document.getElementById('filter-date').value = new Date().toLocaleDateString('en-CA');
                 renderHistory(); 
             }
-            if(id === 'page-fleet') updateFleet();
             if(id === 'page-stats') { setTimeout(drawCharts, 50); }
+            if(id === 'page-fleet') updateFleet();
         }
 
         function drawCharts() {
@@ -301,14 +307,14 @@
                 const cfg = (obj, color) => ({ type: 'bar', data: { labels: Object.keys(obj), datasets: [{ data: Object.values(obj), backgroundColor: color, borderRadius: 8 }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { display: false }, y: { ticks: { color: '#94a3b8' } } } } });
                 if(chart1) chart1.destroy(); chart1 = new Chart(document.getElementById('c-cho'), cfg(statsC, '#0066ff'));
                 if(chart2) chart2.destroy(); chart2 = new Chart(document.getElementById('c-aux'), cfg(statsA, '#10b981'));
-            } catch(e) { console.error("Error al dibujar gráficos", e); }
+            } catch(e) {}
         }
 
-        function toggleList(idx) { const el = document.getElementById(`hist-list-${idx}`); if(el) el.classList.toggle('show'); }
+        function toggleList(idx) { document.getElementById(`hist-list-${idx}`).classList.toggle('show'); }
+        function predict() { const l = db.find(r => r.placa === document.getElementById('sel-pla').value); if(l) { document.getElementById('sel-cho').value = l.chofer; document.getElementById('sel-aux').value = l.auxiliar; } }
+        function clearAll() { currentCarga = []; editIdx = null; localStorage.removeItem('tw_pending_carga'); document.getElementById('btn-main-action').innerText = "GUARDAR DESPACHO"; refreshCargaUI(); }
         function login(u) { activeUser = u; localStorage.setItem('tw_logged', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-info').innerText = u; go('page-route'); }
         function logout() { localStorage.removeItem('tw_logged'); location.reload(); }
-        function clearAll() { currentCarga = []; localStorage.removeItem('tw_pending_carga'); refreshCargaUI(); }
-        function predict() { const l = db.find(r => r.placa === document.getElementById('sel-pla').value); if(l) { document.getElementById('sel-cho').value = l.chofer; document.getElementById('sel-aux').value = l.auxiliar; } }
         function share(p, t, i) { window.location.href = `https://wa.me/?text=*📦 TWINS LOGISTICS*%0A*Placa:* ${p}%0A*Cajas:* ${t}%0A*Ruta:*%0A${i.split(", ").join("%0A")}`; }
     </script>
 </body>
