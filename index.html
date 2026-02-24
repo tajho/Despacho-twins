@@ -32,8 +32,6 @@
         input, select { background: #1a1f26; border: 1px solid var(--border); padding: 14px; border-radius: 14px; color: white; font-size: 15px; font-weight: 500; width: 100%; }
         
         .point-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 12px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.05); }
-        .point-info b { color: var(--accent); }
-
         .btn { border: none; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
         .btn-add { background: var(--accent); color: white; padding: 14px 20px; }
         .btn-save { background: var(--success); color: white; padding: 16px; width: 100%; font-size: 15px; margin-top: 10px; }
@@ -59,33 +57,31 @@
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
-        <div style="font-weight:900; letter-spacing: -0.5px">TWINS LOGISTICS <span style="color:var(--accent)">PRO</span></div>
-        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px; cursor:pointer">---</div>
+        <div style="font-weight:900;">TWINS LOGISTICS <span style="color:var(--accent)">PRO</span></div>
+        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px;">---</div>
     </header>
 
     <div id="page-login" class="page active">
         <div style="text-align:center; padding:40px 0">
             <i class="ph-fill ph-package" style="font-size:60px; color:var(--accent)"></i>
-            <h1 style="margin:10px 0">Warehouse Login</h1>
-            <p style="color:var(--text-dim)">Gestión de Inventario</p>
+            <h1>Warehouse Login</h1>
         </div>
         <div id="login-options" style="display:grid; gap:10px"></div>
     </div>
 
     <div id="page-route" class="page">
         <div class="stat-banner">
-            <div><div class="stat-label">Carga Actual</div><div id="count-cajas" class="stat-val">0</div><div class="stat-label" style="margin-top:5px">Cajas totales</div></div>
+            <div><div class="stat-label">Carga Actual</div><div id="count-cajas" class="stat-val">0</div></div>
             <div style="text-align:right">
                 <div class="stat-label">Envíos</div><div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
-                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:8px; font-size:10px; font-weight:700">RESETEAR</button>
+                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:8px; font-size:10px">RESETEAR</button>
             </div>
         </div>
         <div class="card">
-            <div class="stat-label" style="margin-bottom:10px">Agregar Destino</div>
-            <input type="text" id="inp-cli" placeholder="Nombre del Cliente o Punto" style="margin-bottom:10px">
+            <input type="text" id="inp-cli" placeholder="Cliente" style="margin-bottom:10px">
             <div class="input-group">
                 <input type="number" id="inp-can" placeholder="Cant. Cajas" style="flex:0.6">
-                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR A CARGA</button>
+                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR</button>
             </div>
         </div>
         <div id="list-container" style="display:none">
@@ -186,14 +182,18 @@
             refreshCargaUI();
         }
 
-        function removePoint(idx) { currentCarga.splice(idx, 1); localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga)); refreshCargaUI(); }
+        function removePoint(idx) {
+            currentCarga.splice(idx, 1);
+            localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga));
+            refreshCargaUI();
+        }
 
         function refreshCargaUI() {
             const container = document.getElementById('live-list');
             let total = 0; container.innerHTML = "";
             currentCarga.forEach((item, i) => {
                 total += item.can;
-                container.innerHTML += `<div class="point-item"><div class="point-info"><b>${item.can}</b> CJ - ${item.cli}</div><button class="btn-delete" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button></div>`;
+                container.innerHTML += `<div class="point-item"><div><b>${item.can}</b> CJ - ${item.cli}</div><button class="btn-delete" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button></div>`;
             });
             document.getElementById('count-cajas').innerText = total;
             document.getElementById('count-puntos').innerText = currentCarga.length;
@@ -238,30 +238,22 @@
                 if(r.fecha.split('T')[0] === filterDate) {
                     dTotal += parseFloat(r.total);
                     const lista = r.items.split(", ").map(li => `<span class="point-line">• ${li}</span>`).join("");
-                    html = `<div class="card history-card">
-                        <div class="history-meta"><span><i class="ph ph-clock"></i> ${r.hora || '---'}</span><span style="color:var(--accent); font-weight:800">${r.placa}</span></div>
+                    html += `<div class="card history-card">
+                        <div class="history-meta"><span><i class="ph ph-clock"></i> ${r.hora || '--:--'}</span><span style="color:var(--accent); font-weight:800">${r.placa}</span></div>
                         <div style="font-weight:700; font-size:16px; margin-bottom:4px">${r.total} CJ TOTALES</div>
                         <div style="font-size:11px; color:var(--text-dim)">Eq: ${r.chofer} / ${r.auxiliar}</div>
                         <div id="hist-list-${i}" class="history-puntos">${lista}</div>
                         <div style="display:flex; gap:8px; margin-top:10px">
                             <button class="btn" style="flex:1; background:var(--accent); color:white; font-size:11px; padding:10px" onclick="toggleList(${i})">VER CARGA</button>
                             <button class="btn" style="background:var(--border); width:40px" onclick="loadToEdit(${i})"><i class="ph ph-pencil"></i></button>
-                            <button class="btn" style="background:#25D366; width:45px; color:white" onclick="share('${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i></button>
+                            <button class="btn" style="background:#25D366; width:45px" onclick="share('${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i></button>
                         </div>
-                    </div>` + html;
+                    </div>`;
                 }
             });
             container.innerHTML = html || `<p style="text-align:center; opacity:0.3; padding:40px">Sin datos el ${filterDate}</p>`;
             document.getElementById('st-day').innerText = dTotal;
             document.getElementById('st-month').innerText = mTotal;
-        }
-
-        function loadToEdit(i) {
-            const r = db[i]; editIdx = i;
-            currentCarga = r.items.split(", ").map(item => { const [cli, can] = item.split(": "); return { cli, can: parseInt(can) }; });
-            document.getElementById('sel-pla').value = r.placa; document.getElementById('sel-cho').value = r.chofer; document.getElementById('sel-aux').value = r.auxiliar;
-            document.getElementById('btn-main-action').innerText = "ACTUALIZAR DATOS";
-            refreshCargaUI(); go('page-route');
         }
 
         function updateFleet() {
@@ -286,31 +278,38 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.getElementById('n-' + id.split('-')[1]).classList.add('active');
+            
             if(id === 'page-history') { 
-                document.getElementById('filter-date').value = new Date().toLocaleDateString('en-CA');
+                const hoy = new Date().toLocaleDateString('en-CA'); // Fecha real de hoy corregida
+                document.getElementById('filter-date').value = hoy;
                 renderHistory(); 
             }
-            if(id === 'page-stats') { setTimeout(drawCharts, 50); }
             if(id === 'page-fleet') updateFleet();
+            if(id === 'page-stats') { drawCharts(); }
         }
 
         function drawCharts() {
-            try {
-                const statsC = {}, statsA = {}, now = new Date();
-                db.forEach(r => {
-                    const rD = new Date(r.fecha + "T12:00:00");
-                    if(rD.getMonth() === now.getMonth()) {
-                        statsC[r.chofer] = (statsC[r.chofer] || 0) + parseFloat(r.total);
-                        statsA[r.auxiliar] = (statsA[r.auxiliar] || 0) + parseFloat(r.total);
-                    }
-                });
-                const cfg = (obj, color) => ({ type: 'bar', data: { labels: Object.keys(obj), datasets: [{ data: Object.values(obj), backgroundColor: color, borderRadius: 8 }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { display: false }, y: { ticks: { color: '#94a3b8' } } } } });
-                if(chart1) chart1.destroy(); chart1 = new Chart(document.getElementById('c-cho'), cfg(statsC, '#0066ff'));
-                if(chart2) chart2.destroy(); chart2 = new Chart(document.getElementById('c-aux'), cfg(statsA, '#10b981'));
-            } catch(e) {}
+            const statsC = {}, statsA = {}, now = new Date();
+            db.forEach(r => {
+                const rD = new Date(r.fecha + "T12:00:00");
+                if(rD.getMonth() === now.getMonth() && rD.getFullYear() === now.getFullYear()) {
+                    statsC[r.chofer] = (statsC[r.chofer] || 0) + parseFloat(r.total);
+                    statsA[r.auxiliar] = (statsA[r.auxiliar] || 0) + parseFloat(r.total);
+                }
+            });
+            const cfg = (obj, color) => ({ type: 'bar', data: { labels: Object.keys(obj), datasets: [{ data: Object.values(obj), backgroundColor: color, borderRadius: 8 }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { display: false }, y: { ticks: { color: '#94a3b8' } } } } });
+            if(chart1) chart1.destroy(); chart1 = new Chart(document.getElementById('c-cho'), cfg(statsC, '#0066ff'));
+            if(chart2) chart2.destroy(); chart2 = new Chart(document.getElementById('c-aux'), cfg(statsA, '#10b981'));
         }
 
         function toggleList(idx) { document.getElementById(`hist-list-${idx}`).classList.toggle('show'); }
+        function loadToEdit(i) {
+            const r = db[i]; editIdx = i;
+            currentCarga = r.items.split(", ").map(item => { const [cli, can] = item.split(": "); return { cli, can: parseInt(can) }; });
+            document.getElementById('sel-pla').value = r.placa; document.getElementById('sel-cho').value = r.chofer; document.getElementById('sel-aux').value = r.auxiliar;
+            document.getElementById('btn-main-action').innerText = "ACTUALIZAR DATOS";
+            refreshCargaUI(); go('page-route');
+        }
         function predict() { const l = db.find(r => r.placa === document.getElementById('sel-pla').value); if(l) { document.getElementById('sel-cho').value = l.chofer; document.getElementById('sel-aux').value = l.auxiliar; } }
         function clearAll() { currentCarga = []; editIdx = null; localStorage.removeItem('tw_pending_carga'); document.getElementById('btn-main-action').innerText = "GUARDAR DESPACHO"; refreshCargaUI(); }
         function login(u) { activeUser = u; localStorage.setItem('tw_logged', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-info').innerText = u; go('page-route'); }
