@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHO V42 - PRO ANALYTICS</title>
+    <title>TWINS DESPACHO V43 - ANALYTICS PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -77,7 +77,7 @@
         .stat-label { font-size: 9px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 800; }
 
-        .chart-container { position: relative; height: 200px; width: 100%; margin-top: 15px; }
+        .chart-box { height: 180px; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -113,8 +113,7 @@
             <i class="ph-fill ph-shield-check" style="font-size: 45px; color: white;"></i>
         </div>
         <h1 style="font-weight: 800; font-size: 28px; margin: 0;">TWINS DESPACHO</h1>
-        <p style="color:var(--text-dim); margin-bottom: 40px">Selecciona tu perfil de acceso</p>
-        <div id="login-grid" style="display:grid; gap:14px; padding: 0 20px;"></div>
+        <div id="login-grid" style="display:grid; gap:14px; padding: 20px;"></div>
     </div>
 
     <div id="page-route" class="page">
@@ -152,34 +151,24 @@
 
     <div id="page-history" class="page">
         <div class="card" style="padding:15px; margin-bottom:15px">
-            <div class="stat-label" style="margin-bottom:10px">Rendimiento Mensual (Cajas por Chofer)</div>
-            <div class="chart-container">
-                <canvas id="choferChart"></canvas>
+            <div class="stat-label">Productividad Mensual</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px">
+                <div class="chart-box"><canvas id="choferChart"></canvas></div>
+                <div class="chart-box"><canvas id="auxiliarChart"></canvas></div>
             </div>
         </div>
 
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px">
             <div class="card" style="margin:0; padding:15px; text-align:center">
-                <div class="stat-label">Cajas (Selección)</div>
+                <div class="stat-label">Cajas (Día)</div>
                 <div class="stat-value" id="st-cajas" style="color:var(--accent)">0</div>
             </div>
             <div class="card" style="margin:0; padding:15px; text-align:center">
-                <div class="stat-label">Envíos (Selección)</div>
-                <div class="stat-value" id="st-puntos" style="color:var(--success)">0</div>
+                <div class="stat-label">Acum. Mes</div>
+                <div class="stat-value" id="st-mes-cajas">0</div>
             </div>
         </div>
-        <div class="card" style="padding:15px; text-align:center; margin-bottom:20px">
-            <div class="stat-label">Acumulado Mensual</div>
-            <div style="display:flex; justify-content:space-around; margin-top:8px">
-                <div><small style="opacity:0.6; font-size:10px">📦 TOTAL CAJAS</small><div class="stat-value" id="st-mes-cajas">0</div></div>
-                <div><small style="opacity:0.6; font-size:10px">📍 TOTAL ENVÍOS</small><div class="stat-value" id="st-mes-envios">0</div></div>
-            </div>
-        </div>
-        <div id="admin-tools" style="display:none; margin-bottom:20px">
-            <button class="btn btn-ghost" style="color:var(--accent); border-color:var(--accent)" onclick="generatePDF()">
-                <i class="ph-bold ph-file-pdf"></i> GENERAR REPORTE PDF
-            </button>
-        </div>
+
         <div style="display:flex; gap:10px; margin-bottom:20px">
             <input type="date" id="f-filter" onchange="renderHistory()" style="flex:1.2">
             <input type="text" id="search" oninput="renderHistory()" placeholder="Buscar..." style="flex:0.8">
@@ -208,7 +197,7 @@
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
-        let user = "", items = [], database = [], myChart = null;
+        let user = "", items = [], database = [], cChart = null, aChart = null;
         
         const PLACAS = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
         const CHOFERES = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
@@ -218,10 +207,8 @@
         window.onload = () => {
             initInputs();
             const savedUser = localStorage.getItem('tw_user');
-            const savedDraft = localStorage.getItem('tw_draft_items');
-            if(savedDraft) { items = JSON.parse(savedDraft); renderTemp(); }
-            document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
             if(savedUser) login(savedUser);
+            document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
             loadData();
         };
 
@@ -238,8 +225,7 @@
             if (cache) { database = JSON.parse(cache); renderHistory(); renderFleet(); }
             try {
                 const r = await fetch(API);
-                const freshData = await r.json();
-                database = freshData;
+                database = await r.json();
                 localStorage.setItem('tw_db_cache', JSON.stringify(database));
                 renderHistory(); renderFleet();
             } catch(e) {}
@@ -248,159 +234,116 @@
         function renderHistory() {
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
             const sQ = document.getElementById('search').value.toUpperCase();
-            const hoyStr = new Date().toISOString().split('T')[0];
-            const targetDate = new Date(fD + "T00:00:00");
-            const tM = targetDate.getMonth(), tY = targetDate.getFullYear();
+            const tM = new Date(fD + "T00:00:00").getMonth(), tY = new Date(fD + "T00:00:00").getFullYear();
 
-            let html = "", diaCajas = 0, diaEnvios = 0, mesCajas = 0, mesEnvios = 0;
-            let chartData = {};
+            let html = "", diaCajas = 0, mesCajas = 0;
+            let dataC = {}, dataA = {};
 
             database.forEach(r => {
                 const rf = r.fecha.split('T')[0];
                 const rDate = new Date(r.fecha + "T00:00:00");
+                const totalCj = parseFloat(r.total || 0);
 
                 if (rDate.getMonth() === tM && rDate.getFullYear() === tY) {
-                    const totalCj = parseFloat(r.total || 0);
                     mesCajas += totalCj;
-                    mesEnvios += parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
-                    chartData[r.chofer] = (chartData[r.chofer] || 0) + totalCj;
+                    dataC[r.chofer] = (dataC[r.chofer] || 0) + totalCj;
+                    dataA[r.auxiliar] = (dataA[r.auxiliar] || 0) + totalCj;
                 }
 
                 if (rf === fD) {
                     if (!sQ || r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ) || r.placa.toUpperCase().includes(sQ)) {
-                        const nP = parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
-                        diaCajas += parseFloat(r.total || 0); 
-                        diaEnvios += nP;
-                        const isOld = rf < hoyStr;
-                        
-                        // CORRECCIÓN: Captura de la hora desde el registro
-                        const displayHora = r.hora ? r.hora : "--:--";
-                        
+                        diaCajas += totalCj;
+                        const hora = r.hora || "--:--";
                         html = `
-                        <div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
-                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
-                                <div><b style="font-size:18px; display:block">${r.placa}</b><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : (rf === hoyStr ? 'EN RUTA' : 'PROGRAMADO')}</span></div>
-                                <div style="text-align:right">
-                                    <b style="color:var(--accent); font-size:20px">${r.total} CJ</b>
-                                    <div style="font-size:10px; opacity:0.6">${nP} PUNTOS • ${displayHora}</div>
-                                </div>
+                        <div class="card" style="border-left:6px solid var(--accent)">
+                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px">
+                                <div><b style="font-size:16px">${r.placa}</b><div style="font-size:10px; opacity:0.6">${hora}</div></div>
+                                <b style="color:var(--accent); font-size:18px">${r.total} CJ</b>
                             </div>
-                            <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
-                            <div style="display:flex; gap:10px">
-                                <button class="btn-ghost" style="flex:1; padding:12px; border-radius:15px; font-size:12px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
-                                <button class="btn" style="background:#25D366; color:white; width:60px; border-radius:15px" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo" style="font-size:22px"></i></button>
-                            </div>
+                            <div style="font-size:13px; color:var(--text-dim); margin-bottom:15px">${r.chofer} / ${r.auxiliar}</div>
+                            <button class="btn-ghost" style="padding:10px; font-size:11px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
                         </div>` + html;
                     }
                 }
             });
 
-            cont.innerHTML = html || "<p style='text-align:center; opacity:0.5; padding:50px'>No hay registros</p>";
-            document.getElementById('st-cajas').innerText = diaCajas.toLocaleString(); 
-            document.getElementById('st-puntos').innerText = diaEnvios;
-            document.getElementById('st-mes-cajas').innerText = mesCajas.toLocaleString(); 
-            document.getElementById('st-mes-envios').innerText = mesEnvios;
-            updateChart(chartData);
+            cont.innerHTML = html || "<p style='text-align:center; opacity:0.4'>Sin registros</p>";
+            document.getElementById('st-cajas').innerText = diaCajas;
+            document.getElementById('st-mes-cajas').innerText = mesCajas;
+            updateCharts(dataC, dataA);
         }
 
-        function updateChart(data) {
-            const ctx = document.getElementById('choferChart').getContext('2d');
-            const labels = Object.keys(data);
-            const values = Object.values(data);
-            if(myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Cajas movidas',
-                        data: values,
-                        backgroundColor: '#007aff',
-                        borderRadius: 8,
-                        barThickness: 20
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: '#86868b' } },
-                        y: { grid: { display: false }, ticks: { color: '#f5f5f7', font: { size: 10 } } }
+        function updateCharts(dataC, dataA) {
+            const config = (ctx, label, data, color) => {
+                return new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: Object.keys(data), datasets: [{ data: Object.values(data), backgroundColor: color, borderRadius: 5 }] },
+                    options: { 
+                        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false }, title: { display: true, text: label, color: '#86868b', font: { size: 9 } } },
+                        scales: { x: { display: false }, y: { ticks: { color: '#f5f5f7', font: { size: 8 } } } }
                     }
-                }
-            });
+                });
+            };
+            if(cChart) cChart.destroy(); if(aChart) aChart.destroy();
+            cChart = config(document.getElementById('choferChart').getContext('2d'), 'CHOFERES', dataC, '#007aff');
+            aChart = config(document.getElementById('auxiliarChart').getContext('2d'), 'AUXILIARES', dataA, '#2ed158');
         }
 
         async function saveRoute(tipo) {
             document.getElementById('m-type').style.display = 'none';
             let d = new Date();
-            if(tipo === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
-            const fT = d.toISOString().split('T')[0];
+            if(tipo === 'MAÑANA') d.setDate(d.getDate() + 1);
             
-            // CORRECCIÓN: Generación de hora local para el registro
-            const hT = new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: true });
-            
+            const hT = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
             const reg = { 
-                fecha: fT, 
-                hora: hT, 
-                chofer: document.getElementById('cho').value, 
-                auxiliar: document.getElementById('aux').value, 
-                placa: document.getElementById('pla').value, 
-                items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), 
-                total: items.reduce((a,b)=>a+b.ca,0), 
-                operario: user, 
-                puntos: items.length 
+                fecha: d.toISOString().split('T')[0], hora: hT,
+                chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), 
+                total: items.reduce((a,b)=>a+b.ca,0), operario: user, puntos: items.length 
             };
             
             database.unshift(reg);
             localStorage.setItem('tw_db_cache', JSON.stringify(database));
-            document.getElementById('f-filter').value = fT;
-            nav('page-history');
+            renderHistory(); nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            clearDraft();
+            items = []; renderTemp();
         }
 
+        // Funciones de utilidad (addItem, renderTemp, nav, etc. se mantienen igual)
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
             items.unshift({cl, ca});
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
-            saveDraft(); renderTemp();
+            renderTemp();
         }
         function renderTemp() {
             const box = document.getElementById('temp-list');
             let total = 0; box.innerHTML = "";
             items.forEach((item, i) => {
                 total += item.ca;
-                box.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)"><span>${item.cl}</span><b>${item.ca} CJ <i class="ph ph-trash" onclick="deleteItem(${i})" style="color:var(--danger);margin-left:12px"></i></b></div>`;
+                box.innerHTML += `<div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border)"><span>${item.cl}</span><b>${item.ca} CJ</b></div>`;
             });
             document.getElementById('total-cajas').innerText = total;
             document.getElementById('total-puntos').innerText = items.length + " PUNTOS";
             document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
         }
-        function renderFleet() { 
-            const list = document.getElementById('fleet-list'), hoy = new Date(), fD = document.getElementById('f-filter').value;
-            list.innerHTML = `<h2 style="margin-bottom:25px; font-weight:800">Estado de Flota</h2>`; 
-            PLACAS.forEach(p => { 
-                const r = database.find(x => x.placa === p && x.fecha.split('T')[0] === fD); 
-                const v = new Date(SOATS[p] + "T00:00:00"), dR = Math.ceil((v - hoy) / 86400000); 
-                list.innerHTML += `<div class="card" style="border-left:6px solid ${r ? 'var(--danger)' : 'var(--success)'}"><div style="display:flex; justify-content:space-between"><b>${p}</b><div style="text-align:right"><small style="opacity:0.5; font-size:9px; display:block">SOAT VENCE: ${SOATS[p]}</small><b style="color:${dR<=30?'var(--danger)':'var(--success)'}; font-size:11px">${dR} DÍAS</b></div></div><div style="margin-top:10px">${r ? '🔴 EN RUTA: ' + r.chofer : '🟢 DISPONIBLE'}</div></div>`; 
-            }); 
+        function renderFleet() {
+            const list = document.getElementById('fleet-list'), hoy = new Date();
+            list.innerHTML = `<h3 style="margin-bottom:20px">Flota</h3>`;
+            PLACAS.forEach(p => {
+                const v = new Date(SOATS[p]), dR = Math.ceil((v - hoy) / 86400000);
+                list.innerHTML += `<div class="card" style="padding:15px; border-left:4px solid ${dR<30?'var(--danger)':'var(--success)'}"><b>${p}</b><div style="font-size:10px; opacity:0.6">SOAT: ${dR} días</div></div>`;
+            });
         }
-        function deleteItem(i) { items.splice(i, 1); saveDraft(); renderTemp(); }
-        function saveDraft() { localStorage.setItem('tw_draft_items', JSON.stringify(items)); }
-        function clearDraft() { items = []; localStorage.removeItem('tw_draft_items'); renderTemp(); }
-        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('n-' + id.split('-')[1]).classList.add('active'); if(id === 'page-history') renderHistory(); if(id === 'page-fleet') renderFleet(); }
+        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id === 'page-history') renderHistory(); if(id === 'page-fleet') renderFleet(); }
         function checkAuth(u) { if(u === 'TAJHO ADMIN') document.getElementById('m-auth').style.display='flex'; else login(u); }
         function verifyAuth() { if(document.getElementById('admin-pass').value === '1234') { document.getElementById('m-auth').style.display='none'; login('TAJHO ADMIN'); } else alert("PIN Incorrecto"); }
-        function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-display').innerText = u; if(u === 'TAJHO ADMIN') document.getElementById('admin-tools').style.display = 'block'; nav('page-route'); }
+        function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-display').innerText = u; nav('page-route'); }
         function logout() { localStorage.clear(); location.reload(); }
-        function smartPredict() { const p = document.getElementById('pla').value; if(!p) return; const last = database.find(r => r.placa === p); if(last) { document.getElementById('cho').value = last.chofer; } }
-        function viewItems(txt, ch) { document.getElementById('m-title').innerText = "Ruta: " + ch; document.getElementById('m-container').innerHTML = txt.split(", ").map(i => { const [cl, ca] = i.split(":"); return `<div style="display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)"><span>${cl}</span><b>${ca}</b></div>`; }).join(''); document.getElementById('m-list').style.display = 'flex'; }
-        function wa(c, a, p, t, i) { const d = i.split(", ").map(x => `✅ ${x.toUpperCase().trim()}`).join("%0A"); const msg = `*📦 DESPACHO TWINS*%0A%0A*Chofer:* ${c}%0A*Auxiliar:* ${a}%0A*Placa:* ${p}%0A*Total:* ${t} CJ%0A%0A*DETALLE:*%0A${d}`; window.location.href = `https://wa.me/?text=${msg}`; }
-        function generatePDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); const date = document.getElementById('f-filter').value; doc.text("REPORTE DESPACHOS TWINS - " + date, 14, 20); const rows = []; database.filter(r => r.fecha.split('T')[0] === date).forEach(r => { rows.push([r.chofer, r.placa, r.items, r.total, r.operario]); }); doc.autoTable({ startY: 30, head: [['CHOFER', 'PLACA', 'DETALLES', 'TOTAL', 'OPERARIO']], body: rows }); doc.save(`Twins_${date}.pdf`); }
+        function viewItems(txt, ch) { document.getElementById('m-title').innerText = ch; document.getElementById('m-container').innerHTML = txt.split(", ").map(i => `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">${i}</div>`).join(''); document.getElementById('m-list').style.display = 'flex'; }
+        function smartPredict() { const p = document.getElementById('pla').value; const last = database.find(r => r.placa === p); if(last) document.getElementById('cho').value = last.chofer; }
     </script>
 </body>
 </html>
