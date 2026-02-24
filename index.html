@@ -25,30 +25,34 @@
         .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(12px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 12px; }
         
-        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        /* BANNER */
+        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .stat-val { font-size: 38px; font-weight: 800; line-height: 1; }
         .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.8; }
 
+        /* INPUTS */
         .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
         input, select { background: #1a1f26; border: 1px solid var(--border); padding: 14px; border-radius: 14px; color: white; font-size: 15px; font-weight: 500; width: 100%; }
 
+        /* BOTONES */
         .btn { border: none; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
         .btn-add { background: var(--accent); color: white; padding: 14px 20px; }
         .btn-save { background: var(--success); color: white; padding: 16px; width: 100%; font-size: 15px; margin-top: 10px; }
 
-        /* Estilo de Flota Mejorado */
-        .fleet-card { border-left: 4px solid var(--accent); display: flex; flex-direction: column; gap: 10px; }
-        .fleet-info { display: flex; justify-content: space-between; align-items: center; }
-        .progress-container { background: #1a1f26; height: 8px; border-radius: 10px; overflow: hidden; margin-top: 5px; }
-        .progress-bar { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+        /* DISEÑO DE FLOTA MEJORADO */
+        .fleet-card { position: relative; overflow: hidden; }
+        .fleet-status { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+        .progress-bg { height: 6px; background: #1a1f26; border-radius: 10px; width: 100%; }
+        .progress-fill { height: 100%; border-radius: 10px; transition: 1s ease-out; }
 
-        /* Estilo de Historial */
+        /* HISTORIAL */
         .history-card { border-left: 4px solid var(--accent); }
-        .history-puntos { display: none; font-size: 12px; color: #e2e8f0; background: #05070a; padding: 12px; border-radius: 12px; margin: 10px 0; border: 1px dashed #334155; }
+        .history-puntos { display: none; font-size: 12px; color: #e2e8f0; background: #05070a; padding: 12px; border-radius: 12px; margin: 10px 0; border: 1px dashed #334155; line-height: 1.6; }
         .history-puntos.show { display: block; }
         .point-line { border-bottom: 1px solid #1a1f26; padding: 4px 0; display: block; }
 
-        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #161b22; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        /* NAV */
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #161b22; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
 
@@ -73,13 +77,9 @@
 
     <div id="page-route" class="page">
         <div class="stat-banner">
-            <div>
-                <div class="stat-label">Carga Actual</div>
-                <div id="count-cajas" class="stat-val">0</div>
-            </div>
+            <div><div class="stat-label">Carga Actual</div><div id="count-cajas" class="stat-val">0</div></div>
             <div style="text-align:right">
-                <div class="stat-label">Puntos</div>
-                <div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
+                <div class="stat-label">Puntos</div><div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
                 <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; font-size:10px">RESETEAR</button>
             </div>
         </div>
@@ -113,7 +113,7 @@
     </div>
 
     <div id="page-fleet" class="page">
-        <h3 style="margin-bottom:15px">Control de Seguros (SOAT)</h3>
+        <h3 style="margin-bottom:15px">Seguros de Unidades</h3>
         <div id="fleet-grid"></div>
     </div>
 
@@ -196,7 +196,7 @@
             let total = 0; container.innerHTML = "";
             currentCarga.forEach((item, i) => {
                 total += item.can;
-                container.innerHTML += `<div class="point-item"><div class="point-info"><b>${item.can}</b> CJ - ${item.cli}</div><button class="btn-delete" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button></div>`;
+                container.innerHTML += `<div class="point-item" style="display:flex; justify-content:space-between; margin-bottom:5px; background:#1a1f26; padding:10px; border-radius:10px"><div><b>${item.can}</b> - ${item.cli}</div><button onclick="removePoint(${i})" style="background:none; border:none; color:var(--danger)"><i class="ph ph-trash"></i></button></div>`;
             });
             document.getElementById('count-cajas').innerText = total;
             document.getElementById('count-puntos').innerText = currentCarga.length;
@@ -226,7 +226,7 @@
                 operario: activeUser
             };
 
-            // INSERTAR AL PRINCIPIO PARA QUE SEA EL PRIMERO EN LA LISTA
+            // MEJORA: Unshift asegura que siempre aparezca primero en la lista local
             if(editIdx !== null) { db[editIdx] = registro; editIdx = null; } 
             else { db.unshift(registro); }
 
@@ -244,7 +244,6 @@
             let html = "", dTotal = 0, mTotal = 0;
             const nowF = new Date(filterDate + "T12:00:00");
 
-            // No revertimos el array aquí porque ya usamos unshift en el guardado
             db.forEach((r, i) => {
                 const rDate = new Date(r.fecha + "T12:00:00");
                 if(rDate.getMonth() === nowF.getMonth() && rDate.getFullYear() === nowF.getFullYear()) mTotal += parseFloat(r.total);
@@ -253,15 +252,15 @@
                     dTotal += parseFloat(r.total);
                     const listaFormateada = r.items.split(", ").map(li => `<span class="point-line">• ${li}</span>`).join("");
                     
-                    // Renderizado directo para mantener el orden de inserción (unshift)
+                    // Se concatena al final del HTML para que el primer elemento del array (el más nuevo) se renderice arriba
                     html += `
                     <div class="card history-card">
-                        <div class="history-meta">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; color:var(--text-dim)">
                             <span><i class="ph ph-clock"></i> ${r.hora || '---'}</span>
                             <span style="color:var(--accent); font-weight:800">${r.placa}</span>
                         </div>
                         <div style="font-weight:700; font-size:16px; margin-bottom:4px">${r.total} CJ TOTALES</div>
-                        <div style="font-size:11px; color:var(--text-dim)">${r.chofer} / ${r.auxiliar}</div>
+                        <div style="font-size:11px; color:var(--text-dim)">Eq: ${r.chofer} / ${r.auxiliar}</div>
                         <div id="hist-list-${i}" class="history-puntos">${listaFormateada}</div>
                         <div style="display:flex; gap:8px; margin-top:10px">
                             <button class="btn" style="flex:1; background:var(--accent); color:white; font-size:11px; padding:10px" onclick="toggleList(${i})">VER CARGA</button>
@@ -286,23 +285,20 @@
                 let color = "var(--success)";
                 if(dias < 60) color = "var(--warning)";
                 if(dias < 30) color = "var(--danger)";
-                
                 const pct = Math.max(0, Math.min(100, (dias / 365) * 100));
 
                 grid.innerHTML += `
                     <div class="card fleet-card">
-                        <div class="fleet-info">
+                        <div class="fleet-status">
                             <div>
                                 <div style="font-weight:800; font-size:18px">${p}</div>
-                                <div style="font-size:11px; color:var(--text-dim)">Vence: ${DATA.soats[p]}</div>
+                                <div style="font-size:11px; color:var(--text-dim)">Vencimiento: ${DATA.soats[p]}</div>
                             </div>
                             <div style="text-align:right">
-                                <div style="font-weight:900; color:${color}; font-size:20px">${dias} <span style="font-size:10px">DÍAS</span></div>
+                                <div style="font-weight:900; color:${color}; font-size:22px">${dias} <span style="font-size:10px">DÍAS</span></div>
                             </div>
                         </div>
-                        <div class="progress-container">
-                            <div class="progress-bar" style="width:${pct}%; background:${color}"></div>
-                        </div>
+                        <div class="progress-bg"><div class="progress-fill" style="width:${pct}%; background:${color}"></div></div>
                     </div>`;
             });
         }
@@ -317,7 +313,7 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.getElementById('n-' + id.split('-')[1]).classList.add('active');
-            if(id === 'page-history') { document.getElementById('filter-date').value = new Date().toLocaleDateString('en-CA'); renderHistory(); }
+            if(id === 'page-history') { document.getElementById('filter-date').value = "2026-02-23"; renderHistory(); }
             if(id === 'page-fleet') updateFleet();
             if(id === 'page-stats') setTimeout(drawCharts, 100);
         }
