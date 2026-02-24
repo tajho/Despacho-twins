@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS LOGISTICS PRO</title>
+    <title>TWINS DESPACHOS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,7 +12,7 @@
             --bg: #05070a; --surface: #0f1218;
             --accent: #0066ff; --accent-glow: rgba(0, 102, 255, 0.3);
             --text: #ffffff; --text-dim: #94a3b8;
-            --border: #1e293b; --success: #10b981; --danger: #ef4444;
+            --border: #1e293b; --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
@@ -53,13 +53,18 @@
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 22px; margin-bottom: 2px; }
 
-        /* Estilos de Historial con Lista Clara */
+        /* Historial */
         .history-card { border-left: 4px solid var(--accent); }
         .history-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--text-dim); }
         .history-puntos { display: none; font-size: 12px; color: #e2e8f0; background: #05070a; padding: 12px; border-radius: 12px; margin: 10px 0; line-height: 1.6; border: 1px dashed #334155; }
         .history-puntos.show { display: block; }
         .point-line { border-bottom: 1px solid #1a1f26; padding: 4px 0; display: block; }
         .point-line:last-child { border: none; }
+
+        /* Flota Inteligente */
+        .fleet-badge { font-size: 10px; padding: 4px 8px; border-radius: 6px; font-weight: 800; }
+        .progress-container { width: 100%; height: 6px; background: #1a1f26; border-radius: 10px; margin-top: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; transition: width 0.5s ease; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
         .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 25px; width: 100%; max-width: 400px; }
@@ -68,15 +73,15 @@
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
-        <div style="font-weight:900; letter-spacing: -0.5px">TWINS LOGISTICS <span style="color:var(--accent)">PRO</span></div>
+        <div style="font-weight:900; letter-spacing: -0.5px">TWINS <span style="color:var(--accent)">DESPACHOS</span></div>
         <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px; cursor:pointer">---</div>
     </header>
 
     <div id="page-login" class="page active">
         <div style="text-align:center; padding:40px 0">
             <i class="ph-fill ph-package" style="font-size:60px; color:var(--accent)"></i>
-            <h1 style="margin:10px 0">Warehouse Login</h1>
-            <p style="color:var(--text-dim)">Gestión de Inventario</p>
+            <h1 style="margin:10px 0">TWINS DESPACHOS</h1>
+            <p style="color:var(--text-dim)">Ingreso de Personal</p>
         </div>
         <div id="login-options" style="display:grid; gap:10px"></div>
     </div>
@@ -89,18 +94,18 @@
                 <div class="stat-label" style="margin-top:5px">Cajas totales</div>
             </div>
             <div style="text-align:right">
-                <div class="stat-label">Envíos</div>
+                <div class="stat-label">Puntos</div>
                 <div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
-                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:8px; font-size:10px; font-weight:700">RESETEAR</button>
+                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:8px; font-size:10px; font-weight:700">BORRAR</button>
             </div>
         </div>
 
         <div class="card">
             <div class="stat-label" style="margin-bottom:10px">Agregar Destino</div>
-            <input type="text" id="inp-cli" placeholder="Nombre del Cliente o Punto" style="margin-bottom:10px">
-            <div class="input-group">
+            <input type="text" id="inp-cli" placeholder="Nombre del Cliente">
+            <div class="input-group" style="margin-top:10px">
                 <input type="number" id="inp-can" placeholder="Cant. Cajas" style="flex:0.6">
-                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR A CARGA</button>
+                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR A LISTA</button>
             </div>
         </div>
 
@@ -130,11 +135,17 @@
     </div>
 
     <div id="page-stats" class="page">
-        <div class="card"><div class="stat-label">Chofer (Mes)</div><div style="height:200px"><canvas id="c-cho"></canvas></div></div>
-        <div class="card"><div class="stat-label">Auxiliar (Mes)</div><div style="height:200px"><canvas id="c-aux"></canvas></div></div>
+        <div class="card"><div class="stat-label">Volumen Chofer (Mes)</div><div style="height:220px; margin-top:15px"><canvas id="c-cho"></canvas></div></div>
+        <div class="card"><div class="stat-label">Volumen Auxiliar (Mes)</div><div style="height:220px; margin-top:15px"><canvas id="c-aux"></canvas></div></div>
     </div>
 
-    <div id="page-fleet" class="page"><div id="fleet-grid"></div></div>
+    <div id="page-fleet" class="page">
+        <div style="margin-bottom:20px">
+            <h2 style="margin:0">Estado de Flota</h2>
+            <p style="color:var(--text-dim); font-size:12px">Control inteligente de documentos</p>
+        </div>
+        <div id="fleet-grid"></div>
+    </div>
 
     <div id="modal-confirm" class="modal">
         <div class="modal-content">
@@ -146,9 +157,9 @@
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph ph-truck-trailer"></i>HOJA</button>
+        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph ph-truck-trailer"></i>DESPACHO</button>
         <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph ph-clock-counter-clockwise"></i>DATA</button>
-        <button class="nav-item" id="n-stats" onclick="go('page-stats')"><i class="ph ph-chart-pie"></i>STATS</button>
+        <button class="nav-item" id="n-stats" onclick="go('page-stats')"><i class="ph ph-chart-line"></i>STATS</button>
         <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph ph-shield-check"></i>FLOTA</button>
     </nav>
 
@@ -188,11 +199,17 @@
                 const res = await fetch(API);
                 db = await res.json();
                 localStorage.setItem('tw_db', JSON.stringify(db));
+                updateHistoryDate(); // Asegura fecha de hoy
                 renderHistory(); updateFleet();
             } catch(e) {
                 const cache = localStorage.getItem('tw_db');
-                if(cache) { db = JSON.parse(cache); renderHistory(); updateFleet(); }
+                if(cache) { db = JSON.parse(cache); updateHistoryDate(); renderHistory(); updateFleet(); }
             }
+        }
+
+        function updateHistoryDate() {
+            const hoy = new Date().toLocaleDateString('en-CA');
+            document.getElementById('filter-date').value = hoy;
         }
 
         function addPoint() {
@@ -262,7 +279,6 @@
                 
                 if(r.fecha.split('T')[0] === filterDate) {
                     dTotal += parseFloat(r.total);
-                    // Formatear lista clara con viñetas
                     const listaFormateada = r.items.split(", ").map(li => `<span class="point-line">• ${li}</span>`).join("");
                     
                     html = `
@@ -277,7 +293,7 @@
                         <div style="display:flex; gap:8px; margin-top:10px">
                             <button class="btn" style="flex:1; background:var(--accent); color:white; font-size:11px; padding:10px" onclick="toggleList(${i})">VER CARGA</button>
                             <button class="btn" style="background:var(--border); width:40px" onclick="loadToEdit(${i})"><i class="ph ph-pencil"></i></button>
-                            <button class="btn" style="background:#25D366; width:45px" onclick="share('${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i></button>
+                            <button class="btn" style="background:#25D366; width:45px; color:white" onclick="share('${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i></button>
                         </div>
                     </div>` + html;
                 }
@@ -304,10 +320,28 @@
 
         function updateFleet() {
             const grid = document.getElementById('fleet-grid'); const hoy = new Date();
-            grid.innerHTML = '<h3 style="margin-bottom:15px">Seguros</h3>';
+            grid.innerHTML = "";
             DATA.placas.forEach(p => {
-                const dias = Math.ceil((new Date(DATA.soats[p]) - hoy) / 86400000);
-                grid.innerHTML += `<div class="card"><b>${p}</b> <span style="float:right; color:${dias<30?'var(--danger)':'var(--success)'}">${dias} d</span></div>`;
+                const vence = new Date(DATA.soats[p]);
+                const dias = Math.ceil((vence - hoy) / 86400000);
+                const pct = Math.max(0, Math.min(100, (dias / 365) * 100));
+                let color = "var(--success)";
+                if(dias < 30) color = "var(--danger)";
+                else if(dias < 60) color = "var(--warning)";
+
+                grid.innerHTML += `
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center">
+                        <div>
+                            <div style="font-weight:800; font-size:18px">${p}</div>
+                            <div style="font-size:11px; color:var(--text-dim)">Vence: ${DATA.soats[p]}</div>
+                        </div>
+                        <div class="fleet-badge" style="background:${color}20; color:${color}">${dias} días rest.</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width:${pct}%; background:${color}"></div>
+                    </div>
+                </div>`;
             });
         }
 
@@ -324,26 +358,53 @@
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.getElementById('n-' + id.split('-')[1]).classList.add('active');
-            if(id === 'page-history') { document.getElementById('filter-date').value = "2026-02-23"; renderHistory(); }
+            
+            if(id === 'page-history') { updateHistoryDate(); renderHistory(); }
             if(id === 'page-stats') setTimeout(drawCharts, 100);
+            if(id === 'page-fleet') updateFleet();
         }
 
         function drawCharts() {
             const statsC = {}, statsA = {}, now = new Date();
             db.forEach(r => {
-                if(new Date(r.fecha + "T12:00:00").getMonth() === now.getMonth()) {
+                const rD = new Date(r.fecha + "T12:00:00");
+                if(rD.getMonth() === now.getMonth() && rD.getFullYear() === now.getFullYear()) {
                     statsC[r.chofer] = (statsC[r.chofer] || 0) + parseFloat(r.total);
                     statsA[r.auxiliar] = (statsA[r.auxiliar] || 0) + parseFloat(r.total);
                 }
             });
-            const cfg = (obj, color) => ({ type: 'bar', data: { labels: Object.keys(obj), datasets: [{ data: Object.values(obj), backgroundColor: color, borderRadius: 8 }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { display: false }, y: { ticks: { color: '#94a3b8' } } } } });
-            if(chart1) chart1.destroy(); chart1 = new Chart(document.getElementById('c-cho'), cfg(statsC, '#0066ff'));
-            if(chart2) chart2.destroy(); chart2 = new Chart(document.getElementById('c-aux'), cfg(statsA, '#10b981'));
+
+            const options = {
+                indexAxis: 'y',
+                maintainAspectRatio: false,
+                plugins: { legend: false },
+                scales: { 
+                    x: { display: false }, 
+                    y: { grid: { display: false }, ticks: { color: '#94a3b8', font: { weight: '600' } } } 
+                }
+            };
+
+            if(chart1) chart1.destroy();
+            chart1 = new Chart(document.getElementById('c-cho'), {
+                type: 'bar',
+                data: { labels: Object.keys(statsC), datasets: [{ data: Object.values(statsC), backgroundColor: '#0066ff', borderRadius: 8, barThickness: 20 }] },
+                options: options
+            });
+
+            if(chart2) chart2.destroy();
+            chart2 = new Chart(document.getElementById('c-aux'), {
+                type: 'bar',
+                data: { labels: Object.keys(statsA), datasets: [{ data: Object.values(statsA), backgroundColor: '#10b981', borderRadius: 8, barThickness: 20 }] },
+                options: options
+            });
         }
 
         function login(u) { activeUser = u; localStorage.setItem('tw_logged', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-info').innerText = u; go('page-route'); }
         function logout() { localStorage.removeItem('tw_logged'); location.reload(); }
-        function share(p, t, i) { window.location.href = `https://wa.me/?text=*📦 TWINS LOGISTICS*%0A*Placa:* ${p}%0A*Cajas:* ${t}%0A*Ruta:* ${i.split(", ").join("%0A")}`; }
+        function share(p, t, i) { 
+            const text = encodeURIComponent(`*📦 TWINS DESPACHOS*\n*Placa:* ${p}\n*Cajas:* ${t}\n*Ruta:*\n${i.split(", ").join("\n")}`);
+            window.location.href = `https://wa.me/?text=${text}`; 
+        }
     </script>
 </body>
 </html>
