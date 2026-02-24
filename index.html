@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHO - OFICIAL</title>
+    <title>TWINS DESPACHO - GESTIÓN DE FACTURAS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -37,25 +37,30 @@
         .btn-main { background: var(--success); color: white; width: 100%; padding: 20px; border-radius: 18px; border: none; font-size: 17px; font-weight: 800; margin-top: 15px; cursor: pointer; }
         .btn-opt { background: var(--border); color: white; border: none; padding: 10px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; flex: 1; }
 
-        /* LISTA INFORMATIVA MEJORADA */
-        .route-item { 
-            background: var(--surface); border-radius: 18px; padding: 12px 16px; margin-bottom: 10px; 
-            display: flex; align-items: center; gap: 15px; border: 1px solid var(--border);
+        /* LISTA DIDÁCTICA DE RUTA (MANIFIESTO) */
+        .manifest-card { 
+            background: #1e2533; border-radius: 20px; padding: 18px; margin-bottom: 12px; 
+            border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative;
         }
-        .item-index { background: rgba(255,255,255,0.05); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 11px; font-weight: 800; color: var(--text-dim); }
-        .item-info { flex: 1; }
-        .item-info b { display: block; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .item-qty { background: var(--accent); color: white; padding: 6px 12px; border-radius: 12px; font-weight: 800; font-size: 14px; min-width: 45px; text-align: center; }
+        .manifest-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .manifest-index { background: var(--accent); color: white; width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+        .manifest-client { flex: 1; padding: 0 12px; }
+        .manifest-client b { display: block; font-size: 17px; color: #ffffff; text-transform: uppercase; line-height: 1.2; }
+        .manifest-client span { font-size: 11px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; }
+        
+        .manifest-footer { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 12px; }
+        .manifest-qty { color: var(--success); font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 6px; }
+        .manifest-qty small { font-size: 12px; color: var(--text-dim); }
 
         .card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .detail-box { display: none; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 15px; margin: 12px 0; font-size: 13px; color: #cbd5e1; white-space: pre-line; border: 1px solid var(--border); line-height: 1.6; }
+        .detail-box { display: none; background: rgba(0,0,0,0.3); border-radius: 14px; padding: 15px; margin: 12px 0; font-size: 14px; color: #cbd5e1; border: 1px solid var(--border); line-height: 1.8; }
 
         .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 75px; border-radius: 22px; display: flex; border: 1px solid var(--border); z-index: 2000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 26px; }
 
-        .login-btn { background: var(--surface); border: 1px solid var(--border); color: white; padding: 20px; border-radius: 20px; font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 3000; align-items: center; justify-content: center; padding: 20px; }
     </style>
 </head>
@@ -68,8 +73,8 @@
 
     <div id="page-login" class="page active">
         <div style="text-align:center; padding:60px 0">
-            <h2 style="font-weight:800;">Iniciar Sesión</h2>
-            <p style="color:var(--text-dim);">Gestión de Almacén</p>
+            <h2 style="font-weight:800;">Acceso Almacén</h2>
+            <p style="color:var(--text-dim);">Sistema de Despachos</p>
         </div>
         <div id="login-options"></div>
     </div>
@@ -77,23 +82,24 @@
     <div id="page-route" class="page">
         <div class="stat-banner">
             <div style="display:flex; justify-content:space-between; align-items:center">
-                <div><small style="font-weight:800; opacity:0.8">TOTAL CAJAS</small><div id="count-cajas" style="font-size:48px; font-weight:800;">0</div></div>
-                <div style="text-align:right"><small style="font-weight:800; opacity:0.8">CLIENTES</small><div id="count-puntos" style="font-size:28px; font-weight:800">0</div></div>
+                <div><small style="font-weight:800; opacity:0.8">CAJAS CARGADAS</small><div id="count-cajas" style="font-size:48px; font-weight:800;">0</div></div>
+                <div style="text-align:right"><small style="font-weight:800; opacity:0.8">FACTURAS</small><div id="count-puntos" style="font-size:28px; font-weight:800">0</div></div>
             </div>
         </div>
         
-        <div class="input-group"><input type="text" id="inp-cli" placeholder="Nombre del Cliente" autocomplete="off"></div>
+        <div class="input-group"><input type="text" id="inp-cli" placeholder="Nombre del Cliente (Factura)" autocomplete="off"></div>
         <div class="input-group">
-            <input type="number" id="inp-can" placeholder="Cantidad de Cajas">
+            <input type="number" id="inp-can" placeholder="Total Cajas">
             <button class="btn-add" onclick="addPoint()"><i class="ph-bold ph-plus" style="font-size:24px"></i></button>
         </div>
 
-        <div id="live-list" style="margin-top:20px"></div>
+        <div style="margin:20px 0 10px 5px; font-size:12px; font-weight:800; color:var(--text-dim); letter-spacing:1px">MANIFIESTO DE CARGA ACTUAL:</div>
+        <div id="live-list"></div>
 
         <div id="finalize-area" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px">
             <select id="sel-pla" onchange="predictAndSave()" style="margin-bottom:10px"></select>
             <div class="input-group"><select id="sel-cho"></select><select id="sel-aux"></select></div>
-            <button class="btn-main" onclick="openConfirm()">REGISTRAR DESPACHO</button>
+            <button class="btn-main" onclick="openConfirm()">LISTO PARA DESPACHO</button>
         </div>
     </div>
 
@@ -112,22 +118,23 @@
     <div id="page-stats" class="page">
         <div class="card" style="text-align:center; padding:40px 20px;">
             <i class="ph-fill ph-file-pdf" style="font-size:64px; color:var(--danger); margin-bottom:15px"></i>
-            <h3>Reporte PDF Mensual</h3>
-            <button onclick="generatePDF()" class="btn-main" style="background:var(--danger);">DESCARGAR REPORTE</button>
+            <h3>Reporte Mensual</h3>
+            <button onclick="generatePDF()" class="btn-main" style="background:var(--danger);">GENERAR PDF</button>
         </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
-        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-clock-counter-clockwise"></i>DATA</button>
+        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-fill ph-clipboard-text"></i>RUTEAR</button>
+        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-database"></i>DATA</button>
         <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
-        <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-fill ph-file-text"></i>REPORTE</button>
+        <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-fill ph-file-pdf"></i>PDF</button>
     </nav>
 
     <div id="modal-confirm" class="modal">
         <div class="card" style="width:100%; text-align:center;">
-            <h3 style="margin-bottom:5px">Fecha de Salida</h3>
-            <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px">¿Cuándo sale este vehículo?</p>
+            <i class="ph-fill ph-calendar-check" style="font-size:48px; color:var(--accent); margin-bottom:10px"></i>
+            <h3 style="margin-bottom:5px">Salida del Vehículo</h3>
+            <p style="font-size:13px; color:var(--text-dim); margin-bottom:20px">Elige la fecha de despacho oficial</p>
             <div style="display:flex; gap:10px; margin-bottom:15px">
                 <button class="btn-main" style="margin-top:0" onclick="finalize('HOY')">HOY</button>
                 <button class="btn-main" style="margin-top:0; background:var(--accent)" onclick="finalize('MAÑANA')">MAÑANA</button>
@@ -159,7 +166,7 @@
         function setupUI() {
             const opts = document.getElementById('login-options');
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                opts.innerHTML += `<div class="login-btn" onclick="checkPass('${u}')"><span>${u}</span><i class="ph-bold ph-caret-right"></i></div>`;
+                opts.innerHTML += `<div class="login-btn" onclick="checkPass('${u}')" style="background:var(--surface); border:1px solid var(--border); color:white; padding:20px; border-radius:20px; font-size:16px; font-weight:700; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span>${u}</span><i class="ph-bold ph-caret-right"></i></div>`;
             });
             document.getElementById('sel-pla').innerHTML = '<option value="">Elegir Placa</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
             document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + DATA.choferes.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -212,9 +219,9 @@
                         </div>
                         <div style="font-weight:800; font-size:24px; margin:15px 0">${r.total} Cajas</div>
                         <div style="font-size:12px; font-weight:700; opacity:0.7; margin-bottom:12px">${r.chofer} / ${r.auxiliar}</div>
-                        <div id="details-${i}" class="detail-box">${(r.detalles || r.items || "").split(', ').join('\n')}</div>
+                        <div id="details-${i}" class="detail-box"><b>DETALLE DE FACTURAS:</b><br>${(r.detalles || r.items || "").split(', ').join('\n')}</div>
                         <div style="display:flex; gap:8px">
-                            <button class="btn-opt" onclick="toggleDetails(${i})"><i class="ph ph-eye"></i> Ver Lista</button>
+                            <button class="btn-opt" onclick="toggleDetails(${i})"><i class="ph ph-list-numbers"></i> Lista</button>
                             <button class="btn-opt" onclick="loadEdit(${i})"><i class="ph ph-pencil-simple"></i></button>
                             <button class="btn-opt" style="background:#25D366" onclick="shareWA(${i})"><i class="ph ph-whatsapp-logo"></i></button>
                         </div>
@@ -246,11 +253,20 @@
             let total = 0; list.innerHTML = ""; 
             currentCarga.forEach((it, i) => { 
                 total += it.can; 
-                list.innerHTML += `<div class="route-item">
-                    <div class="item-index">${i+1}</div>
-                    <div class="item-info"><b>${it.cli}</b></div>
-                    <div class="item-qty">${it.can}</div>
-                    <i class="ph-bold ph-trash" style="color:var(--danger); font-size:20px" onclick="removePoint(${i})"></i>
+                list.innerHTML += `
+                <div class="manifest-card">
+                    <div class="manifest-header">
+                        <div class="manifest-index">${i+1}</div>
+                        <div class="manifest-client">
+                            <span>CLIENTE / FACTURA</span>
+                            <b>${it.cli}</b>
+                        </div>
+                        <i class="ph-bold ph-trash" style="color:var(--danger); font-size:22px" onclick="removePoint(${i})"></i>
+                    </div>
+                    <div class="manifest-footer">
+                        <div class="manifest-qty"><small>CARGA:</small>${it.can} <small>Cajas</small></div>
+                        <div style="font-size:10px; font-weight:800; color:var(--accent); opacity:0.6"><i class="ph-fill ph-check-circle"></i> LISTO</div>
+                    </div>
                 </div>`; 
             }); 
             document.getElementById('count-cajas').innerText = total; 
@@ -278,7 +294,7 @@
 
         function shareWA(i) {
             const r = db[i];
-            const msg = `*📦 TWINS DESPACHO*%0A*Salida:* ${r.fecha}%0A*Placa:* ${r.placa}%0A*Total:* ${r.total} Cjs%0A*Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}`;
+            const msg = `*📦 TWINS DESPACHO*%0A*Fecha:* ${r.fecha}%0A*Placa:* ${r.placa}%0A*Cajas:* ${r.total}%0A*Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}`;
             window.open(`https://wa.me/?text=${msg}`, '_blank');
         }
 
