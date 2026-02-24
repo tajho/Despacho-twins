@@ -245,7 +245,6 @@
             } catch(e) {}
         }
 
-        // --- RENDERIZADO CON GRÁFICO Y HORA ---
         function renderHistory() {
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
             const sQ = document.getElementById('search').value.toUpperCase();
@@ -254,19 +253,16 @@
             const tM = targetDate.getMonth(), tY = targetDate.getFullYear();
 
             let html = "", diaCajas = 0, diaEnvios = 0, mesCajas = 0, mesEnvios = 0;
-            let chartData = {}; // Para el gráfico de choferes
+            let chartData = {};
 
             database.forEach(r => {
                 const rf = r.fecha.split('T')[0];
                 const rDate = new Date(r.fecha + "T00:00:00");
 
-                // Cálculo Mensual y Datos para Gráfico
                 if (rDate.getMonth() === tM && rDate.getFullYear() === tY) {
                     const totalCj = parseFloat(r.total || 0);
                     mesCajas += totalCj;
                     mesEnvios += parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
-                    
-                    // Llenar datos para el gráfico
                     chartData[r.chofer] = (chartData[r.chofer] || 0) + totalCj;
                 }
 
@@ -275,10 +271,10 @@
                         const nP = parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
                         diaCajas += parseFloat(r.total || 0); 
                         diaEnvios += nP;
-                        
                         const isOld = rf < hoyStr;
-                        // Sello de tiempo (Nueva Mejora)
-                        const hora = r.hora || "--:--"; 
+                        
+                        // CORRECCIÓN: Captura de la hora desde el registro
+                        const displayHora = r.hora ? r.hora : "--:--";
                         
                         html = `
                         <div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
@@ -286,7 +282,7 @@
                                 <div><b style="font-size:18px; display:block">${r.placa}</b><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : (rf === hoyStr ? 'EN RUTA' : 'PROGRAMADO')}</span></div>
                                 <div style="text-align:right">
                                     <b style="color:var(--accent); font-size:20px">${r.total} CJ</b>
-                                    <div style="font-size:10px; opacity:0.6">${nP} PUNTOS • ${hora}</div>
+                                    <div style="font-size:10px; opacity:0.6">${nP} PUNTOS • ${displayHora}</div>
                                 </div>
                             </div>
                             <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
@@ -304,7 +300,6 @@
             document.getElementById('st-puntos').innerText = diaEnvios;
             document.getElementById('st-mes-cajas').innerText = mesCajas.toLocaleString(); 
             document.getElementById('st-mes-envios').innerText = mesEnvios;
-
             updateChart(chartData);
         }
 
@@ -312,9 +307,7 @@
             const ctx = document.getElementById('choferChart').getContext('2d');
             const labels = Object.keys(data);
             const values = Object.values(data);
-
             if(myChart) myChart.destroy();
-            
             myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -344,13 +337,14 @@
             document.getElementById('m-type').style.display = 'none';
             let d = new Date();
             if(tipo === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
-            
             const fT = d.toISOString().split('T')[0];
+            
+            // CORRECCIÓN: Generación de hora local para el registro
             const hT = new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: true });
             
             const reg = { 
                 fecha: fT, 
-                hora: hT, // Guardamos la hora de registro
+                hora: hT, 
                 chofer: document.getElementById('cho').value, 
                 auxiliar: document.getElementById('aux').value, 
                 placa: document.getElementById('pla').value, 
@@ -368,7 +362,6 @@
             clearDraft();
         }
 
-        // --- FUNCIONES CORE (SIN CAMBIOS) ---
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
