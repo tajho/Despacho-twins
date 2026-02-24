@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHO V45 - FULL GESTIÓN</title>
+    <title>TWINS DESPACHOS V47</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -38,7 +36,6 @@
         .logo { font-weight: 800; font-size: 19px; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
 
-        /* Estilos del Slider de Gráficos */
         .slider-wrapper { position: relative; width: 100%; overflow: hidden; margin-bottom: 20px; }
         .slider-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; gap: 15px; -ms-overflow-style: none; scrollbar-width: none; }
         .slider-container::-webkit-scrollbar { display: none; }
@@ -86,12 +83,12 @@
     </div>
 
     <header id="app-header" class="top-header" style="display:none">
-        <div class="logo">TWINS <span>NEBULA</span></div>
+        <div class="logo">TWINS <span>DESPACHOS</span></div>
         <div id="user-display" style="font-size:11px; font-weight:800; color:var(--accent)">---</div>
     </header>
 
     <div id="page-login" class="page active">
-        <h1 style="text-align:center; margin-top:10vh">TWINS DESPACHO</h1>
+        <h1 style="text-align:center; margin-top:10vh">TWINS DESPACHOS</h1>
         <div id="login-grid" style="display:grid; gap:14px; padding: 20px;"></div>
     </div>
 
@@ -181,24 +178,28 @@
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
-        let user = "", items = [], database = [], cChart = null, aChart = null;
+        let user = "", items = [], database = [], cChart = null, aChart = null, editIndex = null;
         
         const PLACAS = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
-        const CHOFERES = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
-        const AUXILIARES = ["CRISTOPHER", "PLACIDO", "RODOLFO", "SIN AUXILIAR", "NELSON"];
+        const CHOFERES = ["TAJHO", "LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
+        const AUXILIARES = ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"];
         const SOATS = { "CEP-929": "2026-07-22", "BPN-711": "2026-06-10", "BVN-704": "2026-07-02", "BUL-742": "2026-04-02", "BVN-930": "2026-07-02" };
 
         window.onload = () => {
             initInputs();
             const savedUser = localStorage.getItem('tw_user');
             if(savedUser) login(savedUser);
-            document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
+            resetDateFilter();
             loadData();
             document.getElementById('slider').addEventListener('scroll', (e) => {
                 const scroll = e.target.scrollLeft, width = e.target.offsetWidth, activeSlide = Math.round(scroll / width);
                 document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === activeSlide));
             });
         };
+
+        function resetDateFilter() {
+            document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
+        }
 
         function initInputs() {
             const grid = document.getElementById('login-grid');
@@ -227,7 +228,7 @@
             let html = "", diaCajas = 0, mesCajas = 0;
             let dataC = {}, dataA = {};
 
-            database.forEach(r => {
+            database.forEach((r, index) => {
                 const rf = r.fecha.split('T')[0];
                 const rDate = new Date(r.fecha + "T00:00:00");
                 const totalCj = parseFloat(r.total || 0);
@@ -244,7 +245,6 @@
                         const hora = r.hora || "--:--";
                         const puntos = r.items ? r.items.split(',').length : 0;
                         
-                        // RESTAURACIÓN TOTAL DE LA TARJETA CON WHATSAPP Y HORA
                         html = `
                         <div class="card" style="border-left:6px solid var(--accent)">
                             <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
@@ -257,6 +257,7 @@
                             <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
                             <div style="display:flex; gap:10px">
                                 <button class="btn-ghost" style="flex:1; padding:12px; border-radius:15px; font-size:12px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
+                                <button class="btn-ghost" style="width:50px; border-radius:15px; padding:0" onclick="editRoute(${index})"><i class="ph ph-pencil-simple" style="font-size:20px"></i></button>
                                 <button class="btn" style="background:#25D366; color:white; width:60px; border-radius:15px; padding:0" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')">
                                     <i class="ph-fill ph-whatsapp-logo" style="font-size:22px"></i>
                                 </button>
@@ -272,6 +273,20 @@
             updateCharts(dataC, dataA);
         }
 
+        function editRoute(idx) {
+            const r = database[idx];
+            editIndex = idx;
+            items = r.items.split(", ").map(i => {
+                const [cl, ca] = i.split(": ");
+                return { cl, ca: parseInt(ca) };
+            });
+            document.getElementById('pla').value = r.placa;
+            document.getElementById('cho').value = r.chofer;
+            document.getElementById('aux').value = r.auxiliar;
+            renderTemp();
+            nav('page-route');
+        }
+
         function updateCharts(dataC, dataA) {
             const chartOptions = { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#86868b' } }, y: { grid: { display: false }, ticks: { color: '#f5f5f7', font: { size: 10 } } } } };
             if(cChart) cChart.destroy();
@@ -284,9 +299,18 @@
             document.getElementById('m-type').style.display = 'none';
             let d = new Date();
             if(tipo === 'MAÑANA') d.setDate(d.getDate() + 1);
+            
             const hT = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
             const reg = { fecha: d.toISOString().split('T')[0], hora: hT, chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, placa: document.getElementById('pla').value, items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), total: items.reduce((a,b)=>a+b.ca,0), operario: user, puntos: items.length };
-            database.unshift(reg);
+            
+            // LÓGICA DE SOBRESCRITURA
+            if(editIndex !== null) {
+                database[editIndex] = reg;
+                editIndex = null;
+            } else {
+                database.unshift(reg);
+            }
+
             localStorage.setItem('tw_db_cache', JSON.stringify(database));
             renderHistory(); nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
@@ -319,13 +343,18 @@
             document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
         }
 
-        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('n-' + id.split('-')[1]).classList.add('active'); if(id === 'page-history') renderHistory(); }
+        function nav(id) { 
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); 
+            document.getElementById(id).classList.add('active'); 
+            document.getElementById('n-' + id.split('-')[1]).classList.add('active'); 
+            if(id === 'page-history') { resetDateFilter(); renderHistory(); }
+        }
         function checkAuth(u) { if(u === 'TAJHO ADMIN') document.getElementById('m-auth').style.display='flex'; else login(u); }
         function verifyAuth() { if(document.getElementById('admin-pass').value === '1234') { document.getElementById('m-auth').style.display='none'; login('TAJHO ADMIN'); } else alert("PIN Incorrecto"); }
         function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-display').innerText = u; nav('page-route'); }
-        function logout() { localStorage.clear(); location.reload(); }
         function viewItems(txt, ch) { document.getElementById('m-title').innerText = ch; document.getElementById('m-container').innerHTML = txt.split(", ").map(i => `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">${i}</div>`).join(''); document.getElementById('m-list').style.display = 'flex'; }
-        function smartPredict() { const p = document.getElementById('pla').value; const last = database.find(r => r.placa === p); if(last) document.getElementById('cho').value = last.chofer; }
+        function smartPredict() { const p = document.getElementById('pla').value; const last = database.find(r => r.placa === p); if(last) { document.getElementById('cho').value = last.chofer; document.getElementById('aux').value = last.auxiliar; } }
         function renderFleet() { const list = document.getElementById('fleet-list'), hoy = new Date(); list.innerHTML = `<h3>Flota</h3>`; PLACAS.forEach(p => { const v = new Date(SOATS[p]), dR = Math.ceil((v - hoy) / 86400000); list.innerHTML += `<div class="card" style="padding:15px; border-left:4px solid ${dR<30?'var(--danger)':'var(--success)'}"><b>${p}</b><div style="font-size:10px; opacity:0.6">SOAT: ${dR} días</div></div>`; }); }
     </script>
 </body>
