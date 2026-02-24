@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHO V41</title>
+    <title>TWINS DESPACHO V42 - PRO ANALYTICS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg: #010204; --glass: rgba(255, 255, 255, 0.04);
@@ -75,6 +76,8 @@
         
         .stat-label { font-size: 9px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 800; }
+
+        .chart-container { position: relative; height: 200px; width: 100%; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -148,6 +151,13 @@
     </div>
 
     <div id="page-history" class="page">
+        <div class="card" style="padding:15px; margin-bottom:15px">
+            <div class="stat-label" style="margin-bottom:10px">Rendimiento Mensual (Cajas por Chofer)</div>
+            <div class="chart-container">
+                <canvas id="choferChart"></canvas>
+            </div>
+        </div>
+
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px">
             <div class="card" style="margin:0; padding:15px; text-align:center">
                 <div class="stat-label">Cajas (Selección)</div>
@@ -198,7 +208,7 @@
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
-        let user = "", items = [], database = [];
+        let user = "", items = [], database = [], myChart = null;
         
         const PLACAS = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
         const CHOFERES = ["LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
@@ -235,29 +245,31 @@
             } catch(e) {}
         }
 
-        // --- MEJORA DE CONTEO SOLICITADA ---
+        // --- RENDERIZADO CON GRÁFICO Y HORA ---
         function renderHistory() {
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
             const sQ = document.getElementById('search').value.toUpperCase();
             const hoyStr = new Date().toISOString().split('T')[0];
-            
-            // Lógica para cálculo de mes
             const targetDate = new Date(fD + "T00:00:00");
             const tM = targetDate.getMonth(), tY = targetDate.getFullYear();
 
             let html = "", diaCajas = 0, diaEnvios = 0, mesCajas = 0, mesEnvios = 0;
+            let chartData = {}; // Para el gráfico de choferes
 
             database.forEach(r => {
                 const rf = r.fecha.split('T')[0];
                 const rDate = new Date(r.fecha + "T00:00:00");
 
-                // Cálculo Mensual (Exacto)
+                // Cálculo Mensual y Datos para Gráfico
                 if (rDate.getMonth() === tM && rDate.getFullYear() === tY) {
-                    mesCajas += parseFloat(r.total || 0);
+                    const totalCj = parseFloat(r.total || 0);
+                    mesCajas += totalCj;
                     mesEnvios += parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
+                    
+                    // Llenar datos para el gráfico
+                    chartData[r.chofer] = (chartData[r.chofer] || 0) + totalCj;
                 }
 
-                // Filtrado por Día y Búsqueda
                 if (rf === fD) {
                     if (!sQ || r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ) || r.placa.toUpperCase().includes(sQ)) {
                         const nP = parseInt(r.puntos || (r.items ? r.items.split(',').length : 0));
@@ -265,11 +277,17 @@
                         diaEnvios += nP;
                         
                         const isOld = rf < hoyStr;
+                        // Sello de tiempo (Nueva Mejora)
+                        const hora = r.hora || "--:--"; 
+                        
                         html = `
                         <div class="card" style="border-left:6px solid ${isOld ? 'var(--success)' : 'var(--accent)'}">
                             <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
                                 <div><b style="font-size:18px; display:block">${r.placa}</b><span class="badge ${isOld ? 'bg-done' : 'bg-route'}">${isOld ? 'ENTREGADO' : (rf === hoyStr ? 'EN RUTA' : 'PROGRAMADO')}</span></div>
-                                <div style="text-align:right"><b style="color:var(--accent); font-size:20px">${r.total} CJ</b><div style="font-size:10px; opacity:0.6">${nP} PUNTOS</div></div>
+                                <div style="text-align:right">
+                                    <b style="color:var(--accent); font-size:20px">${r.total} CJ</b>
+                                    <div style="font-size:10px; opacity:0.6">${nP} PUNTOS • ${hora}</div>
+                                </div>
                             </div>
                             <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
                             <div style="display:flex; gap:10px">
@@ -282,13 +300,75 @@
             });
 
             cont.innerHTML = html || "<p style='text-align:center; opacity:0.5; padding:50px'>No hay registros</p>";
-            document.getElementById('st-cajas').innerText = diaCajas; 
+            document.getElementById('st-cajas').innerText = diaCajas.toLocaleString(); 
             document.getElementById('st-puntos').innerText = diaEnvios;
-            document.getElementById('st-mes-cajas').innerText = mesCajas; 
+            document.getElementById('st-mes-cajas').innerText = mesCajas.toLocaleString(); 
             document.getElementById('st-mes-envios').innerText = mesEnvios;
+
+            updateChart(chartData);
         }
 
-        // --- RESTO DE FUNCIONES OFICIALES SIN CAMBIOS ---
+        function updateChart(data) {
+            const ctx = document.getElementById('choferChart').getContext('2d');
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+
+            if(myChart) myChart.destroy();
+            
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Cajas movidas',
+                        data: values,
+                        backgroundColor: '#007aff',
+                        borderRadius: 8,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#86868b' } },
+                        y: { grid: { display: false }, ticks: { color: '#f5f5f7', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        async function saveRoute(tipo) {
+            document.getElementById('m-type').style.display = 'none';
+            let d = new Date();
+            if(tipo === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
+            
+            const fT = d.toISOString().split('T')[0];
+            const hT = new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: true });
+            
+            const reg = { 
+                fecha: fT, 
+                hora: hT, // Guardamos la hora de registro
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, 
+                items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), 
+                total: items.reduce((a,b)=>a+b.ca,0), 
+                operario: user, 
+                puntos: items.length 
+            };
+            
+            database.unshift(reg);
+            localStorage.setItem('tw_db_cache', JSON.stringify(database));
+            document.getElementById('f-filter').value = fT;
+            nav('page-history');
+            fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
+            clearDraft();
+        }
+
+        // --- FUNCIONES CORE (SIN CAMBIOS) ---
         function addItem() {
             const cl = document.getElementById('cli').value.toUpperCase(), ca = parseInt(document.getElementById('can').value);
             if(!cl || !ca) return;
@@ -306,19 +386,6 @@
             document.getElementById('total-cajas').innerText = total;
             document.getElementById('total-puntos').innerText = items.length + " PUNTOS";
             document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
-        }
-        async function saveRoute(tipo) {
-            document.getElementById('m-type').style.display = 'none';
-            let d = new Date();
-            if(tipo === 'MAÑANA') { d.setDate(d.getDate() + 1); if(d.getDay() === 0) d.setDate(d.getDate() + 1); }
-            const fT = d.toISOString().split('T')[0];
-            const reg = { fecha: fT, chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, placa: document.getElementById('pla').value, items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), total: items.reduce((a,b)=>a+b.ca,0), operario: user, puntos: items.length };
-            database.unshift(reg);
-            localStorage.setItem('tw_db_cache', JSON.stringify(database));
-            document.getElementById('f-filter').value = fT;
-            nav('page-history');
-            fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            clearDraft();
         }
         function renderFleet() { 
             const list = document.getElementById('fleet-list'), hoy = new Date(), fD = document.getElementById('f-filter').value;
