@@ -3,156 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS TITANIUM V58</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>TWINS LOGISTICS PRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #08090b; --surface: #111318; --card: #1a1d24;
-            --accent: #00e5ff; --accent-glow: rgba(0, 229, 255, 0.2);
-            --text: #f1f5f9; --text-dim: #94a3b8;
-            --border: rgba(255, 255, 255, 0.08); --success: #22c55e; --danger: #ff4757;
+            --bg: #05070a; --surface: #0f1218;
+            --accent: #0066ff; --accent-glow: rgba(0, 102, 255, 0.3);
+            --text: #ffffff; --text-dim: #94a3b8;
+            --border: #1e293b; --success: #10b981; --danger: #ef4444;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         body { 
             margin: 0; background: var(--bg); color: var(--text); 
-            font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh;
         }
 
-        /* Header Estilo Logístico */
+        /* Utilidades de Diseño */
+        .page { display: none; padding: 15px; padding-bottom: 100px; max-width: 600px; margin: 0 auto; animation: pageFade 0.3s ease; }
+        .active { display: block !important; }
+        @keyframes pageFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
         .top-header { 
-            position: sticky; top: 0; z-index: 1000; background: rgba(8, 9, 11, 0.85);
-            backdrop-filter: blur(15px); padding: 15px 20px; display: flex; 
+            position: sticky; top: 0; z-index: 1000; background: rgba(5, 7, 10, 0.8);
+            backdrop-filter: blur(12px); padding: 12px 20px; display: flex; 
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
         }
-        .user-tag { font-size: 11px; font-weight: 700; color: var(--accent); border: 1px solid var(--accent); padding: 4px 12px; border-radius: 20px; text-transform: uppercase; cursor: pointer; }
 
-        .page { display: none; padding: 15px; padding-bottom: 110px; max-width: 550px; margin: 0 auto; animation: pageIn 0.3s ease; }
-        .active { display: block !important; }
-        @keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Contadores de Impacto */
-        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .metric-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 18px; position: relative; overflow: hidden; }
-        .metric-card b { font-size: 30px; font-weight: 800; display: block; letter-spacing: -1px; }
-        .metric-card span { font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-        .metric-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); }
-
-        /* Tarjetas de Diseño Moderno */
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .field-label { font-size: 11px; font-weight: 700; color: var(--text-dim); margin-bottom: 8px; display: block; padding-left: 4px; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 12px; }
         
-        input, select { 
-            background: #0d0f13; border: 1px solid var(--border); padding: 16px; border-radius: 16px; 
-            color: white; width: 100%; font-size: 15px; margin-bottom: 12px; transition: 0.2s; font-family: inherit;
-        }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        /* Contadores Logísticos */
+        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .stat-val { font-size: 38px; font-weight: 800; line-height: 1; }
+        .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.8; }
 
-        /* Botones Pro */
-        .btn { border: none; border-radius: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-        .btn:active { transform: scale(0.97); }
-        .btn-main { background: var(--accent); color: #000; padding: 18px; width: 100%; font-size: 15px; }
-        .btn-ghost { background: rgba(255,255,255,0.04); color: white; border: 1px solid var(--border); padding: 12px; font-size: 13px; }
-        .btn-del { background: rgba(255, 71, 87, 0.1); color: var(--danger); width: 36px; height: 36px; border-radius: 12px; }
+        /* Formulario de Carga */
+        .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
+        input, select { background: #1a1f26; border: 1px solid var(--border); padding: 14px; border-radius: 14px; color: white; font-size: 15px; font-weight: 500; width: 100%; }
+        input:focus { border-color: var(--accent); }
 
         /* Lista de Puntos en Hoja de Ruta */
-        .point-item { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 12px 16px; border-radius: 15px; margin-bottom: 8px; border-left: 3px solid var(--accent); }
-        .point-info { font-weight: 600; }
-        .point-info span { color: var(--accent); font-weight: 800; margin-right: 5px; }
+        .point-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 12px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        .point-info b { color: var(--accent); }
 
-        /* Historial Expandible */
-        .h-card { border-radius: 22px; padding: 18px; }
-        .h-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .h-details { max-height: 0; overflow: hidden; transition: 0.4s ease; font-size: 13px; color: var(--text-dim); }
-        .h-details.open { max-height: 400px; padding-top: 15px; }
-        .h-pill { background: rgba(0, 229, 255, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; }
-
-        /* Navbar Dock Style */
-        .dock-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(26, 29, 36, 0.95); backdrop-filter: blur(20px); height: 75px; border-radius: 28px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; transition: 0.3s; }
+        /* Botones */
+        .btn { border: none; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn-add { background: var(--accent); color: white; padding: 14px 20px; }
+        .btn-save { background: var(--success); color: white; padding: 16px; width: 100%; font-size: 15px; margin-top: 10px; }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); width: 32px; height: 32px; border-radius: 10px; }
+        
+        /* Navigation */
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #161b22; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 24px; margin-bottom: 3px; }
-        .nav-item.active i { filter: drop-shadow(0 0 8px var(--accent)); }
+        .nav-item i { font-size: 22px; margin-bottom: 2px; }
+
+        /* Historial */
+        .history-card { border-left: 4px solid var(--accent); }
+        .history-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--text-dim); }
+        .history-puntos { font-size: 11px; color: var(--text-dim); background: #05070a; padding: 10px; border-radius: 10px; margin: 10px 0; line-height: 1.4; }
+
+        /* Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 25px; width: 100%; max-width: 400px; }
     </style>
 </head>
 <body>
 
-    <header class="top-header" id="ui-header" style="display:none">
-        <div style="font-weight:900; letter-spacing: -1px; font-size: 18px">TWINS <span style="color:var(--accent)">LOGISTICS</span></div>
-        <div id="ui-user" class="user-tag" onclick="logout()">---</div>
+    <header id="app-header" class="top-header" style="display:none">
+        <div style="font-weight:900; letter-spacing: -0.5px">TWINS LOGISTICS <span style="color:var(--accent)">PRO</span></div>
+        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px; cursor:pointer">---</div>
     </header>
 
     <div id="page-login" class="page active">
-        <div style="text-align:center; padding:50px 0">
-            <i class="ph-fill ph-shield-checkered" style="font-size: 60px; color: var(--accent)"></i>
-            <h1 style="margin:10px 0; font-weight: 800">Acceso Almacén</h1>
-            <p style="color: var(--text-dim)">Control de Inventario V58</p>
+        <div style="text-align:center; padding:40px 0">
+            <i class="ph-fill ph-package" style="font-size:60px; color:var(--accent)"></i>
+            <h1 style="margin:10px 0">Warehouse Login</h1>
+            <p style="color:var(--text-dim)">Gestión de Inventario y Despachos</p>
         </div>
-        <div id="login-options" style="display:grid; gap:12px"></div>
+        <div id="login-options" style="display:grid; gap:10px"></div>
     </div>
 
     <div id="page-route" class="page">
-        <div class="metrics-grid">
-            <div class="metric-card"><span>Cajas Totales</span><b id="val-cajas">0</b></div>
-            <div class="metric-card"><span>Puntos Ruta</span><b id="val-puntos">0</b></div>
-        </div>
-
-        <div class="card">
-            <span class="field-label">AÑADIR CLIENTE A LA CARGA</span>
-            <input type="text" id="in-cli" placeholder="Nombre del Cliente">
-            <div style="display:flex; gap:10px">
-                <input type="number" id="in-can" placeholder="Cant." style="flex:0.4">
-                <button class="btn btn-main" onclick="addItem()" style="flex:1.6"><i class="ph-bold ph-plus"></i>AÑADIR</button>
+        <div class="stat-banner">
+            <div>
+                <div class="stat-label">Carga Actual</div>
+                <div id="count-cajas" class="stat-val">0</div>
+                <div class="stat-label" style="margin-top:5px">Cajas totales</div>
+            </div>
+            <div style="text-align:right">
+                <div class="stat-label">Envíos</div>
+                <div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
+                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:8px; font-size:10px; font-weight:700">RESETEAR</button>
             </div>
         </div>
 
-        <div id="carga-activa" style="display:none">
-            <div id="lista-puntos" style="margin-bottom:20px"></div>
+        <div class="card">
+            <div class="stat-label" style="margin-bottom:10px">Agregar Destino</div>
+            <input type="text" id="inp-cli" placeholder="Nombre del Cliente o Punto" style="margin-bottom:10px">
+            <div class="input-group">
+                <input type="number" id="inp-can" placeholder="Cant. Cajas" style="flex:0.6">
+                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR A CARGA</button>
+            </div>
+        </div>
 
-            <div class="card" style="background: var(--surface)">
-                <span class="field-label">ASIGNACIÓN DE TRANSPORTE</span>
-                <select id="sel-pla" onchange="autoPredict()"></select>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+        <div id="list-container" style="display:none">
+            <div class="stat-label" style="margin-bottom:8px">Puntos en esta Ruta</div>
+            <div id="live-list" style="margin-bottom:15px"></div>
+
+            <div class="card">
+                <div class="stat-label" style="margin-bottom:10px">Asignación de Unidad</div>
+                <select id="sel-pla" onchange="predict()" style="margin-bottom:10px"></select>
+                <div class="input-group">
                     <select id="sel-cho"></select>
                     <select id="sel-aux"></select>
                 </div>
-                <button class="btn btn-main" style="background: var(--success); color: black" onclick="finalizarCarga()">FINALIZAR DESPACHO</button>
-                <button class="btn btn-ghost" style="width:100%; margin-top:10px; border:none" onclick="limpiarTodo()">LIMPIAR CARGA ACTUAL</button>
+                <button id="btn-main-action" class="btn btn-save" onclick="openConfirm()">GUARDAR DESPACHO</button>
             </div>
         </div>
     </div>
 
     <div id="page-history" class="page">
-        <div class="metrics-grid">
-            <div class="metric-card"><span>Despacho Hoy</span><b id="st-d">0</b></div>
-            <div class="metric-card"><span>Acumulado Mes</span><b id="st-m">0</b></div>
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-bottom:15px">
+            <div class="card" style="margin:0; text-align:center">
+                <div class="stat-label">Hoy</div>
+                <div id="st-day" style="font-size:20px; font-weight:800; color:var(--accent)">0</div>
+            </div>
+            <div class="card" style="margin:0; text-align:center">
+                <div class="stat-label">Mes Actual</div>
+                <div id="st-month" style="font-size:20px; font-weight:800">0</div>
+            </div>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:20px">
-            <input type="date" id="filtro-fecha" onchange="renderHistory()" style="flex:1; margin:0">
-            <button class="btn btn-ghost" style="width:55px" onclick="sync()"><i class="ph ph-arrows-clockwise" style="font-size:20px"></i></button>
+        <div style="display:flex; gap:8px; margin-bottom:15px">
+            <input type="date" id="filter-date" onchange="renderHistory()" style="flex:1">
+            <button class="btn" style="background:var(--surface); border:1px solid var(--border); width:50px" onclick="exportData()"><i class="ph ph-file-pdf"></i></button>
         </div>
-        <div id="historial-feed"></div>
+        <div id="history-feed"></div>
     </div>
 
     <div id="page-stats" class="page">
-        <div class="card"><span class="field-label">VOLUMEN POR CHOFER (CJ)</span><div style="height:220px"><canvas id="c-cho"></canvas></div></div>
-        <div class="card"><span class="field-label">VOLUMEN POR AUXILIAR (CJ)</span><div style="height:220px"><canvas id="c-aux"></canvas></div></div>
+        <div class="card">
+            <div class="stat-label">Volumen por Chofer (Mes)</div>
+            <div style="height:200px; margin-top:15px"><canvas id="c-cho"></canvas></div>
+        </div>
+        <div class="card">
+            <div class="stat-label">Volumen por Auxiliar (Mes)</div>
+            <div style="height:200px; margin-top:15px"><canvas id="c-aux"></canvas></div>
+        </div>
     </div>
 
-    <div id="page-fleet" class="page"><div id="flota-grid"></div></div>
+    <div id="page-fleet" class="page">
+        <div id="fleet-grid"></div>
+    </div>
 
-    <nav class="dock-nav" id="ui-nav" style="display:none">
-        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph ph-truck"></i>RUTA</button>
-        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph ph-article"></i>DATA</button>
-        <button class="nav-item" id="n-stats" onclick="go('page-stats')"><i class="ph ph-chart-line-up"></i>STATS</button>
+    <div id="modal-confirm" class="modal">
+        <div class="modal-content">
+            <h3 style="text-align:center; margin-bottom:20px">Confirmar Salida</h3>
+            <button class="btn btn-save" onclick="finalize('HOY')">SALIENDO AHORA (23 FEB)</button>
+            <button class="btn" style="width:100%; margin-top:10px; background:var(--border); color:white; padding:16px; border-radius:14px" onclick="finalize('MAÑANA')">PROGRAMAR MAÑANA (24 FEB)</button>
+            <button onclick="closeConfirm()" style="width:100%; border:none; background:none; color:var(--text-dim); margin-top:15px; font-weight:700">Cancelar</button>
+        </div>
+    </div>
+
+    <nav id="app-nav" class="nav-bar" style="display:none">
+        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph ph-truck-trailer"></i>HOJA</button>
+        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph ph-clock-counter-clockwise"></i>DATA</button>
+        <button class="nav-item" id="n-stats" onclick="go('page-stats')"><i class="ph ph-chart-pie"></i>STATS</button>
         <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph ph-shield-check"></i>FLOTA</button>
     </nav>
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
-        let user = "", items = [], db = [], charts = {};
+        let activeUser = "", currentCarga = [], db = [], editIdx = null;
+        let chart1 = null, chart2 = null;
 
         const DATA = {
             placas: ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"],
@@ -162,146 +187,210 @@
         };
 
         window.onload = () => {
-            initApp();
-            const cacheI = localStorage.getItem('tw_items');
-            if(cacheI) { items = JSON.parse(cacheI); updateCargaUI(); }
-            const cacheU = localStorage.getItem('tw_user');
-            if(cacheU) login(cacheU);
-            sync();
+            setupUI();
+            const saved = localStorage.getItem('tw_logged');
+            if(saved) login(saved);
+            syncData();
         };
 
-        function initApp() {
+        function setupUI() {
             const grid = document.getElementById('login-options');
-            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => grid.innerHTML += `<button class="btn btn-ghost" style="padding:18px" onclick="login('${u}')">${u}</button>`);
-            document.getElementById('sel-pla').innerHTML = '<option value="">Vehículo</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
+            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
+                grid.innerHTML += `<button class="btn btn-add" style="background:var(--surface); border:1px solid var(--border)" onclick="login('${u}')">${u}</button>`;
+            });
+            document.getElementById('sel-pla').innerHTML = '<option value="">Seleccionar Unidad</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
             document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + DATA.choferes.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + DATA.auxiliares.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
-        function addItem() {
-            const cl = document.getElementById('in-cli').value.toUpperCase();
-            const ca = parseInt(document.getElementById('in-can').value);
-            if(!cl || !ca) return;
-            items.push({ cl, ca });
-            document.getElementById('in-cli').value = ""; document.getElementById('in-can').value = "";
-            saveItems(); updateCargaUI();
+        async function syncData() {
+            try {
+                const res = await fetch(API);
+                db = await res.json();
+                localStorage.setItem('tw_db', JSON.stringify(db));
+                renderHistory(); updateFleet();
+            } catch(e) {
+                const cache = localStorage.getItem('tw_db');
+                if(cache) { db = JSON.parse(cache); renderHistory(); updateFleet(); }
+            }
         }
 
-        function delItem(i) { items.splice(i, 1); saveItems(); updateCargaUI(); }
-        function saveItems() { localStorage.setItem('tw_items', JSON.stringify(items)); }
+        function addPoint() {
+            const cli = document.getElementById('inp-cli').value.toUpperCase();
+            const can = parseInt(document.getElementById('inp-can').value);
+            if(!cli || !can) return;
+            currentCarga.push({ cli, can });
+            document.getElementById('inp-cli').value = "";
+            document.getElementById('inp-can').value = "";
+            refreshCargaUI();
+        }
 
-        function updateCargaUI() {
-            const box = document.getElementById('lista-puntos');
-            let t = 0; box.innerHTML = "";
-            items.forEach((it, i) => {
-                t += it.ca;
-                box.innerHTML += `<div class="point-item"><div class="point-info"><span>${it.ca} CJ</span> ${it.cl}</div><button class="btn-del" onclick="delItem(${i})"><i class="ph ph-trash"></i></button></div>`;
+        function removePoint(idx) {
+            currentCarga.splice(idx, 1);
+            refreshCargaUI();
+        }
+
+        function refreshCargaUI() {
+            const container = document.getElementById('live-list');
+            const zone = document.getElementById('list-container');
+            let total = 0;
+            container.innerHTML = "";
+            
+            currentCarga.forEach((item, i) => {
+                total += item.can;
+                container.innerHTML += `
+                    <div class="point-item">
+                        <div class="point-info"><b>${item.can}</b> CJ - ${item.cli}</div>
+                        <button class="btn-delete" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button>
+                    </div>`;
             });
-            document.getElementById('val-cajas').innerText = t;
-            document.getElementById('val-puntos').innerText = items.length;
-            document.getElementById('carga-activa').style.display = items.length > 0 ? 'block' : 'none';
+
+            document.getElementById('count-cajas').innerText = total;
+            document.getElementById('count-puntos').innerText = currentCarga.length;
+            zone.style.display = currentCarga.length > 0 ? 'block' : 'none';
         }
 
-        async function finalizarCarga() {
-            if(!document.getElementById('sel-aux').value) return alert("Selecciona un auxiliar válido");
-            const reg = {
-                fecha: new Date().toLocaleDateString('en-CA'),
+        function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
+        function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
+
+        async function finalize(tipo) {
+            const aux = document.getElementById('sel-aux').value;
+            if(!aux) { alert("ERROR: Debe asignar un auxiliar oficial."); return; }
+            
+            closeConfirm();
+            let fecha = new Date(); if(tipo === 'MAÑANA') fecha.setDate(fecha.getDate() + 1);
+            
+            const registro = {
+                fecha: fecha.toLocaleDateString('en-CA'),
                 hora: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
                 placa: document.getElementById('sel-pla').value,
                 chofer: document.getElementById('sel-cho').value,
-                auxiliar: document.getElementById('sel-aux').value,
-                items: items.map(i => `${i.cl}: ${i.ca}`).join(", "),
-                total: items.reduce((a,b)=>a+b.ca,0),
-                operario: user
+                auxiliar: aux,
+                items: currentCarga.map(i => `${i.cli}: ${i.can}`).join(", "),
+                total: currentCarga.reduce((a,b) => a + b.can, 0),
+                operario: activeUser
             };
-            db.unshift(reg);
-            localStorage.setItem('tw_db', JSON.stringify(db));
-            fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
-            limpiarTodo(); go('page-history');
-        }
 
-        function limpiarTodo() { items = []; localStorage.removeItem('tw_items'); updateCargaUI(); }
+            if(editIdx !== null) { db[editIdx] = registro; editIdx = null; } 
+            else { db.unshift(registro); }
+
+            localStorage.setItem('tw_db', JSON.stringify(db));
+            go('page-history');
+            fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(registro) });
+            clearAll();
+        }
 
         function renderHistory() {
-            const feed = document.getElementById('historial-feed'), filter = document.getElementById('filtro-fecha').value;
-            let html = "", dTot = 0, mTot = 0, selD = new Date(filter + "T12:00:00");
+            const container = document.getElementById('history-feed');
+            const filterDate = document.getElementById('filter-date').value;
+            let html = "", dTotal = 0, mTotal = 0;
+            const now = new Date(filterDate + "T12:00:00");
 
-            db.forEach((r, idx) => {
-                const rD = new Date(r.fecha + "T12:00:00");
-                if(rD.getMonth() === selD.getMonth()) mTot += parseFloat(r.total);
-                if(r.fecha.split('T')[0] === filter) {
-                    dTot += parseFloat(r.total);
-                    html += `
-                    <div class="card h-card">
-                        <div class="h-header" onclick="toggleDet(${idx})">
-                            <div><span class="h-pill">${r.placa}</span><br><small style="font-weight:700; color:white">${r.hora}</small></div>
-                            <div style="text-align:right"><b>${r.total} CJ</b><br><i class="ph ph-caret-down" style="font-size:12px; color:var(--accent)"></i></div>
+            db.forEach((r, i) => {
+                const rDate = new Date(r.fecha + "T12:00:00");
+                if(rDate.getMonth() === now.getMonth() && rDate.getFullYear() === now.getFullYear()) mTotal += parseFloat(r.total);
+                
+                if(r.fecha.split('T')[0] === filterDate) {
+                    dTotal += parseFloat(r.total);
+                    html = `
+                    <div class="card history-card">
+                        <div class="history-meta">
+                            <span><i class="ph ph-calendar"></i> ${r.hora}</span>
+                            <span style="color:var(--accent); font-weight:800">${r.placa}</span>
                         </div>
-                        <div id="det-${idx}" class="h-details">
-                            <div style="padding:15px; background:rgba(0,0,0,0.2); border-radius:18px">
-                                <b style="color:var(--accent)">RUTA DETALLADA:</b><br>${r.items.split(", ").join("<br>")}
-                                <div style="margin-top:10px; border-top:1px solid var(--border); padding-top:10px">Equipo: ${r.chofer} / ${r.auxiliar}</div>
-                            </div>
-                            <button class="btn btn-main" style="margin-top:12px; padding:12px; font-size:13px" onclick="share('${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i> ENVIAR REPORTE</button>
+                        <div style="font-weight:700; font-size:16px; margin-bottom:4px">${r.total} CAJAS TOTALES</div>
+                        <div style="font-size:12px; color:var(--text-dim)">Personal: ${r.chofer} / ${r.auxiliar}</div>
+                        <div class="history-puntos">${r.items}</div>
+                        <div style="display:flex; gap:8px">
+                            <button class="btn" style="flex:1; background:var(--border); font-size:11px; padding:10px" onclick="loadToEdit(${i})">MODIFICAR</button>
+                            <button class="btn" style="background:#25D366; width:50px" onclick="share('${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i></button>
                         </div>
-                    </div>`;
+                    </div>` + html;
                 }
             });
-            feed.innerHTML = html || "<p style='text-align:center; opacity:0.3; padding:40px'>No hay registros para este día</p>";
-            document.getElementById('st-d').innerText = dTot;
-            document.getElementById('st-m').innerText = mTot;
+
+            container.innerHTML = html || `<p style="text-align:center; opacity:0.3; padding:40px">Sin movimientos el ${filterDate}</p>`;
+            document.getElementById('st-day').innerText = dTotal;
+            document.getElementById('st-month').innerText = mTotal;
         }
 
-        function toggleDet(i) { document.getElementById(`det-${i}`).classList.toggle('open'); }
+        function loadToEdit(i) {
+            const r = db[i];
+            editIdx = i;
+            currentCarga = r.items.split(", ").map(item => {
+                const [cli, can] = item.split(": ");
+                return { cli, can: parseInt(can) };
+            });
+            document.getElementById('sel-pla').value = r.placa;
+            document.getElementById('sel-cho').value = r.chofer;
+            document.getElementById('sel-aux').value = r.auxiliar;
+            document.getElementById('btn-main-action').innerText = "ACTUALIZAR DATOS";
+            refreshCargaUI();
+            go('page-route');
+        }
+
+        function updateFleet() {
+            const grid = document.getElementById('fleet-grid');
+            const hoy = new Date();
+            grid.innerHTML = '<h3 style="margin-bottom:15px">Control de Seguros</h3>';
+            DATA.placas.forEach(p => {
+                const venc = new Date(DATA.soats[p]);
+                const dias = Math.ceil((venc - hoy) / 86400000);
+                grid.innerHTML += `
+                    <div class="card">
+                        <div style="display:flex; justify-content:space-between; align-items:center">
+                            <b>${p}</b>
+                            <span style="font-size:10px; opacity:0.6">VENCE: ${DATA.soats[p]}</span>
+                        </div>
+                        <div style="font-size:18px; font-weight:800; color:${dias<30?'var(--danger)':'var(--success)'}; margin-top:8px">${dias} días restantes</div>
+                        <div style="height:4px; background:#1a1f26; border-radius:10px; margin-top:10px">
+                            <div style="width:${Math.min(100, (dias/365)*100)}%; background:var(--accent); height:100%; border-radius:10px"></div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function predict() {
+            const placa = document.getElementById('sel-pla').value;
+            const last = db.find(r => r.placa === placa);
+            if(last) {
+                document.getElementById('sel-cho').value = last.chofer;
+                document.getElementById('sel-aux').value = last.auxiliar;
+            }
+        }
+
+        function clearAll() {
+            currentCarga = []; editIdx = null;
+            document.getElementById('btn-main-action').innerText = "GUARDAR DESPACHO";
+            refreshCargaUI();
+        }
 
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.getElementById('n-' + id.split('-')[1]).classList.add('active');
-            if(id === 'page-history') { document.getElementById('filtro-fecha').value = "2026-02-23"; renderHistory(); }
-            if(id === 'page-stats') renderCharts();
-            if(id === 'page-fleet') renderFleet();
+            if(id === 'page-history') { document.getElementById('filter-date').value = "2026-02-23"; renderHistory(); }
+            if(id === 'page-fleet') updateFleet();
+            if(id === 'page-stats') setTimeout(drawCharts, 100);
         }
 
-        function renderCharts() {
-            const cC = {}, cA = {}, m = new Date().getMonth();
+        function drawCharts() {
+            const statsC = {}, statsA = {}, now = new Date();
             db.forEach(r => {
-                if(new Date(r.fecha + "T12:00:00").getMonth() === m) {
-                    cC[r.chofer] = (cC[r.chofer] || 0) + parseFloat(r.total);
-                    cA[r.auxiliar] = (cA[r.auxiliar] || 0) + parseFloat(r.total);
+                if(new Date(r.fecha + "T12:00:00").getMonth() === now.getMonth()) {
+                    statsC[r.chofer] = (statsC[r.chofer] || 0) + parseFloat(r.total);
+                    statsA[r.auxiliar] = (statsA[r.auxiliar] || 0) + parseFloat(r.total);
                 }
             });
-            const plot = (id, obj, color) => {
-                if(charts[id]) charts[id].destroy();
-                charts[id] = new Chart(document.getElementById(id), {
-                    type: 'bar', data: { labels: Object.keys(obj), datasets: [{ data: Object.values(obj), backgroundColor: color, borderRadius: 8 }] },
-                    options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { display: false }, y: { ticks: { color: '#94a3b8' } } } }
-                });
-            };
-            plot('c-cho', cC, '#00e5ff'); plot('c-aux', cA, '#22c55e');
+            const cfg = (obj, color) => ({ type: 'bar', data: { labels: Object.keys(obj), datasets: [{ data: Object.values(obj), backgroundColor: color, borderRadius: 8 }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { display: false }, y: { ticks: { color: '#94a3b8' } } } } });
+            if(chart1) chart1.destroy(); chart1 = new Chart(document.getElementById('c-cho'), cfg(statsC, '#0066ff'));
+            if(chart2) chart2.destroy(); chart2 = new Chart(document.getElementById('c-aux'), cfg(statsA, '#10b981'));
         }
 
-        function renderFleet() {
-            const grid = document.getElementById('flota-grid'), hoy = new Date(); grid.innerHTML = "<h3 style='margin-bottom:15px'>Seguros y SOAT</h3>";
-            DATA.placas.forEach(p => {
-                const dias = Math.ceil((new Date(DATA.soats[p]) - hoy) / 86400000);
-                grid.innerHTML += `<div class="card">
-                    <div style="display:flex; justify-content:space-between"><b>${p}</b> <small>${DATA.soats[p]}</small></div>
-                    <div style="font-size:20px; font-weight:800; color:${dias<30?'var(--danger)':'var(--accent)'}; margin-top:8px">${dias} días restantes</div>
-                </div>`;
-            });
-        }
-
-        async function sync() {
-            try { const res = await fetch(API); db = await res.json(); localStorage.setItem('tw_db', JSON.stringify(db)); renderHistory(); } 
-            catch(e) { db = JSON.parse(localStorage.getItem('tw_db')) || []; renderHistory(); }
-        }
-
-        function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('ui-header').style.display = 'flex'; document.getElementById('ui-nav').style.display = 'flex'; document.getElementById('ui-user').innerText = u; go('page-route'); }
-        function logout() { localStorage.clear(); location.reload(); }
-        function autoPredict() { const l = db.find(r => r.placa === document.getElementById('sel-pla').value); if(l) { document.getElementById('sel-cho').value = l.chofer; document.getElementById('sel-aux').value = l.auxiliar; } }
-        function share(p, t, i) { window.location.href = `https://wa.me/?text=*📦 REPORTE DE DESPACHO TWINS*%0A*Placa:* ${p}%0A*Total Cajas:* ${t}%0A%0A*RUTA:*%0A${i.split(", ").join("%0A")}`; }
+        function login(u) { activeUser = u; localStorage.setItem('tw_logged', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-info').innerText = u; go('page-route'); }
+        function logout() { localStorage.removeItem('tw_logged'); location.reload(); }
+        function share(p, t, i) { window.location.href = `https://wa.me/?text=*📦 TWINS LOGISTICS*%0A*Placa:* ${p}%0A*Cajas:* ${t}%0A*Ruta:* ${i}`; }
     </script>
 </body>
 </html>
