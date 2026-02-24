@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHOS V47</title>
+    <title>TWINS DESPACHOS V48</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -158,32 +158,19 @@
         <div id="history-container"></div>
     </div>
 
-    <div id="page-fleet" class="page">
-        <div id="fleet-list"></div>
-    </div>
-
-    <div id="m-type" class="modal">
-        <div class="modal-card">
-            <h3 style="text-align:center">Fecha de Salida</h3>
-            <button class="btn btn-main" style="margin-bottom:15px" onclick="saveRoute('HOY')">HOY</button>
-            <button class="btn btn-ghost" onclick="saveRoute('MAÑANA')">MAÑANA</button>
-        </div>
-    </div>
-
     <nav id="app-nav" class="nav-bar" style="display:none">
         <button class="nav-link active" id="n-route" onclick="nav('page-route')"><i class="ph ph-plus-circle"></i>Ruta</button>
         <button class="nav-link" id="n-history" onclick="nav('page-history')"><i class="ph ph-database"></i>Data</button>
-        <button class="nav-link" id="n-fleet" onclick="nav('page-fleet')"><i class="ph ph-truck"></i>Flota</button>
     </nav>
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
         let user = "", items = [], database = [], cChart = null, aChart = null, editIndex = null;
         
+        // DATOS OFICIALES ACTUALIZADOS
         const PLACAS = ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"];
         const CHOFERES = ["TAJHO", "LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"];
-        const SOATS = { "CEP-929": "2026-07-22", "BPN-711": "2026-06-10", "BVN-704": "2026-07-02", "BUL-742": "2026-04-02", "BVN-930": "2026-07-02" };
 
         window.onload = () => {
             initInputs();
@@ -203,7 +190,9 @@
 
         function initInputs() {
             const grid = document.getElementById('login-grid');
-            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => { grid.innerHTML += `<button class="btn btn-ghost" onclick="checkAuth('${u}')">${u}</button>`; });
+            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => { 
+                grid.innerHTML += `<button class="btn btn-ghost" onclick="checkAuth('${u}')">${u}</button>`; 
+            });
             document.getElementById('pla').innerHTML = '<option value="">Placa</option>' + PLACAS.map(p => `<option value="${p}">${p}</option>`).join('');
             document.getElementById('cho').innerHTML = '<option value="">Chofer</option>' + CHOFERES.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('aux').innerHTML = '<option value="">Auxiliar</option>' + AUXILIARES.map(a => `<option value="${a}">${a}</option>`).join('');
@@ -211,12 +200,12 @@
 
         async function loadData() {
             const cache = localStorage.getItem('tw_db_cache');
-            if (cache) { database = JSON.parse(cache); renderHistory(); renderFleet(); }
+            if (cache) { database = JSON.parse(cache); renderHistory(); }
             try {
                 const r = await fetch(API);
                 database = await r.json();
                 localStorage.setItem('tw_db_cache', JSON.stringify(database));
-                renderHistory(); renderFleet();
+                renderHistory();
             } catch(e) {}
         }
 
@@ -228,6 +217,10 @@
             let html = "", diaCajas = 0, mesCajas = 0;
             let dataC = {}, dataA = {};
 
+            // Inicializar gráficos con todos los choferes y auxiliares en 0
+            CHOFERES.forEach(c => dataC[c] = 0);
+            AUXILIARES.forEach(a => dataA[a] = 0);
+
             database.forEach((r, index) => {
                 const rf = r.fecha.split('T')[0];
                 const rDate = new Date(r.fecha + "T00:00:00");
@@ -235,8 +228,8 @@
 
                 if (rDate.getMonth() === tM && rDate.getFullYear() === tY) {
                     mesCajas += totalCj;
-                    dataC[r.chofer] = (dataC[r.chofer] || 0) + totalCj;
-                    dataA[r.auxiliar] = (dataA[r.auxiliar] || 0) + totalCj;
+                    if(dataC.hasOwnProperty(r.chofer)) dataC[r.chofer] += totalCj;
+                    if(dataA.hasOwnProperty(r.auxiliar)) dataA[r.auxiliar] += totalCj;
                 }
 
                 if (rf === fD) {
@@ -277,8 +270,8 @@
             const r = database[idx];
             editIndex = idx;
             items = r.items.split(", ").map(i => {
-                const [cl, ca] = i.split(": ");
-                return { cl, ca: parseInt(ca) };
+                const parts = i.split(": ");
+                return { cl: parts[0], ca: parseInt(parts[1]) };
             });
             document.getElementById('pla').value = r.placa;
             document.getElementById('cho').value = r.chofer;
@@ -289,10 +282,20 @@
 
         function updateCharts(dataC, dataA) {
             const chartOptions = { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#86868b' } }, y: { grid: { display: false }, ticks: { color: '#f5f5f7', font: { size: 10 } } } } };
+            
             if(cChart) cChart.destroy();
-            cChart = new Chart(document.getElementById('choferChart').getContext('2d'), { type: 'bar', data: { labels: Object.keys(dataC), datasets: [{ data: Object.values(dataC), backgroundColor: '#007aff', borderRadius: 8 }] }, options: chartOptions });
+            cChart = new Chart(document.getElementById('choferChart').getContext('2d'), { 
+                type: 'bar', 
+                data: { labels: Object.keys(dataC), datasets: [{ data: Object.values(dataC), backgroundColor: '#007aff', borderRadius: 8 }] }, 
+                options: chartOptions 
+            });
+
             if(aChart) aChart.destroy();
-            aChart = new Chart(document.getElementById('auxiliarChart').getContext('2d'), { type: 'bar', data: { labels: Object.keys(dataA), datasets: [{ data: Object.values(dataA), backgroundColor: '#2ed158', borderRadius: 8 }] }, options: chartOptions });
+            aChart = new Chart(document.getElementById('auxiliarChart').getContext('2d'), { 
+                type: 'bar', 
+                data: { labels: Object.keys(dataA), datasets: [{ data: Object.values(dataA), backgroundColor: '#2ed158', borderRadius: 8 }] }, 
+                options: chartOptions 
+            });
         }
 
         async function saveRoute(tipo) {
@@ -301,9 +304,18 @@
             if(tipo === 'MAÑANA') d.setDate(d.getDate() + 1);
             
             const hT = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-            const reg = { fecha: d.toISOString().split('T')[0], hora: hT, chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, placa: document.getElementById('pla').value, items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), total: items.reduce((a,b)=>a+b.ca,0), operario: user, puntos: items.length };
+            const reg = { 
+                fecha: d.toISOString().split('T')[0], 
+                hora: hT, 
+                chofer: document.getElementById('cho').value, 
+                auxiliar: document.getElementById('aux').value, 
+                placa: document.getElementById('pla').value, 
+                items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), 
+                total: items.reduce((a,b)=>a+b.ca,0), 
+                operario: user, 
+                puntos: items.length 
+            };
             
-            // LÓGICA DE SOBRESCRITURA
             if(editIndex !== null) {
                 database[editIndex] = reg;
                 editIndex = null;
@@ -312,7 +324,8 @@
             }
 
             localStorage.setItem('tw_db_cache', JSON.stringify(database));
-            renderHistory(); nav('page-history');
+            renderHistory(); 
+            nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
             items = []; renderTemp();
         }
@@ -348,14 +361,16 @@
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); 
             document.getElementById(id).classList.add('active'); 
             document.getElementById('n-' + id.split('-')[1]).classList.add('active'); 
-            if(id === 'page-history') { resetDateFilter(); renderHistory(); }
+            if(id === 'page-history') { 
+                resetDateFilter(); 
+                renderHistory(); 
+            }
         }
         function checkAuth(u) { if(u === 'TAJHO ADMIN') document.getElementById('m-auth').style.display='flex'; else login(u); }
         function verifyAuth() { if(document.getElementById('admin-pass').value === '1234') { document.getElementById('m-auth').style.display='none'; login('TAJHO ADMIN'); } else alert("PIN Incorrecto"); }
         function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-display').innerText = u; nav('page-route'); }
         function viewItems(txt, ch) { document.getElementById('m-title').innerText = ch; document.getElementById('m-container').innerHTML = txt.split(", ").map(i => `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">${i}</div>`).join(''); document.getElementById('m-list').style.display = 'flex'; }
         function smartPredict() { const p = document.getElementById('pla').value; const last = database.find(r => r.placa === p); if(last) { document.getElementById('cho').value = last.chofer; document.getElementById('aux').value = last.auxiliar; } }
-        function renderFleet() { const list = document.getElementById('fleet-list'), hoy = new Date(); list.innerHTML = `<h3>Flota</h3>`; PLACAS.forEach(p => { const v = new Date(SOATS[p]), dR = Math.ceil((v - hoy) / 86400000); list.innerHTML += `<div class="card" style="padding:15px; border-left:4px solid ${dR<30?'var(--danger)':'var(--success)'}"><b>${p}</b><div style="font-size:10px; opacity:0.6">SOAT: ${dR} días</div></div>`; }); }
     </script>
 </body>
 </html>
