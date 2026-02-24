@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V4</title>
+    <title>TWINS ELITE - FÁCIL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
-            --bg: #05070a; --surface: #0f1218; --accent: #0066ff; 
-            --text: #ffffff; --text-dim: #94a3b8; --border: #1e293b; 
-            --success: #10b981; --danger: #ef4444;
+            --bg: #0b0f17; --surface: #161c28; --accent: #007aff; 
+            --text: #ffffff; --text-dim: #94a3b8; --border: #2d3748; 
+            --success: #34c759; --danger: #ff3b30; --warning: #ffcc00;
         }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -20,96 +20,127 @@
         .page { display: none; padding: 10px 15px 120px 15px; max-width: 500px; margin: 0 auto; }
         .active { display: block !important; }
 
-        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(5, 7, 10, 0.9); backdrop-filter: blur(10px); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        .stat-banner { background: linear-gradient(135deg, #0066ff, #003399); padding: 20px; border-radius: 20px; color: white; margin-bottom: 15px; position: relative; }
+        /* HEADER */
+        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(11, 15, 23, 0.9); backdrop-filter: blur(10px); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        
+        /* BANNER RESUMEN - MÁS VISUAL */
+        .stat-banner { background: linear-gradient(135deg, #007aff, #0056b3); padding: 25px; border-radius: 24px; color: white; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,122,255,0.2); }
+        .stat-label { font-size: 11px; font-weight: 800; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .input-group { display: flex; gap: 8px; margin-bottom: 10px; }
-        input, select { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; font-size: 14px; width: 100%; }
-        .btn-add { background: var(--accent); border: none; border-radius: 12px; color: white; padding: 0 20px; font-weight: 800; cursor: pointer; }
+        /* BOTONES E INPUTS GRANDES PARA DEDOS */
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        input, select { background: var(--surface); border: 2px solid var(--border); padding: 16px; border-radius: 16px; color: white; font-size: 16px; width: 100%; transition: 0.3s; }
+        input:focus { border-color: var(--accent); background: #1a2233; }
+        
+        .btn-add { background: var(--accent); border: none; border-radius: 16px; color: white; padding: 0 25px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-main { background: var(--success); color: white; width: 100%; padding: 20px; border-radius: 18px; border: none; font-size: 17px; font-weight: 800; margin-top: 15px; box-shadow: 0 6px 15px rgba(52,199,89,0.3); }
 
-        .route-item { background: #161b22; border-radius: 12px; padding: 10px 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        /* ITEMS DE RUTA */
+        .route-item { background: var(--surface); border-radius: 16px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
+        .btn-del { color: var(--danger); font-size: 24px; padding: 5px; }
 
-        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 12px; }
-        .badge-hora { background: var(--accent); color: white; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; }
-        .btn-action { height: 45px; width: 45px; border-radius: 12px; border: none; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
+        /* TARJETAS DE HISTORIAL */
+        .card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--accent); }
+        
+        .detail-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; margin: 12px 0; font-size: 13px; color: #cbd5e1; line-height: 1.5; border: 1px solid rgba(255,255,255,0.05); }
 
-        .detail-list { background: #0a0d12; border-radius: 10px; padding: 10px; margin: 10px 0; font-size: 12px; border-left: 2px solid var(--accent); color: var(--text-dim); }
-
-        .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(15, 18, 24, 0.95); backdrop-filter: blur(15px); height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; gap: 4px; }
+        /* NAVEGACIÓN TÁCTIL */
+        .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 75px; border-radius: 22px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; }
+        .nav-item i { font-size: 26px; margin-bottom: 4px; }
         .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 22px; }
 
-        .dash-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .dash-box { background: var(--surface); border: 1px solid var(--border); border-radius: 15px; padding: 12px; border-left: 4px solid var(--accent); }
+        /* LOGIN */
+        .login-btn { background: var(--surface); border: 1px solid var(--border); color: white; padding: 22px; border-radius: 20px; font-size: 16px; font-weight: 700; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .login-btn i { color: var(--accent); font-size: 20px; }
     </style>
 </head>
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
-        <div style="font-weight:900;">TWINS <span style="color:var(--accent)">ELITE</span></div>
-        <div id="user-info" onclick="logout()" style="font-size:11px; font-weight:800; background:var(--surface); padding:8px 15px; border-radius:12px; border:1px solid var(--border)">---</div>
+        <div style="font-weight:900; font-size:18px;">TWINS <span style="color:var(--accent)">ELITE</span></div>
+        <div id="user-info" onclick="logout()" style="font-size:11px; font-weight:800; background:rgba(255,255,255,0.05); padding:8px 15px; border-radius:12px; border:1px solid var(--border)">---</div>
     </header>
 
     <div id="page-login" class="page active">
-        <div style="text-align:center; padding:50px 0"><i class="ph-fill ph-package" style="font-size:70px; color:var(--accent)"></i><h2>INICIAR SESIÓN</h2></div>
-        <div id="login-options" style="display:grid; gap:10px"></div>
+        <div style="text-align:center; padding:60px 0">
+            <div style="background:var(--accent); width:80px; height:80px; border-radius:24px; display:flex; align-items:center; justify-content:center; margin: 0 auto 20px auto;">
+                <i class="ph-fill ph-user-focus" style="font-size:45px; color:white"></i>
+            </div>
+            <h2 style="margin:0; font-weight:800;">Bienvenido</h2>
+            <p style="color:var(--text-dim); font-size:14px;">Selecciona tu nombre para empezar</p>
+        </div>
+        <div id="login-options" style="display:grid; gap:12px"></div>
     </div>
 
     <div id="page-route" class="page">
         <div class="stat-banner">
-            <div style="display:flex; justify-content:space-between">
-                <div><small style="font-weight:800">TOTAL CAJAS</small><div id="count-cajas" style="font-size:40px; font-weight:800">0</div></div>
-                <div style="text-align:right"><small style="font-weight:800">PUNTOS</small><div id="count-puntos" style="font-size:24px; font-weight:800">0</div></div>
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <div><span class="stat-label">Total Cajas</span><div id="count-cajas" style="font-size:48px; font-weight:800; line-height:1">0</div></div>
+                <div style="text-align:right"><span class="stat-label">Puntos</span><div id="count-puntos" style="font-size:28px; font-weight:800">0</div></div>
             </div>
         </div>
+
         <div class="input-group">
-            <input type="text" id="inp-cli" placeholder="Cliente" style="flex: 2;">
-            <input type="number" id="inp-can" placeholder="Cjs" style="flex: 0.8;">
-            <button class="btn-add" onclick="addPoint()"><i class="ph-bold ph-plus"></i></button>
+            <input type="text" id="inp-cli" placeholder="Nombre Cliente" style="flex: 2;">
+            <input type="number" id="inp-can" placeholder="Cant" style="flex: 0.8;">
+            <button class="btn-add" onclick="addPoint()"><i class="ph-bold ph-plus" style="font-size:24px"></i></button>
         </div>
-        <div id="live-list" style="margin-top:15px; max-height: 250px; overflow-y: auto;"></div>
-        <div id="finalize-area" style="display:none; margin-top:20px">
-            <select id="sel-pla" onchange="predictAndSave()" style="margin-bottom:8px"></select>
-            <div class="input-group"><select id="sel-cho"></select><select id="sel-aux"></select></div>
-            <button class="btn-add" style="width:100%; height:55px; background:var(--success); margin-top:10px" onclick="openConfirm()">ENVIAR DESPACHO</button>
+
+        <div id="live-list" style="margin-top:10px;"></div>
+
+        <div id="finalize-area" style="display:none; margin-top:20px; border-top: 1px solid var(--border); padding-top:20px;">
+            <p class="stat-label" style="margin-bottom:10px">Datos de la Unidad</p>
+            <select id="sel-pla" onchange="predictAndSave()" style="margin-bottom:10px"></select>
+            <div class="input-group">
+                <select id="sel-cho"></select>
+                <select id="sel-aux"></select>
+            </div>
+            <button class="btn-main" onclick="openConfirm()"><i class="ph-fill ph-paper-plane-tilt"></i> REGISTRAR SALIDA</button>
         </div>
     </div>
 
     <div id="page-history" class="page">
-        <div class="dash-row">
-            <div class="dash-box"><span style="font-size:9px; color:var(--text-dim); font-weight:800">MES ACTUAL</span><div id="st-month" style="font-size:20px; font-weight:800">0</div></div>
-            <div class="dash-box" style="border-left-color:var(--success)"><span style="font-size:9px; color:var(--text-dim); font-weight:800">DÍA ACTUAL</span><div id="st-day" style="font-size:20px; font-weight:800">0</div></div>
+        <div class="input-group" style="margin-bottom:20px">
+            <div style="flex:1">
+                <span class="stat-label">Ver fecha:</span>
+                <input type="date" id="filter-date" onchange="renderHistory()" style="margin-top:5px">
+            </div>
         </div>
-        <input type="date" id="filter-date" onchange="renderHistory()" style="margin-bottom:15px">
         <div id="history-feed"></div>
     </div>
 
-    <div id="page-fleet" class="page"><div id="fleet-grid"></div></div>
+    <div id="page-fleet" class="page">
+        <h3 style="margin-bottom:20px">Estado de Unidades</h3>
+        <div id="fleet-grid"></div>
+    </div>
 
     <div id="page-stats" class="page">
         <div class="card" style="text-align:center; padding:40px 20px;">
-            <i class="ph ph-file-pdf" style="font-size:60px; color:var(--danger); margin-bottom:20px"></i>
-            <h3>Panel de Reportes</h3>
-            <p style="font-size:12px; opacity:0.6; margin-bottom:30px">Genera un documento PDF con todos los despachos del mes actual registrados en el sistema.</p>
-            <button onclick="generatePDF()" class="btn-add" style="width:100%; background:var(--danger); padding:18px; font-size:16px">
-                <i class="ph-bold ph-download-simple"></i> DESCARGAR REPORTE MENSUAL
+            <i class="ph-fill ph-file-pdf" style="font-size:64px; color:var(--danger); margin-bottom:20px"></i>
+            <h2 style="margin:0">Reporte Mensual</h2>
+            <p style="color:var(--text-dim); margin-bottom:30px">Descarga un documento PDF con todos los movimientos del mes.</p>
+            <button onclick="generatePDF()" class="btn-main" style="background:var(--danger);">
+                <i class="ph-bold ph-download-simple"></i> DESCARGAR AHORA
             </button>
         </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-bold ph-list-plus"></i>RUTA</button>
-        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-bold ph-clock-counter-clockwise"></i>DATA</button>
-        <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-bold ph-truck"></i>FLOTA</button>
-        <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-bold ph-file-text"></i>REPORTE</button>
+        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
+        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-clock-counter-clockwise"></i>DATA</button>
+        <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
+        <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-fill ph-file-text"></i>REPORTE</button>
     </nav>
 
-    <div id="modal-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center; padding:20px;">
-        <div class="card" style="width:100%; text-align:center">
-            <h3>¿Confirmar envío?</h3>
-            <button class="btn-add" style="width:100%; background:var(--success); padding:15px" onclick="finalize('HOY')">SALIENDO AHORA</button>
-            <button onclick="closeConfirm()" style="background:none; border:none; color:var(--text-dim); margin-top:15px">CANCELAR</button>
+    <div id="modal-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px)">
+        <div class="card" style="width:100%; text-align:center; border:none;">
+            <i class="ph-fill ph-question" style="font-size:50px; color:var(--warning)"></i>
+            <h3>¿Guardar despacho?</h3>
+            <p style="font-size:14px; color:var(--text-dim)">Asegúrate que los datos sean correctos antes de enviar.</p>
+            <button class="btn-main" onclick="finalize()">SÍ, GUARDAR TODO</button>
+            <button onclick="closeConfirm()" style="background:none; border:none; color:var(--text-dim); margin-top:20px; font-weight:700">CANCELAR</button>
         </div>
     </div>
 
@@ -133,8 +164,10 @@
 
         function setupUI() {
             const opts = document.getElementById('login-options');
-            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => opts.innerHTML += `<button class="btn-add" style="background:var(--surface); border:1px solid var(--border); padding:18px" onclick="login('${u}')">${u}</button>`);
-            document.getElementById('sel-pla').innerHTML = '<option value="">Placa</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
+            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
+                opts.innerHTML += `<div class="login-btn" onclick="login('${u}')"><span>${u}</span><i class="ph-bold ph-caret-right"></i></div>`;
+            });
+            document.getElementById('sel-pla').innerHTML = '<option value="">Seleccionar Placa</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
             document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + DATA.choferes.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + DATA.auxiliares.map(a => `<option value="${a}">${a}</option>`).join('');
             document.getElementById('filter-date').value = new Date().toISOString().split('T')[0];
@@ -163,32 +196,28 @@
         function renderHistory() {
             const container = document.getElementById('history-feed');
             const selDate = document.getElementById('filter-date').value;
-            let h = "", dTotal = 0, mTotal = 0;
+            let h = "";
             db.forEach((r, i) => {
-                const rD = new Date(r.fecha + "T12:00:00");
-                if(rD.getMonth() === new Date().getMonth()) mTotal += r.total;
                 if(r.fecha === selDate) {
-                    dTotal += r.total;
                     const itemsText = (r.detalles || r.items || "").split(', ').join('<br>');
                     h += `<div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
-                            <span class="badge-hora">${r.hora}</span><b style="color:var(--accent)">${r.placa}</b>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px">
+                            <span class="badge-hora"><i class="ph ph-clock"></i> ${r.hora}</span>
+                            <b style="color:var(--accent); font-size:18px">${r.placa}</b>
                         </div>
-                        <div style="font-weight:800; font-size:18px">${r.total} Cajas</div>
-                        <div style="font-size:11px; opacity:0.6">${r.chofer} / ${r.auxiliar}</div>
+                        <div style="font-weight:800; font-size:22px; margin: 10px 0;">${r.total} Cajas</div>
+                        <div style="font-size:12px; color:var(--text-dim); font-weight:600;">${r.chofer} / ${r.auxiliar}</div>
                         
-                        <div class="detail-list">${itemsText}</div>
+                        <div class="detail-box">${itemsText}</div>
 
-                        <div style="display:flex; gap:8px">
-                            <button class="btn-action" style="background:var(--border); color:white" onclick="loadEdit(${i})"><i class="ph ph-pencil-simple"></i></button>
-                            <button class="btn-action" style="background:#25D366; color:white" onclick="shareWA(${i})"><i class="ph-fill ph-whatsapp-logo"></i></button>
+                        <div style="display:flex; gap:10px; margin-top:15px">
+                            <button class="btn-add" style="flex:1; background:var(--border); padding:12px; height:auto;" onclick="loadEdit(${i})"><i class="ph ph-pencil-simple" style="margin-right:8px"></i> Editar</button>
+                            <button class="btn-add" style="flex:1.5; background:#25D366; padding:12px; height:auto;" onclick="shareWA(${i})"><i class="ph-fill ph-whatsapp-logo" style="margin-right:8px"></i> Compartir</button>
                         </div>
                     </div>`;
                 }
             });
-            container.innerHTML = h || `<p style="text-align:center; opacity:0.3; margin-top:20px">Sin datos</p>`;
-            document.getElementById('st-month').innerText = mTotal;
-            document.getElementById('st-day').innerText = dTotal;
+            container.innerHTML = h || `<div style="text-align:center; padding:50px; opacity:0.5"><i class="ph ph-folder-open" style="font-size:40px"></i><p>No hay registros para este día</p></div>`;
         }
 
         function generatePDF() {
@@ -196,20 +225,9 @@
             const doc = new jsPDF();
             const now = new Date();
             const mesStr = now.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
-            
-            doc.setFontSize(18); doc.text(`REPORTE DE DESPACHOS - ${mesStr}`, 14, 20);
-            
-            const body = db
-                .filter(r => new Date(r.fecha + "T12:00:00").getMonth() === now.getMonth())
-                .map(r => [r.fecha, r.hora, r.placa, r.chofer, r.total, r.operario]);
-
-            doc.autoTable({
-                head: [['Fecha', 'Hora', 'Placa', 'Chofer', 'Cajas', 'Operario']],
-                body: body,
-                startY: 30,
-                theme: 'grid',
-                headStyles: { fillColor: [0, 102, 255] }
-            });
+            doc.setFontSize(18); doc.text(`REPORTE TWINS - ${mesStr}`, 14, 20);
+            const body = db.filter(r => new Date(r.fecha + "T12:00:00").getMonth() === now.getMonth()).map(r => [r.fecha, r.hora, r.placa, r.chofer, r.total, r.operario]);
+            doc.autoTable({ head: [['Fecha', 'Hora', 'Placa', 'Chofer', 'Cajas', 'Operario']], body: body, startY: 30, theme: 'grid', headStyles: { fillColor: [0, 122, 255] } });
             doc.save(`Twins_Reporte_${mesStr}.pdf`);
         }
 
@@ -217,7 +235,7 @@
             const r = db[i];
             const msg = `*📦 DESPACHO TWINS ELITE*%0A` +
                         `*──────────────────*%0A` +
-                        `*📅 Fecha:* ${r.fecha}%0A*⏰ Hora:* ${r.hora}%0A*🚛 Placa:* ${r.placa}%0A*👤 Chofer:* ${r.chofer}%0A*📦 Cajas:* ${r.total}%0A*📋 Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}%0A` +
+                        `*🚛 Placa:* ${r.placa}%0A*👤 Chofer:* ${r.chofer}%0A*📦 Cajas:* ${r.total}%0A*📋 Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}%0A` +
                         `*──────────────────*%0A*✅ Por:* ${r.operario || activeUser}`;
             window.open(`https://wa.me/?text=${msg}`, '_blank');
         }
@@ -246,10 +264,47 @@
             if(id === 'page-fleet') renderFleet();
         }
 
-        function addPoint() { const cli = document.getElementById('inp-cli').value.toUpperCase(); const can = parseInt(document.getElementById('inp-can').value); if(!cli || !can) return; currentCarga.push({ cli, can }); document.getElementById('inp-cli').value = ""; document.getElementById('inp-can').value = ""; refreshCargaUI(); }
-        function refreshCargaUI() { const list = document.getElementById('live-list'); let total = 0; list.innerHTML = ""; currentCarga.forEach((it, i) => { total += it.can; list.innerHTML += `<div class="route-item"><span><b>${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger)" onclick="removePoint(${i})"></i></div>`; }); document.getElementById('count-cajas').innerText = total; document.getElementById('count-puntos').innerText = currentCarga.length; document.getElementById('finalize-area').style.display = currentCarga.length > 0 ? 'block' : 'none'; }
-        function loadEdit(i) { const r = db[i]; currentCarga = (r.detalles || r.items).split(", ").map(it => { const [cli, can] = it.split(": "); return { cli, can: parseInt(can) }; }); document.getElementById('sel-pla').value = r.placa; document.getElementById('sel-cho').value = r.chofer; document.getElementById('sel-aux').value = r.auxiliar; refreshCargaUI(); go('page-route'); }
-        function renderFleet() { document.getElementById('fleet-grid').innerHTML = DATA.placas.map(p => { const d = Math.ceil((new Date(DATA.soats[p]) - new Date()) / 86400000); return `<div class="card" style="display:flex; justify-content:space-between"><div><b>${p}</b><br><small>SOAT Vence: ${DATA.soats[p]}</small></div><span style="color:${d<30?'var(--danger)':'var(--success)'}; font-weight:800">${d}d</span></div>`; }).join(''); }
+        function addPoint() { 
+            const cli = document.getElementById('inp-cli').value.toUpperCase(); 
+            const can = parseInt(document.getElementById('inp-can').value); 
+            if(!cli || !can) return; 
+            currentCarga.push({ cli, can }); 
+            document.getElementById('inp-cli').value = ""; 
+            document.getElementById('inp-can').value = ""; 
+            refreshCargaUI(); 
+        }
+
+        function refreshCargaUI() { 
+            const list = document.getElementById('live-list'); 
+            let total = 0; list.innerHTML = ""; 
+            currentCarga.forEach((it, i) => { 
+                total += it.can; 
+                list.innerHTML += `<div class="route-item"><span><b style="color:var(--accent)">${it.can}</b> ${it.cli}</span><i class="ph ph-trash btn-del" onclick="removePoint(${i})"></i></div>`; 
+            }); 
+            document.getElementById('count-cajas').innerText = total; 
+            document.getElementById('count-puntos').innerText = currentCarga.length; 
+            document.getElementById('finalize-area').style.display = currentCarga.length > 0 ? 'block' : 'none'; 
+        }
+
+        function loadEdit(i) { 
+            const r = db[i]; 
+            currentCarga = (r.detalles || r.items).split(", ").map(it => { 
+                const [cli, can] = it.split(": "); 
+                return { cli, can: parseInt(can) }; 
+            }); 
+            document.getElementById('sel-pla').value = r.placa; 
+            document.getElementById('sel-cho').value = r.chofer; 
+            document.getElementById('sel-aux').value = r.auxiliar; 
+            refreshCargaUI(); go('page-route'); 
+        }
+
+        function renderFleet() { 
+            document.getElementById('fleet-grid').innerHTML = DATA.placas.map(p => { 
+                const d = Math.ceil((new Date(DATA.soats[p]) - new Date()) / 86400000); 
+                return `<div class="card" style="display:flex; justify-content:space-between; align-items:center;"><div><b>${p}</b><br><small style="color:var(--text-dim)">Vence: ${DATA.soats[p]}</small></div><div style="text-align:right"><span style="color:${d<30?'var(--danger)':'var(--success)'}; font-weight:900; font-size:20px;">${d}d</span><br><small style="font-size:9px; font-weight:800; opacity:0.5">DÍAS RESTANTES</small></div></div>`; 
+            }).join(''); 
+        }
+
         function removePoint(i) { currentCarga.splice(i,1); refreshCargaUI(); }
         function clearAll() { currentCarga = []; refreshCargaUI(); }
         function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
