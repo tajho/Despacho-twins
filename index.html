@@ -18,73 +18,78 @@
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
 
-        .page { display: none; padding: 15px; padding-bottom: 100px; max-width: 600px; margin: 0 auto; animation: pageFade 0.3s ease; }
+        .page { display: none; padding: 15px; padding-bottom: 110px; max-width: 600px; margin: 0 auto; animation: pageFade 0.3s ease; }
         .active { display: block !important; }
         @keyframes pageFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(12px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 12px; }
-        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        
+        /* Barra de Navegación Mejorada */
+        .nav-bar { 
+            position: fixed; bottom: 20px; left: 15px; right: 15px; 
+            background: rgba(22, 27, 34, 0.8); backdrop-filter: blur(20px);
+            height: 75px; border-radius: 24px; display: flex; 
+            border: 1px solid rgba(255,255,255,0.1); z-index: 2000; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        .nav-item { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; color: var(--text-dim); background: none; 
+            border: none; font-size: 11px; font-weight: 700; position: relative;
+            transition: 0.3s;
+        }
+        .nav-item.active { color: var(--accent); }
+        .nav-item.active::after {
+            content: ''; position: absolute; top: 0; width: 30%; height: 3px;
+            background: var(--accent); border-radius: 0 0 10px 10px; box-shadow: 0 2px 10px var(--accent);
+        }
+        .nav-item i { font-size: 24px; margin-bottom: 4px; }
+
+        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .stat-val { font-size: 38px; font-weight: 800; line-height: 1; }
         .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.8; }
 
-        .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
         input, select { background: #1a1f26; border: 1px solid var(--border); padding: 14px; border-radius: 14px; color: white; font-size: 15px; font-weight: 500; width: 100%; }
-        
-        .point-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 12px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.05); }
-        .point-info b { color: var(--accent); }
-
-        .btn { border: none; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn { border: none; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-add { background: var(--accent); color: white; padding: 14px 20px; }
-        .btn-save { background: var(--success); color: white; padding: 16px; width: 100%; font-size: 15px; margin-top: 10px; }
-        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); width: 32px; height: 32px; border-radius: 10px; }
+        .btn-save { background: var(--success); color: white; padding: 16px; width: 100%; font-size: 15px; }
         
-        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #161b22; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
-        .nav-item.active { color: var(--accent); }
-
         .history-card { border-left: 4px solid var(--accent); }
-        .history-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--text-dim); }
         .history-puntos { display: none; font-size: 12px; color: #e2e8f0; background: #05070a; padding: 12px; border-radius: 12px; margin: 10px 0; border: 1px dashed #334155; }
         .history-puntos.show { display: block; }
-        .point-line { border-bottom: 1px solid #1a1f26; padding: 4px 0; display: block; }
 
         .fleet-progress { height: 6px; background: #1a1f26; border-radius: 10px; margin-top: 10px; overflow: hidden; }
         .fleet-bar { height: 100%; border-radius: 10px; transition: width 0.5s; }
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 25px; width: 100%; max-width: 400px; }
     </style>
 </head>
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
-        <div style="font-weight:900; letter-spacing: -0.5px">TWINS <span style="color:var(--accent)">DESPACHOS</span></div>
-        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px; cursor:pointer">---</div>
+        <div style="font-weight:900;">TWINS <span style="color:var(--accent)">DESPACHOS</span></div>
+        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px;">---</div>
     </header>
 
     <div id="page-login" class="page active">
-        <div style="text-align:center; padding:40px 0">
-            <i class="ph-fill ph-package" style="font-size:60px; color:var(--accent)"></i>
-            <h1 style="margin:10px 0">TWINS DESPACHOS</h1>
-            <p style="color:var(--text-dim)">Gestión de Almacén</p>
+        <div style="text-align:center; padding:60px 0">
+            <i class="ph-fill ph-package" style="font-size:70px; color:var(--accent)"></i>
+            <h1 style="margin-top:15px">TWINS DESPACHOS</h1>
         </div>
-        <div id="login-options" style="display:grid; gap:10px"></div>
+        <div id="login-options" style="display:grid; gap:12px"></div>
     </div>
 
     <div id="page-route" class="page">
         <div class="stat-banner">
-            <div><div class="stat-label">Carga Actual</div><div id="count-cajas" class="stat-val">0</div><div class="stat-label" style="margin-top:5px">Cajas totales</div></div>
+            <div><div class="stat-label">Carga Actual</div><div id="count-cajas" class="stat-val">0</div></div>
             <div style="text-align:right">
-                <div class="stat-label">Envíos</div><div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
-                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:8px; font-size:10px; font-weight:700">RESETEAR</button>
+                <div class="stat-label">Puntos</div><div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
+                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:5px; font-size:10px">RESETEAR</button>
             </div>
         </div>
         <div class="card">
-            <div class="stat-label" style="margin-bottom:10px">Agregar Destino</div>
-            <input type="text" id="inp-cli" placeholder="Nombre del Cliente o Punto" style="margin-bottom:10px">
-            <div class="input-group">
-                <input type="number" id="inp-can" placeholder="Cant. Cajas" style="flex:0.6">
+            <input type="text" id="inp-cli" placeholder="Nombre del Cliente" style="margin-bottom:10px">
+            <div style="display:flex; gap:10px">
+                <input type="number" id="inp-can" placeholder="Cajas" style="flex:0.6">
                 <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR A CARGA</button>
             </div>
         </div>
@@ -92,7 +97,9 @@
             <div id="live-list" style="margin-bottom:15px"></div>
             <div class="card">
                 <select id="sel-pla" onchange="predict()" style="margin-bottom:10px"></select>
-                <div class="input-group"><select id="sel-cho"></select><select id="sel-aux"></select></div>
+                <div style="display:flex; gap:10px; margin-bottom:10px">
+                    <select id="sel-cho"></select><select id="sel-aux"></select>
+                </div>
                 <button id="btn-main-action" class="btn btn-save" onclick="openConfirm()">GUARDAR DESPACHO</button>
             </div>
         </div>
@@ -112,33 +119,29 @@
     </div>
 
     <div id="page-stats" class="page">
-        <div class="card"><div class="stat-label">Cajas por Chofer (Mes)</div><div style="height:200px; margin-top:10px"><canvas id="c-cho"></canvas></div></div>
-        <div class="card"><div class="stat-label">Cajas por Auxiliar (Mes)</div><div style="height:200px; margin-top:10px"><canvas id="c-aux"></canvas></div></div>
-        <div class="card"><div class="stat-label">Viajes por Unidad (Mes)</div><div style="height:200px; margin-top:10px"><canvas id="c-pla"></canvas></div></div>
+        <div class="card"><div class="stat-label">Producción Choferes (Mes)</div><div style="height:200px; margin-top:10px"><canvas id="c-cho"></canvas></div></div>
+        <div class="card"><div class="stat-label">Producción Auxiliares (Mes)</div><div style="height:200px; margin-top:10px"><canvas id="c-aux"></canvas></div></div>
+        <div class="card"><div class="stat-label">Frecuencia de Unidades (Mes)</div><div style="height:200px; margin-top:10px"><canvas id="c-pla"></canvas></div></div>
     </div>
 
-    <div id="page-fleet" class="page"><div id="fleet-grid"></div></div>
-
-    <div id="modal-confirm" class="modal">
-        <div class="modal-content">
-            <h3 style="text-align:center; margin-bottom:20px">Confirmar Salida</h3>
-            <button class="btn btn-save" onclick="finalize('HOY')">SALIENDO AHORA</button>
-            <button class="btn" style="width:100%; margin-top:10px; background:var(--border); color:white; padding:16px; border-radius:14px" onclick="finalize('MAÑANA')">PROGRAMAR MAÑANA</button>
-            <button onclick="closeConfirm()" style="width:100%; border:none; background:none; color:var(--text-dim); margin-top:15px; font-weight:700">Cancelar</button>
-        </div>
+    <div id="page-fleet" class="page">
+        <h3 style="margin:0 0 15px 0">Seguros y Vencimientos</h3>
+        <div id="fleet-grid"></div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph ph-truck-trailer"></i>HOJA</button>
-        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph ph-clock-counter-clockwise"></i>DATA</button>
+        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph ph-layout"></i>HOJA</button>
+        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph ph-database"></i>DATA</button>
         <button class="nav-item" id="n-stats" onclick="go('page-stats')"><i class="ph ph-chart-bar"></i>STATS</button>
         <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph ph-shield-check"></i>FLOTA</button>
     </nav>
 
+    <div id="modal-confirm" class="modal"><div class="modal-content"><h3 style="text-align:center">Confirmar Salida</h3><button class="btn btn-save" onclick="finalize('HOY')">SALIENDO AHORA</button><button class="btn" style="width:100%; margin-top:10px; background:var(--border); color:white; padding:16px; border-radius:14px" onclick="finalize('MAÑANA')">PROGRAMAR MAÑANA</button><button onclick="closeConfirm()" style="width:100%; border:none; background:none; color:var(--text-dim); margin-top:15px">Cancelar</button></div></div>
+
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxCRMbdOGYjf0R-w1v9tHG76jDhHXxuXOwHahYEV7Gj1lFn3y42C2s9DUO5nkgO75qy/exec";
         let activeUser = "", currentCarga = [], db = [], editIdx = null;
-        let chartCho = null, chartAux = null, chartPla = null;
+        let chartInstances = {};
 
         const DATA = {
             placas: ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"],
@@ -149,18 +152,14 @@
 
         window.onload = () => {
             setupUI();
-            const savedUser = localStorage.getItem('tw_logged');
-            if(savedUser) login(savedUser);
-            const savedCarga = localStorage.getItem('tw_pending_carga');
-            if(savedCarga) { currentCarga = JSON.parse(savedCarga); refreshCargaUI(); }
+            if(localStorage.getItem('tw_logged')) login(localStorage.getItem('tw_logged'));
+            if(localStorage.getItem('tw_pending_carga')) { currentCarga = JSON.parse(localStorage.getItem('tw_pending_carga')); refreshCargaUI(); }
             syncData();
         };
 
         function setupUI() {
             const grid = document.getElementById('login-options');
-            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                grid.innerHTML += `<button class="btn btn-add" style="background:var(--surface); border:1px solid var(--border)" onclick="login('${u}')">${u}</button>`;
-            });
+            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => grid.innerHTML += `<button class="btn" style="background:var(--surface); border:1px solid var(--border); color:white; padding:15px; border-radius:15px" onclick="login('${u}')">${u}</button>`);
             document.getElementById('sel-pla').innerHTML = '<option value="">Unidad</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
             document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + DATA.choferes.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + DATA.auxiliares.map(a => `<option value="${a}">${a}</option>`).join('');
@@ -173,8 +172,8 @@
                 localStorage.setItem('tw_db', JSON.stringify(db));
                 renderHistory(); updateFleet();
             } catch(e) {
-                const cache = localStorage.getItem('tw_db');
-                if(cache) { db = JSON.parse(cache); renderHistory(); updateFleet(); }
+                db = JSON.parse(localStorage.getItem('tw_db') || "[]");
+                renderHistory(); updateFleet();
             }
         }
 
@@ -188,39 +187,36 @@
             refreshCargaUI();
         }
 
-        function removePoint(idx) { currentCarga.splice(idx, 1); localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga)); refreshCargaUI(); }
-
         function refreshCargaUI() {
             const container = document.getElementById('live-list');
             let total = 0; container.innerHTML = "";
             currentCarga.forEach((item, i) => {
                 total += item.can;
-                container.innerHTML += `<div class="point-item"><div class="point-info"><b>${item.can}</b> CJ - ${item.cli}</div><button class="btn-delete" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button></div>`;
+                container.innerHTML += `<div class="point-item"><div><b>${item.can}</b> CJ - ${item.cli}</div><button style="border:none; background:none; color:var(--danger)" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button></div>`;
             });
             document.getElementById('count-cajas').innerText = total;
             document.getElementById('count-puntos').innerText = currentCarga.length;
             document.getElementById('list-container').style.display = currentCarga.length > 0 ? 'block' : 'none';
         }
 
-        function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
-        function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
+        function removePoint(idx) { currentCarga.splice(idx, 1); localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga)); refreshCargaUI(); }
 
         async function finalize(tipo) {
-            const aux = document.getElementById('sel-aux').value;
-            if(!aux) return alert("Asigne un auxiliar.");
+            const aux = document.getElementById('sel-aux').value; if(!aux) return alert("Falta Auxiliar");
             closeConfirm();
             let f = new Date(); if(tipo === 'MAÑANA') f.setDate(f.getDate() + 1);
             const registro = {
                 fecha: f.toLocaleDateString('en-CA'),
-                hora: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
+                hora: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                 placa: document.getElementById('sel-pla').value,
                 chofer: document.getElementById('sel-cho').value,
                 auxiliar: aux,
                 items: currentCarga.map(i => `${i.cli}: ${i.can}`).join(", "),
                 total: currentCarga.reduce((a,b) => a + b.can, 0),
+                puntos: currentCarga.length,
                 operario: activeUser
             };
-            if(editIdx !== null) { db[editIdx] = registro; editIdx = null; } else { db.unshift(registro); }
+            if(editIdx !== null) db[editIdx] = registro; else db.unshift(registro);
             localStorage.setItem('tw_db', JSON.stringify(db));
             localStorage.removeItem('tw_pending_carga');
             go('page-history');
@@ -232,25 +228,25 @@
             const container = document.getElementById('history-feed');
             const filterDate = document.getElementById('filter-date').value;
             let html = "", dTotal = 0, mTotal = 0, mPts = 0;
-            const nowF = new Date(filterDate + "T12:00:00");
+            const now = new Date(filterDate + "T12:00:00");
 
             db.forEach((r, i) => {
                 const rDate = new Date(r.fecha + "T12:00:00");
-                const ptsCount = r.items.split(", ").length;
-                if(rDate.getMonth() === nowF.getMonth() && rDate.getFullYear() === nowF.getFullYear()) {
-                    mTotal += parseFloat(r.total);
-                    mPts += ptsCount;
+                const pts = r.puntos || r.items.split(',').length;
+                if(rDate.getMonth() === now.getMonth() && rDate.getFullYear() === now.getFullYear()) {
+                    mTotal += parseFloat(r.total); mPts += pts;
                 }
                 if(r.fecha.split('T')[0] === filterDate) {
                     dTotal += parseFloat(r.total);
-                    const lista = r.items.split(", ").map(li => `<span class="point-line">• ${li}</span>`).join("");
                     html = `<div class="card history-card">
-                        <div class="history-meta"><span><i class="ph ph-clock"></i> ${r.hora || '---'}</span><span style="color:var(--accent); font-weight:800">${r.placa}</span></div>
-                        <div style="font-weight:700; font-size:16px; margin-bottom:4px">${r.total} CJ en ${ptsCount} Puntos</div>
-                        <div style="font-size:11px; color:var(--text-dim)">Eq: ${r.chofer} / ${r.auxiliar}</div>
-                        <div id="hist-list-${i}" class="history-puntos">${lista}</div>
+                        <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-dim); margin-bottom:5px">
+                            <span>${r.hora}</span><span style="color:var(--accent); font-weight:800">${r.placa}</span>
+                        </div>
+                        <div style="font-weight:700">${r.total} CJ en ${pts} Puntos</div>
+                        <div style="font-size:11px; opacity:0.6">${r.chofer} / ${r.auxiliar}</div>
+                        <div id="hist-list-${i}" class="history-puntos">${r.items.split(", ").map(li => `<div>• ${li}</div>`).join("")}</div>
                         <div style="display:flex; gap:8px; margin-top:10px">
-                            <button class="btn" style="flex:1; background:var(--accent); color:white; font-size:11px; padding:10px" onclick="toggleList(${i})">VER CARGA</button>
+                            <button class="btn" style="flex:1; background:var(--accent); color:white; font-size:11px; padding:10px" onclick="toggleList(${i})">VER DETALLE</button>
                             <button class="btn" style="background:var(--border); width:40px" onclick="loadToEdit(${i})"><i class="ph ph-pencil"></i></button>
                             <button class="btn" style="background:#25D366; width:45px; color:white" onclick="share('${r.placa}','${r.total}','${r.items}')"><i class="ph-fill ph-whatsapp-logo"></i></button>
                         </div>
@@ -263,39 +259,44 @@
             document.getElementById('st-pts-mes').innerText = mPts;
         }
 
-        function loadToEdit(i) {
-            const r = db[i]; editIdx = i;
-            currentCarga = r.items.split(", ").map(item => { const [cli, can] = item.split(": "); return { cli, can: parseInt(can) }; });
-            document.getElementById('sel-pla').value = r.placa; document.getElementById('sel-cho').value = r.chofer; document.getElementById('sel-aux').value = r.auxiliar;
-            document.getElementById('btn-main-action').innerText = "ACTUALIZAR DATOS";
-            refreshCargaUI(); go('page-route');
+        function drawCharts() {
+            const now = new Date();
+            const stats = { cho: {}, aux: {}, pla: {} };
+            
+            db.forEach(r => {
+                const rD = new Date(r.fecha + "T12:00:00");
+                if(rD.getMonth() === now.getMonth()) {
+                    stats.cho[r.chofer] = (stats.cho[r.chofer] || 0) + parseFloat(r.total);
+                    stats.aux[r.auxiliar] = (stats.aux[r.auxiliar] || 0) + parseFloat(r.total);
+                    stats.pla[r.placa] = (stats.pla[r.placa] || 0) + 1;
+                }
+            });
+
+            const createChart = (id, labels, data, color) => {
+                if(chartInstances[id]) chartInstances[id].destroy();
+                chartInstances[id] = new Chart(document.getElementById(id), {
+                    type: 'bar',
+                    data: { labels, datasets: [{ data, backgroundColor: color, borderRadius: 8 }] },
+                    options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { display: false }, y: { ticks: { color: '#94a3b8' } } } }
+                });
+            };
+
+            createChart('c-cho', Object.keys(stats.cho), Object.values(stats.cho), '#0066ff');
+            createChart('c-aux', Object.keys(stats.aux), Object.values(stats.aux), '#10b981');
+            createChart('c-pla', Object.keys(stats.pla), Object.values(stats.pla), '#f59e0b');
         }
 
         function updateFleet() {
-            const grid = document.getElementById('fleet-grid'); const hoy = new Date(); grid.innerHTML = "";
+            const grid = document.getElementById('fleet-grid'); grid.innerHTML = "";
             DATA.placas.forEach(p => {
-                const dias = Math.ceil((new Date(DATA.soats[p]) - hoy) / 86400000);
-                let color = dias < 30 ? "var(--danger)" : (dias < 60 ? "var(--warning)" : "var(--success)");
+                const dias = Math.ceil((new Date(DATA.soats[p]) - new Date()) / 86400000);
+                const color = dias < 30 ? "var(--danger)" : (dias < 60 ? "var(--warning)" : "var(--success)");
                 grid.innerHTML += `<div class="card" style="border-left: 4px solid ${color}">
                     <div style="display:flex; justify-content:space-between"><b>${p}</b> <span style="color:${color}; font-weight:800">${dias} d</span></div>
+                    <div style="font-size:10px; color:var(--text-dim)">SOAT: ${DATA.soats[p]}</div>
                     <div class="fleet-progress"><div class="fleet-bar" style="width:${Math.min(100, (dias/365)*100)}%; background:${color}"></div></div>
                 </div>`;
             });
-        }
-
-        function drawCharts() {
-            const statsC = {}, statsA = {}, statsP = {}, now = new Date();
-            db.forEach(r => {
-                if(new Date(r.fecha + "T12:00:00").getMonth() === now.getMonth()) {
-                    statsC[r.chofer] = (statsC[r.chofer] || 0) + parseFloat(r.total);
-                    statsA[r.auxiliar] = (statsA[r.auxiliar] || 0) + parseFloat(r.total);
-                    statsP[r.placa] = (statsP[r.placa] || 0) + 1;
-                }
-            });
-            const cfg = (ctx, obj, color) => ({ type: 'bar', data: { labels: Object.keys(obj), datasets: [{ data: Object.values(obj), backgroundColor: color, borderRadius: 8 }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { legend: false }, scales: { x: { display: false }, y: { ticks: { color: '#94a3b8' } } } } });
-            if(chartCho) chartCho.destroy(); chartCho = new Chart(document.getElementById('c-cho'), cfg('c-cho', statsC, '#0066ff'));
-            if(chartAux) chartAux.destroy(); chartAux = new Chart(document.getElementById('c-aux'), cfg('c-aux', statsA, '#10b981'));
-            if(chartPla) chartPla.destroy(); chartPla = new Chart(document.getElementById('c-pla'), cfg('c-pla', statsP, '#f59e0b'));
         }
 
         function go(id) {
@@ -304,15 +305,18 @@
             document.getElementById(id).classList.add('active');
             document.getElementById('n-' + id.split('-')[1]).classList.add('active');
             if(id === 'page-history') { document.getElementById('filter-date').value = new Date().toLocaleDateString('en-CA'); renderHistory(); }
-            if(id === 'page-stats') setTimeout(drawCharts, 50);
+            if(id === 'page-stats') setTimeout(drawCharts, 100);
             if(id === 'page-fleet') updateFleet();
         }
 
-        function toggleList(idx) { document.getElementById(`hist-list-${idx}`).classList.toggle('show'); }
-        function predict() { const l = db.find(r => r.placa === document.getElementById('sel-pla').value); if(l) { document.getElementById('sel-cho').value = l.chofer; document.getElementById('sel-aux').value = l.auxiliar; } }
-        function clearAll() { currentCarga = []; editIdx = null; localStorage.removeItem('tw_pending_carga'); document.getElementById('btn-main-action').innerText = "GUARDAR DESPACHO"; refreshCargaUI(); }
         function login(u) { activeUser = u; localStorage.setItem('tw_logged', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-info').innerText = u; go('page-route'); }
         function logout() { localStorage.removeItem('tw_logged'); location.reload(); }
+        function toggleList(idx) { document.getElementById(`hist-list-${idx}`).classList.toggle('show'); }
+        function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
+        function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
+        function clearAll() { currentCarga = []; editIdx = null; localStorage.removeItem('tw_pending_carga'); refreshCargaUI(); }
+        function predict() { const last = db.find(r => r.placa === document.getElementById('sel-pla').value); if(last) { document.getElementById('sel-cho').value = last.chofer; document.getElementById('sel-aux').value = last.auxiliar; } }
+        function loadToEdit(i) { const r = db[i]; editIdx = i; currentCarga = r.items.split(", ").map(it => { const [cli, can] = it.split(": "); return { cli, can: parseInt(can) }; }); document.getElementById('sel-pla').value = r.placa; document.getElementById('sel-cho').value = r.chofer; document.getElementById('sel-aux').value = r.auxiliar; refreshCargaUI(); go('page-route'); }
         function share(p, t, i) { window.location.href = `https://wa.me/?text=*📦 TWINS DESPACHOS*%0A*Placa:* ${p}%0A*Cajas:* ${t}%0A*Ruta:*%0A${i.split(", ").join("%0A")}`; }
     </script>
 </body>
