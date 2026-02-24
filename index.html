@@ -16,85 +16,104 @@
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh; }
+        body { 
+            margin: 0; background: var(--bg); color: var(--text); 
+            font-family: 'Plus Jakarta Sans', sans-serif; min-height: 100vh;
+        }
 
         .page { display: none; padding: 15px; padding-bottom: 100px; max-width: 600px; margin: 0 auto; animation: pageFade 0.3s ease; }
         .active { display: block !important; }
         @keyframes pageFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(12px); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .top-header { 
+            position: sticky; top: 0; z-index: 1000; background: rgba(5, 7, 10, 0.8);
+            backdrop-filter: blur(12px); padding: 12px 20px; display: flex; 
+            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);
+        }
+
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 12px; }
-        
-        /* BANNER */
-        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .stat-banner { background: linear-gradient(135deg, var(--accent), #0033cc); padding: 20px; border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .stat-val { font-size: 38px; font-weight: 800; line-height: 1; }
         .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.8; }
 
-        /* INPUTS */
         .input-group { display: flex; gap: 8px; margin-bottom: 12px; }
         input, select { background: #1a1f26; border: 1px solid var(--border); padding: 14px; border-radius: 14px; color: white; font-size: 15px; font-weight: 500; width: 100%; }
+        input:focus { border-color: var(--accent); }
 
-        /* BOTONES */
+        .point-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 15px; border-radius: 12px; margin-bottom: 6px; border: 1px solid rgba(255,255,255,0.05); }
+        .point-info b { color: var(--accent); }
+
         .btn { border: none; border-radius: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
         .btn-add { background: var(--accent); color: white; padding: 14px 20px; }
         .btn-save { background: var(--success); color: white; padding: 16px; width: 100%; font-size: 15px; margin-top: 10px; }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); width: 32px; height: 32px; border-radius: 10px; }
+        
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #161b22; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 22px; margin-bottom: 2px; }
 
-        /* DISEÑO DE FLOTA MEJORADO */
-        .fleet-card { position: relative; overflow: hidden; }
-        .fleet-status { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
-        .progress-bg { height: 6px; background: #1a1f26; border-radius: 10px; width: 100%; }
-        .progress-fill { height: 100%; border-radius: 10px; transition: 1s ease-out; }
-
-        /* HISTORIAL */
         .history-card { border-left: 4px solid var(--accent); }
-        .history-puntos { display: none; font-size: 12px; color: #e2e8f0; background: #05070a; padding: 12px; border-radius: 12px; margin: 10px 0; border: 1px dashed #334155; line-height: 1.6; }
+        .history-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--text-dim); }
+        .history-puntos { display: none; font-size: 12px; color: #e2e8f0; background: #05070a; padding: 12px; border-radius: 12px; margin: 10px 0; line-height: 1.6; border: 1px dashed #334155; }
         .history-puntos.show { display: block; }
         .point-line { border-bottom: 1px solid #1a1f26; padding: 4px 0; display: block; }
 
-        /* NAV */
-        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #161b22; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
-        .nav-item.active { color: var(--accent); }
+        /* Estilos Mejora Flota */
+        .fleet-progress { height: 6px; background: #1a1f26; border-radius: 10px; margin-top: 10px; overflow: hidden; }
+        .fleet-bar { height: 100%; border-radius: 10px; transition: width 0.5s; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 3000; padding: 20px; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 25px; width: 100%; }
+        .modal-content { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 25px; width: 100%; max-width: 400px; }
     </style>
 </head>
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
-        <div style="font-weight:900;">TWINS LOGISTICS <span style="color:var(--accent)">PRO</span></div>
-        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px;">---</div>
+        <div style="font-weight:900; letter-spacing: -0.5px">TWINS LOGISTICS <span style="color:var(--accent)">PRO</span></div>
+        <div id="user-info" onclick="logout()" style="font-size:10px; font-weight:800; background:var(--border); padding:6px 12px; border-radius:20px; cursor:pointer">---</div>
     </header>
 
     <div id="page-login" class="page active">
         <div style="text-align:center; padding:40px 0">
             <i class="ph-fill ph-package" style="font-size:60px; color:var(--accent)"></i>
-            <h1>Warehouse Login</h1>
+            <h1 style="margin:10px 0">Warehouse Login</h1>
+            <p style="color:var(--text-dim)">Gestión de Inventario</p>
         </div>
         <div id="login-options" style="display:grid; gap:10px"></div>
     </div>
 
     <div id="page-route" class="page">
         <div class="stat-banner">
-            <div><div class="stat-label">Carga Actual</div><div id="count-cajas" class="stat-val">0</div></div>
+            <div>
+                <div class="stat-label">Carga Actual</div>
+                <div id="count-cajas" class="stat-val">0</div>
+                <div class="stat-label" style="margin-top:5px">Cajas totales</div>
+            </div>
             <div style="text-align:right">
-                <div class="stat-label">Puntos</div><div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
-                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; font-size:10px">RESETEAR</button>
+                <div class="stat-label">Envíos</div>
+                <div id="count-puntos" style="font-size:24px; font-weight:800">0</div>
+                <button onclick="clearAll()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 10px; border-radius:8px; margin-top:8px; font-size:10px; font-weight:700">RESETEAR</button>
             </div>
         </div>
+
         <div class="card">
-            <input type="text" id="inp-cli" placeholder="Cliente" style="margin-bottom:10px">
+            <div class="stat-label" style="margin-bottom:10px">Agregar Destino</div>
+            <input type="text" id="inp-cli" placeholder="Nombre del Cliente o Punto" style="margin-bottom:10px">
             <div class="input-group">
-                <input type="number" id="inp-can" placeholder="Cajas" style="flex:0.6">
-                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR</button>
+                <input type="number" id="inp-can" placeholder="Cant. Cajas" style="flex:0.6">
+                <button class="btn btn-add" onclick="addPoint()" style="flex:1.4">AÑADIR A CARGA</button>
             </div>
         </div>
+
         <div id="list-container" style="display:none">
             <div id="live-list" style="margin-bottom:15px"></div>
             <div class="card">
                 <select id="sel-pla" onchange="predict()" style="margin-bottom:10px"></select>
-                <div class="input-group"><select id="sel-cho"></select><select id="sel-aux"></select></div>
+                <div class="input-group">
+                    <select id="sel-cho"></select>
+                    <select id="sel-aux"></select>
+                </div>
                 <button id="btn-main-action" class="btn btn-save" onclick="openConfirm()">GUARDAR DESPACHO</button>
             </div>
         </div>
@@ -112,15 +131,12 @@
         <div id="history-feed"></div>
     </div>
 
-    <div id="page-fleet" class="page">
-        <h3 style="margin-bottom:15px">Seguros de Unidades</h3>
-        <div id="fleet-grid"></div>
+    <div id="page-stats" class="page">
+        <div class="card"><div class="stat-label">Chofer (Mes)</div><div style="height:200px"><canvas id="c-cho"></canvas></div></div>
+        <div class="card"><div class="stat-label">Auxiliar (Mes)</div><div style="height:200px"><canvas id="c-aux"></canvas></div></div>
     </div>
 
-    <div id="page-stats" class="page">
-        <div class="card"><div class="stat-label">Choferes (Mes)</div><div style="height:200px"><canvas id="c-cho"></canvas></div></div>
-        <div class="card"><div class="stat-label">Auxiliares (Mes)</div><div style="height:200px"><canvas id="c-aux"></canvas></div></div>
-    </div>
+    <div id="page-fleet" class="page"><div id="fleet-grid"></div></div>
 
     <div id="modal-confirm" class="modal">
         <div class="modal-content">
@@ -191,19 +207,24 @@
             refreshCargaUI();
         }
 
+        function removePoint(idx) {
+            currentCarga.splice(idx, 1);
+            localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga));
+            refreshCargaUI();
+        }
+
         function refreshCargaUI() {
             const container = document.getElementById('live-list');
             let total = 0; container.innerHTML = "";
             currentCarga.forEach((item, i) => {
                 total += item.can;
-                container.innerHTML += `<div class="point-item" style="display:flex; justify-content:space-between; margin-bottom:5px; background:#1a1f26; padding:10px; border-radius:10px"><div><b>${item.can}</b> - ${item.cli}</div><button onclick="removePoint(${i})" style="background:none; border:none; color:var(--danger)"><i class="ph ph-trash"></i></button></div>`;
+                container.innerHTML += `<div class="point-item"><div class="point-info"><b>${item.can}</b> CJ - ${item.cli}</div><button class="btn-delete" onclick="removePoint(${i})"><i class="ph ph-trash"></i></button></div>`;
             });
             document.getElementById('count-cajas').innerText = total;
             document.getElementById('count-puntos').innerText = currentCarga.length;
             document.getElementById('list-container').style.display = currentCarga.length > 0 ? 'block' : 'none';
         }
 
-        function removePoint(idx) { currentCarga.splice(idx, 1); localStorage.setItem('tw_pending_carga', JSON.stringify(currentCarga)); refreshCargaUI(); }
         function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
         function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
 
@@ -211,12 +232,9 @@
             const aux = document.getElementById('sel-aux').value;
             if(!aux) return alert("Asigne un auxiliar.");
             closeConfirm();
-            
-            let fechaObj = new Date(); 
-            if(tipo === 'MAÑANA') fechaObj.setDate(fechaObj.getDate() + 1);
-            
+            let fecha = new Date(); if(tipo === 'MAÑANA') fecha.setDate(fecha.getDate() + 1);
             const registro = {
-                fecha: fechaObj.toLocaleDateString('en-CA'),
+                fecha: fecha.toLocaleDateString('en-CA'),
                 hora: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
                 placa: document.getElementById('sel-pla').value,
                 chofer: document.getElementById('sel-cho').value,
@@ -225,15 +243,11 @@
                 total: currentCarga.reduce((a,b) => a + b.can, 0),
                 operario: activeUser
             };
-
-            // MEJORA: Unshift asegura que siempre aparezca primero en la lista local
             if(editIdx !== null) { db[editIdx] = registro; editIdx = null; } 
             else { db.unshift(registro); }
-
             localStorage.setItem('tw_db', JSON.stringify(db));
             localStorage.removeItem('tw_pending_carga');
             go('page-history');
-            
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(registro) });
             clearAll();
         }
@@ -252,10 +266,10 @@
                     dTotal += parseFloat(r.total);
                     const listaFormateada = r.items.split(", ").map(li => `<span class="point-line">• ${li}</span>`).join("");
                     
-                    // Se concatena al final del HTML para que el primer elemento del array (el más nuevo) se renderice arriba
+                    // Prioridad arriba al concatenar
                     html += `
                     <div class="card history-card">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:12px; color:var(--text-dim)">
+                        <div class="history-meta">
                             <span><i class="ph ph-clock"></i> ${r.hora || '---'}</span>
                             <span style="color:var(--accent); font-weight:800">${r.placa}</span>
                         </div>
@@ -275,55 +289,72 @@
             document.getElementById('st-month').innerText = mTotal;
         }
 
+        function toggleList(idx) { document.getElementById(`hist-list-${idx}`).classList.toggle('show'); }
+
+        function loadToEdit(i) {
+            const r = db[i]; editIdx = i;
+            currentCarga = r.items.split(", ").map(item => {
+                const [cli, can] = item.split(": ");
+                return { cli, can: parseInt(can) };
+            });
+            document.getElementById('sel-pla').value = r.placa;
+            document.getElementById('sel-cho').value = r.chofer;
+            document.getElementById('sel-aux').value = r.auxiliar;
+            document.getElementById('btn-main-action').innerText = "ACTUALIZAR DATOS";
+            refreshCargaUI(); go('page-route');
+        }
+
         function updateFleet() {
-            const grid = document.getElementById('fleet-grid');
-            const hoy = new Date();
-            grid.innerHTML = "";
+            const grid = document.getElementById('fleet-grid'); const hoy = new Date();
+            grid.innerHTML = '<h3 style="margin-bottom:15px">Seguros (SOAT)</h3>';
             DATA.placas.forEach(p => {
-                const venc = new Date(DATA.soats[p]);
-                const dias = Math.ceil((venc - hoy) / 86400000);
+                const vencimiento = new Date(DATA.soats[p]);
+                const dias = Math.ceil((vencimiento - hoy) / 86400000);
                 let color = "var(--success)";
                 if(dias < 60) color = "var(--warning)";
                 if(dias < 30) color = "var(--danger)";
+                
                 const pct = Math.max(0, Math.min(100, (dias / 365) * 100));
 
                 grid.innerHTML += `
-                    <div class="card fleet-card">
-                        <div class="fleet-status">
-                            <div>
-                                <div style="font-weight:800; font-size:18px">${p}</div>
-                                <div style="font-size:11px; color:var(--text-dim)">Vencimiento: ${DATA.soats[p]}</div>
-                            </div>
-                            <div style="text-align:right">
-                                <div style="font-weight:900; color:${color}; font-size:22px">${dias} <span style="font-size:10px">DÍAS</span></div>
-                            </div>
+                    <div class="card" style="border-left: 4px solid ${color}">
+                        <div style="display:flex; justify-content:space-between; align-items:center">
+                           <div>
+                               <b style="font-size:18px">${p}</b>
+                               <div style="font-size:11px; color:var(--text-dim)">Vence: ${DATA.soats[p]}</div>
+                           </div>
+                           <div style="text-align:right">
+                               <span style="font-weight:900; font-size:20px; color:${color}">${dias} <small style="font-size:10px">DÍAS</small></span>
+                           </div>
                         </div>
-                        <div class="progress-bg"><div class="progress-fill" style="width:${pct}%; background:${color}"></div></div>
+                        <div class="fleet-progress">
+                            <div class="fleet-bar" style="width:${pct}%; background:${color}"></div>
+                        </div>
                     </div>`;
             });
         }
 
-        function toggleList(idx) { document.getElementById(`hist-list-${idx}`).classList.toggle('show'); }
-        function login(u) { activeUser = u; localStorage.setItem('tw_logged', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-info').innerText = u; go('page-route'); }
-        function logout() { localStorage.removeItem('tw_logged'); location.reload(); }
-        function predict() { const l = db.find(r => r.placa === document.getElementById('sel-pla').value); if(l) { document.getElementById('sel-cho').value = l.chofer; document.getElementById('sel-aux').value = l.auxiliar; } }
+        function predict() {
+            const placa = document.getElementById('sel-pla').value;
+            const last = db.find(r => r.placa === placa);
+            if(last) { document.getElementById('sel-cho').value = last.chofer; document.getElementById('sel-aux').value = last.auxiliar; }
+        }
+
         function clearAll() { currentCarga = []; editIdx = null; localStorage.removeItem('tw_pending_carga'); document.getElementById('btn-main-action').innerText = "GUARDAR DESPACHO"; refreshCargaUI(); }
+
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.getElementById('n-' + id.split('-')[1]).classList.add('active');
-            if(id === 'page-history') { document.getElementById('filter-date').value = "2026-02-23"; renderHistory(); }
+            if(id === 'page-history') { 
+                document.getElementById('filter-date').value = new Date().toISOString().split('T')[0];
+                renderHistory(); 
+            }
             if(id === 'page-fleet') updateFleet();
             if(id === 'page-stats') setTimeout(drawCharts, 100);
         }
-        function loadToEdit(i) {
-            const r = db[i]; editIdx = i;
-            currentCarga = r.items.split(", ").map(item => { const [cli, can] = item.split(": "); return { cli, can: parseInt(can) }; });
-            document.getElementById('sel-pla').value = r.placa; document.getElementById('sel-cho').value = r.chofer; document.getElementById('sel-aux').value = r.auxiliar;
-            document.getElementById('btn-main-action').innerText = "ACTUALIZAR DATOS";
-            refreshCargaUI(); go('page-route');
-        }
+
         function drawCharts() {
             const statsC = {}, statsA = {}, now = new Date();
             db.forEach(r => {
@@ -336,6 +367,9 @@
             if(chart1) chart1.destroy(); chart1 = new Chart(document.getElementById('c-cho'), cfg(statsC, '#0066ff'));
             if(chart2) chart2.destroy(); chart2 = new Chart(document.getElementById('c-aux'), cfg(statsA, '#10b981'));
         }
+
+        function login(u) { activeUser = u; localStorage.setItem('tw_logged', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-info').innerText = u; go('page-route'); }
+        function logout() { localStorage.removeItem('tw_logged'); location.reload(); }
         function share(p, t, i) { window.location.href = `https://wa.me/?text=*📦 TWINS LOGISTICS*%0A*Placa:* ${p}%0A*Cajas:* ${t}%0A*Ruta:*%0A${i.split(", ").join("%0A")}`; }
     </script>
 </body>
