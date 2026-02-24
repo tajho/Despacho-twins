@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V3.1</title>
+    <title>TWINS ELITE - V4</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --bg: #05070a; --surface: #0f1218; --accent: #0066ff; 
@@ -26,12 +27,13 @@
         input, select { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; font-size: 14px; width: 100%; }
         .btn-add { background: var(--accent); border: none; border-radius: 12px; color: white; padding: 0 20px; font-weight: 800; cursor: pointer; }
 
-        .route-item { background: #161b22; border-radius: 12px; padding: 10px 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); animation: slideIn 0.2s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        .route-item { background: #161b22; border-radius: 12px; padding: 10px 15px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
 
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 15px; margin-bottom: 12px; }
         .badge-hora { background: var(--accent); color: white; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; }
         .btn-action { height: 45px; width: 45px; border-radius: 12px; border: none; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; }
+
+        .detail-list { background: #0a0d12; border-radius: 10px; padding: 10px; margin: 10px 0; font-size: 12px; border-left: 2px solid var(--accent); color: var(--text-dim); }
 
         .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(15, 18, 24, 0.95); backdrop-filter: blur(15px); height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; gap: 4px; }
@@ -86,15 +88,21 @@
     <div id="page-fleet" class="page"><div id="fleet-grid"></div></div>
 
     <div id="page-stats" class="page">
-        <div class="card"><canvas id="c-cho" height="180"></canvas></div>
-        <button onclick="generatePDF()" class="btn-add" style="width:100%; background:var(--danger); padding:15px">GENERAR REPORTE PDF</button>
+        <div class="card" style="text-align:center; padding:40px 20px;">
+            <i class="ph ph-file-pdf" style="font-size:60px; color:var(--danger); margin-bottom:20px"></i>
+            <h3>Panel de Reportes</h3>
+            <p style="font-size:12px; opacity:0.6; margin-bottom:30px">Genera un documento PDF con todos los despachos del mes actual registrados en el sistema.</p>
+            <button onclick="generatePDF()" class="btn-add" style="width:100%; background:var(--danger); padding:18px; font-size:16px">
+                <i class="ph-bold ph-download-simple"></i> DESCARGAR REPORTE MENSUAL
+            </button>
+        </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
         <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-bold ph-list-plus"></i>RUTA</button>
         <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-bold ph-clock-counter-clockwise"></i>DATA</button>
         <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-bold ph-truck"></i>FLOTA</button>
-        <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-bold ph-chart-line-up"></i>STATS</button>
+        <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-bold ph-file-text"></i>REPORTE</button>
     </nav>
 
     <div id="modal-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center; padding:20px;">
@@ -152,32 +160,6 @@
             go('page-route'); 
         }
 
-        function shareWA(i) {
-            const r = db[i];
-            const msg = `*📦 DESPACHO TWINS ELITE*%0A` +
-                        `*──────────────────*%0A` +
-                        `*📅 Fecha:* ${r.fecha}%0A` +
-                        `*⏰ Hora:* ${r.hora}%0A` +
-                        `*🚛 Placa:* ${r.placa}%0A` +
-                        `*👤 Chofer:* ${r.chofer}%0A` +
-                        `*👥 Aux:* ${r.auxiliar}%0A` +
-                        `*📦 Cajas:* ${r.total}%0A` +
-                        `*📋 Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}%0A` +
-                        `*──────────────────*%0A` +
-                        `*✅ Registrado por:* ${r.operario || activeUser}`;
-            window.open(`https://wa.me/?text=${msg}`, '_blank');
-        }
-
-        function renderFleet() {
-            document.getElementById('fleet-grid').innerHTML = DATA.placas.map(p => {
-                const d = Math.ceil((new Date(DATA.soats[p]) - new Date()) / 86400000);
-                return `<div class="card" style="display:flex; justify-content:space-between">
-                    <div><b>${p}</b><br><small>SOAT Vence: ${DATA.soats[p]}</small></div>
-                    <span style="color:${d<30?'var(--danger)':'var(--success)'}; font-weight:800">${d}d</span>
-                </div>`;
-            }).join('');
-        }
-
         function renderHistory() {
             const container = document.getElementById('history-feed');
             const selDate = document.getElementById('filter-date').value;
@@ -187,12 +169,16 @@
                 if(rD.getMonth() === new Date().getMonth()) mTotal += r.total;
                 if(r.fecha === selDate) {
                     dTotal += r.total;
+                    const itemsText = (r.detalles || r.items || "").split(', ').join('<br>');
                     h += `<div class="card">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
                             <span class="badge-hora">${r.hora}</span><b style="color:var(--accent)">${r.placa}</b>
                         </div>
                         <div style="font-weight:800; font-size:18px">${r.total} Cajas</div>
-                        <div style="font-size:11px; opacity:0.6; margin-bottom:12px">${r.chofer} / ${r.auxiliar}</div>
+                        <div style="font-size:11px; opacity:0.6">${r.chofer} / ${r.auxiliar}</div>
+                        
+                        <div class="detail-list">${itemsText}</div>
+
                         <div style="display:flex; gap:8px">
                             <button class="btn-action" style="background:var(--border); color:white" onclick="loadEdit(${i})"><i class="ph ph-pencil-simple"></i></button>
                             <button class="btn-action" style="background:#25D366; color:white" onclick="shareWA(${i})"><i class="ph-fill ph-whatsapp-logo"></i></button>
@@ -205,7 +191,38 @@
             document.getElementById('st-day').innerText = dTotal;
         }
 
-        async function finalize(tipo) {
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const now = new Date();
+            const mesStr = now.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
+            
+            doc.setFontSize(18); doc.text(`REPORTE DE DESPACHOS - ${mesStr}`, 14, 20);
+            
+            const body = db
+                .filter(r => new Date(r.fecha + "T12:00:00").getMonth() === now.getMonth())
+                .map(r => [r.fecha, r.hora, r.placa, r.chofer, r.total, r.operario]);
+
+            doc.autoTable({
+                head: [['Fecha', 'Hora', 'Placa', 'Chofer', 'Cajas', 'Operario']],
+                body: body,
+                startY: 30,
+                theme: 'grid',
+                headStyles: { fillColor: [0, 102, 255] }
+            });
+            doc.save(`Twins_Reporte_${mesStr}.pdf`);
+        }
+
+        function shareWA(i) {
+            const r = db[i];
+            const msg = `*📦 DESPACHO TWINS ELITE*%0A` +
+                        `*──────────────────*%0A` +
+                        `*📅 Fecha:* ${r.fecha}%0A*⏰ Hora:* ${r.hora}%0A*🚛 Placa:* ${r.placa}%0A*👤 Chofer:* ${r.chofer}%0A*📦 Cajas:* ${r.total}%0A*📋 Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}%0A` +
+                        `*──────────────────*%0A*✅ Por:* ${r.operario || activeUser}`;
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        }
+
+        async function finalize() {
             const r = {
                 fecha: new Date().toISOString().split('T')[0],
                 hora: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
@@ -232,6 +249,7 @@
         function addPoint() { const cli = document.getElementById('inp-cli').value.toUpperCase(); const can = parseInt(document.getElementById('inp-can').value); if(!cli || !can) return; currentCarga.push({ cli, can }); document.getElementById('inp-cli').value = ""; document.getElementById('inp-can').value = ""; refreshCargaUI(); }
         function refreshCargaUI() { const list = document.getElementById('live-list'); let total = 0; list.innerHTML = ""; currentCarga.forEach((it, i) => { total += it.can; list.innerHTML += `<div class="route-item"><span><b>${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger)" onclick="removePoint(${i})"></i></div>`; }); document.getElementById('count-cajas').innerText = total; document.getElementById('count-puntos').innerText = currentCarga.length; document.getElementById('finalize-area').style.display = currentCarga.length > 0 ? 'block' : 'none'; }
         function loadEdit(i) { const r = db[i]; currentCarga = (r.detalles || r.items).split(", ").map(it => { const [cli, can] = it.split(": "); return { cli, can: parseInt(can) }; }); document.getElementById('sel-pla').value = r.placa; document.getElementById('sel-cho').value = r.chofer; document.getElementById('sel-aux').value = r.auxiliar; refreshCargaUI(); go('page-route'); }
+        function renderFleet() { document.getElementById('fleet-grid').innerHTML = DATA.placas.map(p => { const d = Math.ceil((new Date(DATA.soats[p]) - new Date()) / 86400000); return `<div class="card" style="display:flex; justify-content:space-between"><div><b>${p}</b><br><small>SOAT Vence: ${DATA.soats[p]}</small></div><span style="color:${d<30?'var(--danger)':'var(--success)'}; font-weight:800">${d}d</span></div>`; }).join(''); }
         function removePoint(i) { currentCarga.splice(i,1); refreshCargaUI(); }
         function clearAll() { currentCarga = []; refreshCargaUI(); }
         function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
