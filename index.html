@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS DESPACHO V44 - DASHBOARD SLIDER</title>
+    <title>TWINS DESPACHO V45 - FULL GESTIÓN</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -39,72 +39,29 @@
         .logo span { color: var(--accent); }
 
         /* Estilos del Slider de Gráficos */
-        .slider-wrapper {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        .slider-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            gap: 15px;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .slider-wrapper { position: relative; width: 100%; overflow: hidden; margin-bottom: 20px; }
+        .slider-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; gap: 15px; -ms-overflow-style: none; scrollbar-width: none; }
         .slider-container::-webkit-scrollbar { display: none; }
-        .slide {
-            min-width: 100%;
-            scroll-snap-align: start;
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            padding: 20px;
-            backdrop-filter: blur(15px);
-        }
-        .slider-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
+        .slide { min-width: 100%; scroll-snap-align: start; background: var(--glass); border: 1px solid var(--border); border-radius: 30px; padding: 20px; backdrop-filter: blur(15px); }
+        .slider-dots { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
         .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); transition: 0.3s; }
         .dot.active { width: 20px; background: var(--accent); border-radius: 10px; }
 
-        .card { 
-            background: var(--glass); border: 1px solid var(--border); 
-            border-radius: 30px; padding: 22px; margin-bottom: 18px;
-            backdrop-filter: blur(15px);
-        }
-
-        input, select { 
-            width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--border); 
-            background: rgba(255,255,255,0.02); color: white; font-size: 15px;
-        }
-
-        .btn { 
-            width: 100%; padding: 18px; border-radius: 22px; border: none; 
-            font-size: 15px; font-weight: 700; cursor: pointer; 
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
+        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 30px; padding: 22px; margin-bottom: 18px; backdrop-filter: blur(15px); }
+        input, select { width: 100%; padding: 18px; border-radius: 20px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); color: white; font-size: 15px; }
+        .btn { width: 100%; padding: 18px; border-radius: 22px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-main { background: var(--accent); color: white; box-shadow: 0 10px 25px var(--accent-glow); }
         .btn-ghost { background: var(--glass); color: var(--text); border: 1px solid var(--border); }
+        .badge { font-size: 10px; padding: 5px 12px; border-radius: 50px; font-weight: 800; }
+        .bg-route { background: rgba(0, 122, 255, 0.15); color: var(--accent); }
 
-        .nav-bar { 
-            position: fixed; bottom: 25px; left: 20px; right: 20px; 
-            background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(30px);
-            height: 80px; border-radius: 35px; border: 1px solid var(--border);
-            display: flex; justify-content: space-around; align-items: center; z-index: 2000;
-        }
+        .nav-bar { position: fixed; bottom: 25px; left: 20px; right: 20px; background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(30px); height: 80px; border-radius: 35px; border: 1px solid var(--border); display: flex; justify-content: space-around; align-items: center; z-index: 2000; }
         .nav-link { display: flex; flex-direction: column; align-items: center; color: var(--text-dim); border: none; background: none; flex: 1; font-size: 10px; font-weight: 700; }
         .nav-link.active { color: var(--accent); }
         .nav-link i { font-size: 26px; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); z-index: 3000; padding: 25px; align-items: center; justify-content: center; }
         .modal-card { background: #0a0c10; border-radius: 40px; padding: 35px; width: 100%; max-width: 400px; border: 1px solid var(--border); }
-        
         .stat-label { font-size: 9px; color: var(--text-dim); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .stat-value { font-size: 20px; font-weight: 800; }
         .chart-container { position: relative; height: 180px; width: 100%; }
@@ -122,8 +79,9 @@
 
     <div id="m-list" class="modal" onclick="this.style.display='none'">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 id="m-title" style="margin:0">Detalle</h3>
+            <h3 id="m-title" style="margin:0 0 5px 0">Detalle</h3>
             <div id="m-container" style="max-height: 300px; overflow-y: auto; margin-top:20px"></div>
+            <button class="btn btn-main" style="margin-top:25px" onclick="document.getElementById('m-list').style.display='none'">CERRAR</button>
         </div>
     </div>
 
@@ -133,7 +91,7 @@
     </header>
 
     <div id="page-login" class="page active">
-        <h1 style="text-align:center; margin-top:15vh">TWINS DESPACHO</h1>
+        <h1 style="text-align:center; margin-top:10vh">TWINS DESPACHO</h1>
         <div id="login-grid" style="display:grid; gap:14px; padding: 20px;"></div>
     </div>
 
@@ -236,12 +194,8 @@
             if(savedUser) login(savedUser);
             document.getElementById('f-filter').value = new Date().toISOString().split('T')[0];
             loadData();
-            
-            // Listener para los puntos del slider
             document.getElementById('slider').addEventListener('scroll', (e) => {
-                const scroll = e.target.scrollLeft;
-                const width = e.target.offsetWidth;
-                const activeSlide = Math.round(scroll / width);
+                const scroll = e.target.scrollLeft, width = e.target.offsetWidth, activeSlide = Math.round(scroll / width);
                 document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === activeSlide));
             });
         };
@@ -268,8 +222,7 @@
         function renderHistory() {
             const cont = document.getElementById('history-container'), fD = document.getElementById('f-filter').value;
             const sQ = document.getElementById('search').value.toUpperCase();
-            const tM = new Date(fD + "T00:00:00").getMonth();
-            const tY = new Date(fD + "T00:00:00").getFullYear();
+            const tM = new Date(fD + "T00:00:00").getMonth(), tY = new Date(fD + "T00:00:00").getFullYear();
 
             let html = "", diaCajas = 0, mesCajas = 0;
             let dataC = {}, dataA = {};
@@ -289,15 +242,25 @@
                     if (!sQ || r.items.toUpperCase().includes(sQ) || r.chofer.toUpperCase().includes(sQ) || r.placa.toUpperCase().includes(sQ)) {
                         diaCajas += totalCj;
                         const hora = r.hora || "--:--";
-                        // NO TOCAMOS LA TARJETA DE RUTA
+                        const puntos = r.items ? r.items.split(',').length : 0;
+                        
+                        // RESTAURACIÓN TOTAL DE LA TARJETA CON WHATSAPP Y HORA
                         html = `
                         <div class="card" style="border-left:6px solid var(--accent)">
-                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:10px">
-                                <div><b style="font-size:16px">${r.placa}</b><div style="font-size:10px; opacity:0.6">${hora}</div></div>
-                                <b style="color:var(--accent); font-size:18px">${r.total} CJ</b>
+                            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:15px">
+                                <div><b style="font-size:18px; display:block">${r.placa}</b><span class="badge bg-route">EN RUTA</span></div>
+                                <div style="text-align:right">
+                                    <b style="color:var(--accent); font-size:20px">${r.total} CJ</b>
+                                    <div style="font-size:10px; opacity:0.6">${puntos} PUNTOS • ${hora}</div>
+                                </div>
                             </div>
-                            <div style="font-size:13px; color:var(--text-dim); margin-bottom:15px">${r.chofer} / ${r.auxiliar}</div>
-                            <button class="btn-ghost" style="padding:10px; font-size:11px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
+                            <div style="font-size:14px; font-weight:600; color:var(--text-dim); margin-bottom:18px">${r.chofer} • ${r.auxiliar}</div>
+                            <div style="display:flex; gap:10px">
+                                <button class="btn-ghost" style="flex:1; padding:12px; border-radius:15px; font-size:12px" onclick="viewItems('${r.items}', '${r.chofer}')">VER DETALLE</button>
+                                <button class="btn" style="background:#25D366; color:white; width:60px; border-radius:15px; padding:0" onclick="wa('${r.chofer}','${r.auxiliar}','${r.placa}','${r.total}','${r.items}')">
+                                    <i class="ph-fill ph-whatsapp-logo" style="font-size:22px"></i>
+                                </button>
+                            </div>
                         </div>` + html;
                     }
                 }
@@ -310,56 +273,30 @@
         }
 
         function updateCharts(dataC, dataA) {
-            const chartOptions = (color) => ({
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { 
-                    x: { grid: { display: false }, ticks: { color: '#86868b' } },
-                    y: { grid: { display: false }, ticks: { color: '#f5f5f7', font: { size: 10 } } } 
-                }
-            });
-
+            const chartOptions = { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#86868b' } }, y: { grid: { display: false }, ticks: { color: '#f5f5f7', font: { size: 10 } } } } };
             if(cChart) cChart.destroy();
-            cChart = new Chart(document.getElementById('choferChart').getContext('2d'), {
-                type: 'bar',
-                data: { labels: Object.keys(dataC), datasets: [{ data: Object.values(dataC), backgroundColor: '#007aff', borderRadius: 8 }] },
-                options: chartOptions('#007aff')
-            });
-
+            cChart = new Chart(document.getElementById('choferChart').getContext('2d'), { type: 'bar', data: { labels: Object.keys(dataC), datasets: [{ data: Object.values(dataC), backgroundColor: '#007aff', borderRadius: 8 }] }, options: chartOptions });
             if(aChart) aChart.destroy();
-            aChart = new Chart(document.getElementById('auxiliarChart').getContext('2d'), {
-                type: 'bar',
-                data: { labels: Object.keys(dataA), datasets: [{ data: Object.values(dataA), backgroundColor: '#2ed158', borderRadius: 8 }] },
-                options: chartOptions('#2ed158')
-            });
+            aChart = new Chart(document.getElementById('auxiliarChart').getContext('2d'), { type: 'bar', data: { labels: Object.keys(dataA), datasets: [{ data: Object.values(dataA), backgroundColor: '#2ed158', borderRadius: 8 }] }, options: chartOptions });
         }
 
         async function saveRoute(tipo) {
             document.getElementById('m-type').style.display = 'none';
             let d = new Date();
             if(tipo === 'MAÑANA') d.setDate(d.getDate() + 1);
-            
             const hT = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-            const reg = { 
-                fecha: d.toISOString().split('T')[0], 
-                hora: hT, // REGISTRO DE HORA
-                chofer: document.getElementById('cho').value, 
-                auxiliar: document.getElementById('aux').value, 
-                placa: document.getElementById('pla').value, 
-                items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), 
-                total: items.reduce((a,b)=>a+b.ca,0), 
-                operario: user, 
-                puntos: items.length 
-            };
-            
+            const reg = { fecha: d.toISOString().split('T')[0], hora: hT, chofer: document.getElementById('cho').value, auxiliar: document.getElementById('aux').value, placa: document.getElementById('pla').value, items: items.map(i => `${i.cl}: ${i.ca}`).join(", "), total: items.reduce((a,b)=>a+b.ca,0), operario: user, puntos: items.length };
             database.unshift(reg);
             localStorage.setItem('tw_db_cache', JSON.stringify(database));
-            renderHistory(); 
-            nav('page-history');
+            renderHistory(); nav('page-history');
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(reg) });
             items = []; renderTemp();
+        }
+
+        function wa(c, a, p, t, i) { 
+            const d = i.split(", ").map(x => `✅ ${x.toUpperCase().trim()}`).join("%0A"); 
+            const msg = `*📦 DESPACHO TWINS*%0A%0A*Chofer:* ${c}%0A*Auxiliar:* ${a}%0A*Placa:* ${p}%0A*Total:* ${t} CJ%0A%0A*DETALLE:*%0A${d}`; 
+            window.location.href = `https://wa.me/?text=${msg}`; 
         }
 
         function addItem() {
@@ -369,6 +306,7 @@
             document.getElementById('cli').value = ""; document.getElementById('can').value = "";
             renderTemp();
         }
+
         function renderTemp() {
             const box = document.getElementById('temp-list');
             let total = 0; box.innerHTML = "";
@@ -380,28 +318,15 @@
             document.getElementById('total-puntos').innerText = items.length + " PUNTOS";
             document.getElementById('send-zone').style.display = items.length ? 'block' : 'none';
         }
-        function renderFleet() {
-            const list = document.getElementById('fleet-list'), hoy = new Date();
-            list.innerHTML = `<h3 style="margin-bottom:20px">Flota</h3>`;
-            PLACAS.forEach(p => {
-                const v = new Date(SOATS[p]), dR = Math.ceil((v - hoy) / 86400000);
-                list.innerHTML += `<div class="card" style="padding:15px; border-left:4px solid ${dR<30?'var(--danger)':'var(--success)'}"><b>${p}</b><div style="font-size:10px; opacity:0.6">SOAT: ${dR} días</div></div>`;
-            });
-        }
-        function nav(id) { 
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); 
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id).classList.add('active'); 
-            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
-            if(id === 'page-history') renderHistory(); 
-            if(id === 'page-fleet') renderFleet(); 
-        }
+
+        function nav(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('n-' + id.split('-')[1]).classList.add('active'); if(id === 'page-history') renderHistory(); }
         function checkAuth(u) { if(u === 'TAJHO ADMIN') document.getElementById('m-auth').style.display='flex'; else login(u); }
         function verifyAuth() { if(document.getElementById('admin-pass').value === '1234') { document.getElementById('m-auth').style.display='none'; login('TAJHO ADMIN'); } else alert("PIN Incorrecto"); }
         function login(u) { user = u; localStorage.setItem('tw_user', u); document.getElementById('page-login').classList.remove('active'); document.getElementById('app-header').style.display = 'flex'; document.getElementById('app-nav').style.display = 'flex'; document.getElementById('user-display').innerText = u; nav('page-route'); }
         function logout() { localStorage.clear(); location.reload(); }
         function viewItems(txt, ch) { document.getElementById('m-title').innerText = ch; document.getElementById('m-container').innerHTML = txt.split(", ").map(i => `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)">${i}</div>`).join(''); document.getElementById('m-list').style.display = 'flex'; }
         function smartPredict() { const p = document.getElementById('pla').value; const last = database.find(r => r.placa === p); if(last) document.getElementById('cho').value = last.chofer; }
+        function renderFleet() { const list = document.getElementById('fleet-list'), hoy = new Date(); list.innerHTML = `<h3>Flota</h3>`; PLACAS.forEach(p => { const v = new Date(SOATS[p]), dR = Math.ceil((v - hoy) / 86400000); list.innerHTML += `<div class="card" style="padding:15px; border-left:4px solid ${dR<30?'var(--danger)':'var(--success)'}"><b>${p}</b><div style="font-size:10px; opacity:0.6">SOAT: ${dR} días</div></div>`; }); }
     </script>
 </body>
 </html>
