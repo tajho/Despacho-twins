@@ -3,235 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS PRO V15.1 - GESTIÓN TOTAL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>TWINS ERP - V16</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #f0f4f8; --surface: #ffffff; --accent: #007aff; 
-            --text: #1e293b; --text-dim: #64748b; --border: #e2e8f0; 
-            --success: #22c55e; --danger: #ef4444; --dark: #1e293b;
+            --bg: #f3f4f6; --primary: #1e293b; --accent: #2563eb;
+            --success: #059669; --danger: #dc2626; --white: #ffffff;
         }
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        .page { display: none; padding: 15px 15px 140px 15px; max-width: 500px; margin: 0 auto; }
-        .active { display: block !important; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--primary); }
 
-        /* DASHBOARD */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { background: var(--surface); padding: 15px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .stat-card small { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; }
-        .stat-card div { font-size: 20px; font-weight: 800; color: var(--dark); margin-top: 5px; }
-        .stat-full { grid-column: span 2; background: var(--dark); color: white; }
-        .stat-full div { color: var(--success); }
+        /* HEADER ESTRUCTURADO */
+        .header-main { background: var(--primary); color: white; padding: 16px 20px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* DASHBOARD DE CONTROL (Métricas Reales) */
+        .dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; background: var(--white); border-bottom: 1px solid #e5e7eb; }
+        .metric { padding: 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; }
+        .metric small { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
+        .metric div { font-size: 18px; font-weight: 800; margin-top: 4px; }
+        .full { grid-column: span 2; background: #eff6ff; border-color: #bfdbfe; }
 
-        /* TARJETAS DE DATOS MEJORADAS */
-        .hist-card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .hist-placa { font-size: 18px; font-weight: 800; }
-        .hist-total { font-size: 22px; font-weight: 800; color: var(--accent); }
-        
-        .list-detail { display: none; background: #f8fafc; border-radius: 12px; padding: 12px; font-size: 13px; margin: 10px 0; border: 1px solid var(--border); white-space: pre-line; }
-        
-        /* BOTONES DE ACCIÓN EN TARJETA */
-        .actions-row { display: flex; gap: 8px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; }
-        .btn-action { flex: 1; border: none; padding: 10px; border-radius: 10px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
-        .b-list { background: #f1f5f9; color: var(--text); }
-        .b-edit { background: #fff7ed; color: #9a3412; }
-        .b-wa { background: #dcfce7; color: #166534; }
+        /* CONTENEDOR DE PÁGINAS */
+        .page { display: none; padding: 10px 15px 120px 15px; max-width: 600px; margin: 0 auto; }
+        .active { display: block; }
 
-        /* REUSABLE UI */
-        .step-card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        select, input { width: 100%; padding: 16px; border-radius: 14px; border: 2px solid var(--border); font-size: 16px; margin-top: 8px; font-weight: 600; }
+        /* FORMULARIOS TIPO ERP */
+        .form-group { background: var(--white); padding: 16px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #e5e7eb; }
+        label { font-size: 12px; font-weight: 700; color: #64748b; display: block; margin-bottom: 6px; }
+        select, input { width: 100%; padding: 12px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 15px; font-family: inherit; }
+
+        /* TARJETAS DE REGISTRO (Base de Datos) */
+        .data-card { background: var(--white); border-radius: 16px; margin-bottom: 12px; border: 1px solid #e5e7eb; overflow: hidden; }
+        .card-top { padding: 15px; display: flex; justify-content: space-between; align-items: flex-start; background: #fcfcfc; }
+        .card-info h4 { margin: 0; font-size: 16px; font-weight: 800; }
+        .card-info p { margin: 4px 0 0; font-size: 12px; color: #64748b; }
+        .card-badge { background: var(--primary); color: white; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 14px; }
+
+        /* ACCIONES ESTRUCTURADAS */
+        .card-actions { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #f1f5f9; }
+        .action-btn { padding: 12px; border: none; background: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; border-right: 1px solid #f1f5f9; }
+        .action-btn i { font-size: 18px; }
+        .action-btn:last-child { border-right: none; }
         
-        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--dark); height: 75px; border-radius: 25px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { color: #94a3b8; text-align: center; border: none; background: none; font-weight: 700; font-size: 10px; }
-        .nav-item.active { color: white; }
+        .list-view { background: #f8fafc; padding: 12px; font-size: 12px; display: none; border-top: 1px solid #f1f5f9; }
+
+        /* NAV BAR */
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); display: flex; padding: 10px 0; z-index: 200; }
+        .nav-btn { flex: 1; border: none; background: none; color: #94a3b8; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; }
+        .nav-btn.active { color: white; }
+        .nav-btn i { font-size: 24px; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <header class="top-header" style="background:var(--dark); color:white; padding:15px; text-align:center; font-weight:900;">
-        TWINS DESPACHO V15.1
+    <header class="header-main">
+        <div style="font-weight: 800; letter-spacing: -0.5px;">TWINS <span style="color: #60a5fa;">SYSTEM</span></div>
+        <div id="user-display" style="font-size: 11px; opacity: 0.8;"></div>
     </header>
 
-    <div id="page-route" class="page active">
-        <div class="step-card">
-            <select id="sel-pla" onchange="predictData()"></select>
-            <div style="display:flex; gap:8px">
-                <select id="sel-cho"></select>
-                <select id="sel-aux"></select>
-            </div>
+    <div class="dashboard" id="dashboard-stats" style="display:none">
+        <div class="metric full">
+            <small>Cajas Mes (Feb 2026)</small>
+            <div id="m-total-mes">0</div>
         </div>
-        <div class="step-card">
-            <input type="text" id="inp-cli" placeholder="Cliente / Factura">
-            <input type="number" id="inp-can" placeholder="Cantidad Cjs" style="font-size: 24px;">
-            <button class="btn-action" style="background:var(--dark); color:white; width:100%; padding:15px; margin-top:10px" onclick="addItem()">AÑADIR A LISTA</button>
+        <div class="metric">
+            <small>Cajas Hoy</small>
+            <div id="m-total-hoy">0</div>
         </div>
-        <div id="list-container"></div>
-        <button id="btn-final" style="display:none; position:fixed; bottom:100px; left:20px; right:20px; background:var(--success); color:white; padding:20px; border-radius:20px; border:none; font-weight:800; font-size:18px;" onclick="openModal()">FINALIZAR RUTA</button>
+        <div class="metric">
+            <small>Despachos Hoy</small>
+            <div id="m-viajes-hoy">0</div>
+        </div>
     </div>
 
-    <div id="page-history" class="page">
-        <div class="stats-grid">
-            <div class="stat-card stat-full">
-                <small>Acumulado del Mes</small>
-                <div id="stat-month-total">0 Cajas</div>
-            </div>
-            <div class="stat-card">
-                <small>Cajas Hoy</small>
-                <div id="stat-day-total">0</div>
-            </div>
-            <div class="stat-card">
-                <small>Viajes Hoy</small>
-                <div id="stat-day-trips">0</div>
+    <div id="page-entry" class="page active">
+        <div class="form-group">
+            <label>DATOS DE CABECERA (LOGÍSTICA)</label>
+            <select id="f-placa" onchange="autoFill()"></select>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px">
+                <select id="f-chofer"></select>
+                <select id="f-auxiliar"></select>
             </div>
         </div>
 
-        <div style="margin-bottom:15px">
-            <input type="date" id="filter-date" onchange="renderHistory()" style="margin-top:0">
+        <div class="form-group">
+            <label>DETALLE DE CARGA</label>
+            <input type="text" id="f-cliente" placeholder="Cliente / Factura">
+            <input type="number" id="f-cajas" placeholder="Cant. Cajas" style="margin-top:10px">
+            <button onclick="addToList()" style="width:100%; margin-top:12px; background:var(--primary); color:white; padding:12px; border-radius:8px; border:none; font-weight:700;">+ AGREGAR ITEM</button>
         </div>
 
-        <div id="history-list"></div>
+        <div id="temp-list"></div>
+        
+        <button id="btn-save" style="display:none; width:100%; background:var(--success); color:white; padding:18px; border-radius:12px; border:none; font-weight:800; font-size:16px; margin-top:20px; box-shadow: 0 4px 12px rgba(5,150,105,0.3);" onclick="saveToDB()">FINALIZAR Y REGISTRAR</button>
     </div>
 
-    <nav class="nav-bar">
-        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
-        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-chart-bar"></i>DATA</button>
-        <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
+    <div id="page-data" class="page">
+        <div style="margin-bottom:15px; display:flex; gap:10px">
+            <input type="date" id="filter-date" onchange="refreshData()">
+            <button onclick="sync()" style="padding:10px; border-radius:8px; border:1px solid #ccc; background:white"><i class="ph ph-arrows-clockwise"></i></button>
+        </div>
+        <div id="data-container"></div>
+    </div>
+
+    <nav class="nav-bottom" id="nav-bar" style="display:none">
+        <button class="nav-btn active" onclick="go('page-entry', this)"><i class="ph-fill ph-note-pencil"></i>CARGA</button>
+        <button class="nav-btn" onclick="go('page-data', this)"><i class="ph-fill ph-database"></i>DATOS</button>
     </nav>
 
-    <div id="modal-save" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center; padding:20px;">
-        <div class="step-card" style="width:100%; text-align:center">
-            <h3>¿Cuándo sale?</h3>
-            <button class="btn-action" style="background:var(--success); color:white; margin-bottom:10px; width:100%; padding:20px" onclick="saveAll('HOY')">SALIENDO HOY</button>
-            <button class="btn-action" style="background:var(--accent); color:white; width:100%; padding:20px" onclick="saveAll('MAÑANA')">MAÑANA</button>
-            <button onclick="closeModal()" style="background:none; border:none; margin-top:15px; color:var(--text-dim)">Cerrar</button>
-        </div>
-    </div>
-
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
-        const APP_DATA = {
+        const DB_URL = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
+        
+        // MAESTROS (Estructura de Referencia)
+        const MASTER = {
             placas: ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"],
             choferes: ["TAJHO", "LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"],
             auxiliares: ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"]
         };
 
-        let currentItems = [], db = [];
+        let tempItems = [];
+        let globalDB = [];
 
         window.onload = () => {
-            document.getElementById('sel-pla').innerHTML = '<option value="">-- PLACA --</option>' + APP_DATA.placas.map(p=>`<option value="${p}">${p}</option>`).join('');
-            document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + APP_DATA.choferes.map(c=>`<option value="${c}">${c}</option>`).join('');
-            document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + APP_DATA.auxiliares.map(a=>`<option value="${a}">${a}</option>`).join('');
-            document.getElementById('filter-date').value = new Date().toLocaleDateString('sv-SE');
-            syncData();
+            initSystem();
+            sync();
         };
 
-        async function syncData() {
-            try { const r = await fetch(API); db = await r.json(); renderHistory(); } catch(e){}
+        function initSystem() {
+            document.getElementById('f-placa').innerHTML = '<option value="">-- SELECCIONE PLACA --</option>' + MASTER.placas.map(p=>`<option value="${p}">${p}</option>`).join('');
+            document.getElementById('f-chofer').innerHTML = '<option value="">Chofer</option>' + MASTER.choferes.map(c=>`<option value="${c}">${c}</option>`).join('');
+            document.getElementById('f-auxiliar').innerHTML = '<option value="">Auxiliar</option>' + MASTER.auxiliares.map(a=>`<option value="${a}">${a}</option>`).join('');
+            document.getElementById('filter-date').value = new Date().toLocaleDateString('sv-SE');
+            
+            // Simulación de login para registro
+            localStorage.setItem('operario', 'FRANCESCO');
+            document.getElementById('user-display').innerText = "OP: " + localStorage.getItem('operario');
+            document.getElementById('dashboard-stats').style.display = 'grid';
+            document.getElementById('nav-bar').style.display = 'flex';
         }
 
-        function addItem() {
-            const cli = document.getElementById('inp-cli').value.toUpperCase();
-            const can = document.getElementById('inp-can').value;
-            if(!cli || !can) return;
-            currentItems.push({ cli, can });
-            document.getElementById('inp-cli').value = ""; document.getElementById('inp-can').value = "";
-            renderList();
+        function addToList() {
+            const cli = document.getElementById('f-cliente').value.toUpperCase();
+            const can = document.getElementById('f-cajas').value;
+            if(!cli || !can) return alert("Complete cliente y cajas");
+            
+            tempItems.push({ cli, can: parseInt(can) });
+            document.getElementById('f-cliente').value = "";
+            document.getElementById('f-cajas').value = "";
+            renderTemp();
         }
 
-        function renderList() {
-            const c = document.getElementById('list-container');
-            c.innerHTML = currentItems.map((it, i) => `<div class="item-row" style="background:white; padding:10px; margin-top:5px; border-radius:10px; display:flex; justify-content:space-between"><span>${it.cli}</span><b>${it.can} Cjs</b></div>`).join('');
-            document.getElementById('btn-final').style.display = currentItems.length > 0 ? 'block' : 'none';
+        function renderTemp() {
+            const cont = document.getElementById('temp-list');
+            cont.innerHTML = tempItems.map((it, i) => `
+                <div style="display:flex; justify-content:space-between; padding:10px; background:white; margin-top:5px; border-radius:8px; border:1px solid #e5e7eb">
+                    <span>${it.cli}</span><b>${it.can} Cjs</b>
+                </div>
+            `).join('');
+            document.getElementById('btn-save').style.display = tempItems.length > 0 ? 'block' : 'none';
         }
 
-        async function saveAll(tipo) {
-            const f = new Date(); if(tipo === 'MAÑANA') f.setDate(f.getDate() + 1);
-            const r = {
-                fecha: f.toLocaleDateString('sv-SE'),
-                placa: document.getElementById('sel-pla').value,
-                chofer: document.getElementById('sel-cho').value,
-                auxiliar: document.getElementById('sel-aux').value,
-                total: currentItems.reduce((a,b)=> a + parseInt(b.can), 0),
-                items: currentItems.map(x => `${x.cli}: ${x.can}`).join("\n")
+        async function saveToDB() {
+            const data = {
+                fecha: new Date().toLocaleDateString('sv-SE'),
+                placa: document.getElementById('f-placa').value,
+                chofer: document.getElementById('f-chofer').value,
+                auxiliar: document.getElementById('f-auxiliar').value,
+                total: tempItems.reduce((a, b) => a + b.can, 0),
+                items: tempItems.map(x => `${x.cli}: ${x.can}`).join(", "),
+                operario: localStorage.getItem('operario')
             };
-            db.unshift(r); renderHistory(); closeModal(); currentItems = []; renderList();
-            await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+
+            // Guardado optimista (UI primero)
+            globalDB.unshift(data);
+            tempItems = [];
+            renderTemp();
+            refreshData();
+            go('page-data');
+
+            // Envío real
+            await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
         }
 
-        function renderHistory() {
-            const cont = document.getElementById('history-list');
-            const selDate = document.getElementById('filter-date').value;
+        function refreshData() {
+            const cont = document.getElementById('data-container');
+            const fDate = document.getElementById('filter-date').value;
             const currentMonth = new Date().getMonth();
             
-            let dCjs = 0, dTrips = 0, mCjs = 0;
+            let mMes = 0, mHoy = 0, vHoy = 0;
 
-            const filtered = db.filter(r => {
-                const rDate = new Date(r.fecha + "T12:00:00");
-                if(rDate.getMonth() === currentMonth) mCjs += parseInt(r.total);
-                if(r.fecha === selDate) { dCjs += parseInt(r.total); dTrips++; return true; }
-                return false;
+            const filtered = globalDB.filter(r => {
+                const rFecha = new Date(r.fecha + "T12:00:00");
+                // Stats
+                if(rFecha.getMonth() === currentMonth) mMes += parseInt(r.total);
+                if(r.fecha === fDate) { mHoy += parseInt(r.total); vHoy++; }
+                
+                return r.fecha === fDate;
             });
 
-            document.getElementById('stat-month-total').innerText = mCjs + " Cajas";
-            document.getElementById('stat-day-total').innerText = dCjs;
-            document.getElementById('stat-day-trips').innerText = dTrips;
+            // Update Metrics
+            document.getElementById('m-total-mes').innerText = mMes.toLocaleString() + " Cjs";
+            document.getElementById('m-total-hoy').innerText = mHoy.toLocaleString();
+            document.getElementById('m-viajes-hoy').innerText = vHoy;
 
             cont.innerHTML = filtered.map((r, i) => `
-                <div class="hist-card">
-                    <div class="hist-header">
-                        <span class="hist-placa">${r.placa}</span>
-                        <span class="hist-total">${r.total} Cjs</span>
+                <div class="data-card">
+                    <div class="card-top">
+                        <div class="card-info">
+                            <h4>${r.placa}</h4>
+                            <p>${r.chofer} / ${r.auxiliar}</p>
+                        </div>
+                        <div class="card-badge">${r.total} CJS</div>
                     </div>
-                    <div style="font-size:12px; color:var(--text-dim)">${r.chofer} | ${r.auxiliar}</div>
-                    
-                    <div id="list-${i}" class="list-detail"><b>LISTA DE CARGA:</b>\n${r.items}</div>
-
-                    <div class="actions-row">
-                        <button class="btn-action b-list" onclick="toggleList(${i})"><i class="ph-bold ph-list-bullets"></i> LISTA</button>
-                        <button class="btn-action b-edit" onclick="editEntry(${i})"><i class="ph-bold ph-pencil"></i> EDITAR</button>
-                        <button class="btn-action b-wa" onclick="shareWA(${i})"><i class="ph-bold ph-whatsapp-logo"></i> WA</button>
+                    <div id="details-${i}" class="list-view">
+                        <strong>Items:</strong><br>${r.items}
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn" onclick="toggleDet(${i})"><i class="ph ph-list-magnifying-glass"></i>VER LISTA</button>
+                        <button class="action-btn" style="color:var(--accent)" onclick="editRow(${i})"><i class="ph ph-pencil-simple"></i>EDITAR</button>
+                        <button class="action-btn" style="color:var(--success)" onclick="sendWA(${i})"><i class="ph ph-whatsapp-logo"></i>WHATSAPP</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function toggleList(i) {
-            const el = document.getElementById(`list-${i}`);
+        async function sync() {
+            const res = await fetch(DB_URL);
+            globalDB = await res.json();
+            refreshData();
+        }
+
+        function toggleDet(i) {
+            const el = document.getElementById(`details-${i}`);
             el.style.display = el.style.display === 'block' ? 'none' : 'block';
         }
 
-        function editEntry(i) {
-            const r = db[i];
-            const nTotal = prompt("Nuevo total de cajas:", r.total);
-            if(nTotal) {
-                db[i].total = nTotal;
-                renderHistory();
-                alert("Cambio local realizado (Sincroniza con nube para permanente)");
+        function sendWA(i) {
+            const r = globalDB[i];
+            const msg = `*REPORTE TWINS*%0A*Placa:* ${r.placa}%0A*Cajas:* ${r.total}%0A*Detalle:* ${r.items}`;
+            window.open(`https://wa.me/?text=${msg}`);
+        }
+
+        function autoFill() {
+            const p = document.getElementById('f-placa').value;
+            const last = globalDB.find(x => x.placa === p);
+            if(last) {
+                document.getElementById('f-chofer').value = last.chofer;
+                document.getElementById('f-auxiliar').value = last.auxiliar;
             }
         }
 
-        function shareWA(i) {
-            const r = db[i];
-            const msg = `*📦 DESPACHO TWINS*%0A*Placa:* ${r.placa}%0A*Total:* ${r.total} Cjs%0A*Detalle:*%0A${r.items.replace(/\n/g, '%0A')}`;
-            window.open(`https://wa.me/?text=${msg}`, '_blank');
-        }
-
-        function go(id) {
-            document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            if(id === 'page-history') renderHistory();
-        }
-
-        function openModal() { document.getElementById('modal-save').style.display = 'flex'; }
-        function closeModal() { document.getElementById('modal-save').style.display = 'none'; }
-        function predictData() {
-            const p = document.getElementById('sel-pla').value;
-            const last = db.find(x => x.placa === p);
-            if(last) { document.getElementById('sel-cho').value = last.chofer; document.getElementById('sel-aux').value = last.auxiliar; }
+        function go(p, btn) {
+            document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
+            document.getElementById(p).classList.add('active');
+            if(btn) {
+                document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+            }
         }
     </script>
 </body>
