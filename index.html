@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS - CONCEPTO V14.1</title>
+    <title>TWINS ANALYTICS V15</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #f8fafc; --surface: #ffffff; --accent: #007aff; 
+            --bg: #f0f4f8; --surface: #ffffff; --accent: #007aff; 
             --text: #1e293b; --text-dim: #64748b; --border: #e2e8f0; 
-            --success: #22c55e; --danger: #ef4444;
+            --success: #22c55e; --danger: #ef4444; --dark: #1e293b;
         }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -18,137 +18,157 @@
         .page { display: none; padding: 15px 15px 140px 15px; max-width: 500px; margin: 0 auto; }
         .active { display: block !important; }
 
-        .top-header { background: var(--surface); padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); position: sticky; top:0; z-index:100; }
-        .logo { font-weight: 800; font-size: 22px; color: var(--accent); }
-
-        .step-card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--border); }
-        .step-title { font-weight: 700; font-size: 13px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
-
-        select, input { width: 100%; padding: 18px; border-radius: 16px; border: 2px solid var(--border); font-size: 16px; margin-top: 10px; font-family: inherit; font-weight: 600; }
+        /* HEADER */
+        .top-header { background: var(--dark); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; color: white; position: sticky; top:0; z-index:100; }
         
-        .qty-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
-        .qty-btn { background: #f1f5f9; padding: 15px; border-radius: 12px; text-align: center; font-weight: 800; cursor: pointer; }
-        .qty-btn:active { background: var(--accent); color: white; }
+        /* DASHBOARD STATS */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--surface); padding: 15px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .stat-card small { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; }
+        .stat-card div { font-size: 20px; font-weight: 800; color: var(--dark); margin-top: 5px; }
+        .stat-full { grid-column: span 2; background: var(--accent); color: white; }
+        .stat-full small { color: rgba(255,255,255,0.7); }
+        .stat-full div { color: white; }
 
-        .btn-add { background: var(--text); color: white; width: 100%; padding: 18px; border-radius: 16px; border: none; font-weight: 800; font-size: 16px; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        /* HISTORIAL CARDS */
+        .hist-card { background: white; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .hist-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .hist-placa { font-size: 18px; font-weight: 800; color: var(--dark); }
+        .hist-total { background: #f1f5f9; padding: 8px 15px; border-radius: 12px; font-weight: 800; color: var(--accent); font-size: 18px; }
+        
+        .hist-body { background: #f8fafc; border-radius: 16px; padding: 12px; font-size: 12px; color: var(--text-dim); border: 1px solid #edf2f7; }
+        .hist-footer { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; font-weight: 600; }
 
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f1f5f9; border-radius: 12px; margin-top: 8px; border-left: 5px solid var(--accent); }
-
-        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #1e293b; height: 75px; border-radius: 25px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-        .nav-item { color: #94a3b8; text-align: center; border: none; background: none; font-weight: 700; font-size: 11px; }
+        /* REUSABLE UI */
+        .step-card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
+        select, input { width: 100%; padding: 16px; border-radius: 14px; border: 2px solid var(--border); font-size: 16px; margin-top: 8px; font-weight: 600; }
+        .btn-add { background: var(--dark); color: white; width: 100%; padding: 18px; border-radius: 16px; border: none; font-weight: 800; margin-top: 10px; }
+        
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--dark); height: 75px; border-radius: 25px; display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
+        .nav-item { color: #94a3b8; text-align: center; border: none; background: none; font-weight: 700; font-size: 10px; }
         .nav-item.active { color: white; }
         .nav-item i { font-size: 24px; display: block; margin-bottom: 4px; }
 
-        .btn-float { position: fixed; bottom: 105px; left: 20px; right: 20px; background: var(--success); color: white; padding: 22px; border-radius: 20px; text-align: center; font-weight: 800; font-size: 18px; box-shadow: 0 10px 25px rgba(34, 197, 94, 0.3); border: none; display: none; z-index: 900; }
-
-        /* MODAL CORREGIDO */
-        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-content { background: white; width: 100%; max-width: 400px; padding: 30px; border-radius: 30px; text-align: center; }
-
-        /* HISTORIAL MEJORADO */
-        .hist-card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .tag { padding: 5px 12px; border-radius: 10px; font-size: 10px; font-weight: 800; float: right; }
-        .tag-hoy { background: #dcfce7; color: #166534; }
-        .tag-manana { background: #dbeafe; color: #1e40af; }
+        .tag-date { background: var(--dark); color: white; padding: 4px 10px; border-radius: 8px; font-size: 10px; }
     </style>
 </head>
 <body>
 
     <header class="top-header" id="app-header" style="display:none">
-        <div class="logo">TWINS <span style="font-weight:400; color:var(--text-dim)">DESPACHO</span></div>
-        <div id="user-badge" style="font-weight: 800; font-size: 11px; background: #f1f5f9; padding: 6px 12px; border-radius: 10px;">---</div>
+        <div style="font-weight:900; letter-spacing:-1px">TWINS<span style="color:var(--accent)">.</span>PRO</div>
+        <div id="user-badge" style="font-size:10px; opacity:0.8"></div>
     </header>
 
     <div id="page-login" class="page active">
-        <h2 style="text-align:center; margin: 40px 0; font-weight: 800;">Registro de Almacén</h2>
+        <div style="text-align:center; padding:50px 0">
+            <i class="ph-fill ph-shield-check" style="font-size:60px; color:var(--accent)"></i>
+            <h2 style="font-weight:800">Acceso Personal</h2>
+        </div>
         <div id="login-list"></div>
     </div>
 
     <div id="page-route" class="page">
         <div class="step-card">
-            <span class="step-title"><i class="ph-bold ph-truck"></i> 1. Equipo</span>
             <select id="sel-pla" onchange="predictData()"></select>
-            <div style="display:flex; gap:10px">
+            <div style="display:flex; gap:8px">
                 <select id="sel-cho"></select>
                 <select id="sel-aux"></select>
             </div>
         </div>
-
         <div class="step-card">
-            <span class="step-title"><i class="ph-bold ph-package"></i> 2. Mercadería</span>
-            <input type="text" id="inp-cli" placeholder="Cliente / Factura">
-            <input type="number" id="inp-can" placeholder="Cajas" style="font-size: 28px; text-align: center;">
-            <div class="qty-grid">
-                <div class="qty-btn" onclick="quickAdd(1)">+1</div>
-                <div class="qty-btn" onclick="quickAdd(5)">+5</div>
-                <div class="qty-btn" onclick="quickAdd(10)">+10</div>
-                <div class="qty-btn" style="color:var(--danger)" onclick="clearQty()">Borrar</div>
+            <input type="text" id="inp-cli" placeholder="Cliente o Factura">
+            <div style="display:flex; gap:10px; align-items:center; margin-top:10px">
+                <input type="number" id="inp-can" placeholder="Cjs" style="margin-top:0; font-size:24px; flex:1">
+                <button onclick="quickAdd(5)" style="padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:800">+5</button>
+                <button onclick="quickAdd(10)" style="padding:15px; border-radius:12px; border:1px solid var(--border); font-weight:800">+10</button>
             </div>
-            <button class="btn-add" onclick="addItem()">AGREGAR A LA LISTA</button>
+            <button class="btn-add" onclick="addItem()">AGREGAR A RUTA</button>
         </div>
-
         <div id="list-container"></div>
-        <button id="btn-final" class="btn-float" onclick="openModal()">GUARDAR DESPACHO</button>
+        <button id="btn-final" style="display:none; position:fixed; bottom:100px; left:20px; right:20px; background:var(--success); color:white; padding:20px; border-radius:20px; border:none; font-weight:800; font-size:18px; box-shadow: 0 10px 20px rgba(34,197,94,0.3)" onclick="openModal()">GUARDAR DESPACHO</button>
     </div>
 
     <div id="page-history" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
-            <h3 style="margin:0">Historial de Hoy</h3>
-            <button onclick="syncData()" style="border:none; background:none; color:var(--accent); font-weight:800"><i class="ph-bold ph-arrows-clockwise"></i> ACTUALIZAR</button>
+        <div class="stats-grid">
+            <div class="stat-card stat-full">
+                <small>Producción del Mes</small>
+                <div id="stat-month-total">0 Cajas</div>
+            </div>
+            <div class="stat-card">
+                <small>Hoy Cajas</small>
+                <div id="stat-day-total">0</div>
+            </div>
+            <div class="stat-card">
+                <small>Hoy Viajes</small>
+                <div id="stat-day-trips">0</div>
+            </div>
         </div>
+
+        <div style="display:flex; gap:10px; margin-bottom:15px">
+            <select id="filter-month" onchange="renderHistory()" style="margin-top:0; padding:12px; font-size:14px">
+                <option value="ALL">Todo el Mes</option>
+                <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
+                <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
+                <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
+                <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+            </select>
+        </div>
+
         <div id="history-list"></div>
     </div>
 
     <div id="page-fleet" class="page">
-        <h3 style="margin-bottom:20px">Documentos de Flota</h3>
+        <h3 style="margin-bottom:20px">Vencimientos SOAT</h3>
         <div id="fleet-list"></div>
     </div>
 
     <nav class="nav-bar" id="main-nav" style="display:none">
         <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
-        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-clock-counter-clockwise"></i>DATA</button>
+        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-chart-bar"></i>DATA</button>
         <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
     </nav>
 
-    <div id="modal-save" class="modal-overlay" onclick="closeModalExterno(event)">
-        <div class="modal-content">
-            <h2 style="margin-top:0">¿Cuándo sale?</h2>
-            <p style="color:var(--text-dim); margin-bottom:25px">Selecciona la fecha de salida</p>
-            <button class="btn-add" style="background:var(--success); padding:22px; margin-bottom:15px" onclick="saveAll('HOY')">SALIENDO HOY</button>
-            <button class="btn-add" style="background:var(--accent); padding:22px" onclick="saveAll('MAÑANA')">PROGRAMADO MAÑANA</button>
-            <button onclick="closeModal()" style="background:none; border:none; margin-top:20px; color:var(--text-dim); font-weight:700">CANCELAR</button>
+    <div id="modal-save" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center; padding:20px;">
+        <div class="step-card" style="width:100%; text-align:center">
+            <h3>¿Fecha de Salida?</h3>
+            <button class="btn-add" style="background:var(--success)" onclick="saveAll('HOY')">SALIENDO HOY</button>
+            <button class="btn-add" style="background:var(--accent)" onclick="saveAll('MAÑANA')">PROGRAMADO MAÑANA</button>
+            <button onclick="closeModal()" style="background:none; border:none; margin-top:15px; color:var(--text-dim); font-weight:700">CANCELAR</button>
         </div>
     </div>
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
-        const DATA_REF = {
+        const APP_DATA = {
             placas: ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"],
             choferes: ["TAJHO", "LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"],
             auxiliares: ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"],
             soats: { "CEP-929": "2026-07-22", "BPN-711": "2026-06-10", "BVN-704": "2026-07-02", "BUL-742": "2026-04-02", "BVN-930": "2026-07-02" }
         };
 
-        let currentItems = [], db = [], currentUser = "";
+        let currentItems = [], db = [], user = "";
 
         window.onload = () => {
-            initApp();
-            const saved = localStorage.getItem('tw_u');
+            initUI();
+            const saved = localStorage.getItem('tw_user_v15');
             if(saved) login(saved);
             syncData();
         };
 
-        function initApp() {
-            document.getElementById('sel-pla').innerHTML = '<option value="">-- PLACA --</option>' + DATA_REF.placas.map(p=>`<option value="${p}">${p}</option>`).join('');
-            document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + DATA_REF.choferes.map(c=>`<option value="${c}">${c}</option>`).join('');
-            document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + DATA_REF.auxiliares.map(a=>`<option value="${a}">${a}</option>`).join('');
+        function initUI() {
+            document.getElementById('sel-pla').innerHTML = '<option value="">-- PLACA --</option>' + APP_DATA.placas.map(p=>`<option value="${p}">${p}</option>`).join('');
+            document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + APP_DATA.choferes.map(c=>`<option value="${c}">${c}</option>`).join('');
+            document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + APP_DATA.auxiliares.map(a=>`<option value="${a}">${a}</option>`).join('');
             document.getElementById('login-list').innerHTML = ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].map(u => 
-                `<div class="step-card" style="text-align:center; font-weight:800; padding:25px" onclick="login('${u}')">${u}</div>`
+                `<div class="step-card" style="text-align:center; font-weight:800" onclick="login('${u}')">${u}</div>`
             ).join('');
+            // Set mes actual en el filtro
+            const mm = String(new Date().getMonth() + 1).padStart(2, '0');
+            document.getElementById('filter-month').value = mm;
         }
 
         function login(u) {
-            currentUser = u; localStorage.setItem('tw_u', u);
+            user = u; localStorage.setItem('tw_user_v15', u);
             document.getElementById('page-login').classList.remove('active');
             document.getElementById('app-header').style.display = 'flex';
             document.getElementById('main-nav').style.display = 'flex';
@@ -156,112 +176,109 @@
             go('page-route');
         }
 
-        function quickAdd(n) { 
-            const el = document.getElementById('inp-can');
-            el.value = (parseInt(el.value) || 0) + n;
-        }
-        function clearQty() { document.getElementById('inp-can').value = ''; }
+        function quickAdd(n) { const i = document.getElementById('inp-can'); i.value = (parseInt(i.value) || 0) + n; }
 
         function addItem() {
             const cli = document.getElementById('inp-cli').value.toUpperCase();
             const can = document.getElementById('inp-can').value;
-            const pla = document.getElementById('sel-pla').value;
-            if(!cli || !can || !pla) return alert("Falta Placa, Cliente o Cantidad");
-            
+            if(!cli || !can || !document.getElementById('sel-pla').value) return alert("Completa los datos");
             currentItems.push({ cli, can });
-            document.getElementById('inp-cli').value = '';
-            document.getElementById('inp-can').value = '';
+            document.getElementById('inp-cli').value = "";
+            document.getElementById('inp-can').value = "";
             renderList();
         }
 
         function renderList() {
             const cont = document.getElementById('list-container');
             cont.innerHTML = currentItems.map((it, i) => `
-                <div class="item-row">
-                    <span><b>${it.cli}</b></span>
-                    <span><b style="color:var(--accent); font-size:18px">${it.can} Cjs</b> 
-                    <i class="ph-bold ph-trash" style="margin-left:15px; color:var(--danger)" onclick="removeItem(${i})"></i></span>
+                <div style="display:flex; justify-content:space-between; padding:15px; background:white; border-radius:15px; margin-top:8px; border:1px solid var(--border)">
+                    <b>${it.cli}</b>
+                    <span style="color:var(--accent); font-weight:800">${it.can} Cjs <i class="ph ph-trash" style="color:var(--danger); margin-left:10px" onclick="removeItem(${i})"></i></span>
                 </div>
             `).join('');
             document.getElementById('btn-final').style.display = currentItems.length > 0 ? 'block' : 'none';
         }
 
         async function saveAll(op) {
-            const fecha = new Date(); if(op === 'MAÑANA') fecha.setDate(fecha.getDate() + 1);
+            const f = new Date(); if(op === 'MAÑANA') f.setDate(f.getDate() + 1);
             const r = {
-                fecha: fecha.toLocaleDateString('sv-SE'),
+                fecha: f.toLocaleDateString('sv-SE'),
                 placa: document.getElementById('sel-pla').value,
                 chofer: document.getElementById('sel-cho').value,
                 auxiliar: document.getElementById('sel-aux').value,
                 total: currentItems.reduce((a,b)=> a + parseInt(b.can), 0),
                 items: currentItems.map(x => `${x.cli}: ${x.can}`).join(", "),
-                operario: currentUser
+                operario: user
             };
 
-            // Local push para ver datos al instante
             db.unshift(r); 
             closeModal();
-            
-            // Efecto visual
-            document.getElementById('btn-final').innerText = "ENVIANDO A NUBE...";
-            await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            
-            currentItems = [];
-            renderList();
-            renderHistory(); 
+            currentItems = []; renderList();
             go('page-history');
-            document.getElementById('btn-final').innerText = "GUARDAR DESPACHO";
+            await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
         }
 
         function renderHistory() {
             const cont = document.getElementById('history-list');
             const today = new Date().toLocaleDateString('sv-SE');
+            const selMonth = document.getElementById('filter-month').value;
             
-            if(db.length === 0) {
-                cont.innerHTML = `<div style="text-align:center; padding:50px; opacity:0.3">No hay datos registrados aún</div>`;
-                return;
-            }
+            let dayCajas = 0, dayTrips = 0, monthCajas = 0;
 
-            cont.innerHTML = db.map(r => {
-                const esHoy = r.fecha === today;
-                return `
+            const filtered = db.filter(r => {
+                const rMonth = r.fecha.split('-')[1];
+                const matchMonth = (selMonth === "ALL" || rMonth === selMonth);
+                
+                // Cálculos para Dashboard
+                if(r.fecha === today) {
+                    dayCajas += parseInt(r.total);
+                    dayTrips++;
+                }
+                if(rMonth === String(new Date().getMonth() + 1).padStart(2, '0')) {
+                    monthCajas += parseInt(r.total);
+                }
+
+                return matchMonth;
+            });
+
+            // Actualizar Dashboard
+            document.getElementById('stat-day-total').innerText = dayCajas;
+            document.getElementById('stat-day-trips').innerText = dayTrips;
+            document.getElementById('stat-month-total').innerText = monthCajas + " Cajas";
+
+            cont.innerHTML = filtered.map(r => `
                 <div class="hist-card">
-                    <span class="tag ${esHoy ? 'tag-hoy' : 'tag-manana'}">${esHoy ? 'HOY' : 'MAÑANA'}</span>
-                    <div style="font-weight:800; font-size:16px">${r.placa}</div>
-                    <div style="color:var(--accent); font-weight:800; font-size:22px; margin:5px 0">${r.total} Cajas</div>
-                    <div style="font-size:11px; color:var(--text-dim); line-height:1.4">${r.items}</div>
-                </div>`;
-            }).join('');
+                    <div class="hist-header">
+                        <div>
+                            <span class="tag-date">${r.fecha}</span><br>
+                            <span class="hist-placa">${r.placa}</span>
+                        </div>
+                        <div class="hist-total">${r.total} <small style="font-size:10px">CJS</small></div>
+                    </div>
+                    <div class="hist-body">
+                        <b>DETALLE:</b><br>${r.items}
+                    </div>
+                    <div class="hist-footer">
+                        <span><i class="ph ph-user"></i> ${r.chofer}</span>
+                        <span><i class="ph ph-whatsapp-logo" style="color:var(--success)" onclick="shareWA('${r.placa}','${r.total}','${r.items}')"></i> ENVIAR</span>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function renderFleet() {
-            document.getElementById('fleet-list').innerHTML = DATA_REF.placas.map(p => {
-                const diff = Math.ceil((new Date(DATA_REF.soats[p]) - new Date()) / (1000*60*60*24));
-                const color = diff < 30 ? 'var(--danger)' : 'var(--success)';
+            document.getElementById('fleet-list').innerHTML = APP_DATA.placas.map(p => {
+                const diff = Math.ceil((new Date(APP_DATA.soats[p]) - new Date()) / (1000*60*60*24));
                 return `
-                <div class="hist-card" style="display:flex; justify-content:space-between; align-items:center">
-                    <div><b>${p}</b><br><small>Vence: ${DATA_REF.soats[p]}</small></div>
-                    <div style="text-align:right"><b style="color:${color}; font-size:22px">${diff}</b><br><small>DÍAS</small></div>
+                <div class="stat-card" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+                    <div><b>${p}</b><br><small>SOAT: ${APP_DATA.soats[p]}</small></div>
+                    <div style="text-align:right"><b style="color:${diff<30?'var(--danger)':'var(--success)'}">${diff}</b><br><small>DÍAS</small></div>
                 </div>`;
             }).join('');
         }
 
         async function syncData() {
-            try { 
-                const res = await fetch(API); 
-                const raw = await res.json();
-                db = raw.sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-                renderHistory();
-            } catch(e) { console.log("Error sync"); }
-        }
-
-        function predictData() {
-            const p = document.getElementById('sel-pla').value;
-            const last = db.find(x => x.placa === p);
-            if(last) {
-                document.getElementById('sel-cho').value = last.chofer;
-                document.getElementById('sel-aux').value = last.auxiliar;
-            }
+            try { const r = await fetch(API); db = await r.json(); renderHistory(); } catch(e){}
         }
 
         function go(id) {
@@ -273,11 +290,18 @@
             if(id === 'page-fleet') renderFleet();
         }
 
-        // FUNCIONES MODAL CORREGIDAS
         function openModal() { document.getElementById('modal-save').style.display = 'flex'; }
         function closeModal() { document.getElementById('modal-save').style.display = 'none'; }
-        function closeModalExterno(e) { if(e.target.id === 'modal-save') closeModal(); }
         function removeItem(i) { currentItems.splice(i,1); renderList(); }
+        function predictData() {
+            const p = document.getElementById('sel-pla').value;
+            const last = db.find(x => x.placa === p);
+            if(last) { document.getElementById('sel-cho').value = last.chofer; document.getElementById('sel-aux').value = last.auxiliar; }
+        }
+        function shareWA(p, t, i) {
+            const msg = `*📦 DESPACHO TWINS*%0A*Placa:* ${p}%0A*Total:* ${t} Cjs%0A*Detalle:* ${i}`;
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        }
     </script>
 </body>
 </html>
