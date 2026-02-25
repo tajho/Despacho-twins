@@ -22,14 +22,12 @@
 
         .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(11, 15, 23, 0.9); backdrop-filter: blur(10px); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         
-        /* BANNER Y STATS */
         .stat-banner { background: linear-gradient(135deg, #007aff, #0056b3); padding: 25px; border-radius: 24px; color: white; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,122,255,0.2); }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-card { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 18px; text-align: center; }
         .stat-card b { display: block; font-size: 20px; color: var(--accent); }
         .stat-card small { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; }
 
-        /* INPUTS MEJORADOS */
         .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
         input, select { background: var(--surface); border: 2px solid var(--border); padding: 18px; border-radius: 16px; color: white; font-size: 16px; width: 100%; transition: 0.3s; }
         input:focus { border-color: var(--accent); }
@@ -37,12 +35,10 @@
         .btn-add { background: var(--accent); border: none; border-radius: 16px; color: white; padding: 0 25px; font-weight: 800; cursor: pointer; display: flex; align-items: center; }
         .btn-main { background: var(--success); color: white; width: 100%; padding: 20px; border-radius: 18px; border: none; font-size: 17px; font-weight: 800; margin-top: 15px; cursor: pointer; }
 
-        /* LISTAS Y TARJETAS */
         .route-item { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .detail-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; margin: 12px 0; font-size: 13px; color: #cbd5e1; white-space: pre-line; border: 1px solid rgba(255,255,255,0.05); }
 
-        /* NAVEGACIÓN */
         .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 75px; border-radius: 22px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
@@ -144,6 +140,14 @@
             setupUI();
             const saved = localStorage.getItem('tw_logged');
             if(saved) login(saved, true);
+
+            // RECUPERAR RUTA GUARDADA SI EXISTE
+            const savedRoute = localStorage.getItem('tw_temp_route');
+            if (savedRoute) {
+                currentCarga = JSON.parse(savedRoute);
+                refreshCargaUI();
+            }
+
             syncData();
         };
 
@@ -199,7 +203,6 @@
                 const rDate = new Date(r.fecha);
                 const rFechaStr = rDate.toLocaleDateString('sv-SE');
 
-                // Lógica de contadores
                 if(rDate.getMonth() === currentMonth && rDate.getFullYear() === currentYear) {
                     mCjs += r.total;
                     mEnv++;
@@ -223,13 +226,53 @@
                 }
             });
 
-            // Actualizar contadores en pantalla
             document.getElementById('h-cajas-dia').innerText = dCjs;
             document.getElementById('h-envios-dia').innerText = dEnv;
             document.getElementById('h-cajas-mes').innerText = mCjs;
             document.getElementById('h-envios-mes').innerText = mEnv;
             
             container.innerHTML = h || `<p style="text-align:center; opacity:0.3; margin-top:50px">Sin registros</p>`;
+        }
+
+        function addPoint() { 
+            const cli = document.getElementById('inp-cli').value.toUpperCase(); 
+            const can = parseInt(document.getElementById('inp-can').value); 
+            if(!cli || !can) return; 
+            
+            currentCarga.push({ cli, can }); 
+            
+            // GUARDAR EN MEMORIA LOCAL PARA EVITAR BORRADO AL ACTUALIZAR
+            localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga));
+            
+            document.getElementById('inp-cli').value = ""; 
+            document.getElementById('inp-can').value = ""; 
+            refreshCargaUI(); 
+        }
+
+        function removePoint(i) { 
+            currentCarga.splice(i,1); 
+            // ACTUALIZAR MEMORIA LOCAL
+            localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga));
+            refreshCargaUI(); 
+        }
+
+        function clearAll() { 
+            currentCarga = []; 
+            // LIMPIAR MEMORIA LOCAL
+            localStorage.removeItem('tw_temp_route');
+            refreshCargaUI(); 
+        }
+
+        function refreshCargaUI() { 
+            const list = document.getElementById('live-list'); 
+            let total = 0; list.innerHTML = ""; 
+            currentCarga.forEach((it, i) => { 
+                total += it.can; 
+                list.innerHTML += `<div class="route-item"><span><b style="color:var(--accent)">${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger); font-size:20px" onclick="removePoint(${i})"></i></div>`; 
+            }); 
+            document.getElementById('count-cajas').innerText = total; 
+            document.getElementById('count-puntos').innerText = currentCarga.length; 
+            document.getElementById('finalize-area').style.display = currentCarga.length > 0 ? 'block' : 'none'; 
         }
 
         async function finalize() {
@@ -245,29 +288,12 @@
                 operario: activeUser
             };
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
-            db.unshift(r); clearAll(); closeConfirm(); go('page-history');
-        }
-
-        function addPoint() { 
-            const cli = document.getElementById('inp-cli').value.toUpperCase(); 
-            const can = parseInt(document.getElementById('inp-can').value); 
-            if(!cli || !can) return; 
-            currentCarga.push({ cli, can }); 
-            document.getElementById('inp-cli').value = ""; 
-            document.getElementById('inp-can').value = ""; 
-            refreshCargaUI(); 
-        }
-
-        function refreshCargaUI() { 
-            const list = document.getElementById('live-list'); 
-            let total = 0; list.innerHTML = ""; 
-            currentCarga.forEach((it, i) => { 
-                total += it.can; 
-                list.innerHTML += `<div class="route-item"><span><b style="color:var(--accent)">${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger); font-size:20px" onclick="removePoint(${i})"></i></div>`; 
-            }); 
-            document.getElementById('count-cajas').innerText = total; 
-            document.getElementById('count-puntos').innerText = currentCarga.length; 
-            document.getElementById('finalize-area').style.display = currentCarga.length > 0 ? 'block' : 'none'; 
+            db.unshift(r); 
+            
+            // LIMPIAR AL TERMINAR
+            clearAll(); 
+            closeConfirm(); 
+            go('page-history');
         }
 
         function shareWA(i) {
@@ -286,23 +312,37 @@
         }
 
         function logout() { localStorage.clear(); location.reload(); }
-        function removePoint(i) { currentCarga.splice(i,1); refreshCargaUI(); }
-        function clearAll() { currentCarga = []; refreshCargaUI(); }
         function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
         function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
+        
         function loadEdit(i) { 
             const r = db[i]; 
             currentCarga = (r.detalles || r.items).split(", ").map(it => { 
                 const [cli, can] = it.split(": "); 
                 return { cli, can: parseInt(can) }; 
             }); 
+            // AL EDITAR TAMBIÉN GUARDAMOS EN MEMORIA TEMPORAL
+            localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga));
             document.getElementById('sel-pla').value = r.placa; 
             document.getElementById('sel-cho').value = r.chofer; 
             document.getElementById('sel-aux').value = r.auxiliar; 
             refreshCargaUI(); go('page-route'); 
         }
-        function predictAndSave() { const l = db.find(r => r.placa === document.getElementById('sel-pla').value); if(l) { document.getElementById('sel-cho').value = l.chofer; document.getElementById('sel-aux').value = l.auxiliar; } }
-        function renderFleet() { document.getElementById('fleet-grid').innerHTML = DATA.placas.map(p => { const d = Math.ceil((new Date(DATA.soats[p]) - new Date()) / 86400000); return `<div class="card" style="display:flex; justify-content:space-between"><div><b>${p}</b><br><small>Vence: ${DATA.soats[p]}</small></div><span style="color:${d<30?'var(--danger)':'var(--success)'}; font-weight:800">${d}d</span></div>`; }).join(''); }
+
+        function predictAndSave() { 
+            const l = db.find(r => r.placa === document.getElementById('sel-pla').value); 
+            if(l) { 
+                document.getElementById('sel-cho').value = l.chofer; 
+                document.getElementById('sel-aux').value = l.auxiliar; 
+            } 
+        }
+
+        function renderFleet() { 
+            document.getElementById('fleet-grid').innerHTML = DATA.placas.map(p => { 
+                const d = Math.ceil((new Date(DATA.soats[p]) - new Date()) / 86400000); 
+                return `<div class="card" style="display:flex; justify-content:space-between"><div><b>${p}</b><br><small>Vence: ${DATA.soats[p]}</small></div><span style="color:${d<30?'var(--danger)':'var(--success)'}; font-weight:800">${d}d</span></div>`; 
+            }).join(''); 
+        }
         
         function generatePDF() {
             const { jsPDF } = window.jspdf;
