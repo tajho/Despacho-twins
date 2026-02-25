@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - OFICIAL V6</title>
+    <title>TWINS ELITE - OFICIAL V7</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -46,9 +46,9 @@
 
         .login-btn { background: var(--surface); border: 1px solid var(--border); color: white; padding: 20px; border-radius: 20px; font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         
-        /* Estilos para el Selector Inicial */
-        .plate-selector { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .plate-btn { background: var(--surface); border: 2px solid var(--border); padding: 20px; border-radius: 18px; color: white; font-weight: 800; font-size: 18px; text-align: center; }
+        .plate-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .plate-btn { background: var(--surface); border: 2px solid var(--border); padding: 25px 10px; border-radius: 18px; color: white; font-weight: 800; font-size: 16px; text-align: center; display: flex; flex-direction: column; gap: 5px; }
+        .plate-btn small { font-size: 10px; color: var(--accent); opacity: 0.8; }
         .plate-btn:active { background: var(--accent); border-color: var(--accent); }
     </style>
 </head>
@@ -69,8 +69,8 @@
 
     <div id="page-select-plate" class="page">
         <div style="text-align:center; padding:30px 0">
-            <h2 style="font-weight:800;">¿Qué placa vas a cargar?</h2>
-            <p style="color:var(--text-dim);">Selecciona una unidad para empezar</p>
+            <h2 style="font-weight:800;">¿Qué unidad cargará?</h2>
+            <p style="color:var(--text-dim);">Selecciona la placa correspondiente</p>
         </div>
         <div id="plate-options" class="plate-selector"></div>
     </div>
@@ -80,8 +80,8 @@
             <div style="display:flex; justify-content:space-between; align-items:center">
                 <div><small style="font-weight:800; opacity:0.8">CAJAS CARGA</small><div id="count-cajas" style="font-size:48px; font-weight:800;">0</div></div>
                 <div style="text-align:right">
-                    <b id="active-plate-label" style="font-size:20px; display:block">---</b>
-                    <small style="font-weight:800; opacity:0.8">PUNTOS: <span id="count-puntos">0</span></small>
+                    <b id="active-plate-label" style="font-size:22px; display:block; color:#fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3)">---</b>
+                    <small style="font-weight:800; opacity:0.9">PUNTOS: <span id="count-puntos">0</span></small>
                 </div>
             </div>
         </div>
@@ -90,18 +90,18 @@
             <input type="text" id="inp-cli" placeholder="Nombre del Cliente" style="flex:2">
         </div>
         <div class="input-group">
-            <input type="number" id="inp-can" placeholder="Cantidad Cajas" style="flex:1">
+            <input type="number" id="inp-can" placeholder="Cajas" style="flex:1">
             <button class="btn-add" onclick="addPoint()" style="flex:0.5; justify-content:center"><i class="ph-bold ph-plus" style="font-size:24px"></i></button>
         </div>
 
         <div id="live-list"></div>
 
         <div id="finalize-area" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px">
-            <div style="font-size:12px; font-weight:800; color:var(--text-dim); margin-bottom:10px">DETALLES DE ENTREGA</div>
+            <div style="font-size:11px; font-weight:800; color:var(--text-dim); margin-bottom:10px; letter-spacing:1px">VERIFICAR DATOS DE UNIDAD</div>
             <select id="sel-pla" onchange="predictAndSave()" style="margin-bottom:10px; border-color:var(--accent)"></select>
             <div class="input-group"><select id="sel-cho"></select><select id="sel-aux"></select></div>
             <button class="btn-main" onclick="openConfirm()">CONFIRMAR Y GUARDAR</button>
-            <button onclick="clearAll()" style="width:100%; background:none; border:none; color:var(--danger); font-weight:700; margin-top:15px; font-size:13px">BORRAR CARGA ACTUAL</button>
+            <button onclick="clearAll()" style="width:100%; background:none; border:none; color:var(--danger); font-weight:700; margin-top:15px; font-size:12px">ANULAR CARGA ACTUAL</button>
         </div>
     </div>
 
@@ -121,7 +121,7 @@
     <div id="page-stats" class="page">
         <div class="card" style="text-align:center; padding:40px 20px;">
             <i class="ph-fill ph-file-pdf" style="font-size:64px; color:var(--danger); margin-bottom:15px"></i>
-            <h3>Generar Reporte Mensual</h3>
+            <h3>Reporte Mensual</h3>
             <button onclick="generatePDF()" class="btn-main" style="background:var(--danger);">DESCARGAR PDF</button>
         </div>
     </div>
@@ -145,8 +145,17 @@
         const API = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
         let activeUser = "", currentCarga = [], db = [];
 
+        // ASIGNACIONES OFICIALES
+        const ASIGNACION = {
+            "CEP-929": "ROMARIO",
+            "BPN-711": "CESAR C.",
+            "BVN-704": "LUIS H.",
+            "BUL-742": "WALDIR",
+            "BVN-930": "MARCELO"
+        };
+
         const DATA = {
-            placas: ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"],
+            placas: Object.keys(ASIGNACION),
             choferes: ["TAJHO", "LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"],
             auxiliares: ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"],
             soats: { "CEP-929": "2026-07-22", "BPN-711": "2026-06-10", "BVN-704": "2026-07-02", "BUL-742": "2026-04-02", "BVN-930": "2026-07-02" }
@@ -157,7 +166,6 @@
             const saved = localStorage.getItem('tw_logged');
             if(saved) login(saved);
 
-            // Recuperar carga si existe
             const savedRoute = localStorage.getItem('tw_temp_route');
             if (savedRoute) {
                 currentCarga = JSON.parse(savedRoute);
@@ -178,9 +186,8 @@
                 opts.innerHTML += `<div class="login-btn" onclick="checkPass('${u}')"><span>${u}</span><i class="ph-bold ph-caret-right"></i></div>`;
             });
 
-            // Generar botones de placa para el inicio
             document.getElementById('plate-options').innerHTML = DATA.placas.map(p => 
-                `<div class="plate-btn" onclick="startWithPlate('${p}')">${p}</div>`
+                `<div class="plate-btn" onclick="startWithPlate('${p}')"><b>${p}</b><small>${ASIGNACION[p]}</small></div>`
             ).join('');
 
             document.getElementById('sel-pla').innerHTML = '<option value="">Placa</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
@@ -203,12 +210,10 @@
             document.getElementById('app-nav').style.display = 'flex'; 
             document.getElementById('user-info').innerText = u; 
             if(u === "TAJHO ADMIN") document.getElementById('n-stats').style.display = "flex";
-            
             checkNewRoute();
         }
 
         function checkNewRoute() {
-            // Si no hay carga activa, preguntar placa. Si hay, ir directo.
             if(currentCarga.length === 0) go('page-select-plate');
             else go('page-route');
         }
@@ -217,8 +222,16 @@
             document.getElementById('sel-pla').value = p;
             document.getElementById('active-plate-label').innerText = p;
             localStorage.setItem('tw_temp_placa', p);
-            predictAndSave(); // Autocompletar chofer/aux
+            predictAndSave(); 
             go('page-route');
+        }
+
+        function predictAndSave() { 
+            const placa = document.getElementById('sel-pla').value;
+            // ASIGNACIÓN FIJA SEGÚN TU PEDIDO
+            if(ASIGNACION[placa]) {
+                document.getElementById('sel-cho').value = ASIGNACION[placa];
+            }
         }
 
         function addPoint() { 
@@ -251,7 +264,7 @@
         }
 
         function clearAll() { 
-            if(!confirm("¿Borrar toda la lista?")) return;
+            if(!confirm("¿Anular carga actual?")) return;
             currentCarga = []; 
             localStorage.removeItem('tw_temp_route');
             localStorage.removeItem('tw_temp_placa');
@@ -287,15 +300,6 @@
             document.getElementById(id).classList.add('active');
             const navId = id.includes('plate') ? 'n-route' : 'n-' + id.split('-')[1];
             if(document.getElementById(navId)) document.getElementById(navId).classList.add('active');
-        }
-
-        function predictAndSave() { 
-            const placa = document.getElementById('sel-pla').value;
-            const l = db.find(r => r.placa === placa); 
-            if(l) { 
-                document.getElementById('sel-cho').value = l.chofer; 
-                document.getElementById('sel-aux').value = l.auxiliar; 
-            } 
         }
 
         async function syncData() {
@@ -334,6 +338,19 @@
         }
 
         function logout() { localStorage.clear(); location.reload(); }
+        function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
+        function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
+        
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const now = new Date();
+            const mes = now.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
+            doc.text(`REPORTE TWINS ELITE - ${mes}`, 14, 20);
+            const body = db.filter(r => new Date(r.fecha).getMonth() === now.getMonth()).map(r => [r.fecha, r.hora, r.placa, r.total, r.chofer]);
+            doc.autoTable({ head: [['Fecha', 'Hora', 'Placa', 'Cajas', 'Chofer']], body: body, startY: 30 });
+            doc.save(`Twins_Reporte_${mes}.pdf`);
+        }
     </script>
 </body>
 </html>
