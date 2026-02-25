@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - OFICIAL V7</title>
+    <title>TWINS ELITE - OFICIAL V8</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --bg: #0b0f17; --surface: #161c28; --accent: #007aff; 
             --text: #ffffff; --text-dim: #94a3b8; --border: #2d3748; 
-            --success: #34c759; --danger: #ff3b30; --warning: #ffcc00;
+            --success: #34c759; --danger: #ff3b30;
         }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
         body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
@@ -23,11 +21,6 @@
         .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(11, 15, 23, 0.9); backdrop-filter: blur(10px); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         
         .stat-banner { background: linear-gradient(135deg, #007aff, #0056b3); padding: 25px; border-radius: 24px; color: white; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0,122,255,0.2); }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 18px; text-align: center; }
-        .stat-card b { display: block; font-size: 20px; color: var(--accent); }
-        .stat-card small { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; }
-
         .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
         input, select { background: var(--surface); border: 2px solid var(--border); padding: 18px; border-radius: 16px; color: white; font-size: 16px; width: 100%; transition: 0.3s; }
         input:focus { border-color: var(--accent); }
@@ -37,19 +30,15 @@
 
         .route-item { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
         .card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .detail-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; margin: 12px 0; font-size: 13px; color: #cbd5e1; white-space: pre-line; border: 1px solid rgba(255,255,255,0.05); }
 
         .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 75px; border-radius: 22px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 26px; }
 
-        .login-btn { background: var(--surface); border: 1px solid var(--border); color: white; padding: 20px; border-radius: 20px; font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        
         .plate-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .plate-btn { background: var(--surface); border: 2px solid var(--border); padding: 25px 10px; border-radius: 18px; color: white; font-weight: 800; font-size: 16px; text-align: center; display: flex; flex-direction: column; gap: 5px; }
+        .plate-btn { background: var(--surface); border: 2px solid var(--border); padding: 25px 10px; border-radius: 18px; color: white; font-weight: 800; text-align: center; display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
         .plate-btn small { font-size: 10px; color: var(--accent); opacity: 0.8; }
-        .plate-btn:active { background: var(--accent); border-color: var(--accent); }
     </style>
 </head>
 <body>
@@ -62,7 +51,6 @@
     <div id="page-login" class="page active">
         <div style="text-align:center; padding:60px 0">
             <h2 style="font-weight:800;">Iniciar Sesión</h2>
-            <p style="color:var(--text-dim);">Identifícate para continuar</p>
         </div>
         <div id="login-options"></div>
     </div>
@@ -70,7 +58,7 @@
     <div id="page-select-plate" class="page">
         <div style="text-align:center; padding:30px 0">
             <h2 style="font-weight:800;">¿Qué unidad cargará?</h2>
-            <p style="color:var(--text-dim);">Selecciona la placa correspondiente</p>
+            <p style="color:var(--text-dim);">Selecciona para empezar la ruta</p>
         </div>
         <div id="plate-options" class="plate-selector"></div>
     </div>
@@ -80,7 +68,7 @@
             <div style="display:flex; justify-content:space-between; align-items:center">
                 <div><small style="font-weight:800; opacity:0.8">CAJAS CARGA</small><div id="count-cajas" style="font-size:48px; font-weight:800;">0</div></div>
                 <div style="text-align:right">
-                    <b id="active-plate-label" style="font-size:22px; display:block; color:#fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3)">---</b>
+                    <b id="active-plate-label" style="font-size:22px; display:block;">---</b>
                     <small style="font-weight:800; opacity:0.9">PUNTOS: <span id="count-puntos">0</span></small>
                 </div>
             </div>
@@ -94,10 +82,9 @@
             <button class="btn-add" onclick="addPoint()" style="flex:0.5; justify-content:center"><i class="ph-bold ph-plus" style="font-size:24px"></i></button>
         </div>
 
-        <div id="live-list"></div>
+        <div id="live-list" style="margin-top: 10px;"></div>
 
         <div id="finalize-area" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px">
-            <div style="font-size:11px; font-weight:800; color:var(--text-dim); margin-bottom:10px; letter-spacing:1px">VERIFICAR DATOS DE UNIDAD</div>
             <select id="sel-pla" onchange="predictAndSave()" style="margin-bottom:10px; border-color:var(--accent)"></select>
             <div class="input-group"><select id="sel-cho"></select><select id="sel-aux"></select></div>
             <button class="btn-main" onclick="openConfirm()">CONFIRMAR Y GUARDAR</button>
@@ -106,31 +93,13 @@
     </div>
 
     <div id="page-history" class="page">
-        <div class="stat-grid">
-            <div class="stat-card"><small>Hoy Cajas</small><b id="h-cajas-dia">0</b></div>
-            <div class="stat-card"><small>Hoy Envíos</small><b id="h-envios-dia">0</b></div>
-            <div class="stat-card"><small>Mes Cajas</small><b id="h-cajas-mes">0</b></div>
-            <div class="stat-card"><small>Mes Envíos</small><b id="h-envios-mes">0</b></div>
-        </div>
         <input type="date" id="filter-date" onchange="renderHistory()" style="margin-bottom:20px">
         <div id="history-feed"></div>
-    </div>
-
-    <div id="page-fleet" class="page"><div id="fleet-grid"></div></div>
-
-    <div id="page-stats" class="page">
-        <div class="card" style="text-align:center; padding:40px 20px;">
-            <i class="ph-fill ph-file-pdf" style="font-size:64px; color:var(--danger); margin-bottom:15px"></i>
-            <h3>Reporte Mensual</h3>
-            <button onclick="generatePDF()" class="btn-main" style="background:var(--danger);">DESCARGAR PDF</button>
-        </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
         <button class="nav-item active" id="n-route" onclick="checkNewRoute()"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
         <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-clock-counter-clockwise"></i>DATA</button>
-        <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
-        <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-fill ph-file-text"></i>REPORTE</button>
     </nav>
 
     <div id="modal-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; align-items:center; justify-content:center; padding:20px;">
@@ -145,54 +114,28 @@
         const API = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
         let activeUser = "", currentCarga = [], db = [];
 
-        // ASIGNACIONES OFICIALES
-        const ASIGNACION = {
-            "CEP-929": "ROMARIO",
-            "BPN-711": "CESAR C.",
-            "BVN-704": "LUIS H.",
-            "BUL-742": "WALDIR",
-            "BVN-930": "MARCELO"
-        };
-
-        const DATA = {
-            placas: Object.keys(ASIGNACION),
-            choferes: ["TAJHO", "LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"],
-            auxiliares: ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"],
-            soats: { "CEP-929": "2026-07-22", "BPN-711": "2026-06-10", "BVN-704": "2026-07-02", "BUL-742": "2026-04-02", "BVN-930": "2026-07-02" }
-        };
+        const ASIGNACION = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
+        const AUXILIARES = ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"];
 
         window.onload = () => {
             setupUI();
             const saved = localStorage.getItem('tw_logged');
-            if(saved) login(saved);
-
-            const savedRoute = localStorage.getItem('tw_temp_route');
-            if (savedRoute) {
-                currentCarga = JSON.parse(savedRoute);
-                const savedPlaca = localStorage.getItem('tw_temp_placa');
-                if(savedPlaca) {
-                    document.getElementById('sel-pla').value = savedPlaca;
-                    document.getElementById('active-plate-label').innerText = savedPlaca;
-                    predictAndSave();
-                }
-                refreshCargaUI();
-            }
-            syncData();
+            if(saved) login(saved, true);
         };
 
         function setupUI() {
             const opts = document.getElementById('login-options');
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                opts.innerHTML += `<div class="login-btn" onclick="checkPass('${u}')"><span>${u}</span><i class="ph-bold ph-caret-right"></i></div>`;
+                opts.innerHTML += `<div class="login-btn" onclick="checkPass('${u}')" style="background:var(--surface); padding:20px; border-radius:18px; margin-bottom:10px; border:1px solid var(--border); display:flex; justify-content:space-between; font-weight:700;">${u} <i class="ph-bold ph-caret-right"></i></div>`;
             });
 
-            document.getElementById('plate-options').innerHTML = DATA.placas.map(p => 
+            document.getElementById('plate-options').innerHTML = Object.keys(ASIGNACION).map(p => 
                 `<div class="plate-btn" onclick="startWithPlate('${p}')"><b>${p}</b><small>${ASIGNACION[p]}</small></div>`
             ).join('');
 
-            document.getElementById('sel-pla').innerHTML = '<option value="">Placa</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + DATA.choferes.map(c => `<option value="${c}">${c}</option>`).join('');
-            document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + DATA.auxiliares.map(a => `<option value="${a}">${a}</option>`).join('');
+            document.getElementById('sel-pla').innerHTML = '<option value="">Placa</option>' + Object.keys(ASIGNACION).map(p => `<option value="${p}">${p}</option>`).join('');
+            document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + Object.values(ASIGNACION).map(c => `<option value="${c}">${c}</option>`).join('');
+            document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + AUXILIARES.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
         function checkPass(u) {
@@ -202,36 +145,53 @@
             } else login(u);
         }
 
-        function login(u) { 
+        function login(u, isAuto = false) { 
             activeUser = u; 
             localStorage.setItem('tw_logged', u); 
             document.getElementById('page-login').classList.remove('active'); 
             document.getElementById('app-header').style.display = 'flex'; 
             document.getElementById('app-nav').style.display = 'flex'; 
             document.getElementById('user-info').innerText = u; 
-            if(u === "TAJHO ADMIN") document.getElementById('n-stats').style.display = "flex";
-            checkNewRoute();
+            
+            // Lógica crítica de inicio
+            const savedPlaca = localStorage.getItem('tw_temp_placa');
+            if(savedPlaca) {
+                // Si ya hay una placa en memoria, forzar pantalla de carga
+                resumeRoute(savedPlaca);
+            } else {
+                go('page-select-plate');
+            }
+            syncData();
+        }
+
+        function resumeRoute(p) {
+            const savedRoute = localStorage.getItem('tw_temp_route');
+            if(savedRoute) currentCarga = JSON.parse(savedRoute);
+            
+            document.getElementById('sel-pla').value = p;
+            document.getElementById('active-plate-label').innerText = p;
+            predictAndSave();
+            refreshCargaUI();
+            go('page-route');
         }
 
         function checkNewRoute() {
-            if(currentCarga.length === 0) go('page-select-plate');
-            else go('page-route');
+            const savedPlaca = localStorage.getItem('tw_temp_placa');
+            if(savedPlaca) go('page-route');
+            else go('page-select-plate');
         }
 
         function startWithPlate(p) {
+            localStorage.setItem('tw_temp_placa', p);
             document.getElementById('sel-pla').value = p;
             document.getElementById('active-plate-label').innerText = p;
-            localStorage.setItem('tw_temp_placa', p);
-            predictAndSave(); 
+            predictAndSave();
             go('page-route');
         }
 
         function predictAndSave() { 
-            const placa = document.getElementById('sel-pla').value;
-            // ASIGNACIÓN FIJA SEGÚN TU PEDIDO
-            if(ASIGNACION[placa]) {
-                document.getElementById('sel-cho').value = ASIGNACION[placa];
-            }
+            const p = document.getElementById('sel-pla').value;
+            if(ASIGNACION[p]) document.getElementById('sel-cho').value = ASIGNACION[p];
         }
 
         function addPoint() { 
@@ -273,10 +233,9 @@
         }
 
         async function finalize() {
-            const now = new Date();
             const r = {
-                fecha: now.toLocaleDateString('sv-SE'), 
-                hora: now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false }),
+                fecha: new Date().toLocaleDateString('sv-SE'), 
+                hora: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: false }),
                 chofer: document.getElementById('sel-cho').value,
                 auxiliar: document.getElementById('sel-aux').value,
                 placa: document.getElementById('sel-pla').value,
@@ -307,13 +266,12 @@
                 const res = await fetch(API);
                 const raw = await res.json();
                 db = raw.map(r => ({ ...r, total: parseFloat(r.total || 0) }));
-                renderHistory();
             } catch(e) {}
         }
 
         function renderHistory() {
             const container = document.getElementById('history-feed');
-            const selDate = document.getElementById('filter-date').value;
+            const selDate = document.getElementById('filter-date').value || new Date().toLocaleDateString('sv-SE');
             let h = "";
             db.forEach((r, i) => {
                 if(r.fecha.includes(selDate)) {
@@ -323,34 +281,16 @@
                             <b style="color:var(--accent)">${r.placa}</b>
                         </div>
                         <div style="font-weight:800; font-size:24px; margin:10px 0">${r.total} Cajas</div>
-                        <div class="detail-box">${(r.detalles || r.items || "").split(', ').join('\n')}</div>
-                        <button class="btn-add" style="width:100%; background:#25D366; height:50px; justify-content:center" onclick="shareWA(${i})">WhatsApp</button>
+                        <div style="font-size:12px; opacity:0.7; margin-bottom:10px">${r.items}</div>
                     </div>`;
                 }
             });
             container.innerHTML = h || `<p style="text-align:center; opacity:0.3; margin-top:50px">Sin datos</p>`;
         }
 
-        function shareWA(i) {
-            const r = db[i];
-            const msg = `*📦 DESPACHO TWINS ELITE*%0A*Placa:* ${r.placa}%0A*Cajas:* ${r.total}%0A*Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}`;
-            window.open(`https://wa.me/?text=${msg}`, '_blank');
-        }
-
         function logout() { localStorage.clear(); location.reload(); }
         function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
         function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
-        
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const now = new Date();
-            const mes = now.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
-            doc.text(`REPORTE TWINS ELITE - ${mes}`, 14, 20);
-            const body = db.filter(r => new Date(r.fecha).getMonth() === now.getMonth()).map(r => [r.fecha, r.hora, r.placa, r.total, r.chofer]);
-            doc.autoTable({ head: [['Fecha', 'Hora', 'Placa', 'Cajas', 'Chofer']], body: body, startY: 30 });
-            doc.save(`Twins_Reporte_${mes}.pdf`);
-        }
     </script>
 </body>
 </html>
