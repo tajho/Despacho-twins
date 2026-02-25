@@ -3,265 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ERP - V16</title>
+    <title>TWINS V7 | MIDNIGHT MODE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #f3f4f6; --primary: #1e293b; --accent: #2563eb;
-            --success: #059669; --danger: #dc2626; --white: #ffffff;
-        }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--primary); }
-
-        /* HEADER ESTRUCTURADO */
-        .header-main { background: var(--primary); color: white; padding: 16px 20px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* DASHBOARD DE CONTROL (Métricas Reales) */
-        .dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; background: var(--white); border-bottom: 1px solid #e5e7eb; }
-        .metric { padding: 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; }
-        .metric small { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; }
-        .metric div { font-size: 18px; font-weight: 800; margin-top: 4px; }
-        .full { grid-column: span 2; background: #eff6ff; border-color: #bfdbfe; }
-
-        /* CONTENEDOR DE PÁGINAS */
-        .page { display: none; padding: 10px 15px 120px 15px; max-width: 600px; margin: 0 auto; }
-        .active { display: block; }
-
-        /* FORMULARIOS TIPO ERP */
-        .form-group { background: var(--white); padding: 16px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #e5e7eb; }
-        label { font-size: 12px; font-weight: 700; color: #64748b; display: block; margin-bottom: 6px; }
-        select, input { width: 100%; padding: 12px; border-radius: 8px; border: 1.5px solid #e2e8f0; font-size: 15px; font-family: inherit; }
-
-        /* TARJETAS DE REGISTRO (Base de Datos) */
-        .data-card { background: var(--white); border-radius: 16px; margin-bottom: 12px; border: 1px solid #e5e7eb; overflow: hidden; }
-        .card-top { padding: 15px; display: flex; justify-content: space-between; align-items: flex-start; background: #fcfcfc; }
-        .card-info h4 { margin: 0; font-size: 16px; font-weight: 800; }
-        .card-info p { margin: 4px 0 0; font-size: 12px; color: #64748b; }
-        .card-badge { background: var(--primary); color: white; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 14px; }
-
-        /* ACCIONES ESTRUCTURADAS */
-        .card-actions { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #f1f5f9; }
-        .action-btn { padding: 12px; border: none; background: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; border-right: 1px solid #f1f5f9; }
-        .action-btn i { font-size: 18px; }
-        .action-btn:last-child { border-right: none; }
-        
-        .list-view { background: #f8fafc; padding: 12px; font-size: 12px; display: none; border-top: 1px solid #f1f5f9; }
-
-        /* NAV BAR */
-        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); display: flex; padding: 10px 0; z-index: 200; }
-        .nav-btn { flex: 1; border: none; background: none; color: #94a3b8; font-size: 10px; font-weight: 700; display: flex; flex-direction: column; align-items: center; }
-        .nav-btn.active { color: white; }
-        .nav-btn i { font-size: 24px; margin-bottom: 2px; }
-    </style>
-</head>
-<body>
-
-    <header class="header-main">
-        <div style="font-weight: 800; letter-spacing: -0.5px;">TWINS <span style="color: #60a5fa;">SYSTEM</span></div>
-        <div id="user-display" style="font-size: 11px; opacity: 0.8;"></div>
-    </header>
-
-    <div class="dashboard" id="dashboard-stats" style="display:none">
-        <div class="metric full">
-            <small>Cajas Mes (Feb 2026)</small>
-            <div id="m-total-mes">0</div>
-        </div>
-        <div class="metric">
-            <small>Cajas Hoy</small>
-            <div id="m-total-hoy">0</div>
-        </div>
-        <div class="metric">
-            <small>Despachos Hoy</small>
-            <div id="m-viajes-hoy">0</div>
-        </div>
-    </div>
-
-    <div id="page-entry" class="page active">
-        <div class="form-group">
-            <label>DATOS DE CABECERA (LOGÍSTICA)</label>
-            <select id="f-placa" onchange="autoFill()"></select>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px">
-                <select id="f-chofer"></select>
-                <select id="f-auxiliar"></select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>DETALLE DE CARGA</label>
-            <input type="text" id="f-cliente" placeholder="Cliente / Factura">
-            <input type="number" id="f-cajas" placeholder="Cant. Cajas" style="margin-top:10px">
-            <button onclick="addToList()" style="width:100%; margin-top:12px; background:var(--primary); color:white; padding:12px; border-radius:8px; border:none; font-weight:700;">+ AGREGAR ITEM</button>
-        </div>
-
-        <div id="temp-list"></div>
-        
-        <button id="btn-save" style="display:none; width:100%; background:var(--success); color:white; padding:18px; border-radius:12px; border:none; font-weight:800; font-size:16px; margin-top:20px; box-shadow: 0 4px 12px rgba(5,150,105,0.3);" onclick="saveToDB()">FINALIZAR Y REGISTRAR</button>
-    </div>
-
-    <div id="page-data" class="page">
-        <div style="margin-bottom:15px; display:flex; gap:10px">
-            <input type="date" id="filter-date" onchange="refreshData()">
-            <button onclick="sync()" style="padding:10px; border-radius:8px; border:1px solid #ccc; background:white"><i class="ph ph-arrows-clockwise"></i></button>
-        </div>
-        <div id="data-container"></div>
-    </div>
-
-    <nav class="nav-bottom" id="nav-bar" style="display:none">
-        <button class="nav-btn active" onclick="go('page-entry', this)"><i class="ph-fill ph-note-pencil"></i>CARGA</button>
-        <button class="nav-btn" onclick="go('page-data', this)"><i class="ph-fill ph-database"></i>DATOS</button>
-    </nav>
-
-    <script>
-        const DB_URL = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
-        
-        // MAESTROS (Estructura de Referencia)
-        const MASTER = {
-            placas: ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"],
-            choferes: ["TAJHO", "LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"],
-            auxiliares: ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"]
-        };
-
-        let tempItems = [];
-        let globalDB = [];
-
-        window.onload = () => {
-            initSystem();
-            sync();
-        };
-
-        function initSystem() {
-            document.getElementById('f-placa').innerHTML = '<option value="">-- SELECCIONE PLACA --</option>' + MASTER.placas.map(p=>`<option value="${p}">${p}</option>`).join('');
-            document.getElementById('f-chofer').innerHTML = '<option value="">Chofer</option>' + MASTER.choferes.map(c=>`<option value="${c}">${c}</option>`).join('');
-            document.getElementById('f-auxiliar').innerHTML = '<option value="">Auxiliar</option>' + MASTER.auxiliares.map(a=>`<option value="${a}">${a}</option>`).join('');
-            document.getElementById('filter-date').value = new Date().toLocaleDateString('sv-SE');
-            
-            // Simulación de login para registro
-            localStorage.setItem('operario', 'FRANCESCO');
-            document.getElementById('user-display').innerText = "OP: " + localStorage.getItem('operario');
-            document.getElementById('dashboard-stats').style.display = 'grid';
-            document.getElementById('nav-bar').style.display = 'flex';
+            /* Paleta Moderna Oscura */
+            --bg: #0f172a;        /* Azul noche profundo */
+            --card: #1e293b;      /* Gris azulado pizarra */
+            --text: #f8fafc;      /* Blanco azulado */
+            --twins-blue: #3b82f6; /* Azul brillante */
+            --twins-green: #22c55e; /* Verde neón */
+            --border: #334155;    /* Borde sutil */
+            --input-bg: #0f172a;  /* Fondo de inputs */
+            --danger: #ef4444;    /* Rojo alerta */
+            --accent: #6366f1;    /* Violeta para degradados */
         }
 
-        function addToList() {
-            const cli = document.getElementById('f-cliente').value.toUpperCase();
-            const can = document.getElementById('f-cajas').value;
-            if(!cli || !can) return alert("Complete cliente y cajas");
-            
-            tempItems.push({ cli, can: parseInt(can) });
-            document.getElementById('f-cliente').value = "";
-            document.getElementById('f-cajas').value = "";
-            renderTemp();
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif; overscroll-behavior-y: auto;
         }
 
-        function renderTemp() {
-            const cont = document.getElementById('temp-list');
-            cont.innerHTML = tempItems.map((it, i) => `
-                <div style="display:flex; justify-content:space-between; padding:10px; background:white; margin-top:5px; border-radius:8px; border:1px solid #e5e7eb">
-                    <span>${it.cli}</span><b>${it.can} Cjs</b>
-                </div>
-            `).join('');
-            document.getElementById('btn-save').style.display = tempItems.length > 0 ? 'block' : 'none';
+        .app-container { display: flex; flex-direction: column; min-height: 100vh; }
+        .page { display: none; padding: 12px; padding-bottom: 80px; }
+        .active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* CABECERA */
+        .top-header { 
+            position: sticky; top: 0; z-index: 100;
+            background: var(--card); padding: 14px 18px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        async function saveToDB() {
-            const data = {
-                fecha: new Date().toLocaleDateString('sv-SE'),
-                placa: document.getElementById('f-placa').value,
-                chofer: document.getElementById('f-chofer').value,
-                auxiliar: document.getElementById('f-auxiliar').value,
-                total: tempItems.reduce((a, b) => a + b.can, 0),
-                items: tempItems.map(x => `${x.cli}: ${x.can}`).join(", "),
-                operario: localStorage.getItem('operario')
-            };
-
-            // Guardado optimista (UI primero)
-            globalDB.unshift(data);
-            tempItems = [];
-            renderTemp();
-            refreshData();
-            go('page-data');
-
-            // Envío real
-            await fetch(DB_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+        /* NAVEGACIÓN INFERIOR */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; height: 70px; 
+            background: var(--card); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
         }
 
-        function refreshData() {
-            const cont = document.getElementById('data-container');
-            const fDate = document.getElementById('filter-date').value;
-            const currentMonth = new Date().getMonth();
-            
-            let mMes = 0, mHoy = 0, vHoy = 0;
+        .nav-item { border: none; background: none; color: var(--text); font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; opacity: 0.4; transition: 0.2s; }
+        .nav-item.active-nav { color: var(--twins-blue); opacity: 1; border-top: 3px solid var(--twins-blue); }
 
-            const filtered = globalDB.filter(r => {
-                const rFecha = new Date(r.fecha + "T12:00:00");
-                // Stats
-                if(rFecha.getMonth() === currentMonth) mMes += parseInt(r.total);
-                if(r.fecha === fDate) { mHoy += parseInt(r.total); vHoy++; }
-                
-                return r.fecha === fDate;
-            });
-
-            // Update Metrics
-            document.getElementById('m-total-mes').innerText = mMes.toLocaleString() + " Cjs";
-            document.getElementById('m-total-hoy').innerText = mHoy.toLocaleString();
-            document.getElementById('m-viajes-hoy').innerText = vHoy;
-
-            cont.innerHTML = filtered.map((r, i) => `
-                <div class="data-card">
-                    <div class="card-top">
-                        <div class="card-info">
-                            <h4>${r.placa}</h4>
-                            <p>${r.chofer} / ${r.auxiliar}</p>
-                        </div>
-                        <div class="card-badge">${r.total} CJS</div>
-                    </div>
-                    <div id="details-${i}" class="list-view">
-                        <strong>Items:</strong><br>${r.items}
-                    </div>
-                    <div class="card-actions">
-                        <button class="action-btn" onclick="toggleDet(${i})"><i class="ph ph-list-magnifying-glass"></i>VER LISTA</button>
-                        <button class="action-btn" style="color:var(--accent)" onclick="editRow(${i})"><i class="ph ph-pencil-simple"></i>EDITAR</button>
-                        <button class="action-btn" style="color:var(--success)" onclick="sendWA(${i})"><i class="ph ph-whatsapp-logo"></i>WHATSAPP</button>
-                    </div>
-                </div>
-            `).join('');
+        /* ELEMENTOS VISUALES */
+        .banner-total { 
+            background: linear-gradient(135deg, var(--twins-blue), var(--accent)); 
+            color: white; border-radius: 15px; padding: 20px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 15px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
 
-        async function sync() {
-            const res = await fetch(DB_URL);
-            globalDB = await res.json();
-            refreshData();
-        }
+        .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
 
-        function toggleDet(i) {
-            const el = document.getElementById(`details-${i}`);
-            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        input, select { 
+            width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; 
+            border: 1px solid var(--border); background: var(--input-bg); 
+            color: var(--text); font-size: 16px; box-sizing: border-box; 
+            outline: none; transition: 0.2s;
         }
-
-        function sendWA(i) {
-            const r = globalDB[i];
-            const msg = `*REPORTE TWINS*%0A*Placa:* ${r.placa}%0A*Cajas:* ${r.total}%0A*Detalle:* ${r.items}`;
-            window.open(`https://wa.me/?text=${msg}`);
-        }
-
-        function autoFill() {
-            const p = document.getElementById('f-placa').value;
-            const last = globalDB.find(x => x.placa === p);
-            if(last) {
-                document.getElementById('f-chofer').value = last.chofer;
-                document.getElementById('f-auxiliar').value = last.auxiliar;
-            }
-        }
-
-        function go(p, btn) {
-            document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
-            document.getElementById(p).classList.add('active');
-            if(btn) {
-                document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-                btn.classList.add('active');
-            }
-        }
-    </script>
-</body>
-</html>
