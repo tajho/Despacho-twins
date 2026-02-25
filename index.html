@@ -1,930 +1,284 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TWINS DESPACHO — Propuesta UX/UI</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #07090f;
-    --surface: #0f1420;
-    --card: #141b2d;
-    --border: #1e2a42;
-    --accent: #00c8ff;
-    --accent2: #7c3aed;
-    --success: #00e676;
-    --danger: #ff3d57;
-    --warning: #ffab00;
-    --text: #e8eaf6;
-    --dim: #546e7a;
-    --mono: 'Space Mono', monospace;
-    --sans: 'DM Sans', sans-serif;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TWINS V13 - FÁCIL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --bg: #0b0f17; --surface: #161c28; --accent: #007aff; 
+            --text: #ffffff; --text-dim: #94a3b8; --border: #2d3748; 
+            --success: #34c759; --danger: #ff3b30;
+        }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        
+        .page { display: none; padding: 10px 15px 140px 15px; max-width: 500px; margin: 0 auto; }
+        .active { display: block !important; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+        /* HEADER */
+        .top-header { position: sticky; top: 0; z-index: 1000; background: var(--bg); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
 
-  /* ====== LAYOUT GENERAL ====== */
-  .layout { display: flex; min-height: 100vh; }
+        /* INPUTS GRANDES PARA DEDOS GRANDES */
+        input, select { background: #1f2937; border: 2px solid var(--border); padding: 18px; border-radius: 16px; color: white; font-size: 16px; width: 100%; margin-bottom: 12px; transition: 0.3s; }
+        input:focus { border-color: var(--accent); }
 
-  /* ====== SIDEBAR NAVEGACIÓN ====== */
-  .sidebar {
-    width: 280px; min-width: 280px; background: var(--surface);
-    border-right: 1px solid var(--border); padding: 30px 0;
-    display: flex; flex-direction: column;
-    position: sticky; top: 0; height: 100vh; overflow-y: auto;
-  }
-  .sidebar-logo { padding: 0 24px 30px; border-bottom: 1px solid var(--border); }
-  .sidebar-logo h1 { font-family: var(--mono); font-size: 18px; letter-spacing: 2px; }
-  .sidebar-logo h1 span { color: var(--accent); }
-  .sidebar-logo p { font-size: 10px; color: var(--dim); font-family: var(--mono); margin-top: 4px; letter-spacing: 1px; }
+        /* BOTONES DE CANTIDAD RÁPIDA */
+        .qty-pills { display: flex; gap: 8px; margin-bottom: 15px; }
+        .pill { flex: 1; background: var(--border); padding: 12px; border-radius: 12px; text-align: center; font-weight: 800; font-size: 14px; cursor: pointer; }
+        .pill:active { background: var(--accent); }
 
-  .sidebar-section { padding: 20px 16px 8px; font-size: 9px; font-weight: 700; color: var(--dim); letter-spacing: 2px; font-family: var(--mono); }
+        /* TARJETAS DE RUTA */
+        .card-route { background: var(--surface); border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 15px; position: relative; }
+        .status-tag { position: absolute; top: 15px; right: 15px; font-size: 10px; padding: 4px 10px; border-radius: 20px; font-weight: 800; text-transform: uppercase; }
+        .tag-hoy { background: rgba(52, 199, 89, 0.2); color: var(--success); }
+        .tag-manana { background: rgba(0, 122, 255, 0.2); color: var(--accent); }
 
-  .screen-btn {
-    display: flex; align-items: center; gap: 12px;
-    padding: 12px 24px; cursor: pointer; transition: all 0.2s;
-    border: none; background: none; color: var(--dim); width: 100%;
-    text-align: left; font-family: var(--sans); font-size: 13px; font-weight: 600;
-    position: relative;
-  }
-  .screen-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
-  .screen-btn.active { color: var(--accent); background: rgba(0,200,255,0.06); }
-  .screen-btn.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 0 2px 2px 0; }
-  .screen-btn .icon { font-size: 16px; width: 20px; text-align: center; }
-  .badge { margin-left: auto; background: var(--accent); color: #000; font-size: 9px; font-weight: 800; font-family: var(--mono); padding: 2px 7px; border-radius: 20px; }
-  .badge.new { background: var(--success); }
+        /* BOTÓN FLOTANTE DE GUARDADO */
+        .btn-save-fixed { position: fixed; bottom: 100px; left: 20px; right: 20px; background: var(--success); color: white; padding: 22px; border-radius: 24px; border: none; font-size: 18px; font-weight: 800; box-shadow: 0 10px 30px rgba(52, 199, 89, 0.4); z-index: 1500; display: none; }
 
-  .sidebar-note { margin: auto 16px 0; background: rgba(0,200,255,0.05); border: 1px solid rgba(0,200,255,0.2); border-radius: 12px; padding: 14px; font-size: 11px; color: var(--dim); line-height: 1.6; }
-  .sidebar-note strong { color: var(--accent); display: block; margin-bottom: 6px; }
+        /* NAVEGACIÓN TIPO APP MODERNA */
+        .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 75px; border-radius: 25px; display: flex; border: 1px solid var(--border); z-index: 2000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 26px; margin-bottom: 4px; }
 
-  /* ====== CONTENIDO PRINCIPAL ====== */
-  .main { flex: 1; padding: 40px; overflow-y: auto; }
-  .section-header { margin-bottom: 30px; }
-  .section-header h2 { font-size: 22px; font-weight: 800; font-family: var(--mono); }
-  .section-header h2 span { color: var(--accent); }
-  .section-header p { color: var(--dim); font-size: 13px; margin-top: 6px; line-height: 1.5; }
-
-  /* ====== PANTALLAS (SCREENS) ====== */
-  .screen { display: none; }
-  .screen.active { display: block; }
-
-  /* ====== MOCKUP WRAPPER ====== */
-  .mockup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
-  .mockup-grid.single { grid-template-columns: 1fr; }
-  .mockup-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
-
-  .mockup-box { background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
-  .mockup-label { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .mockup-label h3 { font-size: 11px; font-weight: 700; font-family: var(--mono); color: var(--dim); letter-spacing: 1px; }
-  .tag { font-size: 9px; padding: 3px 10px; border-radius: 20px; font-weight: 700; font-family: var(--mono); }
-  .tag.mejora { background: rgba(0,230,118,0.15); color: var(--success); border: 1px solid rgba(0,230,118,0.3); }
-  .tag.nuevo { background: rgba(0,200,255,0.15); color: var(--accent); border: 1px solid rgba(0,200,255,0.3); }
-  .tag.actual { background: rgba(84,110,122,0.2); color: var(--dim); border: 1px solid var(--border); }
-  .tag.critico { background: rgba(255,61,87,0.15); color: var(--danger); border: 1px solid rgba(255,61,87,0.3); }
-
-  .phone-frame { width: 280px; margin: 20px auto; background: #07090f; border: 2px solid #1e2a42; border-radius: 40px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.6); min-height: 560px; position: relative; }
-  .phone-notch { background: #0f1420; height: 28px; display: flex; align-items: center; justify-content: center; }
-  .phone-notch div { width: 80px; height: 6px; background: #1e2a42; border-radius: 3px; }
-  .phone-content { padding: 12px; min-height: 500px; }
-
-  /* ====== COMPONENTES DE WIREFRAME ====== */
-  /* Login */
-  .wf-logo-area { text-align: center; padding: 30px 0 20px; }
-  .wf-logo { font-family: var(--mono); font-size: 22px; font-weight: 700; }
-  .wf-logo span { color: var(--accent); }
-  .wf-sub { font-size: 10px; color: var(--dim); margin-top: 4px; }
-  .wf-avatar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-  .wf-avatar-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 10px; text-align: center; cursor: pointer; transition: all 0.2s; }
-  .wf-avatar-btn:hover { border-color: var(--accent); }
-  .wf-avatar-btn:active { background: rgba(0,200,255,0.1); }
-  .wf-avatar-circle { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent2), var(--accent)); border-radius: 50%; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
-  .wf-avatar-name { font-size: 10px; font-weight: 700; }
-  .wf-avatar-role { font-size: 9px; color: var(--dim); margin-top: 2px; }
-  .wf-pin-area { background: var(--surface); border: 1px dashed rgba(0,200,255,0.3); border-radius: 14px; padding: 14px; margin-top: 12px; text-align: center; }
-  .wf-pin-label { font-size: 9px; color: var(--accent); font-family: var(--mono); margin-bottom: 8px; }
-  .wf-pin-dots { display: flex; gap: 8px; justify-content: center; }
-  .wf-pin-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--accent); }
-  .wf-pin-dot.filled { background: var(--accent); }
-
-  /* Header */
-  .wf-header { background: rgba(0,200,255,0.05); border-bottom: 1px solid var(--border); padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; }
-  .wf-header-title { font-family: var(--mono); font-size: 12px; font-weight: 700; }
-  .wf-header-title span { color: var(--accent); }
-  .wf-user-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; font-size: 9px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
-  .wf-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
-
-  /* Carga de ruta */
-  .wf-vehicle-card { background: rgba(0,200,255,0.04); border: 1px solid rgba(0,200,255,0.25); border-radius: 16px; padding: 12px; margin-bottom: 10px; }
-  .wf-vehicle-label { font-size: 9px; color: var(--accent); font-weight: 800; font-family: var(--mono); margin-bottom: 8px; }
-  .wf-select { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 11px; width: 100%; color: var(--text); }
-  .wf-crew-row { display: flex; gap: 6px; margin-top: 6px; }
-  .wf-input { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 11px; color: var(--text); width: 100%; }
-  .wf-add-row { display: flex; gap: 6px; margin-top: 10px; }
-  .wf-add-btn { background: var(--accent); border: none; border-radius: 10px; color: #000; font-size: 10px; font-weight: 800; padding: 0 12px; cursor: pointer; white-space: nowrap; }
-  
-  /* Progress bar nueva */
-  .wf-progress-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin: 8px 0; }
-  .wf-pb-top { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 6px; }
-  .wf-pb-top span:last-child { color: var(--accent); font-weight: 800; }
-  .wf-pb-track { background: var(--border); border-radius: 4px; height: 5px; }
-  .wf-pb-fill { background: linear-gradient(90deg, var(--accent), var(--success)); height: 5px; border-radius: 4px; }
-
-  /* Manifest items */
-  .wf-manifest-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-  .wf-manifest-num { background: var(--accent); color: #000; width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; font-family: var(--mono); flex-shrink: 0; }
-  .wf-manifest-info { flex: 1; }
-  .wf-manifest-info b { font-size: 11px; display: block; }
-  .wf-manifest-info span { font-size: 9px; color: var(--dim); }
-  .wf-manifest-cjs { color: var(--success); font-size: 13px; font-weight: 800; font-family: var(--mono); }
-  .wf-trash { color: var(--danger); font-size: 12px; cursor: pointer; }
-
-  /* Total banner */
-  .wf-total { background: linear-gradient(135deg, rgba(0,230,118,0.1), rgba(0,200,255,0.05)); border: 1px solid rgba(0,230,118,0.3); border-radius: 14px; padding: 14px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; }
-  .wf-total-num { font-size: 28px; font-weight: 800; font-family: var(--mono); color: var(--success); }
-  .wf-total-label { font-size: 9px; color: var(--dim); }
-  .wf-save-btn { background: var(--success); color: #000; border: none; border-radius: 12px; padding: 10px 16px; font-size: 11px; font-weight: 800; cursor: pointer; }
-
-  /* Historial / Data */
-  .wf-filters { display: flex; gap: 6px; margin-bottom: 10px; }
-  .wf-chip { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: 9px; font-weight: 700; white-space: nowrap; cursor: pointer; }
-  .wf-chip.active { background: rgba(0,200,255,0.1); border-color: var(--accent); color: var(--accent); }
-  .wf-hist-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 6px; }
-  .wf-hist-top { display: flex; justify-content: space-between; margin-bottom: 8px; }
-  .wf-hist-placa { font-family: var(--mono); font-size: 13px; font-weight: 700; }
-  .wf-hist-fecha { font-size: 9px; color: var(--accent); font-weight: 700; font-family: var(--mono); }
-  .wf-hist-big { font-size: 22px; font-weight: 800; font-family: var(--mono); margin-bottom: 4px; }
-  .wf-hist-crew { font-size: 9px; color: var(--dim); }
-  .wf-hist-actions { display: flex; gap: 6px; margin-top: 8px; }
-  .wf-hist-btn { flex: 1; background: var(--border); border: none; border-radius: 8px; padding: 6px; font-size: 9px; font-weight: 700; color: var(--text); cursor: pointer; }
-  .wf-hist-btn.wa { background: rgba(37,211,102,0.15); color: #25d366; border: 1px solid rgba(37,211,102,0.3); }
-  .wf-hist-btn.pdf { background: rgba(255,61,87,0.1); color: var(--danger); border: 1px solid rgba(255,61,87,0.3); }
-
-  /* Stats cards */
-  .wf-stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-  .wf-stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px; text-align: center; }
-  .wf-stat-num { font-size: 22px; font-weight: 800; font-family: var(--mono); color: var(--accent); }
-  .wf-stat-label { font-size: 9px; color: var(--dim); margin-top: 2px; }
-
-  /* Flota */
-  .wf-fleet-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
-  .wf-fleet-icon { width: 36px; height: 36px; background: var(--card); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; border: 1px solid var(--border); }
-  .wf-fleet-info { flex: 1; }
-  .wf-fleet-placa { font-family: var(--mono); font-size: 13px; font-weight: 700; }
-  .wf-fleet-soat { font-size: 9px; color: var(--dim); margin-top: 2px; }
-  .wf-fleet-days { text-align: right; }
-  .wf-days-num { font-size: 20px; font-weight: 800; font-family: var(--mono); }
-  .wf-days-label { font-size: 8px; color: var(--dim); }
-
-  /* Bottom nav */
-  .wf-nav { background: rgba(15,20,32,0.97); border-top: 1px solid var(--border); display: flex; padding: 8px 0 4px; }
-  .wf-nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 7px; font-weight: 700; color: var(--dim); cursor: pointer; }
-  .wf-nav-item.active { color: var(--accent); }
-  .wf-nav-icon { font-size: 18px; line-height: 1; }
-
-  /* ====== ANNOTATIONS ====== */
-  .annotations { margin-top: 24px; }
-  .annotation { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px; margin-bottom: 10px; }
-  .annotation-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; font-family: var(--mono); flex-shrink: 0; margin-top: 2px; }
-  .annotation-num.mejora { background: rgba(0,230,118,0.15); color: var(--success); border: 1px solid rgba(0,230,118,0.3); }
-  .annotation-num.nuevo { background: rgba(0,200,255,0.15); color: var(--accent); border: 1px solid rgba(0,200,255,0.3); }
-  .annotation-num.critico { background: rgba(255,61,87,0.15); color: var(--danger); border: 1px solid rgba(255,61,87,0.3); }
-  .annotation-text h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-  .annotation-text p { font-size: 12px; color: var(--dim); line-height: 1.5; }
-
-  /* ====== SECCIÓN DE COMPARACIÓN ====== */
-  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .compare-side h4 { font-size: 11px; font-family: var(--mono); font-weight: 700; padding: 8px 14px; border-radius: 8px 8px 0 0; text-align: center; }
-  .compare-side h4.actual { background: rgba(84,110,122,0.2); color: var(--dim); }
-  .compare-side h4.nuevo { background: rgba(0,200,255,0.1); color: var(--accent); }
-
-  /* ====== OVERVIEW DE MEJORAS ====== */
-  .improvements-overview { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 30px; }
-  .imp-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
-  .imp-card .imp-icon { font-size: 28px; margin-bottom: 12px; }
-  .imp-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
-  .imp-card p { font-size: 11px; color: var(--dim); line-height: 1.6; }
-  .imp-card ul { font-size: 11px; color: var(--dim); list-style: none; line-height: 1.8; }
-  .imp-card ul li::before { content: '→ '; color: var(--accent); }
-
-  /* ====== NUEVA FEATURE: CONFIRMACIÓN MEJORADA ====== */
-  .wf-modal-overlay { background: rgba(0,0,0,0.85); position: absolute; inset: 0; border-radius: 38px; display: flex; align-items: flex-end; }
-  .wf-modal { background: var(--card); border: 1px solid var(--border); border-radius: 24px 24px 0 0; width: 100%; padding: 20px 16px; }
-  .wf-modal h3 { font-size: 15px; font-weight: 800; text-align: center; margin-bottom: 4px; }
-  .wf-modal p { font-size: 10px; color: var(--dim); text-align: center; margin-bottom: 16px; }
-  .wf-modal-summary { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; justify-content: space-around; }
-  .wf-ms-item { text-align: center; }
-  .wf-ms-item b { display: block; font-size: 16px; font-family: var(--mono); color: var(--accent); }
-  .wf-ms-item span { font-size: 8px; color: var(--dim); }
-  .wf-modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .wf-modal-btn { border: none; border-radius: 12px; padding: 14px; font-size: 11px; font-weight: 800; cursor: pointer; }
-  .wf-modal-btn.hoy { background: var(--success); color: #000; }
-  .wf-modal-btn.man { background: rgba(0,200,255,0.15); color: var(--accent); border: 1px solid rgba(0,200,255,0.3); }
-  .wf-modal-close { display: block; text-align: center; margin-top: 10px; font-size: 9px; color: var(--dim); cursor: pointer; }
-
-  /* NAV ACTUAL VS NUEVO */
-  .nav-compare { display: flex; gap: 12px; margin-bottom: 16px; }
-  .nav-compare > div { flex: 1; }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  /* RESPONSIVE */
-  @media (max-width: 1100px) { .mockup-grid.triple { grid-template-columns: 1fr 1fr; } .improvements-overview { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 900px) { .sidebar { width: 220px; min-width: 220px; } }
-  @media (max-width: 700px) { .layout { flex-direction: column; } .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); } .mockup-grid { grid-template-columns: 1fr; } .compare-grid { grid-template-columns: 1fr; } .improvements-overview { grid-template-columns: 1fr; } .sidebar { display: flex; flex-direction: row; flex-wrap: wrap; padding: 16px; gap: 8px; } .sidebar-logo { padding: 0; border: none; flex-basis: 100%; } .sidebar-section { display: none; } .screen-btn { border-radius: 12px; border: 1px solid var(--border); padding: 8px 14px; } .main { padding: 20px; } }
-</style>
+        .btn-danger { background: rgba(255, 59, 48, 0.1); color: var(--danger); border: none; padding: 12px; border-radius: 12px; font-weight: 700; width: 100%; }
+    </style>
 </head>
 <body>
 
-<div class="layout">
+    <header id="app-header" class="top-header" style="display:none">
+        <div style="font-weight:900; font-size:20px; letter-spacing:-1px">TWINS<span style="color:var(--accent)">.</span></div>
+        <div id="user-info" style="font-size:12px; font-weight:800; opacity:0.6"></div>
+    </header>
 
-  <!-- SIDEBAR -->
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <h1>TWINS <span>DESPACHO</span></h1>
-      <p>PROPUESTA UX/UI v1.0</p>
+    <div id="page-login" class="page active">
+        <div style="padding:40px 0; text-align:center">
+            <h1 style="font-size:32px; font-weight:800; margin-bottom:10px">¡Hola! 👋</h1>
+            <p style="color:var(--text-dim)">Toca tu nombre para empezar</p>
+        </div>
+        <div id="login-options"></div>
     </div>
 
-    <div class="sidebar-section">PANTALLAS</div>
+    <div id="page-route" class="page">
+        <div style="margin-bottom:20px">
+            <label style="font-size:12px; font-weight:800; color:var(--accent); margin-left:5px">1. ¿QUÉ CAMIÓN CARGA?</label>
+            <select id="sel-pla" onchange="predictAndSave()" style="margin-top:8px"></select>
+            
+            <div style="display:flex; gap:10px">
+                <select id="sel-cho" style="font-size:14px"></select>
+                <select id="sel-aux" style="font-size:14px"></select>
+            </div>
+        </div>
 
-    <button class="screen-btn active" onclick="showScreen('resumen')">
-      <span class="icon">📊</span> Resumen General
-    </button>
-    <button class="screen-btn" onclick="showScreen('login')">
-      <span class="icon">🔑</span> Login
-      <span class="badge mejora">MEJORA</span>
-    </button>
-    <button class="screen-btn" onclick="showScreen('carga')">
-      <span class="icon">📦</span> Carga de Ruta
-      <span class="badge mejora">MEJORA</span>
-    </button>
-    <button class="screen-btn" onclick="showScreen('confirmacion')">
-      <span class="icon">✅</span> Modal Confirmación
-      <span class="badge new">NUEVO</span>
-    </button>
-    <button class="screen-btn" onclick="showScreen('historial')">
-      <span class="icon">📋</span> Historial / Data
-      <span class="badge mejora">MEJORA</span>
-    </button>
-    <button class="screen-btn" onclick="showScreen('flota')">
-      <span class="icon">🚛</span> Flota
-    </button>
-    <button class="screen-btn" onclick="showScreen('nav')">
-      <span class="icon">🗂️</span> Navegación
-      <span class="badge mejora">MEJORA</span>
-    </button>
+        <div style="background:var(--surface); padding:20px; border-radius:24px; border:1px solid var(--border)">
+            <label style="font-size:12px; font-weight:800; color:var(--text-dim)">2. AÑADIR FACTURAS / CLIENTES</label>
+            <input type="text" id="inp-cli" placeholder="Nombre o Factura" style="margin-top:10px">
+            
+            <input type="number" id="inp-can" placeholder="¿Cuántas cajas?" style="font-size:24px; text-align:center; font-weight:800">
+            
+            <div class="qty-pills">
+                <div class="pill" onclick="addQty(1)">+1</div>
+                <div class="pill" onclick="addQty(5)">+5</div>
+                <div class="pill" onclick="addQty(10)">+10</div>
+                <div class="pill" style="color:var(--danger)" onclick="document.getElementById('inp-can').value=''">Borrar</div>
+            </div>
 
-    <div class="sidebar-note">
-      <strong>💡 Cómo leer esto</strong>
-      Haz clic en cada sección para ver el wireframe interactivo + las mejoras propuestas con anotaciones.
-    </div>
-  </nav>
+            <button class="btn-main" onclick="addPoint()" style="background:var(--accent); width:100%; padding:20px; border-radius:18px; border:none; color:white; font-weight:800; font-size:16px">+ AGREGAR A LA LISTA</button>
+        </div>
 
-  <!-- MAIN CONTENT -->
-  <main class="main">
-
-    <!-- ===== RESUMEN GENERAL ===== -->
-    <div id="screen-resumen" class="screen active">
-      <div class="section-header">
-        <h2>Propuesta <span>UX/UI</span> — TWINS DESPACHO</h2>
-        <p>Análisis del código existente + wireframes con mejoras concretas para cada pantalla.</p>
-      </div>
-
-      <div class="improvements-overview">
-        <div class="imp-card">
-          <div class="imp-icon">🔑</div>
-          <h4>Login más seguro</h4>
-          <p>Reemplazar clic simple por avatares con PIN numérico visual para el usuario ADMIN.</p>
-          <ul>
-            <li>Avatares con iniciales de color</li>
-            <li>PIN visual tipo puntos</li>
-            <li>Indicador de rol activo</li>
-          </ul>
-        </div>
-        <div class="imp-card">
-          <div class="imp-icon">📦</div>
-          <h4>Carga de Ruta mejorada</h4>
-          <p>Agregar barra de progreso visual y resumen en tiempo real del manifesto.</p>
-          <ul>
-            <li>Contador de cajas en vivo</li>
-            <li>Barra de progreso objetivo</li>
-            <li>Feedback visual al agregar</li>
-          </ul>
-        </div>
-        <div class="imp-card">
-          <div class="imp-icon">✅</div>
-          <h4>Confirmación mejorada</h4>
-          <p>Modal con resumen de datos antes de guardar: evita errores críticos.</p>
-          <ul>
-            <li>Muestra placa, chofer, total</li>
-            <li>Botones claros HOY / MAÑANA</li>
-            <li>Sin confirmaciones accidentales</li>
-          </ul>
-        </div>
-        <div class="imp-card">
-          <div class="imp-icon">📋</div>
-          <h4>Historial con filtros</h4>
-          <p>Chips de filtro rápido y acciones directas en cada tarjeta (WA + PDF).</p>
-          <ul>
-            <li>Filtros por día / semana / mes</li>
-            <li>Acceso directo a WA</li>
-            <li>Exportar PDF por ruta</li>
-          </ul>
-        </div>
-        <div class="imp-card">
-          <div class="imp-icon">🚛</div>
-          <h4>Flota + alertas SOAT</h4>
-          <p>Indicadores de color claros para días restantes de SOAT con umbral de alerta.</p>
-          <ul>
-            <li>Verde / Naranja / Rojo</li>
-            <li>Icono de camión por placa</li>
-            <li>Fecha exacta visible</li>
-          </ul>
-        </div>
-        <div class="imp-card">
-          <div class="imp-icon">🗂️</div>
-          <h4>Navegación inferior</h4>
-          <p>Reordenar nav: Cargar → Data → Flota → PDF. Etiquetas más cortas y claras.</p>
-          <ul>
-            <li>Indicador activo más visible</li>
-            <li>Orden lógico de flujo</li>
-            <li>PDF oculto si no es ADMIN</li>
-          </ul>
-        </div>
-      </div>
-
-      <div style="background: rgba(0,200,255,0.05); border: 1px solid rgba(0,200,255,0.2); border-radius: 16px; padding: 20px; margin-top: 10px;">
-        <h4 style="font-size:13px; font-weight:700; margin-bottom:8px; color: var(--accent);">📌 Flujo de uso actual vs. propuesto</h4>
-        <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:11px; color:var(--dim);">
-          <span style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:5px 14px;">Login</span>
-          <span style="color:var(--accent)">→</span>
-          <span style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:5px 14px;">Seleccionar placa/chofer/aux</span>
-          <span style="color:var(--accent)">→</span>
-          <span style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:5px 14px;">Agregar clientes + cajas</span>
-          <span style="color:var(--accent)">→</span>
-          <span style="background:rgba(0,200,255,0.1); border:1px solid rgba(0,200,255,0.3); border-radius:20px; padding:5px 14px; color:var(--accent)">★ Confirmar con resumen</span>
-          <span style="color:var(--accent)">→</span>
-          <span style="background:var(--card); border:1px solid var(--border); border-radius:20px; padding:5px 14px;">Historial / Compartir WA</span>
-        </div>
-      </div>
+        <div id="live-list" style="margin-top:20px"></div>
+        <button id="main-save-btn" class="btn-save-fixed" onclick="openConfirm()">FINALIZAR Y GUARDAR</button>
     </div>
 
-    <!-- ===== LOGIN ===== -->
-    <div id="screen-login" class="screen">
-      <div class="section-header">
-        <h2>Pantalla <span>Login</span></h2>
-        <p>Mejora: avatares con color de usuario + PIN visual para ADMIN, en lugar de prompt nativo del browser.</p>
-      </div>
-      <div class="mockup-grid compare-grid">
-        <div class="compare-side">
-          <h4 class="actual">ACTUAL</h4>
-          <div class="mockup-box">
-            <div class="phone-frame">
-              <div class="phone-notch"><div></div></div>
-              <div class="phone-content">
-                <div class="wf-logo-area">
-                  <div class="wf-logo">TWINS <span>DESPACHO</span></div>
-                  <div class="wf-sub">Control V12.1</div>
-                </div>
-                <div style="margin-top:20px;">
-                  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:8px; font-size:12px; font-weight:700; text-align:center; color:var(--dim);">TAJHO ADMIN</div>
-                  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:8px; font-size:12px; font-weight:700; text-align:center; color:var(--dim);">FRANCESCO</div>
-                  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:8px; font-size:12px; font-weight:700; text-align:center; color:var(--dim);">OSCAR</div>
-                  <div style="background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; font-size:12px; font-weight:700; text-align:center; color:var(--dim);">LUIS HERBER</div>
-                </div>
-                <div style="margin-top:20px; background:rgba(255,61,87,0.05); border:1px solid rgba(255,61,87,0.2); border-radius:12px; padding:10px; font-size:9px; color:var(--danger); text-align:center;">⚠ PIN via prompt() del browser</div>
-              </div>
-            </div>
-          </div>
+    <div id="page-history" class="page">
+        <div style="display:flex; gap:10px; margin-bottom:15px">
+            <select id="filter-month" onchange="renderHistory()" style="margin-bottom:0">
+                <option value="ALL">Todo el mes</option>
+                <option value="0">Enero</option><option value="1">Febrero</option><option value="2">Marzo</option>
+                </select>
+            <input type="date" id="filter-date" onchange="renderHistory()" style="margin-bottom:0">
         </div>
-        <div class="compare-side">
-          <h4 class="nuevo">PROPUESTA</h4>
-          <div class="mockup-box">
-            <div class="phone-frame">
-              <div class="phone-notch"><div></div></div>
-              <div class="phone-content">
-                <div class="wf-logo-area">
-                  <div class="wf-logo">TWINS <span>DESPACHO</span></div>
-                  <div class="wf-sub">Sistema de Control — v2.0</div>
-                </div>
-                <div style="font-size:9px; color:var(--dim); text-align:center; margin-bottom:12px; font-weight:700;">SELECCIONA TU PERFIL</div>
-                <div class="wf-avatar-grid">
-                  <div class="wf-avatar-btn">
-                    <div class="wf-avatar-circle" style="background: linear-gradient(135deg, #ff3d57, #7c3aed);">TA</div>
-                    <div class="wf-avatar-name">TAJHO</div>
-                    <div class="wf-avatar-role">🔐 ADMIN</div>
-                  </div>
-                  <div class="wf-avatar-btn">
-                    <div class="wf-avatar-circle" style="background: linear-gradient(135deg, #00c8ff, #0062ff);">FR</div>
-                    <div class="wf-avatar-name">FRANCISCO</div>
-                    <div class="wf-avatar-role">Operario</div>
-                  </div>
-                  <div class="wf-avatar-btn">
-                    <div class="wf-avatar-circle" style="background: linear-gradient(135deg, #00e676, #00b0ff);">OS</div>
-                    <div class="wf-avatar-name">OSCAR</div>
-                    <div class="wf-avatar-role">Operario</div>
-                  </div>
-                  <div class="wf-avatar-btn">
-                    <div class="wf-avatar-circle" style="background: linear-gradient(135deg, #ffab00, #ff6d00);">LH</div>
-                    <div class="wf-avatar-name">LUIS H.</div>
-                    <div class="wf-avatar-role">Operario</div>
-                  </div>
-                </div>
-                <div class="wf-pin-area">
-                  <div class="wf-pin-label">🔐 PIN DE ADMIN (4 dígitos)</div>
-                  <div class="wf-pin-dots">
-                    <div class="wf-pin-dot filled"></div>
-                    <div class="wf-pin-dot filled"></div>
-                    <div class="wf-pin-dot"></div>
-                    <div class="wf-pin-dot"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="annotations">
-        <div class="annotation">
-          <div class="annotation-num mejora">1</div>
-          <div class="annotation-text">
-            <h4>Avatares con color de identidad</h4>
-            <p>Cada usuario tiene un color único. Más rápido de identificar visualmente, reduce errores de selección en condiciones de trabajo rápido.</p>
-          </div>
-        </div>
-        <div class="annotation">
-          <div class="annotation-num critico">2</div>
-          <div class="annotation-text">
-            <h4>Eliminar prompt() nativo del browser</h4>
-            <p>El prompt() actual bloquea el hilo principal y no funciona bien en algunos navegadores móviles. Reemplazarlo con un campo PIN visual mejora la UX y la compatibilidad.</p>
-          </div>
-        </div>
-      </div>
+        <div id="history-feed"></div>
     </div>
 
-    <!-- ===== CARGA DE RUTA ===== -->
-    <div id="screen-carga" class="screen">
-      <div class="section-header">
-        <h2>Pantalla <span>Carga de Ruta</span></h2>
-        <p>Mejora: barra de progreso, contador en vivo y validación visual de campos vacíos.</p>
-      </div>
-      <div class="mockup-grid">
-        <div class="mockup-box">
-          <div class="mockup-label"><h3>ESTADO: VEHÍCULO EN MUELLE</h3><span class="tag mejora">MEJORA</span></div>
-          <div class="phone-frame" style="margin: 20px auto;">
-            <div class="phone-notch"><div></div></div>
-            <div class="wf-header">
-              <div class="wf-header-title">TWINS <span>DESPACHO</span></div>
-              <div class="wf-user-chip"><div class="wf-dot"></div>TAJHO</div>
-            </div>
-            <div class="phone-content" style="padding:10px;">
-              <div class="wf-vehicle-card">
-                <div class="wf-vehicle-label">🚛 VEHÍCULO EN MUELLE</div>
-                <select class="wf-select"><option>CEP-929</option></select>
-                <div class="wf-crew-row">
-                  <select class="wf-select" style="font-size:10px;">
-                    <option>TAJHO (Chofer)</option>
-                  </select>
-                  <select class="wf-select" style="font-size:10px; margin-left:6px;">
-                    <option>Cristopher (Aux)</option>
-                  </select>
-                </div>
-              </div>
+    <div id="page-fleet" class="page"><div id="fleet-grid"></div></div>
 
-              <!-- NUEVO: Progress bar -->
-              <div class="wf-progress-bar">
-                <div class="wf-pb-top"><span style="font-size:9px; color:var(--dim);">CAJAS CARGADAS</span><span>47 / 80 ★</span></div>
-                <div class="wf-pb-track"><div class="wf-pb-fill" style="width:59%"></div></div>
-              </div>
+    <nav id="app-nav" class="nav-bar" style="display:none">
+        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
+        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-article"></i>REVISAR</button>
+        <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
+        <button class="nav-item" id="n-stats" style="display:none" onclick="logout()"><i class="ph-fill ph-user"></i>SALIR</button>
+    </nav>
 
-              <!-- Input agregar -->
-              <div style="background:rgba(255,255,255,0.02); border:1px dashed var(--border); border-radius:14px; padding:10px; margin:8px 0;">
-                <div class="wf-add-row">
-                  <input class="wf-input" placeholder="Cliente / Factura" style="flex:2; font-size:10px;">
-                  <input class="wf-input" placeholder="Cjs" style="flex:0.8; font-size:10px;">
-                  <button class="wf-add-btn">+ ADD</button>
-                </div>
-              </div>
-
-              <!-- Lista manifest -->
-              <div class="wf-manifest-item">
-                <div class="wf-manifest-num">1</div>
-                <div class="wf-manifest-info"><b>BODEGA CENTRAL</b><span>Factura #4821</span></div>
-                <div class="wf-manifest-cjs">24</div>
-                <div class="wf-trash">🗑</div>
-              </div>
-              <div class="wf-manifest-item">
-                <div class="wf-manifest-num">2</div>
-                <div class="wf-manifest-info"><b>DISTRIBUIDORA SUR</b><span>Factura #4822</span></div>
-                <div class="wf-manifest-cjs">15</div>
-                <div class="wf-trash">🗑</div>
-              </div>
-              <div class="wf-manifest-item">
-                <div class="wf-manifest-num">3</div>
-                <div class="wf-manifest-info"><b>MARKET EXPRESS</b><span>—</span></div>
-                <div class="wf-manifest-cjs">8</div>
-                <div class="wf-trash">🗑</div>
-              </div>
-
-              <!-- Total y guardar -->
-              <div class="wf-total">
-                <div>
-                  <div class="wf-total-label">TOTAL MANIFESTO</div>
-                  <div class="wf-total-num">47</div>
-                </div>
-                <button class="wf-save-btn">GUARDAR RUTA</button>
-              </div>
-            </div>
-            <div class="wf-nav">
-              <div class="wf-nav-item active"><div class="wf-nav-icon">📦</div>CARGAR</div>
-              <div class="wf-nav-item"><div class="wf-nav-icon">📋</div>DATA</div>
-              <div class="wf-nav-item"><div class="wf-nav-icon">🚛</div>FLOTA</div>
-              <div class="wf-nav-item"><div class="wf-nav-icon">📄</div>PDF</div>
-            </div>
-          </div>
+    <div id="modal-confirm" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center; padding:20px">
+        <div class="card-route" style="width:100%; text-align:center">
+            <h2 style="margin-bottom:20px">¿Cuándo sale el camión?</h2>
+            <button class="btn-main" onclick="finalize('HOY')" style="background:var(--success); margin-bottom:15px; width:100%; border:none; padding:20px; border-radius:15px; color:white; font-weight:800">SALIENDO AHORA (HOY)</button>
+            <button class="btn-main" onclick="finalize('MAÑANA')" style="background:var(--accent); width:100%; border:none; padding:20px; border-radius:15px; color:white; font-weight:800">PARA MAÑANA</button>
+            <button onclick="closeConfirm()" style="background:none; border:none; color:var(--text-dim); margin-top:20px; font-weight:700">CANCELAR</button>
         </div>
-        <div>
-          <div class="annotations" style="margin-top:0;">
-            <div class="annotation">
-              <div class="annotation-num nuevo">★</div>
-              <div class="annotation-text">
-                <h4>Barra de progreso de cajas</h4>
-                <p>Permite definir un objetivo de cajas por ruta y visualizar el avance. Útil para saber si falta cargar antes de salir.</p>
-              </div>
-            </div>
-            <div class="annotation">
-              <div class="annotation-num mejora">1</div>
-              <div class="annotation-text">
-                <h4>Total siempre visible</h4>
-                <p>El contador de cajas aparece pegado al fondo de la lista, visible sin hacer scroll. Reduce errores de conteo.</p>
-              </div>
-            </div>
-            <div class="annotation">
-              <div class="annotation-num mejora">2</div>
-              <div class="annotation-text">
-                <h4>Campo de Factura opcional</h4>
-                <p>Agregar un segundo campo de texto para número de factura junto al cliente, útil para trazabilidad.</p>
-              </div>
-            </div>
-            <div class="annotation">
-              <div class="annotation-num critico">3</div>
-              <div class="annotation-text">
-                <h4>Validación de campos vacíos</h4>
-                <p>Actualmente el botón ADD falla en silencio si falta la placa. Propuesta: resaltar en rojo el campo faltante y mostrar mensaje claro.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <!-- ===== CONFIRMACIÓN ===== -->
-    <div id="screen-confirmacion" class="screen">
-      <div class="section-header">
-        <h2>Modal de <span>Confirmación</span> — Nuevo Diseño</h2>
-        <p>Antes de guardar la ruta, mostrar un resumen completo para evitar errores críticos (placa vacía, fecha incorrecta, etc.).</p>
-      </div>
-      <div class="mockup-grid">
-        <div class="mockup-box">
-          <div class="mockup-label"><h3>MODAL ACTUAL</h3><span class="tag actual">SIMPLE</span></div>
-          <div class="phone-frame">
-            <div class="phone-notch"><div></div></div>
-            <div class="phone-content" style="display:flex; flex-direction:column; gap:10px; padding:20px 12px;">
-              <div style="font-size:13px; font-weight:800; text-align:center; margin-bottom:8px;">Confirmar Cierre</div>
-              <div style="background:var(--success); border-radius:14px; padding:16px; text-align:center; font-size:12px; font-weight:800; color:#000;">SALIENDO HOY</div>
-              <div style="background:var(--accent); border-radius:14px; padding:16px; text-align:center; font-size:12px; font-weight:800; color:#000;">MAÑANA</div>
-              <div style="text-align:center; font-size:10px; color:var(--dim); margin-top:10px;">VOLVER</div>
-              <div style="margin-top:20px; background:rgba(255,61,87,0.05); border:1px solid rgba(255,61,87,0.2); border-radius:12px; padding:10px; font-size:9px; color:var(--danger);">⚠ Sin resumen: puede guardarse con placa vacía o chofer incorrecto</div>
-            </div>
-          </div>
-        </div>
-        <div class="mockup-box">
-          <div class="mockup-label"><h3>MODAL PROPUESTO</h3><span class="tag nuevo">NUEVO</span></div>
-          <div class="phone-frame" style="position:relative;">
-            <div class="phone-notch"><div></div></div>
-            <div class="phone-content" style="filter:blur(1px); opacity:0.3;">
-              <!-- Fondo borroso simulado -->
-              <div class="wf-manifest-item"><div class="wf-manifest-num">1</div><div class="wf-manifest-info"><b>BODEGA CENTRAL</b></div><div class="wf-manifest-cjs">24</div></div>
-              <div class="wf-manifest-item"><div class="wf-manifest-num">2</div><div class="wf-manifest-info"><b>DISTRIBUIDORA SUR</b></div><div class="wf-manifest-cjs">15</div></div>
-            </div>
-            <div class="wf-modal-overlay">
-              <div class="wf-modal">
-                <h3>Confirmar Ruta</h3>
-                <p>Revisa el resumen antes de guardar</p>
-                <div class="wf-modal-summary">
-                  <div class="wf-ms-item"><b>CEP-929</b><span>PLACA</span></div>
-                  <div class="wf-ms-item"><b style="color:var(--success)">47</b><span>CAJAS</span></div>
-                  <div class="wf-ms-item"><b>3</b><span>PARADAS</span></div>
-                </div>
-                <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:8px 12px; margin-bottom:12px; font-size:10px; color:var(--dim);">
-                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Chofer</span><b style="color:var(--text);">TAJHO</b></div>
-                  <div style="display:flex; justify-content:space-between;"><span>Auxiliar</span><b style="color:var(--text);">Cristopher</b></div>
-                </div>
-                <div class="wf-modal-btns">
-                  <button class="wf-modal-btn hoy">✓ SALIENDO HOY</button>
-                  <button class="wf-modal-btn man">↻ MAÑANA</button>
-                </div>
-                <div class="wf-modal-close">← VOLVER Y EDITAR</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <script>
+        const API = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
+        let currentCarga = [], db = [], activeUser = "";
 
-      <div class="annotations">
-        <div class="annotation">
-          <div class="annotation-num nuevo">★</div>
-          <div class="annotation-text">
-            <h4>Resumen completo antes de guardar</h4>
-            <p>Muestra placa, cajas totales, paradas, chofer y auxiliar. Si algo está mal, el operario puede volver y corregir sin perder los datos.</p>
-          </div>
-        </div>
-        <div class="annotation">
-          <div class="annotation-num critico">!</div>
-          <div class="annotation-text">
-            <h4>Prevenir guardado accidental</h4>
-            <p>Con la validación de campos + resumen, se evita el caso crítico de guardar una ruta con placa vacía o sin chofer asignado.</p>
-          </div>
-        </div>
-      </div>
-    </div>
+        const DATA = {
+            placas: ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"],
+            choferes: ["TAJHO", "LUIS H.", "ROMARIO", "CESAR C.", "WALDIR", "MARCELO"],
+            auxiliares: ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"],
+            soats: { "CEP-929": "2026-07-22", "BPN-711": "2026-06-10", "BVN-704": "2026-07-02", "BUL-742": "2026-04-02", "BVN-930": "2026-07-02" }
+        };
 
-    <!-- ===== HISTORIAL ===== -->
-    <div id="screen-historial" class="screen">
-      <div class="section-header">
-        <h2>Pantalla <span>Historial / Data</span></h2>
-        <p>Mejora: filtros rápidos en chips, stats más visuales y acciones directas en cada tarjeta.</p>
-      </div>
-      <div class="mockup-grid">
-        <div class="mockup-box">
-          <div class="mockup-label"><h3>HISTORIAL CON MEJORAS</h3><span class="tag mejora">MEJORA</span></div>
-          <div class="phone-frame">
-            <div class="phone-notch"><div></div></div>
-            <div class="wf-header">
-              <div class="wf-header-title">TWINS <span>DATA</span></div>
-              <div class="wf-user-chip"><div class="wf-dot"></div>TAJHO</div>
-            </div>
-            <div class="phone-content" style="padding:10px;">
-              <!-- Stats -->
-              <div class="wf-stat-row">
-                <div class="wf-stat-card">
-                  <div class="wf-stat-num">248</div>
-                  <div class="wf-stat-label">CAJAS HOY</div>
-                </div>
-                <div class="wf-stat-card">
-                  <div class="wf-stat-num" style="color:var(--success);">4,821</div>
-                  <div class="wf-stat-label">CAJAS MES</div>
-                </div>
-              </div>
+        window.onload = () => {
+            setupLogin();
+            document.getElementById('sel-pla').innerHTML = '<option value="">-- SELECCIONA PLACA --</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
+            document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + DATA.choferes.map(c => `<option value="${c}">${c}</option>`).join('');
+            document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + DATA.auxiliares.map(a => `<option value="${a}">${a}</option>`).join('');
+            
+            const savedUser = localStorage.getItem('tw_logged');
+            if(savedUser) login(savedUser);
+            syncData();
+        };
 
-              <!-- Filtros chip -->
-              <div class="wf-filters" style="overflow-x:auto; padding-bottom:4px;">
-                <div class="wf-chip active">HOY</div>
-                <div class="wf-chip">AYER</div>
-                <div class="wf-chip">SEMANA</div>
-                <div class="wf-chip">FEBRERO</div>
-                <div class="wf-chip">📅</div>
-              </div>
+        function setupLogin() {
+            const container = document.getElementById('login-options');
+            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
+                container.innerHTML += `<div onclick="login('${u}')" style="background:var(--surface); padding:25px; border-radius:20px; margin-bottom:12px; font-weight:800; font-size:18px; text-align:center; border:1px solid var(--border)">${u}</div>`;
+            });
+        }
 
-              <!-- Tarjetas historial -->
-              <div class="wf-hist-card">
-                <div class="wf-hist-top">
-                  <div class="wf-hist-placa">CEP-929</div>
-                  <div class="wf-hist-fecha">24 FEB 2026</div>
-                </div>
-                <div class="wf-hist-big">124 <span style="font-size:12px; color:var(--dim);">Cajas</span></div>
-                <div class="wf-hist-crew">TAJHO / Cristopher · 08:45</div>
-                <div class="wf-hist-actions">
-                  <button class="wf-hist-btn">Ver Lista</button>
-                  <button class="wf-hist-btn wa">📱 WA</button>
-                  <button class="wf-hist-btn pdf">📄 PDF</button>
-                </div>
-              </div>
+        function login(u) {
+            activeUser = u; localStorage.setItem('tw_logged', u);
+            document.getElementById('page-login').classList.remove('active');
+            document.getElementById('app-header').style.display = 'flex';
+            document.getElementById('app-nav').style.display = 'flex';
+            document.getElementById('user-info').innerText = u;
+            go('page-route');
+        }
 
-              <div class="wf-hist-card" style="opacity:0.7;">
-                <div class="wf-hist-top">
-                  <div class="wf-hist-placa">BPN-711</div>
-                  <div class="wf-hist-fecha">24 FEB 2026</div>
-                </div>
-                <div class="wf-hist-big">89 <span style="font-size:12px; color:var(--dim);">Cajas</span></div>
-                <div class="wf-hist-crew">LUIS H. / Percy · 09:12</div>
-                <div class="wf-hist-actions">
-                  <button class="wf-hist-btn">Ver Lista</button>
-                  <button class="wf-hist-btn wa">📱 WA</button>
-                  <button class="wf-hist-btn pdf">📄 PDF</button>
-                </div>
-              </div>
-            </div>
-            <div class="wf-nav">
-              <div class="wf-nav-item"><div class="wf-nav-icon">📦</div>CARGAR</div>
-              <div class="wf-nav-item active"><div class="wf-nav-icon">📋</div>DATA</div>
-              <div class="wf-nav-item"><div class="wf-nav-icon">🚛</div>FLOTA</div>
-              <div class="wf-nav-item"><div class="wf-nav-icon">📄</div>PDF</div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="annotations" style="margin-top:0;">
-            <div class="annotation">
-              <div class="annotation-num mejora">1</div>
-              <div class="annotation-text">
-                <h4>Chips de filtro rápido</h4>
-                <p>HOY / AYER / SEMANA / MES en chips táctiles. Más intuitivo que combo de select + date picker.</p>
-              </div>
-            </div>
-            <div class="annotation">
-              <div class="annotation-num nuevo">2</div>
-              <div class="annotation-text">
-                <h4>Hora de despacho en tarjeta</h4>
-                <p>Mostrar la hora junto al chofer/auxiliar. Útil para auditoría y seguimiento de turnos.</p>
-              </div>
-            </div>
-            <div class="annotation">
-              <div class="annotation-num mejora">3</div>
-              <div class="annotation-text">
-                <h4>Botón PDF por ruta individual</h4>
-                <p>En lugar de un PDF global desde una pantalla separada, generar PDF directamente desde cada tarjeta del historial.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        function addQty(n) {
+            const input = document.getElementById('inp-can');
+            input.value = (parseInt(input.value) || 0) + n;
+        }
 
-    <!-- ===== FLOTA ===== -->
-    <div id="screen-flota" class="screen">
-      <div class="section-header">
-        <h2>Pantalla <span>Flota</span></h2>
-        <p>Mejora visual: semáforo de colores para alertas SOAT y estado más claro.</p>
-      </div>
-      <div class="mockup-grid">
-        <div class="mockup-box">
-          <div class="mockup-label"><h3>GESTIÓN DE FLOTA</h3><span class="tag mejora">MEJORA</span></div>
-          <div class="phone-frame">
-            <div class="phone-notch"><div></div></div>
-            <div class="wf-header">
-              <div class="wf-header-title">TWINS <span>FLOTA</span></div>
-              <div class="wf-user-chip"><div class="wf-dot"></div>TAJHO</div>
-            </div>
-            <div class="phone-content" style="padding:10px;">
-              <!-- Tarjeta en alerta -->
-              <div class="wf-fleet-card" style="border-color:rgba(255,61,87,0.4); background:rgba(255,61,87,0.05);">
-                <div class="wf-fleet-icon">🚛</div>
-                <div class="wf-fleet-info">
-                  <div class="wf-fleet-placa">BUL-742</div>
-                  <div class="wf-fleet-soat">SOAT: 02 Abr 2026</div>
-                </div>
-                <div class="wf-fleet-days">
-                  <div class="wf-days-num" style="color:var(--danger);">37</div>
-                  <div class="wf-days-label">DÍAS</div>
-                  <div style="font-size:8px; color:var(--danger); font-weight:700;">⚠ URGENTE</div>
-                </div>
-              </div>
-              <!-- Tarjeta normal -->
-              <div class="wf-fleet-card">
-                <div class="wf-fleet-icon">🚛</div>
-                <div class="wf-fleet-info">
-                  <div class="wf-fleet-placa">BPN-711</div>
-                  <div class="wf-fleet-soat">SOAT: 10 Jun 2026</div>
-                </div>
-                <div class="wf-fleet-days">
-                  <div class="wf-days-num" style="color:var(--warning);">106</div>
-                  <div class="wf-days-label">DÍAS</div>
-                  <div style="font-size:8px; color:var(--warning); font-weight:700;">⚡ ATENCION</div>
-                </div>
-              </div>
-              <!-- Tarjeta OK -->
-              <div class="wf-fleet-card">
-                <div class="wf-fleet-icon">🚛</div>
-                <div class="wf-fleet-info">
-                  <div class="wf-fleet-placa">CEP-929</div>
-                  <div class="wf-fleet-soat">SOAT: 22 Jul 2026</div>
-                </div>
-                <div class="wf-fleet-days">
-                  <div class="wf-days-num" style="color:var(--success);">148</div>
-                  <div class="wf-days-label">DÍAS</div>
-                  <div style="font-size:8px; color:var(--success); font-weight:700;">✓ OK</div>
-                </div>
-              </div>
-              <div class="wf-fleet-card">
-                <div class="wf-fleet-icon">🚛</div>
-                <div class="wf-fleet-info">
-                  <div class="wf-fleet-placa">BVN-704</div>
-                  <div class="wf-fleet-soat">SOAT: 02 Jul 2026</div>
-                </div>
-                <div class="wf-fleet-days">
-                  <div class="wf-days-num" style="color:var(--success);">128</div>
-                  <div class="wf-days-label">DÍAS</div>
-                  <div style="font-size:8px; color:var(--success); font-weight:700;">✓ OK</div>
-                </div>
-              </div>
-            </div>
-            <div class="wf-nav">
-              <div class="wf-nav-item"><div class="wf-nav-icon">📦</div>CARGAR</div>
-              <div class="wf-nav-item"><div class="wf-nav-icon">📋</div>DATA</div>
-              <div class="wf-nav-item active"><div class="wf-nav-icon">🚛</div>FLOTA</div>
-              <div class="wf-nav-item"><div class="wf-nav-icon">📄</div>PDF</div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div class="annotations" style="margin-top:0;">
-            <div class="annotation">
-              <div class="annotation-num mejora">1</div>
-              <div class="annotation-text">
-                <h4>Semáforo de 3 niveles</h4>
-                <p><span style="color:var(--danger)">🔴 Rojo</span> = menos de 60 días (URGENTE). <span style="color:var(--warning)">🟡 Amarillo</span> = 60-120 días (ATENCIÓN). <span style="color:var(--success)">🟢 Verde</span> = más de 120 días (OK). Más intuitivo que solo mostrar el número.</p>
-              </div>
-            </div>
-            <div class="annotation">
-              <div class="annotation-num mejora">2</div>
-              <div class="annotation-text">
-                <h4>Ordenar por urgencia</h4>
-                <p>Mostrar primero las placas con SOAT más próximo a vencer. Actualmente el orden es estático.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        function addPoint() {
+            const cli = document.getElementById('inp-cli').value.toUpperCase();
+            const can = parseInt(document.getElementById('inp-can').value);
+            if(!cli || !can || !document.getElementById('sel-pla').value) {
+                alert("Primero selecciona Placa, luego escribe Cliente y Cantidad");
+                return;
+            }
+            currentCarga.push({ cli, can });
+            document.getElementById('inp-cli').value = "";
+            document.getElementById('inp-can').value = "";
+            renderLiveList();
+        }
 
-    <!-- ===== NAVEGACIÓN ===== -->
-    <div id="screen-nav" class="screen">
-      <div class="section-header">
-        <h2>Barra de <span>Navegación</span></h2>
-        <p>Comparación de la navegación actual vs. propuesta con mejoras de visibilidad y orden de flujo.</p>
-      </div>
-      <div class="mockup-grid">
-        <div class="mockup-box" style="padding:20px;">
-          <div class="mockup-label"><h3>NAVEGACIÓN ACTUAL</h3><span class="tag actual">ACTUAL</span></div>
-          <div style="background:#0f1420; border-radius:16px; margin:16px 0; overflow:hidden;">
-            <div style="display:flex; padding:12px 0 6px; border-top:1px solid var(--border);">
-              <div style="flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--accent);">
-                <div style="font-size:22px;">📦</div>CARGAR
-              </div>
-              <div style="flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--dim);">
-                <div style="font-size:22px;">🕐</div>DATA
-              </div>
-              <div style="flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--dim);">
-                <div style="font-size:22px;">🚛</div>FLOTA
-              </div>
-              <div style="flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--dim); opacity:0.4;">
-                <div style="font-size:22px;">📄</div>PDF
-              </div>
-            </div>
-          </div>
-          <ul style="font-size:12px; color:var(--dim); line-height:2; list-style:none;">
-            <li>❌ Ícono reloj para "DATA" confunde</li>
-            <li>❌ Tab PDF visible para todos (aunque oculto)</li>
-            <li>❌ Indicador activo poco visible</li>
-            <li>❌ Sin badge de notificación</li>
-          </ul>
-        </div>
-        <div class="mockup-box" style="padding:20px;">
-          <div class="mockup-label"><h3>NAVEGACIÓN PROPUESTA</h3><span class="tag nuevo">NUEVO</span></div>
-          <div style="background:#0f1420; border-radius:16px; margin:16px 0; overflow:hidden;">
-            <div style="display:flex; padding:12px 0 6px; border-top:1px solid var(--border);">
-              <div style="flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--accent); position:relative;">
-                <div style="position:absolute; left:50%; transform:translateX(-50%); top:-12px; width:40px; height:3px; background:var(--accent); border-radius:0 0 3px 3px;"></div>
-                <div style="font-size:22px;">📦</div>CARGAR
-              </div>
-              <div style="flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--dim);">
-                <div style="font-size:22px;">📋</div>HISTORIAL
-              </div>
-              <div style="flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--dim);">
-                <div style="font-size:22px;">🚛</div>FLOTA
-              </div>
-              <div style="flex:1; text-align:center; font-size:9px; font-weight:700; color:var(--danger);">
-                <div style="font-size:22px; position:relative; display:inline-block;">📄<span style="position:absolute; top:-4px; right:-4px; background:var(--danger); color:#fff; font-size:7px; border-radius:50%; width:12px; height:12px; display:flex; align-items:center; justify-content:center;">A</span></div>
-                PDF
-              </div>
-            </div>
-          </div>
-          <ul style="font-size:12px; color:var(--success); line-height:2; list-style:none;">
-            <li>✓ Ícono 📋 más claro para historial</li>
-            <li>✓ Badge "A" en PDF solo visible para ADMIN</li>
-            <li>✓ Barra superior para item activo</li>
-            <li>✓ Etiqueta "HISTORIAL" más descriptiva</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+        function renderLiveList() {
+            const list = document.getElementById('live-list');
+            list.innerHTML = currentCarga.map((it, i) => `
+                <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center">
+                    <div><small style="opacity:0.5">#${i+1}</small><br><b>${it.cli}</b></div>
+                    <div style="display:flex; align-items:center; gap:15px">
+                        <b style="font-size:18px; color:var(--accent)">${it.can}</b>
+                        <i class="ph-bold ph-trash" style="color:var(--danger); font-size:20px" onclick="removePoint(${i})"></i>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('main-save-btn').style.display = currentCarga.length > 0 ? 'block' : 'none';
+        }
 
-  </main>
-</div>
+        async function finalize(op) {
+            const f = new Date(); if(op === 'MAÑANA') f.setDate(f.getDate() + 1);
+            const r = {
+                fecha: f.toLocaleDateString('sv-SE'),
+                placa: document.getElementById('sel-pla').value,
+                total: currentCarga.reduce((a,b) => a + b.can, 0),
+                items: currentCarga.map(i => `${i.cli}: ${i.can}`).join(", "),
+                chofer: document.getElementById('sel-cho').value,
+                auxiliar: document.getElementById('sel-aux').value
+            };
+            
+            // Efecto visual de guardado
+            document.getElementById('main-save-btn').innerText = "GUARDANDO...";
+            await fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
+            
+            db.unshift(r);
+            currentCarga = [];
+            renderLiveList();
+            closeConfirm();
+            go('page-history');
+            document.getElementById('main-save-btn').innerText = "FINALIZAR Y GUARDAR";
+        }
 
-<script>
-  function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('screen-' + id).classList.add('active');
-    event.currentTarget.classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-</script>
+        function renderHistory() {
+            const container = document.getElementById('history-feed');
+            const today = new Date().toLocaleDateString('sv-SE');
+            
+            container.innerHTML = db.map(r => {
+                const isHoy = r.fecha === today;
+                return `
+                <div class="card-route">
+                    <span class="status-tag ${isHoy ? 'tag-hoy' : 'tag-manana'}">${isHoy ? 'Para Hoy' : 'Para Mañana'}</span>
+                    <small style="color:var(--text-dim)">${r.fecha}</small>
+                    <h2 style="margin:5px 0">${r.placa}</h2>
+                    <b style="font-size:20px; color:var(--success)">${r.total} Cajas</b>
+                    <p style="font-size:12px; opacity:0.6">${r.items.substring(0, 50)}...</p>
+                    <button class="btn-danger" style="margin-top:10px" onclick="shareWA('${r.placa}', '${r.total}', '${r.items}')">ENVIAR WHATSAPP</button>
+                </div>`;
+            }).join('');
+        }
 
+        function renderFleet() {
+            const container = document.getElementById('fleet-grid');
+            container.innerHTML = DATA.placas.map(p => {
+                const diff = Math.ceil((new Date(DATA.soats[p]) - new Date()) / (1000*60*60*24));
+                return `
+                <div class="card-route" style="display:flex; justify-content:space-between; align-items:center">
+                    <div><b>${p}</b><br><small>SOAT: ${DATA.soats[p]}</small></div>
+                    <div style="text-align:right"><b style="font-size:24px; color:${diff < 30 ? 'var(--danger)' : 'var(--success)'}">${diff}</b><br><small>DÍAS</small></div>
+                </div>`;
+            }).join('');
+        }
+
+        async function syncData() {
+            try { const res = await fetch(API); db = await res.json(); renderHistory(); } catch(e) {}
+        }
+
+        function go(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
+            if(id === 'page-history') renderHistory();
+            if(id === 'page-fleet') renderFleet();
+        }
+
+        function addQty(n) {
+            const input = document.getElementById('inp-can');
+            input.value = (parseInt(input.value) || 0) + n;
+        }
+
+        function predictAndSave() {
+            const p = document.getElementById('sel-pla').value;
+            const u = db.find(r => r.placa === p);
+            if(u) { document.getElementById('sel-cho').value = u.chofer; document.getElementById('sel-aux').value = u.auxiliar; }
+        }
+
+        function removePoint(i) { currentCarga.splice(i,1); renderLiveList(); }
+        function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
+        function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
+        function logout() { localStorage.clear(); location.reload(); }
+        function shareWA(p, t, i) {
+            const msg = `*📦 DESPACHO TWINS*%0A*Placa:* ${p}%0A*Total:* ${t} Cjs%0A*Detalle:* ${i}`;
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        }
+    </script>
 </body>
 </html>
