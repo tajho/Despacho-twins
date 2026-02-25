@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - OFICIAL V5</title>
+    <title>TWINS ELITE - OFICIAL V6</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -15,7 +15,7 @@
             --success: #34c759; --danger: #ff3b30; --warning: #ffcc00;
         }
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
         
         .page { display: none; padding: 10px 15px 120px 15px; max-width: 500px; margin: 0 auto; }
         .active { display: block !important; }
@@ -45,6 +45,11 @@
         .nav-item i { font-size: 26px; }
 
         .login-btn { background: var(--surface); border: 1px solid var(--border); color: white; padding: 20px; border-radius: 20px; font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        
+        /* Estilos para el Selector Inicial */
+        .plate-selector { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .plate-btn { background: var(--surface); border: 2px solid var(--border); padding: 20px; border-radius: 18px; color: white; font-weight: 800; font-size: 18px; text-align: center; }
+        .plate-btn:active { background: var(--accent); border-color: var(--accent); }
     </style>
 </head>
 <body>
@@ -62,11 +67,22 @@
         <div id="login-options"></div>
     </div>
 
+    <div id="page-select-plate" class="page">
+        <div style="text-align:center; padding:30px 0">
+            <h2 style="font-weight:800;">¿Qué placa vas a cargar?</h2>
+            <p style="color:var(--text-dim);">Selecciona una unidad para empezar</p>
+        </div>
+        <div id="plate-options" class="plate-selector"></div>
+    </div>
+
     <div id="page-route" class="page">
         <div class="stat-banner">
             <div style="display:flex; justify-content:space-between; align-items:center">
                 <div><small style="font-weight:800; opacity:0.8">CAJAS CARGA</small><div id="count-cajas" style="font-size:48px; font-weight:800;">0</div></div>
-                <div style="text-align:right"><small style="font-weight:800; opacity:0.8">PUNTOS</small><div id="count-puntos" style="font-size:28px; font-weight:800">0</div></div>
+                <div style="text-align:right">
+                    <b id="active-plate-label" style="font-size:20px; display:block">---</b>
+                    <small style="font-weight:800; opacity:0.8">PUNTOS: <span id="count-puntos">0</span></small>
+                </div>
             </div>
         </div>
         
@@ -81,9 +97,11 @@
         <div id="live-list"></div>
 
         <div id="finalize-area" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px">
-            <select id="sel-pla" onchange="predictAndSave()" style="margin-bottom:10px"></select>
+            <div style="font-size:12px; font-weight:800; color:var(--text-dim); margin-bottom:10px">DETALLES DE ENTREGA</div>
+            <select id="sel-pla" onchange="predictAndSave()" style="margin-bottom:10px; border-color:var(--accent)"></select>
             <div class="input-group"><select id="sel-cho"></select><select id="sel-aux"></select></div>
             <button class="btn-main" onclick="openConfirm()">CONFIRMAR Y GUARDAR</button>
+            <button onclick="clearAll()" style="width:100%; background:none; border:none; color:var(--danger); font-weight:700; margin-top:15px; font-size:13px">BORRAR CARGA ACTUAL</button>
         </div>
     </div>
 
@@ -94,7 +112,6 @@
             <div class="stat-card"><small>Mes Cajas</small><b id="h-cajas-mes">0</b></div>
             <div class="stat-card"><small>Mes Envíos</small><b id="h-envios-mes">0</b></div>
         </div>
-
         <input type="date" id="filter-date" onchange="renderHistory()" style="margin-bottom:20px">
         <div id="history-feed"></div>
     </div>
@@ -105,13 +122,12 @@
         <div class="card" style="text-align:center; padding:40px 20px;">
             <i class="ph-fill ph-file-pdf" style="font-size:64px; color:var(--danger); margin-bottom:15px"></i>
             <h3>Generar Reporte Mensual</h3>
-            <p style="font-size:13px; color:var(--text-dim); margin-bottom:25px">Exporta todos los despachos del mes actual a un archivo PDF.</p>
             <button onclick="generatePDF()" class="btn-main" style="background:var(--danger);">DESCARGAR PDF</button>
         </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
+        <button class="nav-item active" id="n-route" onclick="checkNewRoute()"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
         <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-clock-counter-clockwise"></i>DATA</button>
         <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
         <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-fill ph-file-text"></i>REPORTE</button>
@@ -139,15 +155,20 @@
         window.onload = () => {
             setupUI();
             const saved = localStorage.getItem('tw_logged');
-            if(saved) login(saved, true);
+            if(saved) login(saved);
 
-            // RECUPERAR RUTA GUARDADA SI EXISTE
+            // Recuperar carga si existe
             const savedRoute = localStorage.getItem('tw_temp_route');
             if (savedRoute) {
                 currentCarga = JSON.parse(savedRoute);
+                const savedPlaca = localStorage.getItem('tw_temp_placa');
+                if(savedPlaca) {
+                    document.getElementById('sel-pla').value = savedPlaca;
+                    document.getElementById('active-plate-label').innerText = savedPlaca;
+                    predictAndSave();
+                }
                 refreshCargaUI();
             }
-
             syncData();
         };
 
@@ -156,21 +177,25 @@
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
                 opts.innerHTML += `<div class="login-btn" onclick="checkPass('${u}')"><span>${u}</span><i class="ph-bold ph-caret-right"></i></div>`;
             });
-            document.getElementById('sel-pla').innerHTML = '<option value="">Elegir Placa</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
-            document.getElementById('sel-cho').innerHTML = '<option value="">Elegir Chofer</option>' + DATA.choferes.map(c => `<option value="${c}">${c}</option>`).join('');
-            document.getElementById('sel-aux').innerHTML = '<option value="">Elegir Auxiliar</option>' + DATA.auxiliares.map(a => `<option value="${a}">${a}</option>`).join('');
-            document.getElementById('filter-date').value = new Date().toLocaleDateString('sv-SE');
+
+            // Generar botones de placa para el inicio
+            document.getElementById('plate-options').innerHTML = DATA.placas.map(p => 
+                `<div class="plate-btn" onclick="startWithPlate('${p}')">${p}</div>`
+            ).join('');
+
+            document.getElementById('sel-pla').innerHTML = '<option value="">Placa</option>' + DATA.placas.map(p => `<option value="${p}">${p}</option>`).join('');
+            document.getElementById('sel-cho').innerHTML = '<option value="">Chofer</option>' + DATA.choferes.map(c => `<option value="${c}">${c}</option>`).join('');
+            document.getElementById('sel-aux').innerHTML = '<option value="">Auxiliar</option>' + DATA.auxiliares.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
         function checkPass(u) {
             if(u === 'TAJHO ADMIN') {
-                const p = prompt("Clave de Administrador:");
+                const p = prompt("Clave:");
                 if(p === "1994") login(u);
-                else alert("Incorrecto");
-            } else { login(u); }
+            } else login(u);
         }
 
-        function login(u, skipPass = false) { 
+        function login(u) { 
             activeUser = u; 
             localStorage.setItem('tw_logged', u); 
             document.getElementById('page-login').classList.remove('active'); 
@@ -178,88 +203,32 @@
             document.getElementById('app-nav').style.display = 'flex'; 
             document.getElementById('user-info').innerText = u; 
             if(u === "TAJHO ADMIN") document.getElementById('n-stats').style.display = "flex";
-            go('page-route'); 
+            
+            checkNewRoute();
         }
 
-        async function syncData() {
-            try {
-                const res = await fetch(API);
-                const raw = await res.json();
-                db = raw.map(r => ({ ...r, total: parseFloat(r.total || 0) }));
-                renderHistory(); renderFleet();
-            } catch(e) {}
+        function checkNewRoute() {
+            // Si no hay carga activa, preguntar placa. Si hay, ir directo.
+            if(currentCarga.length === 0) go('page-select-plate');
+            else go('page-route');
         }
 
-        function renderHistory() {
-            const container = document.getElementById('history-feed');
-            const selDate = document.getElementById('filter-date').value;
-            const now = new Date();
-            const currentMonth = now.getMonth();
-            const currentYear = now.getFullYear();
-            
-            let h = "", dCjs = 0, dEnv = 0, mCjs = 0, mEnv = 0;
-
-            db.forEach((r, i) => {
-                const rDate = new Date(r.fecha);
-                const rFechaStr = rDate.toLocaleDateString('sv-SE');
-
-                if(rDate.getMonth() === currentMonth && rDate.getFullYear() === currentYear) {
-                    mCjs += r.total;
-                    mEnv++;
-                }
-                if(rFechaStr === selDate) {
-                    dCjs += r.total;
-                    dEnv++;
-                    h += `<div class="card">
-                        <div style="display:flex; justify-content:space-between; align-items:center">
-                            <span style="background:var(--accent); padding:4px 10px; border-radius:10px; font-size:12px; font-weight:800">${r.hora}</span>
-                            <b style="color:var(--accent); font-size:18px">${r.placa}</b>
-                        </div>
-                        <div style="font-weight:800; font-size:24px; margin:15px 0">${r.total} Cajas</div>
-                        <div style="font-size:12px; font-weight:700; opacity:0.7">${r.chofer} / ${r.auxiliar}</div>
-                        <div class="detail-box">${(r.detalles || r.items || "").split(', ').join('\n')}</div>
-                        <div style="display:flex; gap:10px">
-                            <button class="btn-add" style="flex:1; background:var(--border); height:50px; justify-content:center" onclick="loadEdit(${i})">Editar</button>
-                            <button class="btn-add" style="flex:1; background:#25D366; height:50px; justify-content:center" onclick="shareWA(${i})">WhatsApp</button>
-                        </div>
-                    </div>`;
-                }
-            });
-
-            document.getElementById('h-cajas-dia').innerText = dCjs;
-            document.getElementById('h-envios-dia').innerText = dEnv;
-            document.getElementById('h-cajas-mes').innerText = mCjs;
-            document.getElementById('h-envios-mes').innerText = mEnv;
-            
-            container.innerHTML = h || `<p style="text-align:center; opacity:0.3; margin-top:50px">Sin registros</p>`;
+        function startWithPlate(p) {
+            document.getElementById('sel-pla').value = p;
+            document.getElementById('active-plate-label').innerText = p;
+            localStorage.setItem('tw_temp_placa', p);
+            predictAndSave(); // Autocompletar chofer/aux
+            go('page-route');
         }
 
         function addPoint() { 
             const cli = document.getElementById('inp-cli').value.toUpperCase(); 
             const can = parseInt(document.getElementById('inp-can').value); 
             if(!cli || !can) return; 
-            
             currentCarga.push({ cli, can }); 
-            
-            // GUARDAR EN MEMORIA LOCAL PARA EVITAR BORRADO AL ACTUALIZAR
             localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga));
-            
             document.getElementById('inp-cli').value = ""; 
             document.getElementById('inp-can').value = ""; 
-            refreshCargaUI(); 
-        }
-
-        function removePoint(i) { 
-            currentCarga.splice(i,1); 
-            // ACTUALIZAR MEMORIA LOCAL
-            localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga));
-            refreshCargaUI(); 
-        }
-
-        function clearAll() { 
-            currentCarga = []; 
-            // LIMPIAR MEMORIA LOCAL
-            localStorage.removeItem('tw_temp_route');
             refreshCargaUI(); 
         }
 
@@ -268,11 +237,26 @@
             let total = 0; list.innerHTML = ""; 
             currentCarga.forEach((it, i) => { 
                 total += it.can; 
-                list.innerHTML += `<div class="route-item"><span><b style="color:var(--accent)">${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger); font-size:20px" onclick="removePoint(${i})"></i></div>`; 
+                list.innerHTML += `<div class="route-item"><span><b style="color:var(--accent)">${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger)" onclick="removePoint(${i})"></i></div>`; 
             }); 
             document.getElementById('count-cajas').innerText = total; 
             document.getElementById('count-puntos').innerText = currentCarga.length; 
             document.getElementById('finalize-area').style.display = currentCarga.length > 0 ? 'block' : 'none'; 
+        }
+
+        function removePoint(i) { 
+            currentCarga.splice(i,1); 
+            localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga));
+            refreshCargaUI(); 
+        }
+
+        function clearAll() { 
+            if(!confirm("¿Borrar toda la lista?")) return;
+            currentCarga = []; 
+            localStorage.removeItem('tw_temp_route');
+            localStorage.removeItem('tw_temp_placa');
+            refreshCargaUI(); 
+            go('page-select-plate');
         }
 
         async function finalize() {
@@ -289,71 +273,67 @@
             };
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
             db.unshift(r); 
-            
-            // LIMPIAR AL TERMINAR
-            clearAll(); 
+            currentCarga = [];
+            localStorage.removeItem('tw_temp_route');
+            localStorage.removeItem('tw_temp_placa');
+            refreshCargaUI();
             closeConfirm(); 
             go('page-history');
-        }
-
-        function shareWA(i) {
-            const r = db[i];
-            const msg = `*📦 DESPACHO TWINS ELITE*%0A*Placa:* ${r.placa}%0A*Cajas:* ${r.total}%0A*Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}%0A*Responsable:* ${r.operario}`;
-            window.open(`https://wa.me/?text=${msg}`, '_blank');
         }
 
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
-            if(id === 'page-history') renderHistory();
-            if(id === 'page-fleet') renderFleet();
-        }
-
-        function logout() { localStorage.clear(); location.reload(); }
-        function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
-        function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
-        
-        function loadEdit(i) { 
-            const r = db[i]; 
-            currentCarga = (r.detalles || r.items).split(", ").map(it => { 
-                const [cli, can] = it.split(": "); 
-                return { cli, can: parseInt(can) }; 
-            }); 
-            // AL EDITAR TAMBIÉN GUARDAMOS EN MEMORIA TEMPORAL
-            localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga));
-            document.getElementById('sel-pla').value = r.placa; 
-            document.getElementById('sel-cho').value = r.chofer; 
-            document.getElementById('sel-aux').value = r.auxiliar; 
-            refreshCargaUI(); go('page-route'); 
+            const navId = id.includes('plate') ? 'n-route' : 'n-' + id.split('-')[1];
+            if(document.getElementById(navId)) document.getElementById(navId).classList.add('active');
         }
 
         function predictAndSave() { 
-            const l = db.find(r => r.placa === document.getElementById('sel-pla').value); 
+            const placa = document.getElementById('sel-pla').value;
+            const l = db.find(r => r.placa === placa); 
             if(l) { 
                 document.getElementById('sel-cho').value = l.chofer; 
                 document.getElementById('sel-aux').value = l.auxiliar; 
             } 
         }
 
-        function renderFleet() { 
-            document.getElementById('fleet-grid').innerHTML = DATA.placas.map(p => { 
-                const d = Math.ceil((new Date(DATA.soats[p]) - new Date()) / 86400000); 
-                return `<div class="card" style="display:flex; justify-content:space-between"><div><b>${p}</b><br><small>Vence: ${DATA.soats[p]}</small></div><span style="color:${d<30?'var(--danger)':'var(--success)'}; font-weight:800">${d}d</span></div>`; 
-            }).join(''); 
+        async function syncData() {
+            try {
+                const res = await fetch(API);
+                const raw = await res.json();
+                db = raw.map(r => ({ ...r, total: parseFloat(r.total || 0) }));
+                renderHistory();
+            } catch(e) {}
         }
-        
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const now = new Date();
-            const mes = now.toLocaleString('es-ES', { month: 'long' }).toUpperCase();
-            doc.text(`REPORTE TWINS ELITE - ${mes}`, 14, 20);
-            const body = db.filter(r => new Date(r.fecha).getMonth() === now.getMonth()).map(r => [r.fecha, r.hora, r.placa, r.total, r.chofer]);
-            doc.autoTable({ head: [['Fecha', 'Hora', 'Placa', 'Cajas', 'Chofer']], body: body, startY: 30 });
-            doc.save(`Twins_Reporte_${mes}.pdf`);
+
+        function renderHistory() {
+            const container = document.getElementById('history-feed');
+            const selDate = document.getElementById('filter-date').value;
+            let h = "";
+            db.forEach((r, i) => {
+                if(r.fecha.includes(selDate)) {
+                    h += `<div class="card">
+                        <div style="display:flex; justify-content:space-between">
+                            <span style="background:var(--accent); padding:4px 10px; border-radius:10px; font-size:12px; font-weight:800">${r.hora}</span>
+                            <b style="color:var(--accent)">${r.placa}</b>
+                        </div>
+                        <div style="font-weight:800; font-size:24px; margin:10px 0">${r.total} Cajas</div>
+                        <div class="detail-box">${(r.detalles || r.items || "").split(', ').join('\n')}</div>
+                        <button class="btn-add" style="width:100%; background:#25D366; height:50px; justify-content:center" onclick="shareWA(${i})">WhatsApp</button>
+                    </div>`;
+                }
+            });
+            container.innerHTML = h || `<p style="text-align:center; opacity:0.3; margin-top:50px">Sin datos</p>`;
         }
+
+        function shareWA(i) {
+            const r = db[i];
+            const msg = `*📦 DESPACHO TWINS ELITE*%0A*Placa:* ${r.placa}%0A*Cajas:* ${r.total}%0A*Ruta:*%0A${(r.detalles || r.items).split(', ').join('%0A')}`;
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+        }
+
+        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
