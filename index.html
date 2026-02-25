@@ -3,153 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - OFICIAL V10</title>
+    <title>TWINS ELITE - OFICIAL V11</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --bg: #0b0f17; --surface: #161c28; --accent: #007aff; 
             --text: #ffffff; --text-dim: #94a3b8; --border: #2d3748; 
-            --success: #34c759; --danger: #ff3b30; --warning: #ffcc00;
+            --success: #34c759; --danger: #ff3b30;
         }
-        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; outline: none; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
         
         .page { display: none; padding: 10px 15px 120px 15px; max-width: 500px; margin: 0 auto; }
         .active { display: block !important; }
 
+        /* HEADER */
         .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(11, 15, 23, 0.9); backdrop-filter: blur(10px); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
-        
-        /* Dashboard Stats */
-        .dash-container { margin-bottom: 25px; }
-        .dash-section-title { font-size: 11px; font-weight: 800; color: var(--accent); letter-spacing: 1px; margin: 15px 0 10px 5px; text-transform: uppercase; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stat-card { background: var(--surface); border: 1px solid var(--border); padding: 18px 15px; border-radius: 20px; text-align: left; }
-        .stat-card b { display: block; font-size: 24px; color: #fff; margin-top: 5px; }
-        .stat-card small { font-size: 10px; color: var(--text-dim); text-transform: uppercase; font-weight: 800; }
 
+        /* DATA CARDS - DISEÑO OPTIMIZADO */
+        .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 20px; margin-bottom: 15px; position: relative; overflow: hidden; }
+        .summary-box::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; }
+        .box-blue::before { background: var(--accent); }
+        .box-green::before { background: var(--success); }
+
+        .summary-title { font-size: 12px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .data-point { display: flex; flex-direction: column; }
+        .data-point b { font-size: 28px; font-weight: 800; color: #fff; }
+        .data-point span { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+
+        /* NUEVO / RUTA (SE MANTIENE INTACTO) */
+        .stat-banner { background: linear-gradient(135deg, #007aff, #0056b3); padding: 25px; border-radius: 24px; color: white; margin-bottom: 20px; }
         .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        input, select { background: var(--surface); border: 2px solid var(--border); padding: 18px; border-radius: 16px; color: white; font-size: 16px; width: 100%; transition: 0.3s; }
-        
-        .btn-add { background: var(--accent); border: none; border-radius: 16px; color: white; padding: 0 25px; font-weight: 800; cursor: pointer; display: flex; align-items: center; }
-        .btn-main { background: var(--success); color: white; width: 100%; padding: 20px; border-radius: 18px; border: none; font-size: 17px; font-weight: 800; margin-top: 15px; cursor: pointer; }
+        input, select { background: var(--surface); border: 2px solid var(--border); padding: 18px; border-radius: 16px; color: white; font-size: 16px; width: 100%; }
+        .btn-add { background: var(--accent); border: none; border-radius: 16px; color: white; padding: 0 25px; font-weight: 800; }
+        .btn-main { background: var(--success); color: white; width: 100%; padding: 20px; border-radius: 18px; border: none; font-size: 17px; font-weight: 800; margin-top: 15px; }
+        .route-item { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; border: 1px solid var(--border); }
 
-        .route-item { background: var(--surface); border-radius: 16px; padding: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); }
-        .card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .detail-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; margin: 12px 0; font-size: 13px; color: #cbd5e1; white-space: pre-line; border: 1px solid rgba(255,255,255,0.05); }
-
-        .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 75px; border-radius: 22px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        /* NAV */
+        .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 75px; border-radius: 22px; display: flex; border: 1px solid var(--border); z-index: 2000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 26px; }
 
-        .stat-banner { background: linear-gradient(135deg, #007aff, #0056b3); padding: 25px; border-radius: 24px; color: white; margin-bottom: 20px; }
+        .loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; }
     </style>
 </head>
 <body>
 
+    <div id="loading" class="loading-overlay">
+        <i class="ph-bold ph-circle-notch-bold" style="font-size: 40px; color: var(--accent); animation: spin 1s linear infinite;"></i>
+        <p style="margin-top: 15px; font-weight: 700;">Sincronizando Inventario...</p>
+    </div>
+
     <header id="app-header" class="top-header" style="display:none">
         <div style="font-weight:900; font-size:18px;">TWINS <span style="color:var(--accent)">ELITE</span></div>
-        <div id="user-info" onclick="logout()" style="font-size:11px; font-weight:800; background:rgba(255,255,255,0.05); padding:8px 15px; border-radius:12px; border:1px solid var(--border)">---</div>
+        <div id="user-info" style="font-size:11px; font-weight:800; background:rgba(255,255,255,0.05); padding:8px 15px; border-radius:12px;">---</div>
     </header>
 
     <div id="page-login" class="page active">
-        <div style="text-align:center; padding:60px 0">
-            <h2 style="font-weight:800;">Iniciar Sesión</h2>
-        </div>
+        <div style="text-align:center; padding:60px 0"><h2 style="font-weight:800;">Acceso Warehouse</h2></div>
         <div id="login-options"></div>
     </div>
 
     <div id="page-select-plate" class="page">
-        <div style="text-align:center; padding:30px 0">
-            <h2 style="font-weight:800;">¿Qué unidad cargará?</h2>
-        </div>
+        <div style="text-align:center; padding:30px 0"><h2 style="font-weight:800;">Unidad de Carga</h2></div>
         <div id="plate-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
     </div>
 
     <div id="page-route" class="page">
         <div class="stat-banner">
             <div style="display:flex; justify-content:space-between; align-items:center">
-                <div><small style="font-weight:800; opacity:0.8">CAJAS ACTUAL</small><div id="count-cajas" style="font-size:48px; font-weight:800;">0</div></div>
-                <div style="text-align:right">
-                    <b id="active-plate-label" style="font-size:20px; display:block;">---</b>
-                    <small style="font-weight:800; opacity:0.9">PUNTOS: <span id="count-puntos">0</span></small>
-                </div>
+                <div><small style="font-weight:800; opacity:0.8">CAJAS EN CARGA</small><div id="count-cajas" style="font-size:48px; font-weight:800;">0</div></div>
+                <div style="text-align:right"><b id="active-plate-label" style="font-size:20px; display:block;">---</b><small>Puntos: <span id="count-puntos">0</span></small></div>
             </div>
         </div>
+        <div class="input-group"><input type="text" id="inp-cli" placeholder="Nombre Cliente"></div>
         <div class="input-group">
-            <input type="text" id="inp-cli" placeholder="Cliente">
-        </div>
-        <div class="input-group">
-            <input type="number" id="inp-can" placeholder="Cajas" style="flex:1">
+            <input type="number" id="inp-can" placeholder="Cantidad" style="flex:1">
             <button class="btn-add" onclick="addPoint()"><i class="ph-bold ph-plus"></i></button>
         </div>
         <div id="live-list"></div>
         <div id="finalize-area" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px">
             <select id="sel-pla" onchange="predictAndSave()" style="margin-bottom:10px;"></select>
             <div class="input-group"><select id="sel-cho"></select><select id="sel-aux"></select></div>
-            <button class="btn-main" onclick="openConfirm()">GUARDAR CARGA</button>
-            <button onclick="clearAll()" style="width:100%; background:none; border:none; color:var(--danger); font-weight:700; margin-top:15px; font-size:12px">BORRAR CARGA ACTUAL</button>
+            <button class="btn-main" onclick="openConfirm()">FINALIZAR DESPACHO</button>
+            <button onclick="clearAll()" style="width:100%; background:none; border:none; color:var(--danger); font-weight:700; margin-top:15px;">ANULAR</button>
         </div>
     </div>
 
     <div id="page-history" class="page">
-        
-        <div class="dash-container">
-            <div class="dash-section-title">Resumen del Mes</div>
-            <div class="stat-grid">
-                <div class="stat-card" style="border-left: 4px solid var(--accent);">
-                    <small>Cajas Mes</small>
-                    <b id="h-cajas-mes">0</b>
-                </div>
-                <div class="stat-card" style="border-left: 4px solid var(--accent);">
-                    <small>Envíos Mes</small>
-                    <b id="h-envios-mes">0</b>
-                </div>
-            </div>
+        <div style="padding: 10px 0 20px 0;">
+            <h2 style="font-weight: 800; margin-bottom: 5px;">Data Almacén</h2>
+            <p style="color: var(--text-dim); font-size: 14px;">Resumen de movimientos oficiales.</p>
+        </div>
 
-            <div class="dash-section-title">Resumen Diario</div>
-            <div class="stat-grid">
-                <div class="stat-card" style="border-left: 4px solid var(--success);">
-                    <small>Cajas Hoy</small>
-                    <b id="h-cajas-dia">0</b>
+        <div class="summary-box box-blue">
+            <div class="summary-title"><i class="ph-bold ph-calendar-check"></i> Acumulado del Mes</div>
+            <div class="summary-grid">
+                <div class="data-point">
+                    <span id="label-month">---</span>
+                    <b id="h-cajas-mes">0</b>
+                    <span>Cajas</span>
                 </div>
-                <div class="stat-card" style="border-left: 4px solid var(--success);">
-                    <small>Envíos Hoy</small>
-                    <b id="h-envios-dia">0</b>
+                <div class="data-point">
+                    <span>DESPACHOS</span>
+                    <b id="h-envios-mes">0</b>
+                    <span>Clientes</span>
                 </div>
             </div>
         </div>
 
-        <div class="dash-section-title">Detalle por Fecha</div>
-        <input type="date" id="filter-date" onchange="renderHistory()" style="margin-bottom:20px">
-        <div id="history-feed"></div>
-    </div>
+        <div class="summary-box box-green">
+            <div class="summary-title"><i class="ph-bold ph-clock-countdown"></i> Movimiento del Día</div>
+            <div class="summary-grid">
+                <div class="data-point">
+                    <span id="label-today">---</span>
+                    <b id="h-cajas-dia">0</b>
+                    <span>Cajas</span>
+                </div>
+                <div class="data-point">
+                    <span>DESPACHOS</span>
+                    <b id="h-envios-dia">0</b>
+                    <span>Clientes</span>
+                </div>
+            </div>
+        </div>
 
-    <div id="page-fleet" class="page"><div id="fleet-grid"></div></div>
-    <div id="page-stats" class="page"><button onclick="generatePDF()" class="btn-main">GENERAR PDF</button></div>
+        <div style="margin-top: 20px;">
+            <div class="dash-section-title" style="color: var(--text-dim); font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">Buscador de Historial</div>
+            <input type="date" id="filter-date" onchange="renderHistoryList()" style="margin-bottom:15px">
+            <div id="history-feed"></div>
+        </div>
+    </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
         <button class="nav-item active" id="n-route" onclick="checkNewRoute()"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
-        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-chart-bar"></i>DATA</button>
-        <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
-        <button class="nav-item" id="n-stats" style="display:none" onclick="go('page-stats')"><i class="ph-fill ph-file-pdf"></i>PDF</button>
+        <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-chart-pie-slice"></i>DATA</button>
     </nav>
-
-    <div id="modal-confirm" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; align-items:center; justify-content:center; padding:20px;">
-        <div class="card" style="width:100%; text-align:center;">
-            <h3>¿Confirmar Carga?</h3>
-            <button class="btn-main" onclick="finalize()">SÍ, GUARDAR</button>
-            <button onclick="closeConfirm()" style="background:none; border:none; color:var(--text-dim); margin-top:20px;">VOLVER</button>
-        </div>
-    </div>
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
         let activeUser = "", currentCarga = [], db = [];
-
         const ASIGNACION = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const AUXILIARES = ["Cristopher", "Plácido", "Martin", "Percy", "Rodolfo", "Ricardo", "Elio", "Daniel C.", "Jofer", "Nelson", "Julio"];
 
@@ -172,11 +168,6 @@
             document.getElementById('sel-aux').innerHTML = AUXILIARES.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
-        function checkPass(u) {
-            if(u === 'TAJHO ADMIN' && prompt("Clave:") !== "1994") return;
-            login(u);
-        }
-
         function login(u) { 
             activeUser = u; 
             localStorage.setItem('tw_logged', u); 
@@ -184,7 +175,6 @@
             document.getElementById('app-header').style.display = 'flex'; 
             document.getElementById('app-nav').style.display = 'flex'; 
             document.getElementById('user-info').innerText = u; 
-            if(u === "TAJHO ADMIN") document.getElementById('n-stats').style.display = "flex";
             
             const savedPlaca = localStorage.getItem('tw_temp_placa');
             if(savedPlaca) {
@@ -192,7 +182,6 @@
                 if(savedRoute) currentCarga = JSON.parse(savedRoute);
                 document.getElementById('sel-pla').value = savedPlaca;
                 document.getElementById('active-plate-label').innerText = savedPlaca;
-                predictAndSave();
                 refreshCargaUI();
                 go('page-route');
             } else {
@@ -201,55 +190,60 @@
             syncData();
         }
 
-        function syncData() {
-            fetch(API).then(r => r.json()).then(data => {
-                db = data.map(r => ({ ...r, total: parseFloat(r.total || 0) }));
-                calculateStats();
-                renderHistory();
-            });
+        async function syncData() {
+            try {
+                const r = await fetch(API);
+                db = await r.json();
+                processDataStats();
+                document.getElementById('loading').style.display = 'none';
+            } catch(e) { console.error(e); }
         }
 
-        function calculateStats() {
+        // FUNCIÓN CLAVE: PROCESA TODO EN UN SOLO CICLO PARA VELOCIDAD
+        function processDataStats() {
             const hoy = new Date().toLocaleDateString('sv-SE');
-            const mesActual = hoy.substring(0, 7); // YYYY-MM
-
+            const mesActual = hoy.substring(0, 7);
+            
             let dCjs = 0, dEnv = 0, mCjs = 0, mEnv = 0;
 
-            db.forEach(r => {
-                if(r.fecha === hoy) { dCjs += r.total; dEnv++; }
-                if(r.fecha.startsWith(mesActual)) { mCjs += r.total; mEnv++; }
-            });
+            for (let i = 0; i < db.length; i++) {
+                const r = db[i];
+                const total = parseFloat(r.total || 0);
+                if (r.fecha === hoy) { dCjs += total; dEnv++; }
+                if (r.fecha && r.fecha.startsWith(mesActual)) { mCjs += total; mEnv++; }
+            }
 
+            // Actualizar Cuadros
             document.getElementById('h-cajas-dia').innerText = dCjs;
             document.getElementById('h-envios-dia').innerText = dEnv;
             document.getElementById('h-cajas-mes').innerText = mCjs;
             document.getElementById('h-envios-mes').innerText = mEnv;
+            
+            document.getElementById('label-today').innerText = "HOY " + hoy.split('-').reverse().slice(0,2).join('/');
+            document.getElementById('label-month').innerText = new Date().toLocaleString('es-ES', { month: 'long' }).toUpperCase();
         }
 
-        function renderHistory() {
+        function renderHistoryList() {
             const container = document.getElementById('history-feed');
-            const selDate = document.getElementById('filter-date').value || new Date().toLocaleDateString('sv-SE');
+            const selDate = document.getElementById('filter-date').value;
             let h = "";
-            db.forEach((r, i) => {
+            db.forEach(r => {
                 if(r.fecha === selDate) {
-                    h += `<div class="card">
-                        <div style="display:flex; justify-content:space-between">
-                            <span style="color:var(--accent); font-weight:800">${r.hora} - ${r.placa}</span>
-                            <b style="color:var(--success)">${r.total} CJS</b>
-                        </div>
-                        <div class="detail-box">${r.items || r.detalles}</div>
-                        <button style="width:100%; background:#25D366; border:none; color:white; padding:12px; border-radius:12px; font-weight:700" onclick="shareWA(${i})">WhatsApp</button>
+                    h += `<div class="route-item" style="font-size:13px">
+                        <span><b>${r.total}</b> ${r.placa}</span>
+                        <span style="color:var(--text-dim)">${r.hora}</span>
                     </div>`;
                 }
             });
-            container.innerHTML = h || `<p style="text-align:center; opacity:0.3; margin-top:50px">No hay datos esta fecha</p>`;
+            container.innerHTML = h || `<p style="text-align:center; opacity:0.3; font-size:12px">Sin registros para esta fecha</p>`;
         }
 
+        // LÓGICA DE CARGA (INTACTA)
         function startWithPlate(p) {
             localStorage.setItem('tw_temp_placa', p);
             document.getElementById('sel-pla').value = p;
             document.getElementById('active-plate-label').innerText = p;
-            predictAndSave();
+            if(ASIGNACION[p]) document.getElementById('sel-cho').value = ASIGNACION[p];
             go('page-route');
         }
 
@@ -276,19 +270,12 @@
             document.getElementById('finalize-area').style.display = currentCarga.length > 0 ? 'block' : 'none'; 
         }
 
-        function removePoint(i) { 
-            currentCarga.splice(i,1); 
-            localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga));
-            refreshCargaUI(); 
-        }
-
+        function removePoint(i) { currentCarga.splice(i,1); localStorage.setItem('tw_temp_route', JSON.stringify(currentCarga)); refreshCargaUI(); }
+        
         function clearAll() { 
-            if(!confirm("¿Borrar?")) return;
-            currentCarga = []; 
-            localStorage.removeItem('tw_temp_route');
-            localStorage.removeItem('tw_temp_placa');
-            refreshCargaUI(); 
-            go('page-select-plate');
+            if(!confirm("¿Borrar carga?")) return;
+            currentCarga = []; localStorage.removeItem('tw_temp_route'); localStorage.removeItem('tw_temp_placa');
+            refreshCargaUI(); go('page-select-plate');
         }
 
         async function finalize() {
@@ -304,13 +291,9 @@
             };
             fetch(API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(r) });
             db.unshift(r); 
-            calculateStats();
-            currentCarga = [];
-            localStorage.removeItem('tw_temp_route');
-            localStorage.removeItem('tw_temp_placa');
-            refreshCargaUI();
-            closeConfirm(); 
-            go('page-history');
+            processDataStats();
+            currentCarga = []; localStorage.removeItem('tw_temp_route'); localStorage.removeItem('tw_temp_placa');
+            refreshCargaUI(); go('page-history');
         }
 
         function go(id) {
@@ -321,25 +304,11 @@
             if(document.getElementById(navId)) document.getElementById(navId).classList.add('active');
         }
 
-        function predictAndSave() { 
-            const p = document.getElementById('sel-pla').value;
-            if(ASIGNACION[p]) document.getElementById('sel-cho').value = ASIGNACION[p];
-        }
-
-        function checkNewRoute() {
-            if(localStorage.getItem('tw_temp_placa')) go('page-route');
-            else go('page-select-plate');
-        }
-
-        function logout() { localStorage.clear(); location.reload(); }
-        function openConfirm() { document.getElementById('modal-confirm').style.display = 'flex'; }
-        function closeConfirm() { document.getElementById('modal-confirm').style.display = 'none'; }
-        
-        function shareWA(i) {
-            const r = db[i];
-            const msg = `*📦 DESPACHO TWINS ELITE*%0A*Placa:* ${r.placa}%0A*Cajas:* ${r.total}%0A*Ruta:*%0A${(r.items || r.detalles).split(', ').join('%0A')}`;
-            window.open(`https://wa.me/?text=${msg}`, '_blank');
-        }
+        function checkPass(u) { if(u === 'TAJHO ADMIN' && prompt("Clave:") !== "1994") return; login(u); }
+        function checkNewRoute() { if(localStorage.getItem('tw_temp_placa')) go('page-route'); else go('page-select-plate'); }
+        function openConfirm() { if(confirm("¿Guardar despacho oficial?")) finalize(); }
+        function predictAndSave() { const p = document.getElementById('sel-pla').value; if(ASIGNACION[p]) document.getElementById('sel-cho').value = ASIGNACION[p]; }
     </script>
+    <style>@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }</style>
 </body>
 </html>
