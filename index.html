@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - OFICIAL V15</title>
+    <title>TWINS ELITE - OFICIAL V16</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -12,8 +12,8 @@
             --text: #ffffff; --text-dim: #94a3b8; --border: #2d3748; 
             --success: #34c759; --danger: #ff3b30; --warning: #ffcc00;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
         
         .page { display: none; padding: 10px 15px 120px 15px; max-width: 500px; margin: 0 auto; }
         .active { display: block !important; }
@@ -22,37 +22,39 @@
 
         /* DATA COMPACTA */
         .summary-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 10px; border-left: 4px solid var(--accent); cursor: pointer; transition: 0.2s; }
-        .summary-box:active { transform: scale(0.98); background: #1e2533; }
+        .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 10px; border-left: 4px solid var(--accent); }
         .box-green { border-left-color: var(--success); }
-        .summary-box label { font-size: 9px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 2px; pointer-events: none; }
-        .data-row { display: flex; justify-content: space-between; align-items: baseline; pointer-events: none; }
-        .data-row b { font-size: 18px; color: #fff; }
-        .data-row span { font-size: 9px; color: var(--text-dim); font-weight: 600; }
+        .summary-box label { font-size: 9px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; display: block; }
+        .data-row { display: flex; justify-content: space-between; align-items: baseline; }
+        .data-row b { font-size: 18px; }
 
-        /* BUSCADOR */
-        .search-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 5px 12px; display: flex; align-items: center; margin-bottom: 10px; }
-        .search-container i { color: var(--text-dim); margin-right: 8px; }
-        .search-container input { background: none; border: none; color: white; padding: 10px 0; width: 100%; font-size: 14px; }
+        /* TARJETAS DE HISTORIAL MEJORADAS */
+        .history-card { background: var(--surface); border-radius: 18px; padding: 15px; border: 1px solid var(--border); margin-bottom: 12px; position: relative; }
+        .h-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .h-top b { font-size: 16px; color: var(--accent); }
+        .h-info { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.4; }
+        
+        .h-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; border-top: 1px solid var(--border); padding-top: 10px; }
+        .btn-action { background: rgba(255,255,255,0.05); border: none; border-radius: 10px; color: white; padding: 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-whatsapp { color: #25D366; background: rgba(37, 211, 102, 0.1); }
 
-        /* TARJETAS DE HISTORIAL */
-        .history-card { background: var(--surface); border-radius: 14px; padding: 12px; border: 1px solid var(--border); margin-bottom: 8px; }
-        .history-card .h-top { display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .history-card b { color: var(--accent); font-size: 13px; }
-        .history-card p { font-size: 12px; color: #cbd5e1; margin: 4px 0; line-height: 1.4; }
-        .history-card .footer { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim); margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px; }
+        /* MODAL */
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000; align-items:center; justify-content:center; padding:20px; }
+        .modal-content { background:var(--surface); width:100%; max-width:400px; border-radius:24px; padding:20px; border:1px solid var(--border); }
 
         /* NAV */
         .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 9px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
+        
+        input, select { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; width: 100%; margin-bottom: 10px; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
         <div style="font-weight:900; font-size:16px;">TWINS <span style="color:var(--accent)">ELITE</span></div>
-        <div id="sync-status" style="font-size:10px; font-weight:800; color:var(--warning)">CARGANDO...</div>
+        <div id="sync-status" style="font-size:10px; font-weight:800; color:var(--warning)">● ACTUALIZANDO</div>
     </header>
 
     <div id="page-login" class="page active">
@@ -66,58 +68,50 @@
     </div>
 
     <div id="page-route" class="page">
-        <div style="background: linear-gradient(135deg, #007aff, #0056b3); padding: 20px; border-radius: 20px; margin-bottom: 15px; color: white;">
+        <div style="background: linear-gradient(135deg, #007aff, #0056b3); padding: 20px; border-radius: 20px; margin-bottom: 15px;">
             <div style="display:flex; justify-content:space-between; align-items:center">
                 <div><small style="font-weight:800; font-size:10px;">CAJAS</small><div id="count-cajas" style="font-size:36px; font-weight:800;">0</div></div>
-                <div style="text-align:right"><b id="active-plate-label" style="font-size:16px;">---</b><small style="display:block; font-size:10px;">Items: <span id="count-puntos">0</span></small></div>
+                <div style="text-align:right"><b id="active-plate-label" style="font-size:16px;">---</b><small style="display:block; font-size:10px;">Ptos: <span id="count-puntos">0</span></small></div>
             </div>
         </div>
-        <input type="text" id="inp-cli" placeholder="Nombre Cliente" style="background:var(--surface); border:1px solid var(--border); padding:14px; border-radius:12px; color:white; width:100%; margin-bottom:10px;">
+        <input type="text" id="inp-cli" placeholder="Cliente">
         <div style="display:flex; gap:10px; margin-bottom: 15px;">
-            <input type="number" id="inp-can" placeholder="Cant." style="background:var(--surface); border:1px solid var(--border); padding:14px; border-radius:12px; color:white; flex:1;">
+            <input type="number" id="inp-can" placeholder="Cant." style="flex:1;">
             <button onclick="addPoint()" style="background:var(--accent); border:none; border-radius:12px; color:white; width:60px;"><i class="ph-bold ph-plus"></i></button>
         </div>
         <div id="live-list"></div>
         <div id="finalize-area" style="display:none; margin-top:15px; border-top:1px solid var(--border); padding-top:15px">
-            <button onclick="finalize()" style="background:var(--success); color:white; width:100%; padding:18px; border-radius:14px; border:none; font-weight:800;">GUARDAR EN EXCEL</button>
+            <button onclick="finalize()" style="background:var(--success); color:white; width:100%; padding:18px; border-radius:14px; border:none; font-weight:800;">GUARDAR Y FINALIZAR</button>
         </div>
     </div>
 
     <div id="page-history" class="page">
-        <h3 style="margin: 10px 0;">Data & Historial</h3>
-        
         <div class="summary-container">
-            <div class="summary-box" onclick="filterByTime('month')">
-                <label id="label-month">MES</label>
+            <div class="summary-box">
+                <label>MES ACTUAL</label>
                 <div class="data-row"><b id="h-cajas-mes">0</b><span>Cjs</span></div>
-                <div class="data-row"><b id="h-envios-mes">0</b><span>Cli</span></div>
             </div>
-            <div class="summary-box box-green" onclick="filterByTime('day')">
+            <div class="summary-box box-green">
                 <label>HOY</label>
                 <div class="data-row"><b id="h-cajas-dia">0</b><span>Cjs</span></div>
-                <div class="data-row"><b id="h-envios-dia">0</b><span>Cli</span></div>
             </div>
         </div>
 
-        <div class="search-container">
-            <i class="ph-bold ph-magnifying-glass"></i>
-            <input type="text" id="search-input" placeholder="Buscar cliente, chofer o placa..." oninput="renderHistory()">
-        </div>
-
-        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-            <input type="date" id="filter-date" onchange="renderHistory()" style="background:var(--surface); border:1px solid var(--border); padding:10px; border-radius:10px; color:white; flex:1; font-size:12px;">
-            <button onclick="resetFilters()" style="background:var(--border); border:none; color:white; padding:0 15px; border-radius:10px; font-size:11px; font-weight:700;">Limpiar</button>
-        </div>
-
+        <input type="text" id="search-input" placeholder="Buscar..." oninput="renderHistory()" style="margin-bottom:10px;">
         <div id="history-feed"></div>
     </div>
 
-    <div id="page-fleet" class="page"><h3>Estado Flota</h3><div id="fleet-grid"></div></div>
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="margin-top:0">Detalle de Ruta</h3>
+            <div id="modal-body" style="max-height:300px; overflow-y:auto; margin-bottom:20px;"></div>
+            <button onclick="closeModal()" style="width:100%; background:var(--border); border:none; padding:12px; border-radius:12px; color:white; font-weight:700;">Cerrar</button>
+        </div>
+    </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
         <button class="nav-item active" id="n-route" onclick="go('page-route')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
         <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-chart-pie-slice"></i>DATA</button>
-        <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
     </nav>
 
     <script>
@@ -146,84 +140,72 @@
                 db = await r.json();
                 document.getElementById('sync-status').innerText = "● ONLINE";
                 document.getElementById('sync-status').style.color = "var(--success)";
-                processStats();
-                renderHistory();
-            } catch(e) {
-                document.getElementById('sync-status').innerText = "● ERROR";
-            }
+                processStats(); renderHistory();
+            } catch(e) { document.getElementById('sync-status').innerText = "● OFFLINE"; }
         }
 
         function processStats() {
             const hoy = new Date().toLocaleDateString('sv-SE');
-            const mes = hoy.substring(0, 7);
-            let dC = 0, dE = 0, mC = 0, mE = 0;
-            
+            let dC = 0, mC = 0;
             db.forEach(r => {
                 const can = parseFloat(r.total || 0);
-                if(r.fecha === hoy) { dC += can; dE++; }
-                if(r.fecha && r.fecha.startsWith(mes)) { mC += can; mE++; }
+                if(r.fecha === hoy) dC += can;
+                if(r.fecha && r.fecha.startsWith(hoy.substring(0, 7))) mC += can;
             });
-
             document.getElementById('h-cajas-dia').innerText = dC;
-            document.getElementById('h-envios-dia').innerText = dE;
             document.getElementById('h-cajas-mes').innerText = mC;
-            document.getElementById('h-envios-mes').innerText = mE;
-            document.getElementById('label-month').innerText = new Date().toLocaleString('es-ES', { month: 'short' }).toUpperCase();
         }
 
         function renderHistory() {
             const container = document.getElementById('history-feed');
             const search = document.getElementById('search-input').value.toLowerCase();
-            const dateFilter = document.getElementById('filter-date').value;
-            
-            let filtered = db;
-
-            if(dateFilter) {
-                filtered = filtered.filter(r => r.fecha === dateFilter);
-            }
-
-            if(search) {
-                filtered = filtered.filter(r => 
-                    r.chofer.toLowerCase().includes(search) || 
-                    r.placa.toLowerCase().includes(search) || 
-                    r.items.toLowerCase().includes(search)
-                );
-            }
-
             let html = "";
-            filtered.slice(0, 30).forEach(r => {
+
+            db.filter(r => r.placa.toLowerCase().includes(search) || r.chofer.toLowerCase().includes(search) || r.items.toLowerCase().includes(search))
+            .slice(0, 20).forEach((r, idx) => {
                 html += `
                 <div class="history-card">
-                    <div class="h-top">
-                        <b>${r.placa}</b>
-                        <span style="color:var(--success); font-weight:800; font-size:12px;">${r.total} CJS</span>
-                    </div>
-                    <p><i class="ph-bold ph-user-circle" style="color:var(--accent)"></i> ${r.chofer}</p>
-                    <p style="font-size:11px; opacity:0.8;">${r.items}</p>
-                    <div class="footer">
-                        <span><i class="ph ph-calendar"></i> ${r.fecha}</span>
-                        <span><i class="ph ph-clock"></i> ${r.hora}</span>
+                    <div class="h-top"><b>${r.placa}</b> <span style="font-size:12px; color:var(--success)">${r.total} CJS</span></div>
+                    <div class="h-info"><i class="ph-bold ph-user"></i> ${r.chofer}<br><i class="ph-bold ph-clock"></i> ${r.fecha} | ${r.hora}</div>
+                    <div class="h-actions">
+                        <button class="btn-action" onclick="viewRoute(${idx})"><i class="ph-bold ph-eye"></i> VER</button>
+                        <button class="btn-action" onclick="editRoute(${idx})"><i class="ph-bold ph-pencil-simple"></i> EDITAR</button>
+                        <button class="btn-action btn-whatsapp" onclick="sendWhatsApp(${idx})"><i class="ph-bold ph-whatsapp-logo"></i> ENVIAR</button>
                     </div>
                 </div>`;
             });
-
-            container.innerHTML = html || `<p style="text-align:center; opacity:0.3; margin-top:30px;">Sin resultados</p>`;
+            container.innerHTML = html || "<p style='text-align:center; opacity:0.3'>No hay registros</p>";
         }
 
-        function filterByTime(type) {
-            const hoy = new Date().toLocaleDateString('sv-SE');
-            if(type === 'day') document.getElementById('filter-date').value = hoy;
-            else document.getElementById('filter-date').value = "";
-            renderHistory();
+        function viewRoute(i) {
+            const r = db[i];
+            document.getElementById('modal-title').innerText = "Lista de Ruta - " + r.placa;
+            document.getElementById('modal-body').innerHTML = r.items.split(',').map(li => `<div style="padding:10px; border-bottom:1px solid var(--border); font-size:13px;">${li.trim()}</div>`).join('');
+            document.getElementById('edit-modal').style.display = "flex";
         }
 
-        function resetFilters() {
-            document.getElementById('search-input').value = "";
-            document.getElementById('filter-date').value = "";
-            renderHistory();
+        function editRoute(i) {
+            const r = db[i];
+            if(confirm("¿Deseas cargar esta ruta para editarla? Se borrará lo que estés haciendo ahora.")) {
+                localStorage.setItem('tw_temp_placa', r.placa);
+                currentCarga = r.items.split(',').map(li => {
+                    const parts = li.split(':');
+                    return { cli: parts[0].trim(), can: parseInt(parts[1]) || 0 };
+                });
+                go('page-route');
+                refreshCargaUI();
+            }
         }
 
-        // Lógica de funcionamiento (Nuevo/Login)
+        function sendWhatsApp(i) {
+            const r = db[i];
+            const msg = `*TWINS ELITE - DESPACHO*\n📦 *Placa:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n📅 *Fecha:* ${r.fecha}\n\n*DETALLE DE RUTA:*\n${r.items.split(',').map(li => "• " + li.trim()).join('\n')}\n\n*TOTAL CAJAS: ${r.total}*`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function closeModal() { document.getElementById('edit-modal').style.display = "none"; }
+
+        // FUNCIONES DE CONTROL (LOGIN/RUTA)
         function login(u) {
             activeUser = u; localStorage.setItem('tw_logged', u);
             document.getElementById('page-login').classList.remove('active');
@@ -253,7 +235,7 @@
             document.getElementById('active-plate-label').innerText = localStorage.getItem('tw_temp_placa') || "---";
             currentCarga.forEach((it, i) => {
                 t += it.can;
-                h += `<div style="background:var(--surface); padding:12px; border-radius:10px; margin-bottom:5px; display:flex; justify-content:space-between; border:1px solid var(--border);"><span><b>${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger)" onclick="currentCarga.splice(${i},1);refreshCargaUI()"></i></div>`;
+                h += `<div style="background:var(--surface); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; justify-content:space-between; border:1px solid var(--border);"><span><b>${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger)" onclick="currentCarga.splice(${i},1);refreshCargaUI()"></i></div>`;
             });
             document.getElementById('count-cajas').innerText = t;
             document.getElementById('count-puntos').innerText = currentCarga.length;
