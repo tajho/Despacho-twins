@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - OFICIAL V16</title>
+    <title>TWINS ELITE - V17 OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -13,99 +13,121 @@
             --success: #34c759; --danger: #ff3b30; --warning: #ffcc00;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; }
         
         .page { display: none; padding: 10px 15px 120px 15px; max-width: 500px; margin: 0 auto; }
         .active { display: block !important; }
 
-        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(11, 15, 23, 0.9); backdrop-filter: blur(10px); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(11, 15, 23, 0.95); backdrop-filter: blur(10px); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
 
-        /* DATA COMPACTA */
-        .summary-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 10px; border-left: 4px solid var(--accent); }
-        .box-green { border-left-color: var(--success); }
-        .summary-box label { font-size: 9px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; display: block; }
-        .data-row { display: flex; justify-content: space-between; align-items: baseline; }
-        .data-row b { font-size: 18px; }
-
-        /* TARJETAS DE HISTORIAL MEJORADAS */
-        .history-card { background: var(--surface); border-radius: 18px; padding: 15px; border: 1px solid var(--border); margin-bottom: 12px; position: relative; }
-        .h-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .h-top b { font-size: 16px; color: var(--accent); }
-        .h-info { font-size: 12px; color: var(--text-dim); margin-bottom: 10px; line-height: 1.4; }
+        /* TARJETAS DE DATA MEJORADAS */
+        .history-card { 
+            background: var(--surface); 
+            border-radius: 20px; 
+            padding: 16px; 
+            border: 1px solid var(--border); 
+            margin-bottom: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .h-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .h-header b { font-size: 18px; color: var(--accent); letter-spacing: 0.5px; }
+        .h-header .badge { background: rgba(52, 199, 89, 0.15); color: var(--success); padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800; }
         
-        .h-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; border-top: 1px solid var(--border); padding-top: 10px; }
-        .btn-action { background: rgba(255,255,255,0.05); border: none; border-radius: 10px; color: white; padding: 8px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn-whatsapp { color: #25D366; background: rgba(37, 211, 102, 0.1); }
+        .h-body { font-size: 13px; color: var(--text-dim); margin-bottom: 15px; line-height: 1.5; }
+        .h-body i { color: var(--accent); margin-right: 5px; width: 16px; text-align: center; }
+
+        /* BOTONERA DE ACCIÓN - AHORA MÁS VISIBLE */
+        .h-actions { 
+            display: flex; 
+            gap: 8px; 
+            margin-top: 12px; 
+            padding-top: 12px; 
+            border-top: 1px solid var(--border);
+        }
+        .btn-act { 
+            flex: 1; 
+            border: none; 
+            border-radius: 10px; 
+            padding: 10px 5px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 4px;
+            cursor: pointer;
+        }
+        .btn-view { background: #2d3748; }
+        .btn-edit { background: #3e4c62; }
+        .btn-wa { background: #128c7e; }
 
         /* MODAL */
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000; align-items:center; justify-content:center; padding:20px; }
-        .modal-content { background:var(--surface); width:100%; max-width:400px; border-radius:24px; padding:20px; border:1px solid var(--border); }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:3000; align-items:center; justify-content:center; padding:20px; backdrop-filter: blur(5px); }
+        .modal-content { background:var(--surface); width:100%; max-width:380px; border-radius:24px; padding:24px; border:1px solid var(--border); }
 
         /* NAV */
-        .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: rgba(22, 28, 40, 0.95); backdrop-filter: blur(20px); height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 9px; font-weight: 700; }
+        .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: #1c2533; height: 70px; border-radius: 20px; display: flex; border: 1px solid var(--border); z-index: 2000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
-        
-        input, select { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; width: 100%; margin-bottom: 10px; font-size: 14px; }
+        .nav-item i { font-size: 24px; margin-bottom: 2px; }
+
+        input { background: var(--surface); border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; width: 100%; margin-bottom: 10px; font-size: 15px; }
     </style>
 </head>
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
         <div style="font-weight:900; font-size:16px;">TWINS <span style="color:var(--accent)">ELITE</span></div>
-        <div id="sync-status" style="font-size:10px; font-weight:800; color:var(--warning)">● ACTUALIZANDO</div>
+        <div id="sync-label" style="font-size:10px; font-weight:800; color:var(--success)">● ACTUALIZADO</div>
     </header>
 
     <div id="page-login" class="page active">
-        <div style="text-align:center; padding:50px 0"><h3 style="font-weight:800;">Warehouse Login</h3></div>
+        <div style="text-align:center; padding:60px 0"><h2 style="font-weight:800;">Acceso</h2></div>
         <div id="login-options"></div>
     </div>
 
     <div id="page-select-plate" class="page">
-        <div style="text-align:center; padding:20px 0"><h3 style="font-weight:800;">Unidad de Carga</h3></div>
-        <div id="plate-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
+        <h3 style="text-align:center; margin-bottom:20px;">Seleccione Unidad</h3>
+        <div id="plate-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
     </div>
 
     <div id="page-route" class="page">
-        <div style="background: linear-gradient(135deg, #007aff, #0056b3); padding: 20px; border-radius: 20px; margin-bottom: 15px;">
+        <div style="background: linear-gradient(135deg, #007aff, #0056b3); padding: 20px; border-radius: 20px; margin-bottom: 20px;">
             <div style="display:flex; justify-content:space-between; align-items:center">
-                <div><small style="font-weight:800; font-size:10px;">CAJAS</small><div id="count-cajas" style="font-size:36px; font-weight:800;">0</div></div>
-                <div style="text-align:right"><b id="active-plate-label" style="font-size:16px;">---</b><small style="display:block; font-size:10px;">Ptos: <span id="count-puntos">0</span></small></div>
+                <div><small style="font-weight:800; opacity:0.8">CAJAS TOTAL</small><div id="count-cajas" style="font-size:38px; font-weight:800;">0</div></div>
+                <div style="text-align:right"><b id="active-plate-label" style="font-size:18px;">---</b><br><small id="count-puntos">0 puntos</small></div>
             </div>
         </div>
-        <input type="text" id="inp-cli" placeholder="Cliente">
-        <div style="display:flex; gap:10px; margin-bottom: 15px;">
-            <input type="number" id="inp-can" placeholder="Cant." style="flex:1;">
-            <button onclick="addPoint()" style="background:var(--accent); border:none; border-radius:12px; color:white; width:60px;"><i class="ph-bold ph-plus"></i></button>
+        <input type="text" id="inp-cli" placeholder="Nombre Cliente">
+        <div style="display:flex; gap:10px; margin-bottom:15px">
+            <input type="number" id="inp-can" placeholder="Cant." style="flex:1">
+            <button onclick="addPoint()" style="background:var(--accent); border:none; border-radius:12px; color:white; width:60px; height:50px;"><i class="ph-bold ph-plus"></i></button>
         </div>
         <div id="live-list"></div>
-        <div id="finalize-area" style="display:none; margin-top:15px; border-top:1px solid var(--border); padding-top:15px">
-            <button onclick="finalize()" style="background:var(--success); color:white; width:100%; padding:18px; border-radius:14px; border:none; font-weight:800;">GUARDAR Y FINALIZAR</button>
+        <div id="finalize-area" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px">
+            <button onclick="finalize()" style="background:var(--success); color:white; width:100%; padding:18px; border-radius:15px; border:none; font-weight:800; font-size:16px;">GUARDAR EN EXCEL</button>
         </div>
     </div>
 
     <div id="page-history" class="page">
-        <div class="summary-container">
-            <div class="summary-box">
-                <label>MES ACTUAL</label>
-                <div class="data-row"><b id="h-cajas-mes">0</b><span>Cjs</span></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px">
+            <div style="background:var(--surface); padding:12px; border-radius:15px; border-left:4px solid var(--accent)">
+                <small style="font-size:9px; color:var(--text-dim)">MES</small><br><b id="h-mes" style="font-size:18px">0</b>
             </div>
-            <div class="summary-box box-green">
-                <label>HOY</label>
-                <div class="data-row"><b id="h-cajas-dia">0</b><span>Cjs</span></div>
+            <div style="background:var(--surface); padding:12px; border-radius:15px; border-left:4px solid var(--success)">
+                <small style="font-size:9px; color:var(--text-dim)">HOY</small><br><b id="h-hoy" style="font-size:18px">0</b>
             </div>
         </div>
-
-        <input type="text" id="search-input" placeholder="Buscar..." oninput="renderHistory()" style="margin-bottom:10px;">
+        <input type="text" id="search-input" placeholder="Buscar chofer, placa o cliente..." oninput="renderHistory()">
         <div id="history-feed"></div>
     </div>
 
-    <div id="edit-modal" class="modal">
+    <div id="modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title" style="margin-top:0">Detalle de Ruta</h3>
-            <div id="modal-body" style="max-height:300px; overflow-y:auto; margin-bottom:20px;"></div>
-            <button onclick="closeModal()" style="width:100%; background:var(--border); border:none; padding:12px; border-radius:12px; color:white; font-weight:700;">Cerrar</button>
+            <h3 id="m-title" style="margin-top:0; color:var(--accent)">Detalle</h3>
+            <div id="m-body" style="max-height:300px; overflow-y:auto; margin:15px 0; border-top:1px solid var(--border)"></div>
+            <button onclick="closeModal()" style="width:100%; background:var(--accent); border:none; padding:15px; border-radius:12px; color:white; font-weight:800;">ENTENDIDO</button>
         </div>
     </div>
 
@@ -120,17 +142,17 @@
         const ASIGNACION = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
 
         window.onload = () => {
-            setupLogin();
+            setupUI();
             if(localStorage.getItem('tw_logged')) login(localStorage.getItem('tw_logged'));
         };
 
-        function setupLogin() {
-            const opts = document.getElementById('login-options');
+        function setupUI() {
+            const l = document.getElementById('login-options');
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                opts.innerHTML += `<div onclick="checkPass('${u}')" style="background:var(--surface); padding:16px; border-radius:12px; margin-bottom:8px; border:1px solid var(--border); display:flex; justify-content:space-between; font-weight:700;">${u} <i class="ph-bold ph-caret-right"></i></div>`;
+                l.innerHTML += `<div onclick="checkPass('${u}')" style="background:var(--surface); padding:18px; border-radius:15px; margin-bottom:10px; border:1px solid var(--border); font-weight:700;">${u}</div>`;
             });
             document.getElementById('plate-options').innerHTML = Object.keys(ASIGNACION).map(p => 
-                `<div onclick="startWithPlate('${p}')" style="background:var(--surface); border:1px solid var(--border); padding:20px; border-radius:12px; color:white; font-weight:800; text-align:center;">${p}</div>`
+                `<div onclick="startPlate('${p}')" style="background:var(--surface); border:1px solid var(--border); padding:20px 10px; border-radius:15px; font-weight:800; text-align:center;">${p}</div>`
             ).join('');
         }
 
@@ -138,74 +160,74 @@
             try {
                 const r = await fetch(API);
                 db = await r.json();
-                document.getElementById('sync-status').innerText = "● ONLINE";
-                document.getElementById('sync-status').style.color = "var(--success)";
                 processStats(); renderHistory();
-            } catch(e) { document.getElementById('sync-status').innerText = "● OFFLINE"; }
+            } catch(e) { console.error(e); }
         }
 
         function processStats() {
             const hoy = new Date().toLocaleDateString('sv-SE');
             let dC = 0, mC = 0;
             db.forEach(r => {
-                const can = parseFloat(r.total || 0);
-                if(r.fecha === hoy) dC += can;
-                if(r.fecha && r.fecha.startsWith(hoy.substring(0, 7))) mC += can;
+                const n = parseFloat(r.total || 0);
+                if(r.fecha === hoy) dC += n;
+                if(r.fecha && r.fecha.startsWith(hoy.substring(0, 7))) mC += n;
             });
-            document.getElementById('h-cajas-dia').innerText = dC;
-            document.getElementById('h-cajas-mes').innerText = mC;
+            document.getElementById('h-hoy').innerText = dC;
+            document.getElementById('h-mes').innerText = mC;
         }
 
         function renderHistory() {
             const container = document.getElementById('history-feed');
-            const search = document.getElementById('search-input').value.toLowerCase();
+            const query = document.getElementById('search-input').value.toLowerCase();
             let html = "";
 
-            db.filter(r => r.placa.toLowerCase().includes(search) || r.chofer.toLowerCase().includes(search) || r.items.toLowerCase().includes(search))
+            db.filter(r => r.placa.toLowerCase().includes(query) || r.chofer.toLowerCase().includes(query) || r.items.toLowerCase().includes(query))
             .slice(0, 20).forEach((r, idx) => {
                 html += `
                 <div class="history-card">
-                    <div class="h-top"><b>${r.placa}</b> <span style="font-size:12px; color:var(--success)">${r.total} CJS</span></div>
-                    <div class="h-info"><i class="ph-bold ph-user"></i> ${r.chofer}<br><i class="ph-bold ph-clock"></i> ${r.fecha} | ${r.hora}</div>
+                    <div class="h-header"><b>${r.placa}</b> <span class="badge">${r.total} CJS</span></div>
+                    <div class="h-body">
+                        <div><i class="ph-fill ph-user"></i> ${r.chofer}</div>
+                        <div><i class="ph-fill ph-clock"></i> ${r.hora} | ${r.fecha}</div>
+                    </div>
                     <div class="h-actions">
-                        <button class="btn-action" onclick="viewRoute(${idx})"><i class="ph-bold ph-eye"></i> VER</button>
-                        <button class="btn-action" onclick="editRoute(${idx})"><i class="ph-bold ph-pencil-simple"></i> EDITAR</button>
-                        <button class="btn-action btn-whatsapp" onclick="sendWhatsApp(${idx})"><i class="ph-bold ph-whatsapp-logo"></i> ENVIAR</button>
+                        <button class="btn-act btn-view" onclick="viewR(${idx})"><i class="ph-bold ph-eye"></i> VER</button>
+                        <button class="btn-act btn-edit" onclick="editR(${idx})"><i class="ph-bold ph-pencil"></i> EDITAR</button>
+                        <button class="btn-act btn-wa" onclick="sendWA(${idx})"><i class="ph-bold ph-whatsapp-logo"></i> WA</button>
                     </div>
                 </div>`;
             });
-            container.innerHTML = html || "<p style='text-align:center; opacity:0.3'>No hay registros</p>";
+            container.innerHTML = html || "<p style='text-align:center; opacity:0.3; margin-top:20px;'>No hay datos</p>";
         }
 
-        function viewRoute(i) {
+        function viewR(i) {
             const r = db[i];
-            document.getElementById('modal-title').innerText = "Lista de Ruta - " + r.placa;
-            document.getElementById('modal-body').innerHTML = r.items.split(',').map(li => `<div style="padding:10px; border-bottom:1px solid var(--border); font-size:13px;">${li.trim()}</div>`).join('');
-            document.getElementById('edit-modal').style.display = "flex";
+            document.getElementById('m-title').innerText = "Ruta " + r.placa;
+            document.getElementById('m-body').innerHTML = r.items.split(',').map(li => `<div style="padding:12px; border-bottom:1px solid var(--border); font-size:14px;">${li.trim()}</div>`).join('');
+            document.getElementById('modal').style.display = "flex";
         }
 
-        function editRoute(i) {
+        function editR(i) {
             const r = db[i];
-            if(confirm("¿Deseas cargar esta ruta para editarla? Se borrará lo que estés haciendo ahora.")) {
+            if(confirm("¿Cargar esta ruta para editar?")) {
                 localStorage.setItem('tw_temp_placa', r.placa);
                 currentCarga = r.items.split(',').map(li => {
-                    const parts = li.split(':');
-                    return { cli: parts[0].trim(), can: parseInt(parts[1]) || 0 };
+                    const p = li.split(':');
+                    return { cli: p[0].trim(), can: parseInt(p[1]) || 0 };
                 });
-                go('page-route');
-                refreshCargaUI();
+                go('page-route'); refreshCargaUI();
             }
         }
 
-        function sendWhatsApp(i) {
+        function sendWA(i) {
             const r = db[i];
-            const msg = `*TWINS ELITE - DESPACHO*\n📦 *Placa:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n📅 *Fecha:* ${r.fecha}\n\n*DETALLE DE RUTA:*\n${r.items.split(',').map(li => "• " + li.trim()).join('\n')}\n\n*TOTAL CAJAS: ${r.total}*`;
+            const msg = `*TWINS ELITE*\n📦 *${r.placa}* (${r.chofer})\n\n*RUTA:*\n${r.items.split(',').map(li => "• " + li.trim()).join('\n')}\n\n*TOTAL: ${r.total} CAJAS*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        function closeModal() { document.getElementById('edit-modal').style.display = "none"; }
+        function closeModal() { document.getElementById('modal').style.display = "none"; }
 
-        // FUNCIONES DE CONTROL (LOGIN/RUTA)
+        // CORE LOGIC
         function login(u) {
             activeUser = u; localStorage.setItem('tw_logged', u);
             document.getElementById('page-login').classList.remove('active');
@@ -214,13 +236,13 @@
             syncData(); go('page-history');
         }
         function checkPass(u) { if(u==='TAJHO ADMIN' && prompt("Clave:")!=="1994") return; login(u); }
-        function startWithPlate(p) { localStorage.setItem('tw_temp_placa', p); go('page-route'); refreshCargaUI(); }
+        function startPlate(p) { localStorage.setItem('tw_temp_placa', p); go('page-route'); refreshCargaUI(); }
         function go(id) {
             if(id === 'page-route' && !localStorage.getItem('tw_temp_placa')) { go('page-select-plate'); return; }
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            let bid = id === 'page-select-plate' ? 'n-route' : 'n-' + id.split('-')[1];
+            const bid = id === 'page-select-plate' ? 'n-route' : 'n-' + id.split('-')[1];
             if(document.getElementById(bid)) document.getElementById(bid).classList.add('active');
         }
         function addPoint() {
@@ -235,10 +257,10 @@
             document.getElementById('active-plate-label').innerText = localStorage.getItem('tw_temp_placa') || "---";
             currentCarga.forEach((it, i) => {
                 t += it.can;
-                h += `<div style="background:var(--surface); padding:12px; border-radius:12px; margin-bottom:8px; display:flex; justify-content:space-between; border:1px solid var(--border);"><span><b>${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger)" onclick="currentCarga.splice(${i},1);refreshCargaUI()"></i></div>`;
+                h += `<div style="background:var(--surface); padding:14px; border-radius:12px; margin-bottom:8px; display:flex; justify-content:space-between; border:1px solid var(--border);"><span><b>${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger)" onclick="currentCarga.splice(${i},1);refreshCargaUI()"></i></div>`;
             });
             document.getElementById('count-cajas').innerText = t;
-            document.getElementById('count-puntos').innerText = currentCarga.length;
+            document.getElementById('count-puntos').innerText = currentCarga.length + " puntos";
             document.getElementById('finalize-area').style.display = t > 0 ? 'block' : 'none';
             document.getElementById('live-list').innerHTML = h;
         }
