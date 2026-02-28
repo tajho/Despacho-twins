@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V45.4 SYNC</title>
+    <title>TWINS ELITE - V45.5 PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -15,55 +15,74 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 90px; }
 
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 75px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; }
-        .nav-item.active { color: var(--accent); }
-
         .page { display: none; padding: 18px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* Cuadros de Data */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card { padding: 16px; border-radius: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); background: white; }
+        .stat-card.blue { background: var(--accent); color: white; border: none; }
+
         .date-divider { display: flex; align-items: center; gap: 10px; margin: 25px 0 12px 5px; font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; }
         .date-divider::after { content: ""; flex: 1; height: 2px; background: var(--border); }
 
-        .route-card { background: #fff; border-radius: 24px; padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .route-card { background: #fff; border-radius: 24px; padding: 18px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); position: relative; }
+        
+        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
+        .action-btn { border: none; border-radius: 12px; padding: 10px; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--bg); color: var(--text-dim); }
+
         .input-box { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 16px; width: 100%; font-size: 16px; font-weight: 600; outline: none; }
         
-        #sync-loader { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 12px 25px; border-radius: 30px; font-size: 13px; font-weight: 800; z-index: 3000; box-shadow: 0 10px 30px rgba(16,185,129,0.4); }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 75px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; }
+        .nav-item.active { color: var(--accent); }
+
+        #sync-status { display: none; position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 2000; background: var(--success); color: white; padding: 8px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
-    <div id="sync-loader"><i class="ph-bold ph-cloud-arrow-up"></i> SUBIENDO AL EXCEL...</div>
+    <div id="sync-status">🔄 SINCRONIZANDO...</div>
 
     <div id="page-dash" class="page active">
-        <h2 style="font-weight: 800;">Historial</h2>
-        <div style="display:flex; gap:8px; margin-bottom:20px;">
-            <input type="text" id="search" placeholder="Placa o chofer..." class="input-box" oninput="renderHistory()" style="flex:1;">
-            <input type="date" id="filter-date" class="input-box" style="width:55px; padding:10px;" onchange="renderHistory()">
+        <div class="stat-grid">
+            <div class="stat-card blue">
+                <span style="font-size:10px; font-weight:800; opacity:0.8;">TOTAL MES</span>
+                <div id="m-cajas" style="font-size:24px; font-weight:900;">0</div>
+            </div>
+            <div class="stat-card">
+                <span style="font-size:10px; font-weight:800; color:var(--accent)">TOTAL HOY</span>
+                <div id="d-cajas" style="font-size:24px; font-weight:900;">0</div>
+            </div>
         </div>
+
+        <div style="display:flex; gap:8px; margin-bottom:20px;">
+            <input type="text" id="search" placeholder="Buscar placa/chofer..." class="input-box" oninput="renderHistory()" style="flex:1;">
+            <input type="date" id="filter-date" class="input-box" style="width:50px; padding:10px;" onchange="renderHistory()">
+        </div>
+        
         <div id="history-container"></div>
     </div>
 
     <div id="page-units" class="page">
-        <h2 style="font-weight:800;">Nueva Carga</h2>
+        <h2 style="font-weight:800;">¿Qué unidad cargarás?</h2>
         <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
     </div>
 
     <div id="page-assign" class="page">
         <h2 id="title-placa" style="font-weight:800;">---</h2>
         <div style="background:white; padding:20px; border-radius:24px; border:1px solid var(--border);">
-            <label style="font-size:11px; font-weight:800; color:var(--text-dim);">DESPACHO</label>
+            <label style="font-size:11px; font-weight:800; color:var(--text-dim);">FECHA DESPACHO</label>
             <select id="sel-date" class="input-box" style="margin-bottom:15px;">
-                <option value="ayer">Ayer</option>
-                <option value="hoy" selected>Hoy</option>
-                <option value="mañana">Mañana</option>
+                <option value="hoy">Para Hoy</option>
+                <option value="mañana" selected>Para Mañana</option>
             </select>
-            <label style="font-size:11px; font-weight:800; color:var(--text-dim);">CONDUCTOR</label>
+            <label style="font-size:11px; font-weight:800; color:var(--text-dim);">CHOFER</label>
             <select id="sel-chofer" class="input-box" style="margin-bottom:15px;"></select>
             <label style="font-size:11px; font-weight:800; color:var(--text-dim);">AUXILIAR</label>
             <select id="sel-aux" class="input-box"></select>
-            <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:#fff; border:none; margin-top:20px; padding:22px; font-weight:800;">SIGUIENTE</button>
+            <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:#fff; border:none; margin-top:20px; padding:22px; font-weight:800;">EMPEZAR CARGA</button>
         </div>
     </div>
 
@@ -80,19 +99,19 @@
             </div>
             <div id="items-list" style="margin-top:20px;"></div>
         </div>
-        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:var(--success); color:#fff; border:none; margin-top:15px; padding:22px; font-weight:800;">TERMINAR Y SUBIR</button>
+        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:var(--success); color:#fff; border:none; margin-top:15px; padding:22px; font-weight:800;">SUBIR A EXCEL</button>
     </div>
 
     <nav class="nav-bar">
-        <button class="nav-item active" id="n-dash" onclick="go('page-dash')"><i class="ph-fill ph-clock-counter-clockwise" style="font-size:24px;"></i>HISTORIAL</button>
-        <button class="nav-item" id="n-units" onclick="go('page-units')"><i class="ph-fill ph-plus-circle" style="font-size:24px;"></i>CARGAR</button>
+        <button class="nav-item active" id="n-dash" onclick="go('page-dash')"><i class="ph-fill ph-house-line" style="font-size:24px;"></i>INICIO</button>
+        <button class="nav-item" id="n-units" onclick="go('page-units')"><i class="ph-fill ph-plus-circle" style="font-size:24px;"></i>NUEVO</button>
     </nav>
 
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby59273ThmezjUQ9-AB6Gx5O8G6J6zMB7SAtzImDhUfEoXBlCx-mT9h4AvzVI_2C56O/exec'; 
 
-        let db = JSON.parse(localStorage.getItem('twins_db_v45_4') || '[]');
-        let current = { items: [] };
+        let db = JSON.parse(localStorage.getItem('twins_db_v45_5') || '[]');
+        let current = { items: [] }, activeId = null;
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
@@ -103,11 +122,12 @@
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
             for(let p in FLOTA) ug.innerHTML += `<div style="background:white; padding:25px; border-radius:20px; text-align:center; font-weight:800; border:1px solid var(--border);" onclick="startAssign('${p}')">${p}</div>`;
-            renderHistory();
+            renderHistory(); renderStats();
         };
 
         function startAssign(p) {
             current = { placa: p, items: [], id: 'R' + Date.now() };
+            activeId = null;
             document.getElementById('title-placa').innerText = p;
             document.getElementById('sel-chofer').value = FLOTA[p] || CONDUCTORES[0];
             go('page-assign');
@@ -117,10 +137,9 @@
             current.chofer = document.getElementById('sel-chofer').value;
             current.auxiliar = document.getElementById('sel-aux').value;
             let d = new Date(); 
-            const opt = document.getElementById('sel-date').value;
-            if(opt === 'mañana') d.setDate(d.getDate() + 1);
-            if(opt === 'ayer') d.setDate(d.getDate() - 1);
+            if(document.getElementById('sel-date').value === 'mañana') d.setDate(d.getDate() + 1);
             current.fecha = d.toISOString().split('T')[0];
+            current.creacion = new Date().toLocaleString();
             refreshLoadUI(); go('page-load');
         }
 
@@ -134,7 +153,6 @@
 
         function refreshLoadUI() {
             document.getElementById('load-placa').innerText = current.placa;
-            document.getElementById('load-meta').innerText = "Ruta: " + current.fecha;
             let t = current.items.reduce((a,b)=>a+b.can,0);
             document.getElementById('load-total').innerText = t;
             document.getElementById('items-list').innerHTML = current.items.map((it, i) => `
@@ -146,28 +164,30 @@
         }
 
         async function saveAndSync() {
-            db.unshift(current);
-            localStorage.setItem('twins_db_v45_4', JSON.stringify(db));
+            const idx = db.findIndex(x => x.id === current.id);
+            if(idx > -1) db[idx] = current; else db.unshift(current);
+            localStorage.setItem('twins_db_v45_5', JSON.stringify(db));
             
-            document.getElementById('sync-loader').style.display = 'block';
+            document.getElementById('sync-status').style.display = 'block';
             
             try {
-                // Envío real al Excel mediante POST
+                // El envío debe ser un objeto plano para el Excel
+                const dataToSend = {
+                    action: "save",
+                    ...current
+                };
+
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(current)
+                    body: JSON.stringify(dataToSend)
                 });
-            } catch (e) {
-                alert("Guardado localmente. Se subirá al Excel cuando haya mejor conexión.");
-            }
+            } catch (e) { console.log("Sync Error"); }
 
             setTimeout(() => {
-                document.getElementById('sync-loader').style.display = 'none';
-                go('page-dash');
-                renderHistory();
-            }, 1500);
+                document.getElementById('sync-status').style.display = 'none';
+                go('page-dash'); renderHistory(); renderStats();
+            }, 1000);
         }
 
         function renderHistory() {
@@ -183,10 +203,10 @@
             let data = db.filter(r => JSON.stringify(r).toLowerCase().includes(q));
 
             if(fDate) {
-                renderBlock(container, `DÍA: ${fDate}`, data.filter(r => r.fecha === fDate));
+                renderBlock(container, `CONSULTA: ${fDate}`, data.filter(r => r.fecha === fDate));
             } else {
                 renderBlock(container, "PARA MAÑANA", data.filter(r => r.fecha === mañana));
-                renderBlock(container, "CARGA DE HOY", data.filter(r => r.fecha === hoy));
+                renderBlock(container, "LOGÍSTICA HOY", data.filter(r => r.fecha === hoy));
                 renderBlock(container, "AYER", data.filter(r => r.fecha === ayer));
             }
         }
@@ -198,12 +218,43 @@
                 const total = r.items.reduce((a,b)=>a+b.can,0);
                 cont.innerHTML += `
                 <div class="route-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div><b style="font-size:17px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim);">${r.chofer}</div></div>
-                        <div style="text-align:right;"><b style="color:var(--accent); font-size:18px;">${total}</b><div style="font-size:9px; font-weight:800;">CAJAS</div></div>
+                    <div style="display:flex; justify-content:space-between; align-items:start;">
+                        <div><b style="font-size:18px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim);">${r.chofer}</div></div>
+                        <div style="text-align:right;"><b style="color:var(--accent); font-size:20px;">${total}</b><div style="font-size:9px; font-weight:800;">CAJAS</div></div>
+                    </div>
+                    <div class="route-actions">
+                        <button class="action-btn" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil-simple"></i>EDITAR</button>
+                        <button class="action-btn" onclick="deleteRoute('${r.id}')"><i class="ph-bold ph-trash" style="color:red"></i>BORRAR</button>
+                        <button class="action-btn" style="color:green" onclick="sendWA('${r.id}')"><i class="ph-fill ph-whatsapp-logo"></i>WHATSAPP</button>
                     </div>
                 </div>`;
             });
+        }
+
+        function editRoute(id) {
+            current = JSON.parse(JSON.stringify(db.find(x => x.id === id)));
+            refreshLoadUI(); go('page-load');
+        }
+
+        function deleteRoute(id) {
+            if(confirm('¿Borrar ruta?')) {
+                db = db.filter(x => x.id !== id);
+                localStorage.setItem('twins_db_v45_5', JSON.stringify(db));
+                renderHistory(); renderStats();
+            }
+        }
+
+        function sendWA(id) {
+            const r = db.find(x => x.id === id);
+            const lista = r.items.map(i => `• ${i.cli}: ${i.can}`).join('\n');
+            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n\n*CARGA:*\n${lista}\n\n*TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)}*`;
+            window.location.href = "whatsapp://send?text=" + encodeURIComponent(msg);
+        }
+
+        function renderStats() {
+            const h = new Date().toISOString().split('T')[0], m = h.substring(0,7);
+            document.getElementById('d-cajas').innerText = db.filter(r => r.fecha === h).reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
+            document.getElementById('m-cajas').innerText = db.filter(r => r.fecha.startsWith(m)).reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
         }
 
         function go(id) {
@@ -211,6 +262,7 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id === 'page-dash' ? 'n-dash' : 'n-units').classList.add('active');
+            if(id === 'page-dash') renderStats();
         }
     </script>
 </body>
