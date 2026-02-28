@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V65.6 Optimized</title>
+    <title>TWINS ELITE - V65.7 Corrected</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -36,7 +36,7 @@
         .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 15px; }
         .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
-        .btn-card { background: #fff; border: 1px solid #eee; padding: 8px; border-radius: 12px; font-weight: 800; font-size: 10px; text-transform: uppercase; }
+        .btn-card { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 12px; font-weight: 800; font-size: 10px; text-transform: uppercase; color: var(--text); }
 
         .truck-load-header { background: #000; color: #fff; padding: 25px; border-radius: 28px; margin-bottom: 20px; }
         .truck-progress-bg { height: 8px; background: rgba(255,255,255,0.15); border-radius: 10px; margin-top: 15px; }
@@ -169,16 +169,8 @@
         function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
         function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; pullCloudData(); }
 
-        async function syncCloud(data) {
-            const indicator = document.getElementById('sync-indicator');
-            indicator.style.opacity = "1";
-            try { fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }).then(() => { indicator.style.opacity = "0.5"; }); } catch(e){ indicator.style.background = "var(--red)"; }
-        }
-
         async function pullCloudData(silent = false) {
             if(isSyncing) return; isSyncing = true;
-            const indicator = document.getElementById('sync-indicator');
-            if(!silent) indicator.style.opacity = "1";
             try {
                 const res = await fetch(CLOUD_URL);
                 const cloud = await res.json();
@@ -186,33 +178,46 @@
                     db = cloud; localStorage.setItem('twins_v63_db', JSON.stringify(db));
                     renderStats(); renderHistory();
                 }
-                indicator.style.background = "var(--green)";
-            } catch(e){ indicator.style.background = "var(--red)"; } finally { isSyncing = false; indicator.style.opacity = "0.5"; }
+            } catch(e){} finally { isSyncing = false; }
         }
 
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById('n-'+id.split('-')[1]).classList.add('active');
             if(id === 'page-dash') pullCloudData(true);
         }
 
-        function renderStats() {
+        function initConf(p) { 
             const hoy = new Date().toISOString().split('T')[0];
-            const rHoy = db.filter(r => r.fecha.includes(hoy));
-            const rMes = db.filter(r => r.fecha.startsWith(hoy.substring(0,7)));
-            const sum = (a) => a.reduce((x,y) => x + (y.items ? y.items.reduce((z,w)=>z+w.can,0) : 0), 0);
-            const cli = (a) => a.reduce((x,y) => x + (y.items ? y.items.length : 0), 0);
-            document.getElementById('stat-hoy-cajas').innerText = sum(rHoy);
-            document.getElementById('stat-hoy-envios').innerText = cli(rHoy) + " CLIENTES";
-            document.getElementById('stat-mes-cajas').innerText = sum(rMes);
-            document.getElementById('stat-mes-envios').innerText = cli(rMes) + " CLIENTES";
+            cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: hoy, chofer: FLOTA[p], auxiliar: "POR ASIGNAR" }; 
+            localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); 
+            document.getElementById('conf-placa').innerText = p; 
+            document.getElementById('c-fecha').value = hoy; 
+            go('page-config'); 
         }
 
-        function initConf(p) { cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: "POR ASIGNAR" }; localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); document.getElementById('conf-placa').innerText = p; document.getElementById('c-fecha').value = cur.fecha; go('page-config'); }
-        function goLoad() { cur.fecha = document.getElementById('c-fecha').value; cur.chofer = document.getElementById('c-chofer').value; cur.auxiliar = document.getElementById('c-aux').value; localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
-        function addItem() { const cli = document.getElementById('i-cli').value.toUpperCase().trim(); const can = parseInt(document.getElementById('i-can').value); if(cli && can) { cur.items.push({cli, can}); localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refreshLoad(); } }
+        function goLoad() { 
+            // IMPORTANTE: Aseguramos que la fecha sea la del input del calendario
+            cur.fecha = document.getElementById('c-fecha').value; 
+            cur.chofer = document.getElementById('c-chofer').value; 
+            cur.auxiliar = document.getElementById('c-aux').value; 
+            localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); 
+            document.getElementById('load-placa-txt').innerText = cur.placa; 
+            refreshLoad(); 
+            go('page-load'); 
+        }
+
+        function addItem() { 
+            const cli = document.getElementById('i-cli').value.toUpperCase().trim(); 
+            const can = parseInt(document.getElementById('i-can').value); 
+            if(cli && can) { 
+                cur.items.push({cli, can}); 
+                localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); 
+                document.getElementById('i-cli').value=""; 
+                document.getElementById('i-can').value=""; 
+                refreshLoad(); 
+            } 
+        }
         
         function refreshLoad() { 
             const total = cur.items.reduce((a,b)=>a+b.can, 0); 
@@ -228,13 +233,14 @@
                 </div>`).reverse().join(''); 
         }
 
-        function save() { 
+        async function save() { 
             const idx = db.findIndex(r => r.id === cur.id); 
             if(idx > -1) db[idx] = JSON.parse(JSON.stringify(cur)); else db.unshift(JSON.parse(JSON.stringify(cur)));
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
             localStorage.removeItem('twins_cur_draft');
             renderStats(); renderHistory();
-            syncCloud(cur);
+            // Sincronización nube
+            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
             cur = { items: [] }; go('page-dash'); 
         }
 
@@ -243,8 +249,14 @@
             let filt = db.filter(r => r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.includes(q));
             document.getElementById('hist-cont').innerHTML = filt.map(r => `
                 <div class="route-card">
-                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);"><span>📅 ${r.fecha}</span><span>${r.placa}</span></div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;"><b style="font-size:24px;">${r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0} CJS</b><b>${r.items ? r.items.length : 0} CLI.</b></div>
+                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
+                        <span>📅 ${r.fecha}</span>
+                        <span>${r.placa}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
+                        <b style="font-size:24px;">${r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0} CJS</b>
+                        <b>${r.items ? r.items.length : 0} CLI.</b>
+                    </div>
                     <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                     <div class="card-actions">
                         <button onclick="viewL('${r.id}')" class="btn-card">Lista</button>
@@ -255,13 +267,61 @@
                 </div>`).join('');
         }
 
-        function openCrew(id) { quickEditId = id; const r = db.find(x => x.id === id); document.getElementById('qe-chofer').value = r.chofer; document.getElementById('qe-aux').value = r.auxiliar; document.getElementById('modal-crew').style.display = 'flex'; }
-        function saveQuickCrew() { const idx = db.findIndex(x => x.id === quickEditId); if(idx > -1) { db[idx].chofer = document.getElementById('qe-chofer').value; db[idx].auxiliar = document.getElementById('qe-aux').value; localStorage.setItem('twins_v63_db', JSON.stringify(db)); syncCloud(db[idx]); renderHistory(); closeCrew(); } }
+        function openCrew(id) { 
+            quickEditId = id; 
+            const r = db.find(x => x.id === id); 
+            document.getElementById('qe-chofer').value = r.chofer; 
+            document.getElementById('qe-aux').value = r.auxiliar; 
+            document.getElementById('modal-crew').style.display = 'flex'; 
+        }
+
+        function saveQuickCrew() { 
+            const idx = db.findIndex(x => x.id === quickEditId); 
+            if(idx > -1) { 
+                db[idx].chofer = document.getElementById('qe-chofer').value; 
+                db[idx].auxiliar = document.getElementById('qe-aux').value; 
+                localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+                fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
+                renderHistory(); closeCrew(); 
+            } 
+        }
+
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
         function viewL(id) { const r = db.find(x => x.id === id); if(!r.items) return; document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
-        function editR(id) { const rFound = db.find(x => x.id === id); if(rFound) { cur = JSON.parse(JSON.stringify(rFound)); localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); } }
-        function shareW(id) { const r = db.find(x => x.id === id); const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0; const totalClientes = r.items ? r.items.length : 0; let msg = `*TWINS ELITE*%0A%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`; if(r.items) r.items.forEach(i => { msg += `• ${i.cli}: ${i.can}%0A`; }); msg += `%0A📦 *TOTAL:* ${totalCajas} Cjs%0A👥 *CLIENTES:* ${totalClientes}`; window.location.href = "https://api.whatsapp.com/send?text=" + msg; }
+        
+        function editR(id) { 
+            const rFound = db.find(x => x.id === id); 
+            if(rFound) { 
+                cur = JSON.parse(JSON.stringify(rFound)); 
+                localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); 
+                document.getElementById('load-placa-txt').innerText = cur.placa; 
+                refreshLoad(); 
+                go('page-load'); 
+            } 
+        }
+        
+        function shareW(id) { 
+            const r = db.find(x => x.id === id); 
+            const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0; 
+            const totalClientes = r.items ? r.items.length : 0; 
+            let msg = `*TWINS ELITE*%0A%0A📅 *FECHA:* ${r.fecha}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`; 
+            if(r.items) r.items.forEach(i => { msg += `• ${i.cli}: ${i.can}%0A`; }); 
+            msg += `%0A📦 *TOTAL:* ${totalCajas} Cjs%0A👥 *CLIENTES:* ${totalClientes}`; 
+            window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
+        }
+
+        function renderStats() {
+            const hoy = new Date().toISOString().split('T')[0];
+            const rHoy = db.filter(r => r.fecha === hoy);
+            const rMes = db.filter(r => r.fecha.startsWith(hoy.substring(0,7)));
+            const sum = (a) => a.reduce((x,y) => x + (y.items ? y.items.reduce((z,w)=>z+w.can,0) : 0), 0);
+            const cli = (a) => a.reduce((x,y) => x + (y.items ? y.items.length : 0), 0);
+            document.getElementById('stat-hoy-cajas').innerText = sum(rHoy);
+            document.getElementById('stat-hoy-envios').innerText = cli(rHoy) + " CLIENTES";
+            document.getElementById('stat-mes-cajas').innerText = sum(rMes);
+            document.getElementById('stat-mes-envios').innerText = cli(rMes) + " CLIENTES";
+        }
     </script>
 </body>
 </html>
