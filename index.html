@@ -2,178 +2,139 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TWINS ELITE - V31 MOBILE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TWINS ELITE - V32 DASHBOARD</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #f8fafc; --surface: #ffffff; --accent: #0062ff; 
+            --bg: #f1f5f9; --surface: #ffffff; --accent: #0062ff; 
             --text: #0f172a; --text-dim: #64748b; --border: #e2e8f0; 
             --success: #10b981; --danger: #f43f5e;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-user-select: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        body { 
-            margin: 0; background: var(--bg); color: var(--text); 
-            height: 100vh; width: 100vw; overflow: hidden; position: fixed;
-        }
+        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* Estilo para simular App de Celular */
-        .page { 
-            position: absolute; inset: 0; display: none; 
-            flex-direction: column; padding: 15px 15px 110px 15px;
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-        }
-        .active { display: flex !important; }
-
-        /* Indicador de actualización (Pull-to-refresh visual) */
-        #ptr-loader {
-            text-align: center; height: 0; overflow: hidden;
-            transition: height 0.2s; color: var(--accent); font-weight: 800; font-size: 12px;
-        }
-
-        /* Navegación Inferior Robusta */
+        /* Navegación Inferior */
         .nav-bar { 
-            position: fixed; bottom: 15px; left: 15px; right: 15px; 
-            background: rgba(255,255,255,0.95); height: 70px; border-radius: 22px; 
-            display: flex; border: 1px solid var(--border); z-index: 1000; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); backdrop-filter: blur(10px);
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: #fff; height: 75px; display: flex; 
+            border-top: 1px solid var(--border); z-index: 1000; 
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
         }
         .nav-item { 
             flex: 1; display: flex; flex-direction: column; align-items: center; 
             justify-content: center; color: var(--text-dim); background: none; 
-            border: none; font-size: 10px; font-weight: 700; 
+            border: none; font-size: 11px; font-weight: 700; 
         }
         .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 26px; margin-bottom: 2px; }
+        .nav-item i { font-size: 24px; margin-bottom: 2px; }
 
-        /* Botones y Cards para dedos grandes */
-        .card { 
-            background: #fff; border-radius: 20px; padding: 18px; 
-            border: 1px solid var(--border); margin-bottom: 12px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02); flex-shrink: 0;
-        }
-        .btn-main { 
-            background: var(--accent); color: #fff; border: none; 
-            border-radius: 18px; padding: 22px; width: 100%; 
-            font-weight: 800; font-size: 16px; margin-top: 10px;
-        }
-        .input-box { 
-            background: #fff; border: 1px solid var(--border); 
-            border-radius: 16px; padding: 18px; width: 100%; 
-            font-size: 16px; font-weight: 600; margin-bottom: 12px; outline: none;
-            -webkit-appearance: none;
-        }
+        /* Contenedores */
+        .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
+        .active { display: block; }
 
-        /* Estilo Admin */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
-        .stat-card { background: var(--accent); color: #fff; padding: 15px; border-radius: 18px; text-align: center; }
+        /* Cards y UI */
+        .card { background: #fff; border-radius: 20px; padding: 18px; border: 1px solid var(--border); margin-bottom: 15px; }
+        .btn-main { background: var(--accent); color: #fff; border: none; border-radius: 18px; padding: 20px; width: 100%; font-weight: 800; font-size: 16px; margin-top: 10px; }
+        .input-box { background: #fff; border: 1px solid var(--border); border-radius: 15px; padding: 15px; width: 100%; font-size: 16px; font-weight: 600; margin-bottom: 12px; outline: none; }
 
-        /* Animación suave */
-        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .active .card { animation: slideUp 0.3s ease-out; }
+        /* Dashboard Stats */
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card { background: var(--accent); color: #fff; padding: 15px; border-radius: 20px; text-align: center; }
+        .stat-card h2 { margin: 5px 0; font-size: 28px; }
+        
+        /* Modal */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
     </style>
 </head>
-<body id="app-body">
-
-    <div id="ptr-loader"><i class="ph-bold ph-arrows-clockwise"></i> ACTUALIZANDO...</div>
+<body>
 
     <div id="page-login" class="page active">
-        <div style="text-align:center; padding:60px 0 30px;">
-            <div style="background:var(--accent); width:70px; height:70px; border-radius:20px; margin:0 auto 15px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:35px;"><i class="ph-fill ph-truck"></i></div>
-            <h1 style="font-weight:800; margin:0; letter-spacing:-1px;">TWINS ELITE</h1>
-            <p style="color:var(--text-dim); font-size:14px;">Logística Interna</p>
+        <div style="text-align:center; padding:40px 0;">
+            <h1 style="font-weight:800; margin:0;">TWINS ELITE</h1>
+            <p style="color:var(--text-dim);">Acceso de Personal</p>
         </div>
         <div id="login-options"></div>
     </div>
 
-    <div id="page-history" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 5px;">
-            <h2 style="font-weight:800; margin:0;">Historial</h2>
-            <div id="sync-tag" style="font-size:10px; font-weight:800; color:var(--success);">● ONLINE</div>
+    <div id="page-dashboard" class="page">
+        <h2 style="font-weight:800; margin-bottom:15px;">Dashboard</h2>
+        
+        <div class="stat-grid">
+            <div class="stat-card"><small>CAJAS HOY</small><h2 id="st-cajas">0</h2></div>
+            <div class="stat-card" style="background:#fff; color:var(--accent); border:1px solid var(--accent);"><small>RUTAS</small><h2 id="st-rutas">0</h2></div>
         </div>
-        <div class="input-box" style="display:flex; align-items:center; gap:10px; margin-bottom:15px; background:#fff; position:sticky; top:0; z-index:10;">
+
+        <div class="input-box" style="display:flex; align-items:center; gap:10px; position:sticky; top:10px; z-index:100; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
             <i class="ph-bold ph-magnifying-glass" style="color:var(--accent)"></i>
-            <input type="text" id="smart-search" placeholder="Placa, chofer o auxiliar..." style="border:none; width:100%; outline:none;" oninput="renderHistory()">
+            <input type="text" id="smart-search" placeholder="Buscar placa, chofer, auxiliar..." style="border:none; width:100%; outline:none;" oninput="renderHistory()">
         </div>
-        <div id="history-feed"></div>
+
+        <div id="history-feed" style="margin-top:20px;"></div>
     </div>
 
     <div id="page-select-plate" class="page">
-        <h2 style="font-weight:800; margin-bottom:20px;">Nueva Carga</h2>
+        <h2 style="font-weight:800; margin-bottom:20px;">Seleccionar Unidad</h2>
         <div id="plate-grid"></div>
     </div>
 
     <div id="page-crew" class="page">
-        <h2 style="margin-bottom:5px;">Equipo</h2>
-        <p style="color:var(--text-dim); margin-bottom:20px;">Unidad: <b id="crew-plate" style="color:var(--accent)">---</b></p>
-        <label style="font-size:11px; font-weight:800; margin-left:5px;">CONDUCTOR TITULAR/RELEVO:</label>
-        <input type="text" id="inp-driver" class="input-box">
-        <label style="font-size:11px; font-weight:800; margin-left:5px;">AUXILIAR ASIGNADO:</label>
-        <select id="sel-aux" class="input-box">
-            <option value="SIN AUXILIAR">SELECCIONAR AUXILIAR</option>
-            <option value="CRISTOPHER">CRISTOPHER</option>
-            <option value="PERCY">PERCY</option>
-            <option value="PLACIDO">PLACIDO</option>
-            <option value="RODOLFO">RODOLFO</option>
-            <option value="RICARDO">RICARDO</option>
-            <option value="ELIO">ELIO</option>
-            <option value="JOFER">JOFER</option>
-            <option value="MARTIN">MARTIN</option>
-            <option value="NELSON">NELSON</option>
-            <option value="JULIO">JULIO</option>
-            <option value="DANIEL C.">DANIEL C.</option>
-        </select>
-        <button onclick="confirmCrew()" class="btn-main">CARGAR PRODUCTOS</button>
+        <h2 style="margin-bottom:20px;">Equipo de Ruta</h2>
+        <div class="card">
+            <label style="font-size:11px; font-weight:800;">UNIDAD:</label>
+            <div id="crew-plate" style="font-size:20px; font-weight:800; color:var(--accent); margin-bottom:15px;">---</div>
+            
+            <label style="font-size:11px; font-weight:800;">CONDUCTOR:</label>
+            <input type="text" id="inp-driver" class="input-box">
+            
+            <label style="font-size:11px; font-weight:800;">AUXILIAR:</label>
+            <select id="sel-aux" class="input-box">
+                <option value="CRISTOPHER">CRISTOPHER</option>
+                <option value="PERCY">PERCY</option>
+                <option value="PLACIDO">PLACIDO</option>
+                <option value="RODOLFO">RODOLFO</option>
+                <option value="RICARDO">RICARDO</option>
+                <option value="ELIO">ELIO</option>
+                <option value="JOFER">JOFER</option>
+                <option value="MARTIN">MARTIN</option>
+                <option value="NELSON">NELSON</option>
+                <option value="JULIO">JULIO</option>
+                <option value="DANIEL C.">DANIEL C.</option>
+            </select>
+            <button onclick="confirmCrew()" class="btn-main">CONTINUAR</button>
+        </div>
     </div>
 
     <div id="page-route" class="page">
-        <div style="background: var(--accent); padding: 22px; border-radius: 22px; color:#fff; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,98,255,0.15);">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div><b id="active-plate" style="font-size:22px;">---</b><br><small id="active-crew" style="font-size:11px;"></small></div>
-                <div style="text-align:right;"><h1 id="count-cajas" style="margin:0; font-size:35px;">0</h1><small>CJS</small></div>
-            </div>
+        <div style="background: var(--accent); padding: 20px; border-radius: 20px; color:#fff; margin-bottom: 20px;">
+            <b id="active-plate" style="font-size:20px;">---</b><br>
+            <small id="active-crew"></small>
+            <h1 id="count-cajas" style="margin:10px 0 0 0;">0 CJS</h1>
         </div>
         <input type="text" id="inp-cli" placeholder="Cliente" class="input-box" list="suggestions">
         <datalist id="suggestions"></datalist>
         <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <input type="number" id="inp-can" placeholder="Cajas" class="input-box" style="flex:1;">
-            <button onclick="addPoint()" style="background:var(--text); color:#fff; border:none; border-radius:18px; width:70px; font-size:30px;">+</button>
+            <input type="number" id="inp-can" placeholder="Cant." class="input-box" style="flex:1;">
+            <button onclick="addPoint()" style="background:var(--text); color:#fff; border:none; border-radius:15px; width:60px; font-size:22px;">+</button>
         </div>
         <div id="live-list"></div>
-        <button id="btn-save" onclick="openModal('modal-date')" style="display:none; background:var(--success); color:#fff; width:100%; padding:22px; border-radius:20px; border:none; font-weight:800; margin-top:15px;">GUARDAR DESPACHO</button>
+        <button id="btn-save" onclick="openModal('modal-date')" style="display:none; background:var(--success); color:#fff; width:100%; padding:20px; border-radius:18px; border:none; font-weight:800; margin-top:20px;">GUARDAR RUTA</button>
     </div>
 
-    <div id="page-fleet" class="page">
-        <h2 style="font-weight:800;">Estado de Flota</h2>
-        <div id="fleet-list"></div>
-    </div>
-
-    <div id="page-reports" class="page">
-        <h2 style="font-weight:800;">Resumen Diario</h2>
-        <div class="stat-grid">
-            <div class="stat-card"><small>TOTAL CAJAS</small><h2 id="st-cajas">0</h2></div>
-            <div class="stat-card" style="background:#fff; color:var(--accent); border:1px solid var(--accent);"><small>TOTAL RUTAS</small><h2 id="st-rutas">0</h2></div>
-        </div>
-        <div id="daily-log"></div>
-    </div>
-
-    <div id="modal-date" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px);">
-        <div style="background:#fff; border-radius:28px; padding:30px; width:100%; text-align:center;">
-            <h3 style="margin:0 0 10px 0; font-weight:800;">Programar Salida</h3>
-            <p style="color:var(--text-dim); margin-bottom:25px;">Selecciona la fecha del viaje</p>
-            <button onclick="finalize('hoy')" class="btn-main" style="background:var(--success); margin-bottom:12px;">PARA HOY</button>
-            <button onclick="finalize('mañana')" class="btn-main">PARA MAÑANA</button>
-            <button onclick="document.getElementById('modal-date').style.display='none'" style="margin-top:15px; border:none; background:none; color:var(--danger); font-weight:800;">CANCELAR</button>
+    <div id="modal-date" class="modal">
+        <div style="background:#fff; border-radius:25px; padding:30px; width:100%; text-align:center;">
+            <h3 style="margin-top:0;">¿Cuándo sale?</h3>
+            <button onclick="finalize('hoy')" class="btn-main" style="background:var(--success); margin-bottom:10px;">HOY</button>
+            <button onclick="finalize('mañana')" class="btn-main">MAÑANA</button>
+            <button onclick="document.getElementById('modal-date').style.display='none'" style="margin-top:15px; border:none; background:none; color:var(--danger); font-weight:700;">CANCELAR</button>
         </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-item active" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-clock-counter-clockwise"></i>DATA</button>
+        <button class="nav-item active" id="n-dashboard" onclick="go('page-dashboard')"><i class="ph-fill ph-chart-bar"></i>CONTROL</button>
         <button class="nav-item" id="n-route" onclick="go('page-select-plate')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
-        <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
-        <button class="nav-item" id="n-reports" onclick="go('page-reports')"><i class="ph-fill ph-chart-pie"></i>ADMIN</button>
     </nav>
 
     <script>
@@ -181,27 +142,8 @@
         let db = [], currentCarga = [], activeUser = "";
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
 
-        // --- SISTEMA DE ACTUALIZACIÓN POR DESLIZAMIENTO (PULL TO REFRESH) ---
-        let startY = 0;
-        const pageHistory = document.getElementById('page-history');
-        const ptrLoader = document.getElementById('ptr-loader');
-
-        pageHistory.addEventListener('touchstart', e => { if(pageHistory.scrollTop === 0) startY = e.touches[0].pageY; });
-        pageHistory.addEventListener('touchmove', e => {
-            const y = e.touches[0].pageY;
-            if(pageHistory.scrollTop === 0 && y > startY) {
-                const diff = Math.min((y - startY) * 0.5, 60);
-                ptrLoader.style.height = diff + 'px';
-                if(diff > 50) ptrLoader.innerHTML = "SUELTA PARA ACTUALIZAR";
-            }
-        });
-        pageHistory.addEventListener('touchend', () => {
-            if(parseInt(ptrLoader.style.height) > 50) syncData();
-            ptrLoader.style.height = '0';
-        });
-
         window.onload = () => {
-            const saved = localStorage.getItem('tw_db_v31');
+            const saved = localStorage.getItem('tw_db_v32');
             if(saved) { db = JSON.parse(saved); renderHistory(); renderAdmin(); }
             setupUI();
             if(localStorage.getItem('tw_logged')) login(localStorage.getItem('tw_logged'));
@@ -210,28 +152,22 @@
         function setupUI() {
             const l = document.getElementById('login-options');
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                l.innerHTML += `<div onclick="checkPass('${u}')" class="card" style="font-weight:700; display:flex; justify-content:space-between; align-items:center;">${u} <i class="ph ph-caret-right"></i></div>`;
+                l.innerHTML += `<div onclick="checkPass('${u}')" class="card" style="font-weight:700;">${u}</div>`;
             });
             const f = document.getElementById('plate-grid');
-            const fl = document.getElementById('fleet-list');
             for(let p in FLOTA) {
-                f.innerHTML += `<div class="card" onclick="openCrew('${p}')" style="display:flex; justify-content:space-between; align-items:center; padding:25px 20px;"><b>${p}</b> <i class="ph-fill ph-plus-circle" style="color:var(--accent); font-size:24px;"></i></div>`;
-                fl.innerHTML += `<div class="card"><b>${p}</b><div style="font-size:13px; color:var(--text-dim); margin-top:5px;">Conductor: ${FLOTA[p]}</div></div>`;
+                f.innerHTML += `<div class="card" onclick="openCrew('${p}')" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:800;">${p} <i class="ph ph-plus-circle"></i></div>`;
             }
         }
 
         async function syncData() {
-            ptrLoader.style.height = '50px';
-            ptrLoader.innerHTML = "ACTUALIZANDO...";
             try {
                 const r = await fetch(API);
                 const data = await r.json();
                 db = data.map((x,i)=>({...x, id: 'R'+Date.now()+i, fecha: x.fecha.split('T')[0]}));
-                localStorage.setItem('tw_db_v31', JSON.stringify(db));
+                localStorage.setItem('tw_db_v32', JSON.stringify(db));
                 renderHistory(); renderAdmin();
-                ptrLoader.innerHTML = "¡LISTO!";
-            } catch(e) { ptrLoader.innerHTML = "ERROR DE CONEXIÓN"; }
-            setTimeout(() => ptrLoader.style.height = '0', 1000);
+            } catch(e) { console.warn("Modo Offline"); }
         }
 
         function openCrew(p) {
@@ -262,12 +198,12 @@
             let t = 0, h = "";
             currentCarga.forEach((it, i) => {
                 t += it.can;
-                h += `<div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px; border-left:5px solid var(--accent);">
+                h += `<div class="card" style="display:flex; justify-content:space-between; padding:12px; border-left:4px solid var(--accent);">
                     <span><b>${it.can}</b> ${it.cli}</span>
-                    <i class="ph-bold ph-trash" style="color:var(--danger); font-size:20px;" onclick="currentCarga.splice(${i},1);refreshRouteUI()"></i>
+                    <i class="ph ph-trash" style="color:var(--danger)" onclick="currentCarga.splice(${i},1);refreshRouteUI()"></i>
                 </div>`;
             });
-            document.getElementById('count-cajas').innerText = t;
+            document.getElementById('count-cajas').innerText = t + " CJS";
             document.getElementById('btn-save').style.display = t > 0 ? 'block' : 'none';
             document.getElementById('live-list').innerHTML = h;
         }
@@ -284,10 +220,10 @@
                 operario: activeUser,
                 id: 'R'+Date.now()
             };
-            db.unshift(r); localStorage.setItem('tw_db_v31', JSON.stringify(db));
+            db.unshift(r); localStorage.setItem('tw_db_v32', JSON.stringify(db));
             fetch(API, {method:'POST', mode:'no-cors', body:JSON.stringify(r)});
-            document.getElementById('modal-date').style.display='none';
-            go('page-history'); renderHistory(); renderAdmin();
+            document.getElementById('modal-date').style.display = 'none';
+            go('page-dashboard'); renderHistory(); renderAdmin();
         }
 
         function renderHistory() {
@@ -296,16 +232,14 @@
             db.filter(r => JSON.stringify(r).toLowerCase().includes(q)).forEach(r => {
                 h += `<div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:start;">
-                        <div><b style="font-size:18px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim); margin-top:4px;">C: ${r.chofer} | A: ${r.auxiliar}</div></div>
-                        <span style="background:var(--bg); padding:6px 12px; border-radius:10px; font-weight:800; color:var(--accent);">${r.total} CJS</span>
+                        <div><b>${r.placa}</b><div style="font-size:11px; color:var(--text-dim);">${r.chofer} | ${r.auxiliar}</div></div>
+                        <span style="font-weight:800; color:var(--accent)">${r.total} CJS</span>
                     </div>
-                    <div style="font-size:11px; margin:10px 0; color:var(--text-dim);"><i class="ph ph-calendar"></i> ${r.fecha.split('-').reverse().join('/')}</div>
-                    <button onclick="sendWA('${r.id}')" style="width:100%; border:none; background:#ecfdf5; color:#10b981; padding:12px; border-radius:12px; font-weight:800; font-size:13px; display:flex; align-items:center; justify-content:center; gap:8px;">
-                        <i class="ph-fill ph-whatsapp-logo" style="font-size:20px;"></i> ENVIAR DETALLE
-                    </button>
+                    <div style="font-size:11px; margin:8px 0;">${r.fecha.split('-').reverse().join('/')}</div>
+                    <button onclick="sendWA('${r.id}')" style="width:100%; border:none; background:#ecfdf5; color:#10b981; padding:10px; border-radius:12px; font-weight:800; font-size:12px;">ENVIAR WHATSAPP</button>
                 </div>`;
             });
-            document.getElementById('history-feed').innerHTML = h || "<div style='text-align:center; padding:40px; color:var(--text-dim);'>No hay registros</div>";
+            document.getElementById('history-feed').innerHTML = h;
         }
 
         function renderAdmin() {
@@ -319,7 +253,7 @@
             activeUser = u; localStorage.setItem('tw_logged', u);
             document.getElementById('page-login').classList.remove('active');
             document.getElementById('app-nav').style.display = 'flex';
-            go('page-history');
+            syncData(); go('page-dashboard');
         }
 
         function checkPass(u) { if(u==='TAJHO ADMIN' && prompt("Clave:")!=="1994") return; login(u); }
@@ -327,13 +261,13 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            const bid = id.includes('plate') || id.includes('route') || id.includes('crew') ? 'n-route' : 'n-'+id.split('-')[1];
-            if(document.getElementById(bid)) document.getElementById(bid).classList.add('active');
-            document.getElementById(id).scrollTop = 0;
+            const bid = id.includes('dashboard') ? 'n-dashboard' : 'n-route';
+            document.getElementById(bid).classList.add('active');
+            window.scrollTo(0,0);
         }
         function sendWA(id) {
             const r = db.find(x => x.id === id);
-            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n🤝 *Auxiliar:* ${r.auxiliar}\n📅 *Fecha:* ${r.fecha}\n\n*DETALLE:*\n${r.items}\n\n*TOTAL: ${r.total} CAJAS*`;
+            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n🤝 *Auxiliar:* ${r.auxiliar}\n📅 *Fecha:* ${r.fecha}\n\n*TOTAL: ${r.total} CAJAS*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
