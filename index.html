@@ -1,204 +1,60 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V50.5</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <style>
-        :root {
-            --bg: #f8f9fa; --surface: #ffffff; --accent: #000000; 
-            --text: #111827; --text-dim: #6b7280; --border: #e5e7eb; 
-            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
-        }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
-
-        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
-        .active { display: block; }
-
-        /* --- ESTILOS EXCLUSIVOS SECCIÓN DATA --- */
-        .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 14px; text-transform: uppercase; color: var(--text-dim); }
-        
-        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; position: relative; }
-        .rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; color: #fff; background: #eee; color: #aaa; }
-        .pos-1 { background: var(--gold); color: #000; }
-        .pos-2 { background: var(--silver); color: #000; }
-        .pos-3 { background: var(--bronze); color: #000; }
-        
-        .rank-info { flex: 1; }
-        .rank-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; overflow: hidden; }
-        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.5s ease; }
-        .rank-stats { font-size: 10px; font-weight: 800; color: var(--text-dim); margin-top: 4px; display: flex; gap: 10px; }
-        .rank-stats b { color: #000; }
-
-        /* --- MANTENIENDO EL RESTO IGUAL --- */
-        .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .master-card { background: #fff; padding: 20px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 125px; }
-        .master-card.black { background: #000; color: #fff; border: none; }
-        .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.6; margin-bottom: 8px; }
-        .stat-main { font-size: 30px; font-weight: 900; line-height: 1; }
-        
-        .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 10px; }
-        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
-        .nav-btn.active { color: #000; }
-        .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
-    </style>
-</head>
-<body>
-
-    <div id="page-dash" class="page active">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Twins Elite</h1>
-        <div class="core-dash">
-            <div class="master-card black">
-                <div><span class="stat-label">Control Hoy</span><span id="stat-hoy-cajas" class="stat-main">0</span></div>
-                <div style="border-top:1px solid #333; padding-top:8px;"><span id="stat-hoy-envios" style="font-size:14px; font-weight:800;">0 CLIENTES</span></div>
-            </div>
-            <div class="master-card">
-                <div><span class="stat-label">Resumen Mes</span><span id="stat-mes-cajas" class="stat-main">0</span></div>
-                <div style="border-top:1px solid #eee; padding-top:8px;"><span id="stat-mes-envios" style="font-size:14px; font-weight:800;">0 CLIENTES</span></div>
-            </div>
-        </div>
-        <div id="smart-history"></div>
+<div id="page-data" class="page">
+    <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Auditoría de Personal</h1>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:25px;">
+        <input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0">
+        <button onclick="injectFakeData()" style="background:#000; color:#fff; border:none; border-radius:12px; font-size:11px; font-weight:800;">SIMULAR MES COMPLETO</button>
     </div>
 
-    <div id="page-data" class="page">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Rendimiento Almacén</h1>
+    <div class="section-tag">Reporte Consolidado Choferes</div>
+    <div id="rank-choferes-list" class="rank-box">
+        </div>
+
+    <div class="section-tag">Reporte Consolidado Auxiliares</div>
+    <div id="rank-auxiliares-list" class="rank-box">
+        </div>
+
+    <div class="section-tag">Log de Salidas Registradas</div>
+    <div id="data-results"></div>
+</div>
+
+<script>
+// Nueva lógica de renderizado para Auditoría
+function renderData() {
+    const m = document.getElementById('f-month').value || new Date().toISOString().substring(0,7);
+    let filt = db.filter(r => r.fecha.startsWith(m));
+    
+    let cStats = {}, aStats = {};
+    filt.forEach(r => {
+        let cjs = r.items.reduce((a,b)=>a+b.can,0);
+        let cls = r.items.length;
+        cStats[r.chofer] = cStats[r.chofer] || {cjs:0, cls:0, r:0};
+        cStats[r.chofer].cjs += cjs; cStats[r.chofer].cls += cls; cStats[r.chofer].r++;
         
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:25px;">
-            <input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0">
-            <button onclick="injectFakeData()" style="background:#f3f4f6; border:none; border-radius:12px; font-size:10px; font-weight:800;">RECARGAR PRUEBA</button>
-        </div>
+        aStats[r.auxiliar] = aStats[r.auxiliar] || {cjs:0, r:0};
+        aStats[r.auxiliar].cjs += cjs; aStats[r.auxiliar].r++;
+    });
 
-        <div class="rank-box">
-            <div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Choferes (Cajas/Clientes)</div>
-            <div id="rank-choferes-list"></div>
-        </div>
-
-        <div class="rank-box">
-            <div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares (Apoyo/Cajas)</div>
-            <div id="rank-auxiliares-list"></div>
-        </div>
-
-        <div style="font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; margin: 30px 0 10px 5px;">Movimientos del Mes</div>
-        <div id="data-results"></div>
-    </div>
-
-    <div id="page-units" class="page"><h1>Nueva Carga</h1><div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div></div>
-    <div id="page-assign" class="page"><h1>Programación</h1></div>
-    <div id="page-load" class="page"><h1>Carga</h1></div>
-
-    <nav class="nav-bottom">
-        <button class="nav-btn active" id="n-dash" onclick="go('page-dash')"><i class="ph-bold ph-chart-pie"></i>HISTORIAL</button>
-        <button class="nav-btn" id="n-units" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
-        <button class="nav-btn" id="n-data" onclick="go('page-data')"><i class="ph-bold ph-database"></i>DATA</button>
-    </nav>
-
-    <script>
-        let db = JSON.parse(localStorage.getItem('twins_v50_db')) || [];
-
-        const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
-        const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
-
-        function injectFakeData() {
-            let fake = [];
-            let hoy = new Date();
-            for(let i=0; i<15; i++) {
-                let d = new Date(); d.setDate(hoy.getDate() - i);
-                let itemsNum = Math.floor(Math.random() * 8) + 3;
-                let items = [];
-                for(let j=0; j<itemsNum; j++) items.push({cli: "CLIENTE "+j, can: Math.floor(Math.random()*50)+10});
-                
-                fake.push({
-                    id: 'F'+Date.now()+i,
-                    fecha: d.toISOString().split('T')[0],
-                    placa: "ABC-123",
-                    chofer: CONDUCTORES[Math.floor(Math.random()*CONDUCTORES.length)],
-                    auxiliar: AUXILIARES[Math.floor(Math.random()*AUXILIARES.length)],
-                    items: items
-                });
-            }
-            db = fake;
-            localStorage.setItem('twins_v50_db', JSON.stringify(db));
-            renderData(); renderStats();
-        }
-
-        function renderData() {
-            const m = document.getElementById('f-month').value || new Date().toISOString().substring(0,7);
-            let filt = db.filter(r => r.fecha.startsWith(m));
+    const drawTable = (data, targetId, isAux = false) => {
+        let sorted = Object.entries(data).sort((a,b) => b[1].cjs - a[1].cjs);
+        let html = `<table style="width:100%; font-size:12px; border-collapse:collapse;">
+            <tr style="text-align:left; color:gray; font-size:10px;">
+                <th style="padding:8px 0;">PERSONAL</th>
+                <th>${isAux ? 'RUTAS' : 'CLIENTES'}</th>
+                <th style="text-align:right;">TOTAL CAJAS</th>
+            </tr>`;
+        
+        html += sorted.map(([name, val]) => `
+            <tr style="border-top:1px solid #f3f4f6;">
+                <td style="padding:12px 0; font-weight:700;">${name}</td>
+                <td>${isAux ? val.r : val.cls}</td>
+                <td style="text-align:right; font-weight:800;">${val.cjs}</td>
+            </tr>`).join('') + `</table>`;
             
-            let cStats = {}, aStats = {};
-            filt.forEach(r => {
-                let cjs = r.items.reduce((a,b)=>a+b.can,0);
-                let cls = r.items.length;
-                cStats[r.chofer] = cStats[r.chofer] || {cjs:0, cls:0, r:0};
-                cStats[r.chofer].cjs += cjs; cStats[r.chofer].cls += cls; cStats[r.chofer].r++;
-                
-                aStats[r.auxiliar] = aStats[r.auxiliar] || {cjs:0, r:0};
-                aStats[r.auxiliar].cjs += cjs; aStats[r.auxiliar].r++;
-            });
+        document.getElementById(targetId).innerHTML = sorted.length ? html : '<p style="font-size:11px; color:gray;">No hay registros este mes.</p>';
+    };
 
-            // Lógica de Ranking
-            const draw = (data, targetId, isAux = false) => {
-                let sorted = Object.entries(data).sort((a,b) => b[1].cjs - a[1].cjs).slice(0,5);
-                let maxCjs = sorted[0] ? sorted[0][1].cjs : 1;
-                
-                document.getElementById(targetId).innerHTML = sorted.map(([name, val], i) => {
-                    let perc = (val.cjs / maxCjs) * 100;
-                    return `
-                    <div class="rank-item">
-                        <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
-                        <div class="rank-info">
-                            <div class="rank-name"><span>${name}</span> <span>${val.cjs} CJS</span></div>
-                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${perc}%"></div></div>
-                            <div class="rank-stats">
-                                <span><i class="ph-bold ph-package"></i> <b>${val.cjs}</b> Cajas</span>
-                                <span><i class="ph-bold ph-map-pin"></i> <b>${isAux ? val.r : val.cls}</b> ${isAux ? 'Rutas' : 'Clientes'}</span>
-                            </div>
-                        </div>
-                    </div>`;
-                }).join('');
-            };
-
-            draw(cStats, 'rank-choferes-list');
-            draw(aStats, 'rank-auxiliares-list', true);
-            
-            document.getElementById('data-results').innerHTML = filt.map(r => `
-                <div class="route-card" style="padding:12px; font-size:12px;">
-                    <div style="display:flex; justify-content:space-between; font-weight:800;">
-                        <span>${r.fecha} • ${r.chofer}</span>
-                        <span>${r.items.reduce((a,b)=>a+b.can,0)} Cjs</span>
-                    </div>
-                </div>`).join('');
-        }
-
-        function renderStats() {
-            const h = new Date().toISOString().split('T')[0], m = h.substring(0,7);
-            const rHoy = db.filter(r => r.fecha === h), rMes = db.filter(r => r.fecha.startsWith(m));
-            document.getElementById('stat-hoy-cajas').innerText = rHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
-            document.getElementById('stat-hoy-envios').innerText = rHoy.reduce((a,b)=>a+b.items.length, 0) + " CLIENTES";
-            document.getElementById('stat-mes-cajas').innerText = rMes.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
-            document.getElementById('stat-mes-envios').innerText = rMes.reduce((a,b)=>a+b.items.length, 0) + " CLIENTES";
-        }
-
-        function go(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
-            if(id === 'page-data') renderData();
-        }
-
-        window.onload = () => {
-            document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
-            renderStats();
-            // Inyectamos datos de prueba automáticamente la primera vez para que veas el diseño
-            if(db.length === 0) injectFakeData(); else renderData();
-        };
-    </script>
-</body>
-</html>
+    drawTable(cStats, 'rank-choferes-list');
+    drawTable(aStats, 'rank-auxiliares-list', true);
+}
+</script>
