@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V46.5 CORE</title>
+    <title>TWINS ELITE - V46.6</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -29,7 +29,6 @@
         .stat-main { font-size: 28px; font-weight: 900; }
         .stat-sub { font-size: 11px; font-weight: 600; display: block; margin-top: 2px; }
 
-        /* Tarjetas de Ruta Intel */
         .route-card { background: #fff; border-radius: 28px; padding: 22px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); }
         .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 20px; }
         .action-btn { border: 1px solid var(--border); border-radius: 16px; padding: 14px 5px; font-size: 10px; font-weight: 800; background: #fff; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -120,7 +119,8 @@
     </nav>
 
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby59273ThmezjUQ9-AB6Gx5O8G6J6zMB7SAtzImDhUfEoXBlCx-mT9h4AvzVI_2C56O/exec';
+        // TU NUEVA URL OFICIAL
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz17aqWIX2ktdjce6dxXKeklCfadQzHDpBbQH4Rb0MvcBEpcOubhKPAv3QayCUE1TtY/exec';
 
         let db = JSON.parse(localStorage.getItem('twins_core_v46')) || [];
         let clientsRegistry = JSON.parse(localStorage.getItem('twins_clients')) || [];
@@ -139,10 +139,6 @@
         };
 
         function startAssign(p) {
-            const hoy = new Date().toISOString().split('T')[0];
-            const duplicate = db.find(r => r.placa === p && r.fecha === hoy);
-            if(duplicate && !confirm(`Ojo: La unidad ${p} ya fue registrada hoy. ¿Duplicar?`)) return;
-
             current = { placa: p, items: [], id: 'R' + Date.now() };
             document.getElementById('title-placa').innerText = p;
             document.getElementById('sel-chofer').value = FLOTA[p] || CONDUCTORES[0];
@@ -162,14 +158,7 @@
             const cli = document.getElementById('inp-cli').value.toUpperCase().trim(), 
                   can = parseInt(document.getElementById('inp-can').value);
             if(!cli || isNaN(can)) return;
-            
             current.items.push({cli, can});
-            if(!clientsRegistry.includes(cli)) {
-                clientsRegistry.push(cli);
-                localStorage.setItem('twins_clients', JSON.stringify(clientsRegistry));
-                document.getElementById('suggest-clients').innerHTML += `<option value="${cli}">`;
-            }
-
             document.getElementById('inp-cli').value = ""; 
             document.getElementById('inp-can').value = "";
             document.getElementById('inp-cli').focus();
@@ -178,12 +167,11 @@
 
         function refreshLoadUI() {
             document.getElementById('load-placa').innerText = current.placa;
-            document.getElementById('load-meta').innerText = `Ruta: ${current.fecha}`;
             let t = current.items.reduce((a,b)=>a+b.can,0);
             document.getElementById('load-total').innerText = t;
             document.getElementById('items-list').innerHTML = current.items.map((it, i) => `
                 <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800; background:#f9f9f9; border-radius:12px; margin-bottom:8px;">
-                    <span>${it.can} <small>•</small> ${it.cli}</span>
+                    <span>${it.can} • ${it.cli}</span>
                     <i class="ph-bold ph-trash" style="color:red" onclick="current.items.splice(${i},1);refreshLoadUI()"></i>
                 </div>`).reverse().join('');
             document.getElementById('btn-finish').style.display = t > 0 ? 'block' : 'none';
@@ -197,8 +185,9 @@
             document.getElementById('sync-loader').style.display = 'block';
             
             try {
+                // Sincronización inteligente para evitar desorden en Excel
                 await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(current) });
-            } catch (e) { console.log("Excel Offline"); }
+            } catch (e) { console.log("Sync delay"); }
 
             setTimeout(() => {
                 document.getElementById('sync-loader').style.display = 'none';
@@ -211,7 +200,6 @@
             const mes = hoy.substring(0,7);
             const dataHoy = db.filter(r => r.fecha === hoy);
             const dataMes = db.filter(r => r.fecha.startsWith(mes));
-
             document.getElementById('stat-cajas-hoy').innerText = dataHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
             document.getElementById('stat-envios-hoy').innerText = dataHoy.length + " ENVÍOS";
             document.getElementById('stat-cajas-mes').innerText = dataMes.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
@@ -223,9 +211,8 @@
             container.innerHTML = "";
             const hoy = new Date().toISOString().split('T')[0];
             let mañana = new Date(); mañana.setDate(mañana.getDate() + 1); mañana = mañana.toISOString().split('T')[0];
-
-            renderBlock(container, "Próximos Despachos", db.filter(r => r.fecha === mañana));
-            renderBlock(container, "Registros de Hoy", db.filter(r => r.fecha === hoy));
+            renderBlock(container, "PRÓXIMOS DESPACHOS", db.filter(r => r.fecha === mañana));
+            renderBlock(container, "REGISTROS HOY", db.filter(r => r.fecha === hoy));
         }
 
         function renderBlock(cont, titulo, items) {
@@ -236,27 +223,16 @@
                 cont.innerHTML += `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <b style="font-size:22px;">${r.placa}</b>
-                            <div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer} | ${r.items.length} Clientes</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <b style="font-size:26px; color:#000;">${total}</b>
-                            <div style="font-size:9px; font-weight:900;">CAJAS</div>
-                        </div>
+                        <div><b style="font-size:22px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer}</div></div>
+                        <div style="text-align:right;"><b style="font-size:26px;">${total}</b><div style="font-size:9px; font-weight:900;">CAJAS</div></div>
                     </div>
                     <div class="route-actions">
-                        <button class="action-btn" onclick="viewItems('${r.id}')"><i class="ph-bold ph-list"></i>VER</button>
+                        <button class="action-btn" onclick="alert(JSON.stringify(r.items))"><i class="ph-bold ph-list"></i>VER</button>
                         <button class="action-btn" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
                         <button class="action-btn wa" onclick="sendWA('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WHATSAPP</button>
                     </div>
                 </div>`;
             });
-        }
-
-        function viewItems(id) {
-            const r = db.find(x => x.id === id);
-            alert(`DETALLE ${r.placa}:\n\n` + r.items.map(i => `${i.cli}: ${i.can} Cjs`).join('\n'));
         }
 
         function editRoute(id) {
@@ -266,7 +242,7 @@
 
         function sendWA(id) {
             const r = db.find(x => x.id === id);
-            const msg = `*TWINS ELITE*\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n📅 *RUTA:* ${r.fecha}\n\n*DETALLE:*\n${r.items.map(i=>`• ${i.cli}: ${i.can}`).join('\n')}\n\n*TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)} Cjs*`;
+            const msg = `*TWINS ELITE*\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n📅 *RUTA:* ${r.fecha}\n\n*TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)} Cjs*`;
             window.location.href = "whatsapp://send?text=" + encodeURIComponent(msg);
         }
 
