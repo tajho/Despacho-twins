@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V46.6</title>
+    <title>TWINS ELITE - V46.7</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -19,12 +19,9 @@
         .active { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Dos Cuadros Maestros */
         .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .master-card { background: var(--surface); padding: 20px; border-radius: 28px; border: 2px solid var(--accent); box-shadow: var(--shadow); position: relative; }
-        .master-card i { position: absolute; right: 15px; top: 15px; font-size: 20px; opacity: 0.2; }
         .master-card.black { background: var(--accent); color: #fff; }
-        .master-card.black .stat-label { color: rgba(255,255,255,0.7); }
         .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
         .stat-main { font-size: 28px; font-weight: 900; }
         .stat-sub { font-size: 11px; font-weight: 600; display: block; margin-top: 2px; }
@@ -53,22 +50,18 @@
 
     <div id="page-dash" class="page active">
         <h2 style="font-weight: 900; letter-spacing: -1.5px; margin-bottom: 25px; font-size: 28px;">Gestión de Rutas</h2>
-        
         <div class="core-dash">
             <div class="master-card black">
-                <i class="ph-fill ph-package"></i>
                 <span class="stat-label">Hoy</span>
                 <span id="stat-cajas-hoy" class="stat-main">0</span>
                 <span id="stat-envios-hoy" class="stat-sub">0 ENVÍOS</span>
             </div>
             <div class="master-card">
-                <i class="ph-fill ph-calendar"></i>
                 <span class="stat-label">Mes</span>
                 <span id="stat-cajas-mes" class="stat-main">0</span>
                 <span id="stat-envios-mes" class="stat-sub">0 ENVÍOS</span>
             </div>
         </div>
-
         <div id="history-container"></div>
     </div>
 
@@ -82,10 +75,10 @@
         <div style="background:white; padding:25px; border-radius:32px; border:1px solid var(--border); box-shadow: var(--shadow);">
             <label class="stat-label">Fecha despacho</label>
             <select id="sel-date" class="input-box" style="margin-bottom:15px;">
-                <option value="hoy">Para Hoy</option>
-                <option value="mañana" selected>Para Mañana</option>
+                <option value="hoy">Hoy</option>
+                <option value="mañana" selected>Mañana</option>
             </select>
-            <label class="stat-label">Equipo asignado</label>
+            <label class="stat-label">Personal</label>
             <select id="sel-chofer" class="input-box" style="margin-bottom:10px;"></select>
             <select id="sel-aux" class="input-box"></select>
             <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:#fff; border:none; margin-top:25px; font-weight:900; height:70px;">COMENZAR CARGA</button>
@@ -100,17 +93,15 @@
             </div>
             <span id="load-total" style="font-size:36px; font-weight:900;">0</span>
         </div>
-        
         <div style="background:white; padding:25px; border-radius:32px; border:1px solid var(--border); box-shadow: var(--shadow);">
-            <input type="text" id="inp-cli" placeholder="Nombre Cliente" class="input-box" style="margin-bottom:12px;" list="suggest-clients">
-            <datalist id="suggest-clients"></datalist>
+            <input type="text" id="inp-cli" placeholder="Nombre Cliente" class="input-box" style="margin-bottom:12px;">
             <div style="display:flex; gap:10px;">
                 <input type="number" id="inp-can" placeholder="Cjs" class="input-box" style="flex:1;">
                 <button onclick="addItem()" style="background:#000; color:#fff; border:none; border-radius:20px; width:80px; font-size:30px;"><i class="ph-bold ph-plus"></i></button>
             </div>
             <div id="items-list" style="margin-top:25px;"></div>
         </div>
-        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:#000; color:#fff; border:none; margin-top:20px; font-weight:900; height:70px;">GUARDAR EN EXCEL</button>
+        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:#000; color:#fff; border:none; margin-top:20px; font-weight:900; height:70px;">GUARDAR TODO</button>
     </div>
 
     <nav class="nav-bar">
@@ -119,11 +110,8 @@
     </nav>
 
     <script>
-        // TU NUEVA URL OFICIAL
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz17aqWIX2ktdjce6dxXKeklCfadQzHDpBbQH4Rb0MvcBEpcOubhKPAv3QayCUE1TtY/exec';
-
         let db = JSON.parse(localStorage.getItem('twins_core_v46')) || [];
-        let clientsRegistry = JSON.parse(localStorage.getItem('twins_clients')) || [];
         let current = { items: [] };
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
@@ -148,19 +136,16 @@
         function confirmAssign() {
             current.chofer = document.getElementById('sel-chofer').value;
             current.auxiliar = document.getElementById('sel-aux').value;
-            let d = new Date(); 
-            if(document.getElementById('sel-date').value === 'mañana') d.setDate(d.getDate() + 1);
+            let d = new Date(); if(document.getElementById('sel-date').value === 'mañana') d.setDate(d.getDate() + 1);
             current.fecha = d.toISOString().split('T')[0];
             refreshLoadUI(); go('page-load');
         }
 
         function addItem() {
-            const cli = document.getElementById('inp-cli').value.toUpperCase().trim(), 
-                  can = parseInt(document.getElementById('inp-can').value);
+            const cli = document.getElementById('inp-cli').value.toUpperCase().trim(), can = parseInt(document.getElementById('inp-can').value);
             if(!cli || isNaN(can)) return;
             current.items.push({cli, can});
-            document.getElementById('inp-cli').value = ""; 
-            document.getElementById('inp-can').value = "";
+            document.getElementById('inp-cli').value = ""; document.getElementById('inp-can').value = "";
             document.getElementById('inp-cli').focus();
             refreshLoadUI();
         }
@@ -181,18 +166,9 @@
             const idx = db.findIndex(x => x.id === current.id);
             if(idx > -1) db[idx] = current; else db.unshift(current);
             localStorage.setItem('twins_core_v46', JSON.stringify(db));
-            
             document.getElementById('sync-loader').style.display = 'block';
-            
-            try {
-                // Sincronización inteligente para evitar desorden en Excel
-                await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(current) });
-            } catch (e) { console.log("Sync delay"); }
-
-            setTimeout(() => {
-                document.getElementById('sync-loader').style.display = 'none';
-                go('page-dash'); renderHistory(); renderStats();
-            }, 1000);
+            try { await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(current) }); } catch (e) {}
+            setTimeout(() => { document.getElementById('sync-loader').style.display = 'none'; go('page-dash'); renderHistory(); renderStats(); }, 1000);
         }
 
         function renderStats() {
@@ -223,29 +199,36 @@
                 cont.innerHTML += `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <div><b style="font-size:22px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer}</div></div>
+                        <div>
+                            <b style="font-size:22px;">${r.placa}</b>
+                            <div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer} | ${r.auxiliar}</div>
+                        </div>
                         <div style="text-align:right;"><b style="font-size:26px;">${total}</b><div style="font-size:9px; font-weight:900;">CAJAS</div></div>
                     </div>
                     <div class="route-actions">
-                        <button class="action-btn" onclick="alert(JSON.stringify(r.items))"><i class="ph-bold ph-list"></i>VER</button>
+                        <button class="action-btn" onclick="viewRoute('${r.id}')"><i class="ph-bold ph-list"></i>VER</button>
                         <button class="action-btn" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
-                        <button class="action-btn wa" onclick="sendWA('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WHATSAPP</button>
+                        <button class="action-btn wa" onclick="preWA('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WHATSAPP</button>
                     </div>
                 </div>`;
             });
         }
 
-        function editRoute(id) {
-            current = JSON.parse(JSON.stringify(db.find(x => x.id === id)));
-            refreshLoadUI(); go('page-load');
-        }
-
-        function sendWA(id) {
+        function viewRoute(id) {
             const r = db.find(x => x.id === id);
-            const msg = `*TWINS ELITE*\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n📅 *RUTA:* ${r.fecha}\n\n*TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)} Cjs*`;
-            window.location.href = "whatsapp://send?text=" + encodeURIComponent(msg);
+            alert(`RUTA ${r.placa}\n${r.chofer} / ${r.auxiliar}\n\n` + r.items.map(i => `• ${i.cli}: ${i.can}`).join('\n'));
         }
 
+        function preWA(id) {
+            const r = db.find(x => x.id === id);
+            if(confirm(`¿Confirmar despacho?\n🚛 ${r.placa}\n👤 ${r.chofer}\n🤝 ${r.auxiliar}\n📦 ${r.items.length} entregas`)) {
+                const lista = r.items.map(i => `• ${i.cli}: ${i.can}`).join('\n');
+                const msg = `*TWINS ELITE*\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n🤝 *AUX:* ${r.auxiliar}\n📅 *RUTA:* ${r.fecha}\n\n*DESPACHO:*\n${lista}\n\n*TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)} Cjs*`;
+                window.location.href = "whatsapp://send?text=" + encodeURIComponent(msg);
+            }
+        }
+
+        function editRoute(id) { current = JSON.parse(JSON.stringify(db.find(x => x.id === id))); refreshLoadUI(); go('page-load'); }
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
