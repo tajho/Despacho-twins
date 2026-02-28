@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V20 PRO SYSTEM</title>
+    <title>TWINS ELITE - V21 FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -20,31 +20,37 @@
 
         .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(11, 17, 26, 0.95); backdrop-filter: blur(15px); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
 
-        /* TARJETAS */
+        /* TARJETAS DE HISTORIAL */
         .card { background: var(--surface); border-radius: 20px; padding: 16px; border: 1px solid var(--border); margin-bottom: 12px; }
         .h-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; }
-        .btn-act { border: none; border-radius: 10px; padding: 10px; font-size: 10px; font-weight: 800; color: white; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+        
+        .btn-act { 
+            border: none; border-radius: 10px; padding: 12px 5px; font-size: 11px; font-weight: 800; 
+            color: white; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer;
+        }
+        .btn-v { background: #2d3748; } .btn-e { background: #3e4c62; } .btn-w { background: #128c7e; }
 
-        /* NAVBAR MEJORADA */
+        /* NAVBAR */
         .nav-bar { position: fixed; bottom: 20px; left: 15px; right: 15px; background: #1c2533; height: 75px; border-radius: 22px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 9px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 22px; margin-bottom: 3px; }
 
+        /* INPUTS Y BOTONES */
+        .inp-main { background: var(--surface); border: 1px solid var(--border); padding: 16px; border-radius: 14px; color: white; width: 100%; margin-bottom: 10px; font-size: 16px; }
+        .btn-big { width:100%; padding:18px; border-radius:15px; border:none; font-weight:800; font-size:15px; cursor:pointer; margin-bottom:10px; }
+
         /* MODALES */
         .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:3000; align-items:center; justify-content:center; padding:20px; }
         .modal-content { background:var(--surface); width:100%; max-width:400px; border-radius:24px; padding:25px; border:1px solid var(--border); text-align:center; }
-        
-        .inp-main { background: var(--surface); border: 1px solid var(--border); padding: 16px; border-radius: 14px; color: white; width: 100%; margin-bottom: 10px; font-size: 16px; }
-        .btn-big { width:100%; padding:18px; border-radius:15px; border:none; font-weight:800; font-size:15px; cursor:pointer; margin-bottom:10px; }
     </style>
 </head>
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
         <div style="font-weight:900; font-size:18px;">TWINS <span style="color:var(--accent)">ELITE</span></div>
-        <div id="db-status" onclick="syncData()" style="font-size:10px; font-weight:800; color:var(--success); background:rgba(255,255,255,0.05); padding:5px 10px; border-radius:20px;">
-            ● ONLINE
+        <div id="db-status" onclick="syncData()" style="font-size:10px; font-weight:800; color:var(--success); background:rgba(255,255,255,0.05); padding:5px 10px; border-radius:20px; cursor:pointer;">
+            ● ACTUALIZAR DATA
         </div>
     </header>
 
@@ -54,7 +60,7 @@
     </div>
 
     <div id="page-select-plate" class="page">
-        <h3 style="margin-bottom:20px; font-weight:800;">¿Qué unidad cargará?</h3>
+        <h3 style="margin-bottom:20px; font-weight:800;">Seleccionar Unidad</h3>
         <div id="plate-options" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;"></div>
     </div>
 
@@ -77,37 +83,24 @@
     </div>
 
     <div id="page-history" class="page">
-        <input type="text" id="search-input" class="inp-main" placeholder="Buscar chofer, placa o cliente..." oninput="renderHistory()">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px">
-            <div class="card" style="margin-bottom:0; border-left:4px solid var(--accent)">
-                <small style="color:var(--text-dim)">MES</small><br><b id="h-mes" style="font-size:20px">0</b>
-            </div>
-            <div class="card" style="margin-bottom:0; border-left:4px solid var(--success)">
-                <small style="color:var(--text-dim)">HOY</small><br><b id="h-hoy" style="font-size:20px">0</b>
-            </div>
-        </div>
+        <input type="text" id="search-input" class="inp-main" placeholder="Buscar por cliente, placa o chofer..." oninput="renderHistory()">
         <div id="history-feed"></div>
     </div>
 
     <div id="page-fleet" class="page">
-        <h3 style="font-weight:800;">Estado de Unidades</h3>
+        <h3 style="font-weight:800;">Estado de Flota</h3>
         <div id="fleet-container"></div>
     </div>
 
     <div id="page-reports" class="page">
-        <h3 style="font-weight:800;">Resumen de Operación</h3>
-        <div class="card">
-            <label style="font-size:12px; color:var(--text-dim)">EFICIENCIA DE CARGA</label>
-            <div style="font-size:24px; font-weight:800; margin:10px 0;">98.5%</div>
-            <div style="height:8px; background:#2d3748; border-radius:4px;"><div style="width:98%; background:var(--success); height:100%; border-radius:4px;"></div></div>
-        </div>
+        <h3 style="font-weight:800;">Reporte Semanal</h3>
         <div id="report-details"></div>
     </div>
 
     <div id="modal-date" class="modal">
         <div class="modal-content">
-            <h3 style="margin-top:0;">¿Cuándo sale esta ruta?</h3>
-            <p style="color:var(--text-dim); margin-bottom:20px;">Selecciona la fecha de despacho para el reporte.</p>
+            <h3 style="margin-top:0;">Programación</h3>
+            <p style="color:var(--text-dim); margin-bottom:20px;">¿Cuándo sale esta ruta?</p>
             <button onclick="finalizeProcess('hoy')" class="btn-big" style="background:var(--accent); color:white;">PARA HOY</button>
             <button onclick="finalizeProcess('mañana')" class="btn-big" style="background:var(--surface); color:white; border:1px solid var(--border);">PARA MAÑANA</button>
             <button onclick="document.getElementById('modal-date').style.display='none'" style="background:none; border:none; color:var(--danger); font-weight:700; margin-top:10px;">CANCELAR</button>
@@ -117,13 +110,13 @@
     <div id="modal-view" class="modal">
         <div class="modal-content">
             <h3 id="mv-title" style="margin-top:0; color:var(--accent)"></h3>
-            <div id="mv-body" style="text-align:left; max-height:300px; overflow-y:auto; margin:15px 0;"></div>
+            <div id="mv-body" style="text-align:left; max-height:350px; overflow-y:auto; margin:15px 0; border-top:1px solid var(--border); padding-top:10px;"></div>
             <button onclick="document.getElementById('modal-view').style.display='none'" class="btn-big" style="background:var(--accent); color:white;">CERRAR</button>
         </div>
     </div>
 
     <nav id="app-nav" class="nav-bar" style="display:none">
-        <button class="nav-item active" id="n-route" onclick="go('page-select-plate')"><i class="ph-fill ph-plus-circle"></i>RUTA</button>
+        <button class="nav-item" id="n-route" onclick="go('page-select-plate')"><i class="ph-fill ph-plus-circle"></i>RUTA</button>
         <button class="nav-item" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-clock-counter-clockwise"></i>DATA</button>
         <button class="nav-item" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
         <button class="nav-item" id="n-reports" onclick="go('page-reports')"><i class="ph-fill ph-chart-bar"></i>REPORTES</button>
@@ -135,8 +128,8 @@
         const ASIGNACION = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
 
         window.onload = () => {
-            const saved = localStorage.getItem('tw_db_v20');
-            if(saved) { db = JSON.parse(saved); processStats(); renderHistory(); }
+            const saved = localStorage.getItem('tw_db_v21');
+            if(saved) { db = JSON.parse(saved); renderHistory(); }
             setupUI();
             if(localStorage.getItem('tw_logged')) login(localStorage.getItem('tw_logged'));
         };
@@ -144,10 +137,10 @@
         function setupUI() {
             const l = document.getElementById('login-options');
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                l.innerHTML += `<div onclick="checkPass('${u}')" style="background:var(--surface); padding:18px; border-radius:15px; margin-bottom:10px; border:1px solid var(--border); font-weight:700;">${u}</div>`;
+                l.innerHTML += `<div onclick="checkPass('${u}')" style="background:var(--surface); padding:18px; border-radius:15px; margin-bottom:10px; border:1px solid var(--border); font-weight:700; cursor:pointer;">${u}</div>`;
             });
             document.getElementById('plate-options').innerHTML = Object.keys(ASIGNACION).map(p => 
-                `<div onclick="startPlate('${p}')" style="background:var(--surface); border:1px solid var(--border); padding:25px 10px; border-radius:18px; font-weight:800; text-align:center;">${p}</div>`
+                `<div onclick="startPlate('${p}')" style="background:var(--surface); border:1px solid var(--border); padding:25px 10px; border-radius:18px; font-weight:800; text-align:center; cursor:pointer;">${p}</div>`
             ).join('');
         }
 
@@ -155,92 +148,61 @@
             try {
                 const r = await fetch(API);
                 db = await r.json();
-                localStorage.setItem('tw_db_v20', JSON.stringify(db));
-                processStats(); renderHistory(); renderFleet(); renderReports();
-            } catch(e) { console.log("Offline"); }
-        }
-
-        function processStats() {
-            const hoy = new Date().toLocaleDateString('sv-SE');
-            let dC = 0, mC = 0;
-            db.forEach(r => {
-                const n = parseFloat(r.total || 0);
-                if(r.fecha === hoy) dC += n;
-                if(r.fecha && r.fecha.startsWith(hoy.substring(0, 7))) mC += n;
-            });
-            document.getElementById('h-hoy').innerText = dC;
-            document.getElementById('h-mes').innerText = mC;
+                localStorage.setItem('tw_db_v21', JSON.stringify(db));
+                renderHistory(); renderFleet(); renderReports();
+            } catch(e) { alert("Error de conexión"); }
         }
 
         function renderHistory() {
             const query = document.getElementById('search-input').value.toLowerCase();
             let html = "";
             db.filter(r => r.placa.toLowerCase().includes(query) || r.chofer.toLowerCase().includes(query) || r.items.toLowerCase().includes(query))
-            .slice(0, 30).forEach((r, idx) => {
-                const originalIdx = db.indexOf(r);
+            .slice(0, 40).forEach((r) => {
+                const globalIdx = db.indexOf(r); // Índice real para que los botones funcionen
                 html += `
                 <div class="card">
-                    <div style="display:flex; justify-content:space-between"><b>${r.placa}</b> <span style="color:var(--success); font-weight:800;">${r.total} CJS</span></div>
-                    <div style="font-size:12px; color:var(--text-dim); margin-top:5px;">${r.chofer} | ${r.fecha}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <b>${r.placa}</b> 
+                        <span style="color:var(--success); font-weight:800; font-size:18px;">${r.total} CJS</span>
+                    </div>
+                    <div style="font-size:12px; color:var(--text-dim); margin-top:5px; font-weight:600;">
+                        ${r.chofer} | <span style="color:white">${r.fecha}</span>
+                    </div>
                     <div class="h-actions">
-                        <button class="btn-act" style="background:#2d3748" onclick="viewR(${originalIdx})">VER</button>
-                        <button class="btn-act" style="background:#3e4c62" onclick="editR(${originalIdx})">EDITAR</button>
-                        <button class="btn-act" style="background:#128c7e" onclick="sendWA(${originalIdx})">WA</button>
+                        <button class="btn-act btn-v" onclick="viewR(${globalIdx})"><i class="ph-bold ph-eye"></i> VER</button>
+                        <button class="btn-act btn-e" onclick="editR(${globalIdx})"><i class="ph-bold ph-pencil"></i> EDITAR</button>
+                        <button class="btn-act btn-w" onclick="sendWA(${globalIdx})"><i class="ph-bold ph-whatsapp-logo"></i> WA</button>
                     </div>
                 </div>`;
             });
-            document.getElementById('history-feed').innerHTML = html;
+            document.getElementById('history-feed').innerHTML = html || "<p style='text-align:center; opacity:0.3'>Sin registros</p>";
         }
 
-        function renderFleet() {
-            let html = "";
-            Object.keys(ASIGNACION).forEach(p => {
-                const last = db.find(r => r.placa === p);
-                html += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
-                    <div><b>${p}</b><br><small style="color:var(--text-dim)">${ASIGNACION[p]}</small></div>
-                    <div style="text-align:right"><span style="color:var(--success); font-size:11px;">● ACTIVO</span><br><small style="font-size:10px;">Ult: ${last ? last.fecha : '---'}</small></div>
-                </div>`;
+        function viewR(i) {
+            const r = db[i];
+            document.getElementById('mv-title').innerText = "Ruta " + r.placa;
+            document.getElementById('mv-body').innerHTML = r.items.split(',').map(li => `<div style="padding:12px; border-bottom:1px solid var(--border); font-size:14px;">${li.trim()}</div>`).join('');
+            document.getElementById('modal-view').style.display = 'flex';
+        }
+
+        function editR(i) {
+            const r = db[i];
+            if(!confirm("¿Cargar esta ruta para editar?")) return;
+            localStorage.setItem('tw_temp_placa', r.placa);
+            currentCarga = r.items.split(',').map(li => {
+                const p = li.split(':');
+                return { cli: p[0].trim(), can: parseInt(p[1]) || 0 };
             });
-            document.getElementById('fleet-container').innerHTML = html;
+            go('page-route'); refreshCargaUI();
         }
 
-        function renderReports() {
-            const summary = {};
-            db.slice(0, 50).forEach(r => { summary[r.chofer] = (summary[r.chofer] || 0) + parseFloat(r.total); });
-            let html = "<h4 style='margin:10px 0'>Carga por Chofer (Top)</h4>";
-            Object.keys(summary).sort((a,b)=>summary[b]-summary[a]).forEach(c => {
-                html += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border)"><span>${c}</span><b>${summary[c]} Cjs</b></div>`;
-            });
-            document.getElementById('report-details').innerHTML = html;
+        function sendWA(i) {
+            const r = db[i];
+            const msg = `*TWINS ELITE*\n📦 *${r.placa}* (${r.chofer})\n📅 *Fecha:* ${r.fecha}\n\n*DETALLE:*\n${r.items.split(',').map(li => "• " + li.trim()).join('\n')}\n\n*TOTAL: ${r.total} CAJAS*`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // --- LÓGICA DE RUTA ---
-        function openFinalizeModal() { document.getElementById('modal-date').style.display = 'flex'; }
-
-        async function finalizeProcess(tipo) {
-            let fechaEnvio = new Date();
-            if(tipo === 'mañana') fechaEnvio.setDate(fechaEnvio.getDate() + 1);
-            
-            const r = {
-                fecha: fechaEnvio.toLocaleDateString('sv-SE'),
-                hora: new Date().toLocaleTimeString('es-PE', {hour:'2-digit', minute:'2-digit', hour12:false}),
-                chofer: ASIGNACION[localStorage.getItem('tw_temp_placa')],
-                placa: localStorage.getItem('tw_temp_placa'),
-                items: currentCarga.map(i => `${i.cli}: ${i.can}`).join(", "),
-                total: currentCarga.reduce((a,b)=>a+b.can,0),
-                operario: activeUser
-            };
-
-            db.unshift(r);
-            localStorage.setItem('tw_db_v20', JSON.stringify(db));
-            fetch(API, {method:'POST', mode:'no-cors', body:JSON.stringify(r)});
-            
-            document.getElementById('modal-date').style.display = 'none';
-            currentCarga = []; localStorage.removeItem('tw_temp_placa');
-            go('page-history');
-        }
-
-        // --- NAVEGACIÓN Y CORE ---
+        // --- FUNCIONES CORE ---
         function login(u) {
             activeUser = u; localStorage.setItem('tw_logged', u);
             document.getElementById('page-login').classList.remove('active');
@@ -248,6 +210,7 @@
             document.getElementById('app-nav').style.display = 'flex';
             syncData(); go('page-history');
         }
+
         function checkPass(u) { if(u==='TAJHO ADMIN' && prompt("Clave:")!=="1994") return; login(u); }
         function startPlate(p) { localStorage.setItem('tw_temp_placa', p); go('page-route'); refreshCargaUI(); }
 
@@ -255,11 +218,10 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            const bid = id.includes('plate') || id.includes('route') ? 'n-route' : 'n-'+id.split('-')[1];
+            const bid = (id.includes('plate') || id.includes('route')) ? 'n-route' : 'n-'+id.split('-')[1];
             document.getElementById(bid).classList.add('active');
             if(id === 'page-history') renderHistory();
             if(id === 'page-fleet') renderFleet();
-            if(id === 'page-reports') renderReports();
         }
 
         function addPoint() {
@@ -275,7 +237,7 @@
             document.getElementById('active-plate-label').innerText = localStorage.getItem('tw_temp_placa') || "---";
             currentCarga.forEach((it, i) => {
                 t += it.can;
-                h += `<div class="card" style="display:flex; justify-content:space-between; margin-bottom:8px;"><span><b>${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger)" onclick="currentCarga.splice(${i},1);refreshCargaUI()"></i></div>`;
+                h += `<div class="card" style="display:flex; justify-content:space-between; margin-bottom:8px; padding:12px;"><span><b>${it.can}</b> ${it.cli}</span><i class="ph ph-trash" style="color:var(--danger); cursor:pointer;" onclick="currentCarga.splice(${i},1);refreshCargaUI()"></i></div>`;
             });
             document.getElementById('count-cajas').innerText = t;
             document.getElementById('count-puntos').innerText = currentCarga.length + " clientes";
@@ -283,27 +245,43 @@
             document.getElementById('live-list').innerHTML = h;
         }
 
-        function viewR(i) {
-            const r = db[i];
-            document.getElementById('mv-title').innerText = r.placa;
-            document.getElementById('mv-body').innerHTML = r.items.split(',').map(li => `<div style="padding:10px; border-bottom:1px solid var(--border)">${li.trim()}</div>`).join('');
-            document.getElementById('modal-view').style.display = 'flex';
+        function openFinalizeModal() { document.getElementById('modal-date').style.display = 'flex'; }
+
+        async function finalizeProcess(tipo) {
+            let fechaEnvio = new Date();
+            if(tipo === 'mañana') fechaEnvio.setDate(fechaEnvio.getDate() + 1);
+            
+            const r = {
+                fecha: fechaEnvio.toLocaleDateString('sv-SE'),
+                chofer: ASIGNACION[localStorage.getItem('tw_temp_placa')],
+                placa: localStorage.getItem('tw_temp_placa'),
+                items: currentCarga.map(i => `${i.cli}: ${i.can}`).join(", "),
+                total: currentCarga.reduce((a,b)=>a+b.can,0),
+                operario: activeUser
+            };
+
+            db.unshift(r);
+            localStorage.setItem('tw_db_v21', JSON.stringify(db));
+            fetch(API, {method:'POST', mode:'no-cors', body:JSON.stringify(r)});
+            
+            document.getElementById('modal-date').style.display = 'none';
+            currentCarga = []; localStorage.removeItem('tw_temp_placa');
+            go('page-history');
         }
 
-        function editR(i) {
-            const r = db[i];
-            localStorage.setItem('tw_temp_placa', r.placa);
-            currentCarga = r.items.split(',').map(li => {
-                const p = li.split(':');
-                return { cli: p[0].trim(), can: parseInt(p[1]) || 0 };
+        function renderFleet() {
+            let html = "";
+            Object.keys(ASIGNACION).forEach(p => {
+                html += `<div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div><b>${p}</b><br><small style="color:var(--text-dim)">${ASIGNACION[p]}</small></div>
+                    <div style="color:var(--success); font-weight:800; font-size:10px;">● OPERATIVO</div>
+                </div>`;
             });
-            go('page-route'); refreshCargaUI();
+            document.getElementById('fleet-container').innerHTML = html;
         }
 
-        function sendWA(i) {
-            const r = db[i];
-            const msg = `*TWINS ELITE*\n📦 *${r.placa}* (${r.chofer})\n📅 *Fecha:* ${r.fecha}\n\n*DETALLE:*\n${r.items.split(',').map(li => "• " + li.trim()).join('\n')}\n\n*TOTAL: ${r.total} CAJAS*`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        function renderReports() {
+            document.getElementById('report-details').innerHTML = `<div class="card"><p style="text-align:center; color:var(--text-dim)">Consolidando datos del Excel...</p></div>`;
         }
     </script>
 </body>
