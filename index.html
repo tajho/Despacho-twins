@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V50.9</title>
+    <title>TWINS ELITE - V51.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -19,42 +19,54 @@
         .active { display: block; }
         @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Buscador Mejorado */
+        /* Buscador */
         .search-container { position: sticky; top: 0; background: var(--bg); z-index: 100; padding: 5px 0 15px 0; }
-        .search-input { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 14px 14px 45px; width: 100%; font-size: 14px; font-weight: 600; outline: none; box-shadow: var(--shadow); }
+        .search-input { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 14px 14px 45px; width: 100%; font-size: 14px; font-weight: 600; outline: none; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .search-icon { position: absolute; left: 16px; top: 20px; font-size: 20px; color: var(--text-dim); }
 
-        /* Dashboard Stats */
+        /* Stats */
         .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .master-card { background: #fff; padding: 20px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 125px; }
+        .master-card { background: #fff; padding: 18px; border-radius: 22px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 115px; }
         .master-card.black { background: #000; color: #fff; border: none; }
-        .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.6; }
-        .stat-main { font-size: 28px; font-weight: 900; }
+        .stat-label { font-size: 9px; font-weight: 800; text-transform: uppercase; opacity: 0.6; }
+        .stat-main { font-size: 26px; font-weight: 900; }
 
-        /* Data & Rankings */
+        /* Ranking DATA */
         .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; color: var(--text-dim); text-transform: uppercase; }
-        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-        .rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; background: #f3f4f6; color: #9ca3af; }
+        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .rank-pos { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; background: #eee; color: #aaa; }
         .pos-1 { background: var(--gold); color: #000; }
         .pos-2 { background: var(--silver); color: #000; }
         .pos-3 { background: var(--bronze); color: #000; }
         .rank-info { flex: 1; }
-        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; margin-top: 5px; }
-        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; }
+        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; margin: 6px 0; }
+        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.6s ease; }
+        .rank-meta { font-size: 10px; font-weight: 800; color: var(--text-dim); display: flex; gap: 10px; }
+        .rank-meta b { color: #000; }
 
-        /* General */
-        .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
-        .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 10px; }
-        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); }
+        /* Tarjetas Historial */
+        .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #f3f4f6; padding-top: 12px; }
+        .btn-action { border: 1px solid var(--border); border-radius: 12px; padding: 10px 5px; font-size: 9px; font-weight: 800; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text); }
+        .btn-action.wa { background: #000; color: #fff; border: none; }
+        .section-tag { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; margin: 25px 0 10px 5px; display: flex; align-items: center; gap: 6px; }
+
+        /* Nav */
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
+        .nav-btn i { font-size: 24px; margin-bottom: 4px; }
+        
+        .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 10px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(4px); }
+        .modal-box { background: #fff; border-radius: 24px; padding: 25px; width: 100%; max-height: 80vh; overflow-y: auto; }
     </style>
 </head>
 <body>
 
     <div id="page-dash" class="page active">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Historial</h1>
+        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Control Historial</h1>
         
         <div class="search-container">
             <i class="ph-bold ph-magnifying-glass search-icon"></i>
@@ -67,7 +79,7 @@
                 <div style="border-top:1px solid #333; padding-top:8px; font-size:12px; font-weight:800;" id="stat-hoy-envios">0 CLI</div>
             </div>
             <div class="master-card">
-                <div><span class="stat-label">Filtrado</span><span id="stat-fil-cajas" class="stat-main">0</span></div>
+                <div><span class="stat-label">Resultado Búsqueda</span><span id="stat-fil-cajas" class="stat-main">0</span></div>
                 <div style="border-top:1px solid #eee; padding-top:8px; font-size:12px; font-weight:800;" id="stat-fil-envios">0 CLI</div>
             </div>
         </div>
@@ -76,11 +88,11 @@
     </div>
 
     <div id="page-data" class="page">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Rendimiento</h1>
+        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Rendimiento Personal</h1>
         
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:25px;">
             <input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0">
-            <button onclick="injectFakeData()" style="background:#f3f4f6; border:none; border-radius:12px; font-size:10px; font-weight:800;">RECARGAR PRUEBA</button>
+            <button onclick="injectFakeData()" style="background:#f3f4f6; border:none; border-radius:12px; font-size:10px; font-weight:800;">SIMULAR DATOS</button>
         </div>
 
         <div class="rank-box">
@@ -105,49 +117,78 @@
         <button class="nav-btn" id="n-data" onclick="go('page-data')"><i class="ph-bold ph-chart-bar"></i>DATA</button>
     </nav>
 
+    <div id="modal-view" class="modal"><div class="modal-box"><h3 id="m-title"></h3><div id="m-body"></div><button onclick="closeModal('modal-view')" class="field" style="margin-top:20px;">CERRAR</button></div></div>
+
     <script>
         let db = JSON.parse(localStorage.getItem('twins_v50_db')) || [];
 
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
 
-        // BUSCADOR Y RENDERIZADO DE HISTORIAL
+        function getDates() {
+            const hoy = new Date().toISOString().split('T')[0];
+            const ayerDate = new Date(); ayerDate.setDate(ayerDate.getDate() - 1);
+            const ayer = ayerDate.toISOString().split('T')[0];
+            const mañanaDate = new Date(); mañanaDate.setDate(mañanaDate.getDate() + 1);
+            const mañana = mañanaDate.toISOString().split('T')[0];
+            return { hoy, ayer, mañana };
+        }
+
         function renderSmartHistory() {
             const query = document.getElementById('main-search').value.toLowerCase();
             const cont = document.getElementById('smart-history');
+            const { hoy, ayer, mañana } = getDates();
             
             let filtered = db.filter(r => {
                 const matchGeneral = r.chofer.toLowerCase().includes(query) || 
                                    r.placa.toLowerCase().includes(query) || 
-                                   r.auxiliar.toLowerCase().includes(query);
+                                   r.auxiliar.toLowerCase().includes(query) ||
+                                   r.fecha.includes(query);
                 const matchCliente = r.items.some(i => i.cli.toLowerCase().includes(query));
                 return matchGeneral || matchCliente;
             });
 
-            // Actualizar Stats de Búsqueda
             document.getElementById('stat-fil-cajas').innerText = filtered.reduce((a,b) => a + b.items.reduce((x,y)=>x+y.can,0), 0);
-            document.getElementById('stat-fil-envios').innerText = filtered.reduce((a,b) => a + b.items.length, 0) + " CLIENTES";
+            document.getElementById('stat-fil-envios').innerText = filtered.reduce((a,b) => a + b.items.length, 0) + " CLI";
 
-            cont.innerHTML = filtered.map(r => `
-                <div class="route-card">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <div>
-                            <b style="font-size:16px;">${r.placa}</b>
-                            <div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer} | ${r.auxiliar}</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <span style="font-size:10px; display:block; opacity:0.6;">${r.fecha}</span>
-                            <b style="font-size:16px;">${r.items.reduce((a,b)=>a+b.can,0)} CJS</b>
-                        </div>
-                    </div>
-                    <div style="margin-top:10px; font-size:11px; color:var(--text-dim); border-top:1px solid #f3f4f6; padding-top:8px;">
-                        ${r.items.map(i => i.cli).slice(0,3).join(', ')}${r.items.length > 3 ? '...' : ''}
-                    </div>
-                </div>
-            `).join('') || '<p style="text-align:center; color:gray; margin-top:20px;">No se encontraron resultados.</p>';
+            let html = "";
+
+            if(query === "") {
+                // Vista Estándar: Mañana, Hoy, Ayer
+                const rFut = db.filter(r => r.fecha >= mañana);
+                const rHoy = db.filter(r => r.fecha === hoy);
+                const rAyer = db.filter(r => r.fecha === ayer);
+
+                if(rFut.length) { html += `<div class="section-tag">Programado</div>`; rFut.forEach(r => html += card(r)); }
+                html += `<div class="section-tag">Hoy</div>`;
+                if(!rHoy.length) html += `<p style="font-size:12px;color:gray;margin-left:10px;">Sin rutas hoy.</p>`;
+                rHoy.forEach(r => html += card(r, true));
+                if(rAyer.length) { html += `<div class="section-tag">Ayer</div>`; rAyer.forEach(r => html += card(r)); }
+            } else {
+                // Vista Búsqueda: Todo lo que coincida
+                html += `<div class="section-tag">Resultados de Búsqueda</div>`;
+                filtered.forEach(r => html += card(r));
+            }
+            
+            cont.innerHTML = html;
         }
 
-        // SECCIÓN DATA: RANKINGS
+        function card(r, highlight = false) {
+            const t = r.items.reduce((a,b)=>a+b.can,0);
+            return `
+            <div class="route-card" style="${highlight?'border-left:4px solid #000':''}">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div><b style="font-size:17px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer} | ${r.auxiliar}</div></div>
+                    <div style="text-align:right;"><span style="font-size:9px; display:block; opacity:0.6;">${r.fecha}</span><b style="font-size:17px;">${t} CJS</b><div style="font-size:10px;font-weight:800;">${r.items.length} CLI</div></div>
+                </div>
+                <div class="route-actions">
+                    <button class="btn-action" onclick="view('${r.id}')"><i class="ph-bold ph-eye"></i>VER</button>
+                    <button class="btn-action" onclick="edit('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
+                    <button class="btn-action wa" onclick="prepWA('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WA</button>
+                </div>
+            </div>`;
+        }
+
         function renderData() {
             const m = document.getElementById('f-month').value || new Date().toISOString().substring(0,7);
             let filt = db.filter(r => r.fecha.startsWith(m));
@@ -170,42 +211,41 @@
                     <div class="rank-item">
                         <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
                         <div class="rank-info">
-                            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700;">
-                                <span>${name}</span><span>${val.cjs} CJS</span>
-                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700;"><span>${name}</span><span>${val.cjs} CJS</span></div>
                             <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${perc}%"></div></div>
-                            <div style="font-size:10px; font-weight:800; color:var(--text-dim); margin-top:4px;">
-                                ${isAux ? val.r + ' RUTAS' : val.cls + ' CLIENTES'}
+                            <div class="rank-meta">
+                                <span><i class="ph-bold ph-package"></i> <b>${val.cjs}</b> Cajas</span>
+                                <span><i class="ph-bold ph-users"></i> <b>${isAux?val.r:val.cls}</b> ${isAux?'Rutas':'Clientes'}</span>
                             </div>
                         </div>
                     </div>`;
-                }).join('') || '<p style="font-size:12px;color:gray">Sin datos este mes.</p>';
+                }).join('') || '<p style="font-size:12px;color:gray">Sin registros.</p>';
             };
 
             draw(cStats, 'rank-choferes-list');
             draw(aStats, 'rank-auxiliares-list', true);
         }
 
-        // UTILIDADES
+        function renderStats() {
+            const { hoy } = getDates();
+            const rHoy = db.filter(r => r.fecha === hoy);
+            document.getElementById('stat-hoy-cajas').innerText = rHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
+            document.getElementById('stat-hoy-envios').innerText = rHoy.reduce((a,b)=>a+b.items.length, 0) + " CLI";
+        }
+
         function injectFakeData() {
             let fake = [];
             for(let i=0; i<15; i++) {
                 let d = new Date(); d.setDate(d.getDate() - i);
                 fake.push({
-                    id: 'F'+i, fecha: d.toISOString().split('T')[0], placa: "BPN-711",
+                    id: 'F'+Date.now()+i, fecha: d.toISOString().split('T')[0], placa: "BPN-711",
                     chofer: CONDUCTORES[Math.floor(Math.random()*CONDUCTORES.length)],
                     auxiliar: AUXILIARES[Math.floor(Math.random()*AUXILIARES.length)],
-                    items: [{cli: "CLIENTE X", can: 50}, {cli: "CLIENTE Y", can: 30}]
+                    items: [{cli: "TIENDA A", can: 40}, {cli: "ABARROTES B", can: 25}]
                 });
             }
-            db = fake; renderSmartHistory(); renderData(); renderStats();
-        }
-
-        function renderStats() {
-            const hoy = new Date().toISOString().split('T')[0];
-            const rHoy = db.filter(r => r.fecha === hoy);
-            document.getElementById('stat-hoy-cajas').innerText = rHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
-            document.getElementById('stat-hoy-envios').innerText = rHoy.reduce((a,b)=>a+b.items.length, 0) + " CLI";
+            db = fake; localStorage.setItem('twins_v50_db', JSON.stringify(db));
+            renderSmartHistory(); renderData(); renderStats();
         }
 
         function go(id) {
@@ -216,16 +256,22 @@
             if(id === 'page-data') renderData();
         }
 
+        function view(id) {
+            const r = db.find(x => x.id === id);
+            document.getElementById('m-title').innerText = `Detalle ${r.placa}`;
+            document.getElementById('m-body').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;"><span>${i.cli}</span><b>${i.can} Cjs</b></div>`).join('');
+            document.getElementById('modal-view').style.display = 'flex';
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
         window.onload = () => {
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
-            if(db.length === 0) injectFakeData();
-            renderSmartHistory(); renderStats();
-            
-            // Render de unidades para nueva carga
             const ug = document.getElementById('units-grid');
             ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"].forEach(p => {
-                ug.innerHTML += `<div style="background:#fff; padding:20px; border-radius:18px; text-align:center; font-weight:800; border:1px solid var(--border); shadow:var(--shadow)">${p}</div>`;
+                ug.innerHTML += `<div style="background:#fff; padding:20px; border-radius:18px; text-align:center; font-weight:800; border:1px solid var(--border); shadow:0 4px 12px rgba(0,0,0,0.03)">${p}</div>`;
             });
+            renderSmartHistory(); renderStats();
         };
     </script>
 </body>
