@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V60.0</title>
+    <title>TWINS ELITE - V61.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -19,23 +19,25 @@
         .active { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Filtros Historial */
+        /* Navegación Superior Inteligente */
         .filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .filter-btn { background: #fff; border: 1px solid var(--border); padding: 10px 18px; border-radius: 12px; font-size: 11px; font-weight: 800; white-space: nowrap; color: var(--text-dim); }
-        .filter-btn.active { background: #000; color: #fff; border-color: #000; }
+        .filter-btn { background: #fff; border: 1px solid var(--border); padding: 12px 18px; border-radius: 14px; font-size: 11px; font-weight: 800; white-space: nowrap; color: var(--text-dim); }
+        .filter-btn.active { background: #000; color: #fff; border-color: #000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-        /* Tarjetas de Ruta con Detalle Completo */
+        /* Tarjetas de Ruta */
         .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .card-meta { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
-        .card-crew { font-size: 12px; font-weight: 700; color: #4b5563; margin-top: 4px; display: flex; align-items: center; gap: 5px; }
+        .card-meta { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: var(--text-dim); margin-bottom: 10px; }
+        .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 8px; padding: 8px; background: #f9fafb; border-radius: 10px; }
         
         .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; border-top: 1px solid #f3f4f6; padding-top: 15px; }
         .btn-act { border: 1px solid var(--border); border-radius: 14px; padding: 12px 5px; font-size: 10px; font-weight: 800; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text); }
         .btn-act.wa { background: #000; color: #fff; border: none; }
 
-        /* DATA: DISEÑO ORIGINAL (BARRAS NEGRAS) */
+        /* SECCIÓN DATA (RESTAURADA) */
         .rank-card { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .rank-bar-bg { background: #f3f4f6; height: 10px; border-radius: 20px; margin: 6px 0; overflow: hidden; }
+        .rank-row { margin-bottom: 18px; }
+        .rank-info { display: flex; justify-content: space-between; font-weight: 800; font-size: 12px; margin-bottom: 6px; }
+        .rank-bar-bg { background: #f3f4f6; height: 12px; border-radius: 20px; overflow: hidden; }
         .rank-bar-fill { background: #000; height: 100%; border-radius: 20px; width: 0; transition: width 1s ease-out; }
 
         /* Navegación Reordenada */
@@ -44,16 +46,19 @@
         .nav-btn.active { color: #000; }
         .nav-btn i { font-size: 26px; margin-bottom: 4px; }
 
+        /* Inputs Modernos */
         .field { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 15px; font-weight: 700; outline: none; margin-bottom: 12px; }
-        .unit-card { background: #fff; padding: 25px 15px; border-radius: 22px; text-align: center; border: 1px solid var(--border); }
+        .unit-card { background: #fff; padding: 25px 15px; border-radius: 22px; text-align: center; border: 1px solid var(--border); cursor: pointer; }
+        .unit-card i { font-size: 28px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
     <div id="page-units" class="page active">
-        <h1 style="font-weight:900; margin-bottom:20px;">Nueva Carga</h1>
+        <h1 style="font-weight:900; margin-bottom:10px;">Twins Elite</h1>
+        <p style="color:var(--text-dim); font-size:13px; font-weight:700; margin-bottom:25px;">Selecciona unidad:</p>
         <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
-        <button onclick="injectData()" style="width:100%; margin-top:30px; padding:15px; border-radius:15px; background:none; border:2px dashed #ccc; color:gray; font-weight:800; font-size:11px;">SIMULAR DATOS</button>
+        <button onclick="quickTest()" style="width:100%; margin-top:30px; padding:15px; border-radius:15px; background:none; border:1px dashed #ccc; color:gray; font-weight:800; font-size:10px;">CARGAR DATOS DE REVISIÓN</button>
     </div>
 
     <div id="page-dash" class="page">
@@ -68,38 +73,46 @@
     </div>
 
     <div id="page-data" class="page">
-        <h1 style="font-weight:900;">Data Mensual</h1>
+        <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
         <input type="month" id="f-month" class="field" onchange="renderData()">
+        
         <div class="rank-card">
-            <div style="font-weight:800; font-size:11px; color:var(--text-dim); margin-bottom:15px;">TOP CHOFERES</div>
+            <div style="font-weight:800; font-size:11px; color:var(--text-dim); margin-bottom:20px;">TOP CHOFERES</div>
             <div id="rank-choferes"></div>
         </div>
+
         <div class="rank-card">
-            <div style="font-weight:800; font-size:11px; color:var(--text-dim); margin-bottom:15px;">TOP AUXILIARES</div>
+            <div style="font-weight:800; font-size:11px; color:var(--text-dim); margin-bottom:20px;">TOP AUXILIARES</div>
             <div id="rank-auxiliares"></div>
         </div>
     </div>
 
     <div id="page-config" class="page">
-        <h2 id="conf-placa" style="font-weight:900; font-size:32px; margin-bottom:20px;">---</h2>
+        <div style="background:#000; color:#fff; padding:25px; border-radius:28px; margin-bottom:25px; text-align:center;">
+            <i class="ph-bold ph-truck" style="font-size:30px; opacity:0.5;"></i>
+            <h2 id="conf-placa" style="margin:5px 0 0 0; font-size:32px;">---</h2>
+        </div>
+        <label style="font-size:11px; font-weight:800; margin-left:5px;">FECHA PROGRAMADA</label>
         <input type="date" id="c-fecha" class="field">
+        <label style="font-size:11px; font-weight:800; margin-left:5px;">CHOFER ASIGNADO</label>
         <select id="c-chofer" class="field"></select>
+        <label style="font-size:11px; font-weight:800; margin-left:5px;">AUXILIAR DE APOYO</label>
         <select id="c-aux" class="field"></select>
-        <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">INICIAR CARGA</button>
+        <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:22px; font-weight:800; border:none; margin-top:15px;">SIGUIENTE: CARGAR CLIENTES</button>
     </div>
 
     <div id="page-load" class="page">
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px; background:#fff; padding:15px; border-radius:20px; border:1px solid var(--border);">
-            <b id="load-placa-txt">---</b>
-            <b id="load-total" style="font-size:22px;">0</b>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background:#fff; padding:20px; border-radius:22px; border:1px solid var(--border);">
+            <div><b id="load-placa-txt">---</b><br><small id="load-sub" style="color:var(--text-dim);"></small></div>
+            <b id="load-total" style="font-size:24px;">0</b>
         </div>
         <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0">
             <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1; margin:0">
         </div>
-        <button onclick="addItem()" style="width:100%; padding:18px; background:#000; color:#fff; border-radius:18px; font-weight:800; border:none;">AGREGAR CLIENTE</button>
+        <button onclick="addItem()" style="width:100%; padding:18px; background:#000; color:#fff; border-radius:18px; font-weight:800; border:none;">AGREGAR A LISTA</button>
         <div id="load-list" style="margin-top:20px;"></div>
-        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:20px; background:var(--green); color:#fff; border-radius:20px; font-weight:900; border:none; margin-top:20px;">GUARDAR TODO</button>
+        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:22px; background:var(--green); color:#fff; border-radius:22px; font-weight:900; border:none; margin-top:20px;">GUARDAR REGISTRO</button>
     </div>
 
     <nav class="nav-bottom">
@@ -109,9 +122,8 @@
     </nav>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('twins_db_v60')) || [];
+        let db = JSON.parse(localStorage.getItem('twins_db_v61')) || [];
         let cur = { items: [] };
-        let activeFilter = 'hoy';
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
@@ -119,7 +131,7 @@
 
         window.onload = () => {
             const ug = document.getElementById('units-grid');
-            for(let p in FLOTA) ug.innerHTML += `<div class="unit-card" onclick="initConf('${p}')"><i class="ph-bold ph-truck" style="font-size:24px;"></i><br><b>${p}</b></div>`;
+            for(let p in FLOTA) ug.innerHTML += `<div class="unit-card" onclick="initConf('${p}')"><i class="ph-bold ph-truck"></i><br><b>${p}</b></div>`;
             const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
@@ -141,6 +153,7 @@
             cur.chofer = document.getElementById('c-chofer').value;
             cur.auxiliar = document.getElementById('c-aux').value;
             document.getElementById('load-placa-txt').innerText = cur.placa;
+            document.getElementById('load-sub').innerText = cur.chofer + " | " + cur.fecha;
             refreshLoad();
             go('page-load');
         }
@@ -159,7 +172,7 @@
             document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
             document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px; font-weight:700;">
-                    <span><i class="ph-bold ph-trash" style="color:red; margin-right:10px" onclick="removeItem(${i})"></i>${it.cli}</span>
+                    <span><i class="ph-bold ph-trash" style="color:red; margin-right:12px;" onclick="removeItem(${i})"></i>${it.cli}</span>
                     <b>${it.can}</b>
                 </div>`).reverse().join('');
         }
@@ -167,49 +180,46 @@
         function save() {
             const idx = db.findIndex(r => r.id === cur.id);
             if(idx > -1) db[idx] = cur; else db.unshift(cur);
-            localStorage.setItem('twins_db_v60', JSON.stringify(db));
+            localStorage.setItem('twins_db_v61', JSON.stringify(db));
             go('page-dash'); setFilter('hoy');
         }
 
         function setFilter(f) {
-            activeFilter = f;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('f-'+f).classList.add('active');
-            renderHistory();
+            renderHistory(f);
         }
 
-        function renderHistory() {
+        function renderHistory(f = 'hoy') {
             const hoy = new Date().toISOString().split('T')[0];
             const ayer = new Date(Date.now() - 864e5).toISOString().split('T')[0];
             let filt = db;
-            if(activeFilter === 'hoy') filt = db.filter(r => r.fecha === hoy);
-            if(activeFilter === 'ayer') filt = db.filter(r => r.fecha === ayer);
-            if(activeFilter === 'mañana') {
+            if(f === 'hoy') filt = db.filter(r => r.fecha === hoy);
+            if(f === 'ayer') filt = db.filter(r => r.fecha === ayer);
+            if(f === 'mañana') {
                 filt = db.filter(r => r.fecha > hoy).sort((a,b) => a.fecha.localeCompare(b.fecha));
-                if(filt.length > 0) { const nextD = filt[0].fecha; filt = filt.filter(r => r.fecha === nextD); }
+                if(filt.length > 0) { const d = filt[0].fecha; filt = filt.filter(r => r.fecha === d); }
             }
             document.getElementById('hist-cont').innerHTML = filt.map(r => `
                 <div class="route-card">
-                    <div class="card-meta"><span>📅 ${r.fecha}</span><span>ID: ${r.id.slice(-4)}</span></div>
+                    <div class="card-meta"><span>📅 ${r.fecha}</span><span>UNIDAD: ${r.placa}</span></div>
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <b style="font-size:18px;">${r.placa}</b>
-                        <b style="font-size:22px;">${r.items.reduce((a,b)=>a+b.can,0)} CJS</b>
+                        <b style="font-size:24px;">${r.items.reduce((a,b)=>a+b.can,0)} CJS</b>
+                        <b style="color:var(--text-dim); font-size:12px;">${r.items.length} CLIENTES</b>
                     </div>
-                    <div class="card-crew"><i class="ph-bold ph-user"></i> ${r.chofer} | <i class="ph-bold ph-users"></i> ${r.auxiliar}</div>
+                    <div class="card-crew"><i class="ph-bold ph-identification-card"></i> ${r.chofer} <br> <i class="ph-bold ph-users-three"></i> ${r.auxiliar}</div>
                     <div class="route-actions">
-                        <button class="btn-act" onclick="alert('Lista: '+JSON.stringify(r.items))"><i class="ph-bold ph-list"></i>LISTA</button>
+                        <button class="btn-act" onclick="alert('Lista: '+JSON.stringify(r.items))"><i class="ph-bold ph-list"></i>VER</button>
                         <button class="btn-act" onclick="editR('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
                         <button class="btn-act wa" onclick="shareW('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>REPORTE</button>
                     </div>
-                </div>`).join('') || '<p style="text-align:center; padding:40px; color:gray;">No hay registros.</p>';
+                </div>`).join('') || '<p style="text-align:center; padding:50px; color:gray;">No hay registros.</p>';
         }
 
         function editR(id) {
-            const r = db.find(x => x.id === id);
-            cur = JSON.parse(JSON.stringify(r));
+            cur = JSON.parse(JSON.stringify(db.find(x => x.id === id)));
             document.getElementById('load-placa-txt').innerText = cur.placa;
-            refreshLoad();
-            go('page-load');
+            refreshLoad(); go('page-load');
         }
 
         function renderData() {
@@ -226,27 +236,27 @@
                 let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
                 let max = sorted[0] ? sorted[0][1].cjs : 1;
                 document.getElementById(id).innerHTML = sorted.map(([n, v]) => `
-                    <div style="margin-bottom:15px;">
-                        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:12px;"><span>${n}</span><span>${v.cjs} CJS</span></div>
+                    <div class="rank-row">
+                        <div class="rank-info"><span>${n}</span><span>${v.cjs} CJS</span></div>
                         <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
                     </div>`).join('');
             };
             draw(cS, 'rank-choferes'); draw(aS, 'rank-auxiliares');
         }
 
-        function injectData() {
+        function quickTest() {
             const m = new Date().toISOString().substring(0,7);
-            db = Array.from({length:10}, (_,i)=>({id:'F'+i, fecha:`${m}-0${i+1}`, placa:'CEP-929', chofer:CONDUCTORES[i%6], auxiliar:AUXILIARES[i%9], items:[{cli:'CLI', can:20+i}]}));
-            localStorage.setItem('twins_db_v60', JSON.stringify(db));
+            db = Array.from({length:10}, (_,i)=>({id:'F'+i, fecha:`${m}-0${i+1}`, placa:'CEP-929', chofer:CONDUCTORES[i%6], auxiliar:AUXILIARES[i%9], items:[{cli:'MARKET '+i, can:30+i}]}));
+            localStorage.setItem('twins_db_v61', JSON.stringify(db));
             location.reload();
         }
 
         function shareW(id) {
             const r = db.find(x => x.id === id);
-            let txt = `*TWINS ELITE*%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`;
-            r.items.forEach(i => txt += `• ${i.cli}: ${i.can}%0A`);
-            txt += `%0A📦 *TOTAL:* ${r.items.reduce((a,b)=>a+b.can,0)} Cjs`;
-            window.location.href = "https://api.whatsapp.com/send?text=" + txt;
+            let t = `*TWINS ELITE*%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A📅 *FECHA:* ${r.fecha}%0A%0A*CARGA:*%0A`;
+            r.items.forEach(i => t += `• ${i.cli}: ${i.can}%0A`);
+            t += `%0A📦 *TOTAL:* ${r.items.reduce((a,b)=>a+b.can,0)} Cjs`;
+            window.location.href = "https://api.whatsapp.com/send?text=" + t;
         }
 
         function go(id) {
@@ -254,6 +264,7 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
             document.getElementById('n-'+id.split('-')[1]).classList.add('active');
+            if(id === 'page-data') renderData();
             window.scrollTo(0,0);
         }
     </script>
