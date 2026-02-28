@@ -3,77 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V46.0 INTELLIGENCE</title>
+    <title>TWINS ELITE - V46.5 CORE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #0f172a; --surface: #1e293b; --accent: #38bdf8; 
-            --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; 
-            --success: #22c55e; --shadow: 0 10px 25px rgba(0,0,0,0.3);
+            --bg: #fdfdfd; --surface: #ffffff; --accent: #000000; 
+            --text: #000000; --text-dim: #6b7280; --border: #e5e7eb; 
+            --success: #000000; --shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: slideUp 0.4s ease; }
+        .page { display: none; padding: 20px; max-width: 550px; margin: 0 auto; animation: fade 0.3s ease; }
         .active { display: block; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Dashboard Inteligente */
-        .smart-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .stat-card { background: var(--surface); padding: 15px; border-radius: 20px; border: 1px solid var(--border); position: relative; overflow: hidden; }
-        .stat-card.highlight { border-color: var(--accent); background: linear-gradient(145deg, #1e293b, #0f172a); }
-        .stat-icon { position: absolute; right: -5px; top: -5px; font-size: 40px; color: var(--accent); opacity: 0.15; }
-        .stat-label { font-size: 9px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .stat-val { font-size: 22px; font-weight: 900; margin-top: 4px; display: block; }
+        /* Dos Cuadros Maestros */
+        .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .master-card { background: var(--surface); padding: 20px; border-radius: 28px; border: 2px solid var(--accent); box-shadow: var(--shadow); position: relative; }
+        .master-card i { position: absolute; right: 15px; top: 15px; font-size: 20px; opacity: 0.2; }
+        .master-card.black { background: var(--accent); color: #fff; }
+        .master-card.black .stat-label { color: rgba(255,255,255,0.7); }
+        .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .stat-main { font-size: 28px; font-weight: 900; }
+        .stat-sub { font-size: 11px; font-weight: 600; display: block; margin-top: 2px; }
 
-        /* Lista Inteligente */
-        .route-card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); }
-        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--border); }
-        .action-btn { border: none; border-radius: 12px; padding: 12px 5px; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 6px; background: rgba(255,255,255,0.03); color: var(--text-dim); }
-        .action-btn.wa { color: var(--success); }
+        /* Tarjetas de Ruta Intel */
+        .route-card { background: #fff; border-radius: 28px; padding: 22px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 20px; }
+        .action-btn { border: 1px solid var(--border); border-radius: 16px; padding: 14px 5px; font-size: 10px; font-weight: 800; background: #fff; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .action-btn.wa { background: #000; color: #fff; border: none; }
 
-        .input-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 16px; color: #fff; outline: none; transition: 0.3s; }
-        .input-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
+        .input-box { background: #f3f4f6; border: 2px solid transparent; border-radius: 20px; padding: 18px; width: 100%; font-size: 16px; font-weight: 700; outline: none; transition: 0.2s; }
+        .input-box:focus { background: #fff; border-color: var(--accent); }
 
-        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(15px); height: 70px; display: flex; border-radius: 25px; border: 1px solid var(--border); z-index: 1000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; gap: 4px; }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 800; gap: 5px; }
         .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 22px; }
+        .nav-item i { font-size: 26px; }
 
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--surface); border-radius: 30px; padding: 25px; width: 100%; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border); }
-        
-        #sync-bar { display: none; position: fixed; top: 0; left: 0; right: 0; background: var(--accent); color: var(--bg); text-align: center; padding: 5px; font-size: 10px; font-weight: 900; z-index: 5000; }
+        #sync-loader { display: none; position: fixed; top: 0; left: 0; right: 0; height: 4px; background: #000; z-index: 5000; overflow: hidden; }
+        #sync-loader::after { content: ""; display: block; width: 40%; height: 100%; background: #fff; animation: move 1s infinite linear; }
+        @keyframes move { from { margin-left: -40%; } to { margin-left: 100%; } }
     </style>
 </head>
 <body>
 
-    <div id="sync-bar">INTELIGENCIA SINCRONIZANDO CON NUBE...</div>
+    <div id="sync-loader"></div>
 
     <div id="page-dash" class="page active">
-        <h2 style="font-weight: 800; letter-spacing: -1px; margin-bottom: 20px;">Twins Intel <span style="color:var(--accent)">.</span></h2>
+        <h2 style="font-weight: 900; letter-spacing: -1.5px; margin-bottom: 25px; font-size: 28px;">Gestión de Rutas</h2>
         
-        <div class="smart-dash">
-            <div class="stat-card highlight">
-                <i class="ph-fill ph-package stat-icon"></i>
-                <span class="stat-label">Cajas Hoy</span>
-                <span id="stat-cajas-hoy" class="stat-val">0</span>
+        <div class="core-dash">
+            <div class="master-card black">
+                <i class="ph-fill ph-package"></i>
+                <span class="stat-label">Hoy</span>
+                <span id="stat-cajas-hoy" class="stat-main">0</span>
+                <span id="stat-envios-hoy" class="stat-sub">0 ENVÍOS</span>
             </div>
-            <div class="stat-card">
-                <i class="ph-fill ph-truck stat-icon"></i>
-                <span class="stat-label">Envíos Hoy</span>
-                <span id="stat-envios-hoy" class="stat-val">0</span>
-            </div>
-            <div class="stat-card">
-                <i class="ph-fill ph-calendar-check stat-icon"></i>
-                <span class="stat-label">Cajas Mes</span>
-                <span id="stat-cajas-mes" class="stat-val">0</span>
-            </div>
-            <div class="stat-card">
-                <i class="ph-fill ph-chart-line-up stat-icon"></i>
-                <span class="stat-label">Envíos Mes</span>
-                <span id="stat-envios-mes" class="stat-val">0</span>
+            <div class="master-card">
+                <i class="ph-fill ph-calendar"></i>
+                <span class="stat-label">Mes</span>
+                <span id="stat-cajas-mes" class="stat-main">0</span>
+                <span id="stat-envios-mes" class="stat-sub">0 ENVÍOS</span>
             </div>
         </div>
 
@@ -81,61 +74,55 @@
     </div>
 
     <div id="page-units" class="page">
-        <h2 style="font-weight:800;">Seleccionar Unidad</h2>
+        <h2 style="font-weight:900;">Nueva Unidad</h2>
         <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
     </div>
 
     <div id="page-assign" class="page">
-        <h2 id="title-placa" style="font-weight:800; color:var(--accent);">---</h2>
-        <div style="background:var(--surface); padding:20px; border-radius:24px; border:1px solid var(--border);">
-            <label class="stat-label">Programación</label>
+        <h2 id="title-placa" style="font-weight:900; font-size:32px;">---</h2>
+        <div style="background:white; padding:25px; border-radius:32px; border:1px solid var(--border); box-shadow: var(--shadow);">
+            <label class="stat-label">Fecha despacho</label>
             <select id="sel-date" class="input-box" style="margin-bottom:15px;">
                 <option value="hoy">Para Hoy</option>
                 <option value="mañana" selected>Para Mañana</option>
             </select>
-            <label class="stat-label">Responsables</label>
+            <label class="stat-label">Equipo asignado</label>
             <select id="sel-chofer" class="input-box" style="margin-bottom:10px;"></select>
             <select id="sel-aux" class="input-box"></select>
-            <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:var(--bg); border:none; margin-top:20px; font-weight:800; height:65px;">INICIAR CARGA INTELIGENTE</button>
+            <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:#fff; border:none; margin-top:25px; font-weight:900; height:70px;">COMENZAR CARGA</button>
         </div>
     </div>
 
     <div id="page-load" class="page">
-        <div style="background:var(--accent); color:var(--bg); padding:20px; border-radius:24px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-            <div><h3 id="load-placa" style="margin:0; font-weight:900;">---</h3><span id="load-meta" style="font-size:10px; font-weight:700; text-transform:uppercase;"></span></div>
-            <span id="load-total" style="font-size:32px; font-weight:900;">0</span>
+        <div style="background:#000; color:#fff; padding:25px; border-radius:32px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <h3 id="load-placa" style="margin:0; font-weight:900; font-size:24px;">---</h3>
+                <span id="load-meta" style="font-size:11px; font-weight:700; opacity:0.6;"></span>
+            </div>
+            <span id="load-total" style="font-size:36px; font-weight:900;">0</span>
         </div>
         
-        <div style="background:var(--surface); padding:20px; border-radius:24px; border:1px solid var(--border);">
-            <input type="text" id="inp-cli" placeholder="Nombre del Cliente" class="input-box" style="margin-bottom:10px;" list="suggest-clients">
+        <div style="background:white; padding:25px; border-radius:32px; border:1px solid var(--border); box-shadow: var(--shadow);">
+            <input type="text" id="inp-cli" placeholder="Nombre Cliente" class="input-box" style="margin-bottom:12px;" list="suggest-clients">
             <datalist id="suggest-clients"></datalist>
-            
             <div style="display:flex; gap:10px;">
-                <input type="number" id="inp-can" placeholder="Cant." class="input-box" style="flex:1;">
-                <button onclick="addItem()" style="background:var(--success); color:#fff; border:none; border-radius:18px; width:70px; font-size:30px;"><i class="ph-bold ph-plus"></i></button>
+                <input type="number" id="inp-can" placeholder="Cjs" class="input-box" style="flex:1;">
+                <button onclick="addItem()" style="background:#000; color:#fff; border:none; border-radius:20px; width:80px; font-size:30px;"><i class="ph-bold ph-plus"></i></button>
             </div>
-            <div id="items-list" style="margin-top:20px;"></div>
+            <div id="items-list" style="margin-top:25px;"></div>
         </div>
-        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:#fff; color:var(--bg); border:none; margin-top:15px; font-weight:800; height:65px;">FINALIZAR Y SINCRONIZAR</button>
-    </div>
-
-    <div id="modal-list" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title" style="margin-top:0; color:var(--accent)">Detalle de Carga</h3>
-            <div id="modal-body"></div>
-            <button onclick="closeModal()" class="input-box" style="margin-top:20px; border:none; background:rgba(255,255,255,0.05);">CERRAR VENTANA</button>
-        </div>
+        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:#000; color:#fff; border:none; margin-top:20px; font-weight:900; height:70px;">GUARDAR EN EXCEL</button>
     </div>
 
     <nav class="nav-bar">
-        <button class="nav-item active" id="n-dash" onclick="go('page-dash')"><i class="ph-fill ph-squares-four"></i>PANEL</button>
-        <button class="nav-item" id="n-units" onclick="go('page-units')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
+        <button class="nav-item active" id="n-dash" onclick="go('page-dash')"><i class="ph-fill ph-chart-bar"></i>HISTORIAL</button>
+        <button class="nav-item" id="n-units" onclick="go('page-units')"><i class="ph-fill ph-plus-circle"></i>NUEVA</button>
     </nav>
 
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby59273ThmezjUQ9-AB6Gx5O8G6J6zMB7SAtzImDhUfEoXBlCx-mT9h4AvzVI_2C56O/exec';
 
-        let db = JSON.parse(localStorage.getItem('twins_intel_v46')) || [];
+        let db = JSON.parse(localStorage.getItem('twins_core_v46')) || [];
         let clientsRegistry = JSON.parse(localStorage.getItem('twins_clients')) || [];
         let current = { items: [] };
 
@@ -147,22 +134,14 @@
             const sc = document.getElementById('sel-chofer'), sa = document.getElementById('sel-aux'), ug = document.getElementById('units-grid');
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
-            for(let p in FLOTA) ug.innerHTML += `<div style="background:var(--surface); padding:25px; border-radius:20px; text-align:center; font-weight:800; border:1px solid var(--border);" onclick="startAssign('${p}')">${p}</div>`;
-            updateSuggestions();
-            renderHistory(); 
-            renderStats();
+            for(let p in FLOTA) ug.innerHTML += `<div style="background:white; padding:30px; border-radius:24px; text-align:center; font-weight:900; border:1px solid var(--border); font-size:18px;" onclick="startAssign('${p}')">${p}</div>`;
+            renderHistory(); renderStats();
         };
 
-        function updateSuggestions() {
-            const list = document.getElementById('suggest-clients');
-            list.innerHTML = [...new Set(clientsRegistry)].map(c => `<option value="${c}">`).join('');
-        }
-
         function startAssign(p) {
-            // Inteligencia: Verificar si la unidad ya se cargó hoy
             const hoy = new Date().toISOString().split('T')[0];
-            const duplicado = db.find(r => r.placa === p && r.fecha === hoy);
-            if(duplicado && !confirm(`Aviso: La unidad ${p} ya tiene una carga hoy. ¿Deseas crear otra?`)) return;
+            const duplicate = db.find(r => r.placa === p && r.fecha === hoy);
+            if(duplicate && !confirm(`Ojo: La unidad ${p} ya fue registrada hoy. ¿Duplicar?`)) return;
 
             current = { placa: p, items: [], id: 'R' + Date.now() };
             document.getElementById('title-placa').innerText = p;
@@ -180,30 +159,32 @@
         }
 
         function addItem() {
-            const cli = document.getElementById('inp-cli').value.toUpperCase().trim(), can = parseInt(document.getElementById('inp-can').value);
-            if(!cli || !can) return;
+            const cli = document.getElementById('inp-cli').value.toUpperCase().trim(), 
+                  can = parseInt(document.getElementById('inp-can').value);
+            if(!cli || isNaN(can)) return;
             
             current.items.push({cli, can});
             if(!clientsRegistry.includes(cli)) {
                 clientsRegistry.push(cli);
                 localStorage.setItem('twins_clients', JSON.stringify(clientsRegistry));
-                updateSuggestions();
+                document.getElementById('suggest-clients').innerHTML += `<option value="${cli}">`;
             }
 
-            document.getElementById('inp-cli').value = ""; document.getElementById('inp-can').value = "";
+            document.getElementById('inp-cli').value = ""; 
+            document.getElementById('inp-can').value = "";
             document.getElementById('inp-cli').focus();
             refreshLoadUI();
         }
 
         function refreshLoadUI() {
             document.getElementById('load-placa').innerText = current.placa;
-            document.getElementById('load-meta').innerText = `Destino: ${current.fecha}`;
+            document.getElementById('load-meta').innerText = `Ruta: ${current.fecha}`;
             let t = current.items.reduce((a,b)=>a+b.can,0);
             document.getElementById('load-total').innerText = t;
             document.getElementById('items-list').innerHTML = current.items.map((it, i) => `
-                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid var(--border); font-weight:600; background:rgba(255,255,255,0.02); margin-bottom:5px; border-radius:10px;">
-                    <span>${it.can} <small style="color:var(--accent)">📦</small> ${it.cli}</span>
-                    <i class="ph-bold ph-x-circle" style="color:#ff4444; font-size:20px;" onclick="current.items.splice(${i},1);refreshLoadUI()"></i>
+                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800; background:#f9f9f9; border-radius:12px; margin-bottom:8px;">
+                    <span>${it.can} <small>•</small> ${it.cli}</span>
+                    <i class="ph-bold ph-trash" style="color:red" onclick="current.items.splice(${i},1);refreshLoadUI()"></i>
                 </div>`).reverse().join('');
             document.getElementById('btn-finish').style.display = t > 0 ? 'block' : 'none';
         }
@@ -211,35 +192,30 @@
         async function saveAndSync() {
             const idx = db.findIndex(x => x.id === current.id);
             if(idx > -1) db[idx] = current; else db.unshift(current);
-            localStorage.setItem('twins_intel_v46', JSON.stringify(db));
+            localStorage.setItem('twins_core_v46', JSON.stringify(db));
             
-            document.getElementById('sync-bar').style.display = 'block';
+            document.getElementById('sync-loader').style.display = 'block';
             
             try {
-                await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(current)
-                });
-            } catch (e) { console.log("Cloud sync delayed"); }
+                await fetch(WEB_APP_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(current) });
+            } catch (e) { console.log("Excel Offline"); }
 
             setTimeout(() => {
-                document.getElementById('sync-bar').style.display = 'none';
+                document.getElementById('sync-loader').style.display = 'none';
                 go('page-dash'); renderHistory(); renderStats();
             }, 1000);
         }
 
         function renderStats() {
             const hoy = new Date().toISOString().split('T')[0];
-            const mesActual = hoy.substring(0,7);
-
+            const mes = hoy.substring(0,7);
             const dataHoy = db.filter(r => r.fecha === hoy);
-            const dataMes = db.filter(r => r.fecha.startsWith(mesActual));
+            const dataMes = db.filter(r => r.fecha.startsWith(mes));
 
             document.getElementById('stat-cajas-hoy').innerText = dataHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
-            document.getElementById('stat-envios-hoy').innerText = dataHoy.length;
+            document.getElementById('stat-envios-hoy').innerText = dataHoy.length + " ENVÍOS";
             document.getElementById('stat-cajas-mes').innerText = dataMes.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
-            document.getElementById('stat-envios-mes').innerText = dataMes.length;
+            document.getElementById('stat-envios-mes').innerText = dataMes.length + " ENVÍOS";
         }
 
         function renderHistory() {
@@ -249,43 +225,38 @@
             let mañana = new Date(); mañana.setDate(mañana.getDate() + 1); mañana = mañana.toISOString().split('T')[0];
 
             renderBlock(container, "Próximos Despachos", db.filter(r => r.fecha === mañana));
-            renderBlock(container, "Despachados Hoy", db.filter(r => r.fecha === hoy));
+            renderBlock(container, "Registros de Hoy", db.filter(r => r.fecha === hoy));
         }
 
         function renderBlock(cont, titulo, items) {
             if(items.length === 0) return;
-            cont.innerHTML += `<div style="font-size:11px; font-weight:800; color:var(--accent); margin:20px 0 10px; text-transform:uppercase;">${titulo}</div>`;
+            cont.innerHTML += `<div style="font-size:12px; font-weight:900; margin:30px 0 15px 5px; text-transform:uppercase;">${titulo}</div>`;
             items.forEach(r => {
                 const total = r.items.reduce((a,b)=>a+b.can,0);
                 cont.innerHTML += `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <b style="font-size:19px; letter-spacing:1px;">${r.placa}</b>
-                            <div style="font-size:11px; color:var(--text-dim); font-weight:600;">${r.chofer} | ${r.items.length} Cli.</div>
+                            <b style="font-size:22px;">${r.placa}</b>
+                            <div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer} | ${r.items.length} Clientes</div>
                         </div>
                         <div style="text-align:right;">
-                            <b style="color:var(--accent); font-size:24px;">${total}</b>
-                            <div style="font-size:9px; font-weight:800; opacity:0.6;">TOTAL CAJAS</div>
+                            <b style="font-size:26px; color:#000;">${total}</b>
+                            <div style="font-size:9px; font-weight:900;">CAJAS</div>
                         </div>
                     </div>
                     <div class="route-actions">
-                        <button class="action-btn" onclick="viewList('${r.id}')"><i class="ph-bold ph-eye"></i>VER</button>
+                        <button class="action-btn" onclick="viewItems('${r.id}')"><i class="ph-bold ph-list"></i>VER</button>
                         <button class="action-btn" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
-                        <button class="action-btn wa" onclick="sendWA('${r.id}')"><i class="ph-fill ph-whatsapp-logo"></i>WHATSAPP</button>
+                        <button class="action-btn wa" onclick="sendWA('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WHATSAPP</button>
                     </div>
                 </div>`;
             });
         }
 
-        function viewList(id) {
+        function viewItems(id) {
             const r = db.find(x => x.id === id);
-            document.getElementById('modal-title').innerText = `${r.placa} - Detalle`;
-            document.getElementById('modal-body').innerHTML = r.items.map(i => `
-                <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); font-weight:600;">
-                    <span>${i.cli}</span><span style="color:var(--accent)">${i.can} Cjs</span>
-                </div>`).join('') + `<div style="padding:15px; text-align:right; font-weight:900; font-size:20px; color:var(--success);">Total: ${r.items.reduce((a,b)=>a+b.can,0)}</div>`;
-            document.getElementById('modal-list').style.display = 'flex';
+            alert(`DETALLE ${r.placa}:\n\n` + r.items.map(i => `${i.cli}: ${i.can} Cjs`).join('\n'));
         }
 
         function editRoute(id) {
@@ -295,7 +266,7 @@
 
         function sendWA(id) {
             const r = db.find(x => x.id === id);
-            const msg = `*TWINS ELITE - DESPACHO*\n━━━━━━━━━━━━━━\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n🤝 *AUX:* ${r.auxiliar}\n📅 *FECHA:* ${r.fecha}\n━━━━━━━━━━━━━━\n*CLIENTES:*\n${r.items.map(i=>`• ${i.cli}: ${i.can} Cjs`).join('\n')}\n━━━━━━━━━━━━━━\n📦 *TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)} Cajas*`;
+            const msg = `*TWINS ELITE*\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n📅 *RUTA:* ${r.fecha}\n\n*DETALLE:*\n${r.items.map(i=>`• ${i.cli}: ${i.can}`).join('\n')}\n\n*TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)} Cjs*`;
             window.location.href = "whatsapp://send?text=" + encodeURIComponent(msg);
         }
 
@@ -306,7 +277,6 @@
             document.getElementById(id === 'page-dash' ? 'n-dash' : 'n-units').classList.add('active');
             if(id === 'page-dash') renderStats();
         }
-        function closeModal() { document.getElementById('modal-list').style.display = 'none'; }
     </script>
 </body>
 </html>
