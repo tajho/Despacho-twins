@@ -3,81 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V24 ULTRA SMART</title>
+    <title>TWINS ELITE - V25 CLARITY</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #04070a; --surface: #111827; --accent: #007aff; 
-            --accent-glow: rgba(0, 122, 255, 0.4);
-            --text: #f9fafb; --text-dim: #9ca3af; --border: #1f2937; 
-            --success: #10b981; --danger: #ef4444;
+            --bg: #f8fafc; --surface: #ffffff; --accent: #0062ff; 
+            --text-main: #0f172a; --text-dim: #64748b; --border: #e2e8f0; 
+            --success: #10b981; --danger: #f43f5e; --shadow: rgba(0,0,0,0.05);
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; transition: all 0.2s ease; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; transition: 0.2s ease; }
+        body { margin: 0; background: var(--bg); color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; }
         
-        /* Layout */
-        .page { display: none; height: 100vh; overflow-y: auto; padding: 10px 20px 140px 20px; max-width: 500px; margin: 0 auto; }
-        .active { display: block !important; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Contenedores */
+        .page { display: none; height: 100vh; overflow-y: auto; padding: 15px 20px 140px 20px; max-width: 500px; margin: 0 auto; }
+        .active { display: block !important; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Header Moderno */
-        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(4, 7, 10, 0.8); backdrop-filter: blur(20px); padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 800; font-size: 22px; letter-spacing: -1px; }
-        .logo span { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
+        .top-header { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,0.85); backdrop-filter: blur(15px); padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .logo { font-weight: 800; font-size: 20px; color: var(--text-main); }
+        .logo span { color: var(--accent); }
 
-        /* Tarjetas Estilo "Glass" */
-        .card { background: var(--surface); border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 16px; position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-        .card:hover { border-color: var(--accent); }
+        /* Tarjetas Estilo "Soft" */
+        .card { background: var(--surface); border-radius: 22px; padding: 20px; border: 1px solid var(--border); margin-bottom: 16px; box-shadow: 0 4px 12px var(--shadow); position: relative; }
+        .card:active { transform: scale(0.98); }
         
-        .h-header { display: flex; justify-content: space-between; align-items: center; }
-        .badge-cjs { background: linear-gradient(135deg, #059669, #10b981); color: white; padding: 6px 12px; border-radius: 12px; font-weight: 800; font-size: 14px; box-shadow: 0 4px 10px rgba(16,185,129,0.3); }
+        .h-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .h-header b { font-size: 19px; font-weight: 800; color: var(--text-main); }
+        .cjs-badge { background: #ecfdf5; color: var(--success); padding: 6px 14px; border-radius: 12px; font-weight: 800; font-size: 15px; }
 
-        /* Buscador Inteligente */
-        .search-box { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-        .search-box input { background: none; border: none; color: white; width: 100%; font-size: 15px; font-weight: 500; }
+        /* Buscador Inteligente - Diseño Claro */
+        .search-area { position: sticky; top: 0; background: var(--bg); padding: 10px 0 15px 0; z-index: 100; }
+        .search-bar { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 15px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px var(--shadow); }
+        .search-bar input { background: none; border: none; width: 100%; font-size: 15px; font-weight: 600; color: var(--text-main); }
+        .search-bar i { color: var(--accent); font-size: 20px; }
 
-        /* Botones Pro */
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn-s { border: none; border-radius: 14px; padding: 12px; font-size: 11px; font-weight: 700; color: white; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; background: #1f2937; }
-        .btn-s:active { transform: scale(0.92); }
-        .btn-wa { background: #065f46; color: #34d399; }
+        /* Acciones de Tarjeta */
+        .actions-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; }
+        .btn-sm { border: none; border-radius: 12px; padding: 12px 5px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .btn-view { background: #f1f5f9; color: #475569; }
+        .btn-edit { background: #eff6ff; color: #3b82f6; }
+        .btn-wa { background: #ecfdf5; color: #10b981; }
 
-        /* Navbar Flotante */
-        .nav-float { position: fixed; bottom: 25px; left: 20px; right: 20px; background: rgba(31, 41, 55, 0.8); backdrop-filter: blur(20px); height: 70px; border-radius: 25px; display: flex; border: 1px solid rgba(255,255,255,0.1); z-index: 2000; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 600; }
-        .nav-btn.active { color: var(--accent); }
-        .nav-btn i { font-size: 22px; margin-bottom: 2px; }
+        /* Botonera Inferior */
+        .nav-main { position: fixed; bottom: 25px; left: 20px; right: 20px; background: #fff; height: 75px; border-radius: 24px; display: flex; border: 1px solid var(--border); z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .nav-opt { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; }
+        .nav-opt.active { color: var(--accent); }
+        .nav-opt i { font-size: 24px; margin-bottom: 3px; }
 
         /* Inputs de Carga */
-        .input-group { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 5px 15px; margin-bottom: 12px; }
-        .input-group input { background: none; border: none; color: white; padding: 15px 0; width: 100%; font-size: 16px; }
+        .inp-modern { background: #fff; border: 1px solid var(--border); padding: 18px; border-radius: 16px; width: 100%; font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+        .btn-send { background: var(--accent); color: #fff; border: none; border-radius: 18px; padding: 20px; width: 100%; font-weight: 800; font-size: 16px; box-shadow: 0 8px 20px rgba(0,98,255,0.25); }
+
+        /* Modal */
+        .modal { display:none; position:fixed; inset:0; background:rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); z-index:3000; align-items:center; justify-content:center; padding:20px; }
+        .modal-body { background: #fff; border-radius: 30px; padding: 30px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
     <header id="app-header" class="top-header" style="display:none">
         <div class="logo">TWINS <span>ELITE</span></div>
-        <div id="status-chip" onclick="syncData()" style="font-size:10px; font-weight:800; padding:6px 12px; border-radius:12px; background: rgba(16,185,129,0.1); color: var(--success); cursor:pointer;">
-            ● SISTEMA OK
+        <div onclick="syncData()" style="font-size:11px; font-weight:800; color:var(--accent); background:#f0f7ff; padding:8px 14px; border-radius:12px; cursor:pointer;">
+            <i class="ph-bold ph-arrows-clockwise"></i> ACTUALIZAR
         </div>
     </header>
 
     <div id="page-login" class="page active">
-        <div style="padding: 60px 0 40px 0; text-align:center;">
-            <div style="width:70px; height:70px; background:var(--accent); border-radius:22px; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 30px var(--accent-glow);">
-                <i class="ph-fill ph-shield-check" style="font-size:40px; color:white;"></i>
+        <div style="text-align:center; padding:60px 0 40px;">
+            <div style="width:75px; height:75px; background:var(--accent); border-radius:22px; margin:0 auto 25px; display:flex; align-items:center; justify-content:center; box-shadow: 0 10px 25px rgba(0,98,255,0.3);">
+                <i class="ph-fill ph-user-focus" style="font-size:40px; color:#fff;"></i>
             </div>
-            <h1 style="font-weight:800; margin:0;">Bienvenido</h1>
-            <p style="color:var(--text-dim);">Selecciona tu perfil de acceso</p>
+            <h1 style="font-weight:800; margin:0; letter-spacing:-1px;">Gestión de Almacén</h1>
+            <p style="color:var(--text-dim); font-weight:500;">Inicia sesión para continuar</p>
         </div>
         <div id="login-options"></div>
     </div>
 
     <div id="page-history" class="page">
-        <div class="search-box">
-            <i class="ph ph-sparkle" style="color:var(--accent); font-size:20px;"></i>
-            <input type="text" id="smart-search" placeholder="Buscar por placa, chofer o fecha..." oninput="renderSmartHistory()">
+        <div class="search-area">
+            <div class="search-bar">
+                <i class="ph-bold ph-sparkle"></i>
+                <input type="text" id="smart-search" placeholder="Busca placa, chofer o cliente..." oninput="renderSmartHistory()">
+            </div>
         </div>
         <div id="history-feed"></div>
     </div>
@@ -88,57 +97,48 @@
     </div>
 
     <div id="page-route" class="page">
-        <div id="route-hero" style="background: linear-gradient(135deg, #007aff, #00c6ff); padding: 30px; border-radius: 30px; margin-bottom: 25px; position:relative; overflow:hidden;">
+        <div style="background: var(--accent); padding: 30px; border-radius: 28px; margin-bottom: 25px; color:#fff; position:relative; box-shadow: 0 12px 30px rgba(0,98,255,0.2);">
             <div style="position:relative; z-index:2;">
-                <small style="font-weight:700; opacity:0.8; letter-spacing:1px;">RESUMEN DE DESPACHO</small>
-                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:10px;">
-                    <h1 id="count-cajas" style="font-size:56px; margin:0; font-weight:800; line-height:1;">0</h1>
+                <small style="font-weight:700; opacity:0.8;">CAJAS REGISTRADAS</small>
+                <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+                    <h1 id="count-cajas" style="font-size:54px; margin:0; font-weight:800;">0</h1>
                     <div style="text-align:right;">
                         <b id="active-plate-label" style="font-size:20px; display:block;">---</b>
-                        <span id="count-puntos" style="font-size:13px; opacity:0.8;">0 Clientes</span>
+                        <span id="count-puntos" style="font-size:13px; opacity:0.9;">0 Clientes</span>
                     </div>
                 </div>
             </div>
-            <i class="ph ph-truck" style="position:absolute; right:-20px; bottom:-20px; font-size:120px; opacity:0.1;"></i>
         </div>
-
-        <div class="input-group">
-            <input type="text" id="inp-cli" placeholder="Nombre del Cliente" list="suggestions">
-            <datalist id="suggestions"></datalist>
-        </div>
+        
+        <input type="text" id="inp-cli" class="inp-modern" placeholder="Cliente" list="suggestions">
+        <datalist id="suggestions"></datalist>
+        
         <div style="display:flex; gap:12px; margin-bottom:25px;">
-            <div class="input-group" style="flex:1; margin-bottom:0;">
-                <input type="number" id="inp-can" placeholder="Cajas">
-            </div>
-            <button onclick="addPoint()" style="background:var(--accent); border:none; border-radius:20px; color:white; width:70px; font-size:26px; cursor:pointer;">
-                <i class="ph-bold ph-plus"></i>
-            </button>
+            <input type="number" id="inp-can" class="inp-modern" placeholder="Cant." style="flex:1; margin-bottom:0;">
+            <button onclick="addPoint()" style="background:var(--text-main); color:#fff; border:none; border-radius:16px; width:70px; font-size:26px;"><i class="ph-bold ph-plus"></i></button>
         </div>
         
         <div id="live-list"></div>
-        
         <div id="finalize-area" style="display:none; margin-top:20px;">
-            <button onclick="openModal('modal-date')" style="background:var(--text); color:var(--bg); width:100%; padding:20px; border-radius:22px; border:none; font-weight:800; font-size:16px; cursor:pointer;">
-                GUARDAR Y NOTIFICAR
-            </button>
+            <button onclick="openModal('modal-date')" class="btn-send">FINALIZAR Y GUARDAR</button>
         </div>
     </div>
 
-    <div id="modal-date" class="page" style="position:fixed; background:rgba(0,0,0,0.9); z-index:3000; padding-top:100px;">
-        <div style="background:var(--surface); border-radius:30px; padding:30px; text-align:center; border:1px solid var(--border);">
-            <h3 style="font-weight:800; margin-bottom:10px;">¿Cuándo sale esta ruta?</h3>
-            <p style="color:var(--text-dim); margin-bottom:25px;">La fecha determinará el reporte de inventario.</p>
-            <button onclick="finalizeProcess('hoy')" style="background:var(--accent); color:white; width:100%; padding:18px; border-radius:15px; border:none; font-weight:700; margin-bottom:12px;">PARA HOY</button>
-            <button onclick="finalizeProcess('mañana')" style="background:var(--border); color:white; width:100%; padding:18px; border-radius:15px; border:none; font-weight:700;">PARA MAÑANA</button>
-            <button onclick="closeModal('modal-date')" style="background:none; border:none; color:var(--danger); margin-top:15px; font-weight:600;">CANCELAR</button>
+    <div id="modal-date" class="modal">
+        <div class="modal-body">
+            <h3 style="font-weight:800; margin:0 0 10px 0;">Programación</h3>
+            <p style="color:var(--text-dim); margin-bottom:25px;">¿Cuándo sale esta ruta?</p>
+            <button onclick="finalizeProcess('hoy')" class="btn-send" style="margin-bottom:12px;">PARA HOY</button>
+            <button onclick="finalizeProcess('mañana')" class="inp-modern" style="background:#f1f5f9; color:var(--text-main); border:none;">PARA MAÑANA</button>
+            <button onclick="closeModal('modal-date')" style="background:none; border:none; color:var(--danger); margin-top:20px; font-weight:700;">CANCELAR</button>
         </div>
     </div>
 
-    <nav id="app-nav" class="nav-float" style="display:none">
-        <button class="nav-btn" id="n-route" onclick="go('page-select-plate')"><i class="ph-fill ph-plus-circle"></i>RUTA</button>
-        <button class="nav-btn active" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-chart-bar"></i>DATA</button>
-        <button class="nav-btn" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
-        <button class="nav-btn" id="n-reports" onclick="go('page-reports')"><i class="ph-fill ph-fingerprint"></i>ADMIN</button>
+    <nav id="app-nav" class="nav-main" style="display:none">
+        <button class="nav-opt active" id="n-route" onclick="go('page-select-plate')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
+        <button class="nav-opt" id="n-history" onclick="go('page-history')"><i class="ph-fill ph-database"></i>DATA</button>
+        <button class="nav-opt" id="n-fleet" onclick="go('page-fleet')"><i class="ph-fill ph-truck"></i>FLOTA</button>
+        <button class="nav-opt" id="n-reports" onclick="go('page-reports')"><i class="ph-fill ph-chart-pie-slice"></i>REPORTES</button>
     </nav>
 
     <script>
@@ -147,7 +147,7 @@
         const ASIGNACION = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
 
         window.onload = () => {
-            const saved = localStorage.getItem('tw_db_v24');
+            const saved = localStorage.getItem('tw_db_v25');
             if(saved) { db = JSON.parse(saved); renderSmartHistory(); updateSuggestions(); }
             setupUI();
             if(localStorage.getItem('tw_logged')) login(localStorage.getItem('tw_logged'));
@@ -156,7 +156,7 @@
         function setupUI() {
             const l = document.getElementById('login-options');
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                l.innerHTML += `<div onclick="checkPass('${u}')" class="card" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:700;">${u} <i class="ph ph-arrow-right"></i></div>`;
+                l.innerHTML += `<div onclick="checkPass('${u}')" class="card" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:700;">${u} <i class="ph ph-caret-right" style="color:var(--accent)"></i></div>`;
             });
             document.getElementById('plate-options').innerHTML = Object.keys(ASIGNACION).map(p => 
                 `<div onclick="startPlate('${p}')" class="card" style="text-align:center; padding:35px 10px; font-weight:800; font-size:20px; cursor:pointer; border-bottom:4px solid var(--accent);">${p}</div>`
@@ -164,56 +164,42 @@
         }
 
         async function syncData() {
-            const chip = document.getElementById('status-chip');
-            chip.innerHTML = "ACTUALIZANDO...";
             try {
                 const r = await fetch(API);
                 const data = await r.json();
-                db = data.map((x, i) => ({ ...x, id: 'R-'+Date.now()+i, fecha: x.fecha.split('T')[0] }));
-                localStorage.setItem('tw_db_v24', JSON.stringify(db));
-                renderSmartHistory();
-                updateSuggestions();
-                chip.innerHTML = "● SISTEMA AL DÍA";
-            } catch(e) { chip.innerHTML = "● MODO OFFLINE"; }
-        }
-
-        function updateSuggestions() {
-            const clientes = [...new Set(db.flatMap(r => r.items.split(',').map(i => i.split(':')[0].trim())))];
-            document.getElementById('suggestions').innerHTML = clientes.slice(0, 15).map(c => `<option value="${c}">`).join('');
+                db = data.map((x, i) => ({ ...x, id: 'ID-'+Date.now()+i, fecha: x.fecha.split('T')[0] }));
+                localStorage.setItem('tw_db_v25', JSON.stringify(db));
+                renderSmartHistory(); updateSuggestions();
+            } catch(e) { console.log("Offline Mode"); }
         }
 
         function renderSmartHistory() {
-            const query = document.getElementById('smart-search').value.toLowerCase();
+            const val = document.getElementById('smart-search').value.toLowerCase();
             let html = "";
-            const filtered = db.filter(r => `${r.placa} ${r.chofer} ${r.items} ${r.fecha}`.toLowerCase().includes(query));
+            const filtered = db.filter(r => `${r.placa} ${r.chofer} ${r.items} ${r.fecha}`.toLowerCase().includes(val));
 
-            filtered.slice(0, 50).forEach(r => {
+            filtered.forEach(r => {
                 const f = r.fecha.split('-').reverse().join('/');
                 html += `
                 <div class="card">
                     <div class="h-header">
                         <div>
-                            <b style="font-size:20px;">${r.placa}</b>
-                            <div style="font-size:12px; color:var(--text-dim); font-weight:600;">${r.chofer} | ${f}</div>
+                            <b>${r.placa}</b>
+                            <div style="font-size:12px; color:var(--text-dim); margin-top:4px; font-weight:600;">${r.chofer} | ${f}</div>
                         </div>
-                        <div class="badge-cjs">${r.total} CJS</div>
+                        <div class="cjs-badge">${r.total} CJS</div>
                     </div>
-                    <div class="btn-grid">
-                        <button class="btn-s" onclick="viewR('${r.id}')"><i class="ph ph-magnifying-glass"></i>VER</button>
-                        <button class="btn-s" onclick="editR('${r.id}')"><i class="ph ph-pencil-line"></i>EDITAR</button>
-                        <button class="btn-s btn-wa" onclick="sendWA('${r.id}')"><i class="ph ph-whatsapp-logo"></i>WHATSAPP</button>
+                    <div class="actions-row">
+                        <button class="btn-sm btn-view" onclick="viewR('${r.id}')"><i class="ph ph-eye"></i>VER</button>
+                        <button class="btn-sm btn-edit" onclick="editR('${r.id}')"><i class="ph ph-pencil"></i>EDITAR</button>
+                        <button class="btn-sm btn-wa" onclick="sendWA('${r.id}')"><i class="ph ph-whatsapp-logo"></i>WA</button>
                     </div>
                 </div>`;
             });
-            document.getElementById('history-feed').innerHTML = html;
+            document.getElementById('history-feed').innerHTML = html || "<p style='text-align:center; color:var(--text-dim); margin-top:40px;'>Sin datos...</p>";
         }
 
-        // --- LÓGICA DE NEGOCIO ---
-        function startPlate(p) { 
-            localStorage.setItem('tw_temp_placa', p); 
-            go('page-route'); 
-            refreshCargaUI(); 
-        }
+        function startPlate(p) { localStorage.setItem('tw_temp_placa', p); go('page-route'); refreshCargaUI(); }
 
         function addPoint() {
             const cli = document.getElementById('inp-cli').value.toUpperCase(), can = parseInt(document.getElementById('inp-can').value);
@@ -225,50 +211,35 @@
 
         function refreshCargaUI() {
             let t = 0; let h = "";
-            const placa = localStorage.getItem('tw_temp_placa');
-            document.getElementById('active-plate-label').innerText = placa || "---";
-            
+            document.getElementById('active-plate-label').innerText = localStorage.getItem('tw_temp_placa') || "---";
             currentCarga.forEach((it, i) => {
                 t += it.can;
                 h += `<div class="card" style="display:flex; justify-content:space-between; padding:15px; margin-bottom:10px; border-left:4px solid var(--accent);">
                     <span><b>${it.can}</b> ${it.cli}</span>
-                    <i class="ph-bold ph-trash" style="color:var(--danger); font-size:20px;" onclick="currentCarga.splice(${i},1);refreshCargaUI()"></i>
+                    <i class="ph ph-trash" style="color:var(--danger); font-size:20px;" onclick="currentCarga.splice(${i},1);refreshCargaUI()"></i>
                 </div>`;
             });
-
-            const countEl = document.getElementById('count-cajas');
-            countEl.innerText = t;
-            countEl.style.color = t > 1000 ? 'var(--danger)' : 'white'; // Alerta inteligente
-            
+            document.getElementById('count-cajas').innerText = t;
             document.getElementById('count-puntos').innerText = currentCarga.length + " Clientes";
             document.getElementById('finalize-area').style.display = t > 0 ? 'block' : 'none';
             document.getElementById('live-list').innerHTML = h;
         }
 
         async function finalizeProcess(tipo) {
-            let f = new Date();
-            if(tipo === 'mañana') f.setDate(f.getDate() + 1);
-            
+            let f = new Date(); if(tipo === 'mañana') f.setDate(f.getDate() + 1);
             const r = {
                 fecha: f.toISOString().split('T')[0],
                 chofer: ASIGNACION[localStorage.getItem('tw_temp_placa')],
                 placa: localStorage.getItem('tw_temp_placa'),
                 items: currentCarga.map(i => `${i.cli}: ${i.can}`).join(", "),
                 total: currentCarga.reduce((a,b)=>a+b.can,0),
-                operario: activeUser,
-                id: 'R-'+Date.now()
+                id: 'ID-'+Date.now()
             };
-
-            db.unshift(r);
-            localStorage.setItem('tw_db_v24', JSON.stringify(db));
+            db.unshift(r); localStorage.setItem('tw_db_v25', JSON.stringify(db));
             fetch(API, {method:'POST', mode:'no-cors', body:JSON.stringify(r)});
-            
-            closeModal('modal-date');
-            currentCarga = []; 
-            go('page-history');
+            closeModal('modal-date'); currentCarga = []; go('page-history');
         }
 
-        // --- NAVEGACIÓN ---
         function login(u) {
             activeUser = u; localStorage.setItem('tw_logged', u);
             document.getElementById('page-login').classList.remove('active');
@@ -276,22 +247,24 @@
             document.getElementById('app-nav').style.display = 'flex';
             syncData(); go('page-history');
         }
-        function checkPass(u) { if(u==='TAJHO ADMIN' && prompt("Acceso:")!=="1994") return; login(u); }
-        function openModal(id) { document.getElementById(id).style.display = 'block'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        
+        function checkPass(u) { if(u==='TAJHO ADMIN' && prompt("Clave:")!=="1994") return; login(u); }
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.nav-opt').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             const bid = id.includes('plate') || id.includes('route') ? 'n-route' : 'n-'+id.split('-')[1];
             if(document.getElementById(bid)) document.getElementById(bid).classList.add('active');
         }
-
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
         function sendWA(id) {
             const r = db.find(x => x.id === id);
-            const msg = `*TWINS ELITE - DESPACHO*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n📅 *Fecha:* ${r.fecha.split('-').reverse().join('/')}\n\n*DETALLE:*\n${r.items.split(',').map(li => "• " + li.trim()).join('\n')}\n\n*TOTAL: ${r.total} CAJAS*`;
+            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n📅 *Fecha:* ${r.fecha.split('-').reverse().join('/')}\n\n*DETALLE:*\n${r.items.split(',').map(li => "• " + li.trim()).join('\n')}\n\n*TOTAL: ${r.total} CAJAS*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+        function updateSuggestions() {
+            const clientes = [...new Set(db.flatMap(r => r.items.split(',').map(i => i.split(':')[0].trim())))];
+            document.getElementById('suggestions').innerHTML = clientes.slice(0, 15).map(c => `<option value="${c}">`).join('');
         }
     </script>
 </body>
