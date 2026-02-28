@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V46.9</title>
+    <title>TWINS ELITE - V47.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -55,7 +55,7 @@
     <div id="sync-loader"></div>
 
     <div id="page-dash" class="page active">
-        <h2 style="font-weight: 900; letter-spacing: -1.5px; margin-bottom: 25px; font-size: 28px;">Gestión de Rutas</h2>
+        <h2 style="font-weight: 900; letter-spacing: -1.5px; margin-bottom: 25px; font-size: 28px;">TWINS ELITE</h2>
         <div class="core-dash">
             <div class="master-card black">
                 <span class="stat-label">Hoy</span>
@@ -81,13 +81,13 @@
         <div style="background:white; padding:25px; border-radius:32px; border:1px solid var(--border); box-shadow: var(--shadow);">
             <label class="stat-label">Despacho</label>
             <select id="sel-date" class="input-box" style="margin-bottom:15px;">
-                <option value="hoy">Hoy</option>
-                <option value="mañana" selected>Mañana</option>
+                <option value="hoy">Para Hoy</option>
+                <option value="mañana" selected>Para Mañana</option>
             </select>
-            <label class="stat-label">Equipo</label>
+            <label class="stat-label">Personal</label>
             <select id="sel-chofer" class="input-box" style="margin-bottom:10px;"></select>
             <select id="sel-aux" class="input-box"></select>
-            <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:#fff; border:none; margin-top:25px; font-weight:900; height:70px;">COMENZAR</button>
+            <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:#fff; border:none; margin-top:25px; font-weight:900; height:70px;">INICIAR CARGA</button>
         </div>
     </div>
 
@@ -104,7 +104,7 @@
             </div>
             <div id="items-list" style="margin-top:25px;"></div>
         </div>
-        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:#000; color:#fff; border:none; margin-top:20px; font-weight:900; height:70px;">GUARDAR REGISTRO</button>
+        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:#000; color:#fff; border:none; margin-top:20px; font-weight:900; height:70px;">GUARDAR TODO</button>
     </div>
 
     <div id="modal-view" class="modal">
@@ -117,7 +117,7 @@
 
     <div id="modal-wa" class="modal">
         <div class="modal-content">
-            <h3 style="margin-top:0; font-weight:900; color:var(--success);"><i class="ph-fill ph-whatsapp-logo"></i> Enviar Despacho</h3>
+            <h3 style="margin-top:0; font-weight:900; color:var(--success);"><i class="ph-fill ph-whatsapp-logo"></i> Confirmar Despacho</h3>
             <div id="wa-summary" style="margin-bottom:20px;"></div>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <button onclick="closeModal('modal-wa')" class="input-box" style="background:#f3f4f6; border:none; font-weight:800;">ATRÁS</button>
@@ -243,8 +243,9 @@
             const r = db.find(x => x.id === id);
             document.getElementById('wa-summary').innerHTML = `
                 <div class="modal-item"><span>Unidad:</span><span>${r.placa}</span></div>
-                <div class="modal-item"><span>Equipo:</span><span>${r.chofer} / ${r.auxiliar}</span></div>
-                <div class="modal-item" style="background:#eee;"><span>Carga:</span><span>${r.items.length} Clientes</span></div>
+                <div class="modal-item"><span>Chofer:</span><span>${r.chofer}</span></div>
+                <div class="modal-item"><span>Auxiliar:</span><span>${r.auxiliar}</span></div>
+                <div class="modal-item" style="background:#eee;"><span>Resumen:</span><span>${r.items.length} Envíos</span></div>
             `;
             document.getElementById('modal-wa').style.display = 'flex';
         }
@@ -252,8 +253,9 @@
         function executeWA() {
             const r = db.find(x => x.id === waTargetId);
             const lista = r.items.map(i => `• ${i.cli}: ${i.can}`).join('\n');
-            const total = r.items.reduce((a,b)=>a+b.can,0);
-            const msg = `*TWINS ELITE*\n\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n🤝 *AUX:* ${r.auxiliar}\n\n*LISTA DE DESPACHO:*\n${lista}\n\n*TOTAL: ${total} Cjs*`;
+            const totalCajas = r.items.reduce((a,b)=>a+b.can,0);
+            const totalEnvios = r.items.length;
+            const msg = `*TWINS ELITE*\n\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n🤝 *AUX:* ${r.auxiliar}\n\n*LISTA DE DESPACHO:*\n${lista}\n\n📦 *ENVÍOS:* ${totalEnvios}\n📊 *TOTAL CAJAS:* ${totalCajas}`;
             window.location.href = "whatsapp://send?text=" + encodeURIComponent(msg);
             closeModal('modal-wa');
         }
