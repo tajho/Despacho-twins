@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V51.0</title>
+    <title>TWINS ELITE - V52.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -19,19 +19,20 @@
         .active { display: block; }
         @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Buscador */
-        .search-container { position: sticky; top: 0; background: var(--bg); z-index: 100; padding: 5px 0 15px 0; }
-        .search-input { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 14px 14px 45px; width: 100%; font-size: 14px; font-weight: 600; outline: none; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .search-icon { position: absolute; left: 16px; top: 20px; font-size: 20px; color: var(--text-dim); }
+        /* Buscador Inteligente */
+        .search-bar { position: sticky; top: 0; background: var(--bg); z-index: 100; padding: 5px 0 15px 0; display: flex; gap: 8px; }
+        .search-input { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 14px 14px 14px 40px; flex: 1; font-size: 14px; font-weight: 600; outline: none; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .search-icon { position: absolute; left: 14px; top: 19px; font-size: 20px; color: var(--text-dim); }
+        .date-filter { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 0 10px; font-weight: 700; font-size: 12px; cursor: pointer; }
 
         /* Stats */
         .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .master-card { background: #fff; padding: 18px; border-radius: 22px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 115px; }
+        .master-card { background: #fff; padding: 18px; border-radius: 22px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 115px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
         .master-card.black { background: #000; color: #fff; border: none; }
         .stat-label { font-size: 9px; font-weight: 800; text-transform: uppercase; opacity: 0.6; }
         .stat-main { font-size: 26px; font-weight: 900; }
 
-        /* Ranking DATA */
+        /* Rankings DATA */
         .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; color: var(--text-dim); text-transform: uppercase; }
         .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -39,48 +40,45 @@
         .pos-1 { background: var(--gold); color: #000; }
         .pos-2 { background: var(--silver); color: #000; }
         .pos-3 { background: var(--bronze); color: #000; }
-        .rank-info { flex: 1; }
-        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; margin: 6px 0; }
-        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.6s ease; }
+        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; margin: 6px 0; overflow: hidden; }
+        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.8s ease; }
         .rank-meta { font-size: 10px; font-weight: 800; color: var(--text-dim); display: flex; gap: 10px; }
-        .rank-meta b { color: #000; }
 
-        /* Tarjetas Historial */
-        .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        /* Cards */
+        .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); position: relative; }
         .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #f3f4f6; padding-top: 12px; }
         .btn-action { border: 1px solid var(--border); border-radius: 12px; padding: 10px 5px; font-size: 9px; font-weight: 800; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text); }
-        .btn-action.wa { background: #000; color: #fff; border: none; }
-        .section-tag { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; margin: 25px 0 10px 5px; display: flex; align-items: center; gap: 6px; }
+        .section-tag { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; margin: 25px 0 10px 5px; border-left: 3px solid #000; padding-left: 8px; }
 
         /* Nav */
         .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
-        .nav-btn i { font-size: 24px; margin-bottom: 4px; }
+        .nav-btn i { font-size: 22px; margin-bottom: 4px; }
         
         .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 10px; }
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(4px); }
-        .modal-box { background: #fff; border-radius: 24px; padding: 25px; width: 100%; max-height: 80vh; overflow-y: auto; }
+        .placa-btn { background: #fff; padding: 25px 15px; border-radius: 20px; border: 1px solid var(--border); text-align: center; font-weight: 900; font-size: 18px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
     </style>
 </head>
 <body>
 
     <div id="page-dash" class="page active">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Control Historial</h1>
+        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Auditoría Twins</h1>
         
-        <div class="search-container">
+        <div class="search-bar">
             <i class="ph-bold ph-magnifying-glass search-icon"></i>
-            <input type="text" id="main-search" class="search-input" placeholder="Buscar chofer, placa o cliente..." oninput="renderSmartHistory()">
+            <input type="text" id="main-search" class="search-input" placeholder="Chofer, Placa, Cliente..." oninput="renderSmartHistory()">
+            <input type="date" id="date-picker" class="date-filter" onchange="renderSmartHistory()">
         </div>
 
         <div class="core-dash">
             <div class="master-card black">
                 <div><span class="stat-label">Cajas Hoy</span><span id="stat-hoy-cajas" class="stat-main">0</span></div>
-                <div style="border-top:1px solid #333; padding-top:8px; font-size:12px; font-weight:800;" id="stat-hoy-envios">0 CLI</div>
+                <div style="border-top:1px solid #333; padding-top:8px; font-size:11px; font-weight:800;" id="stat-hoy-envios">0 CLI</div>
             </div>
             <div class="master-card">
-                <div><span class="stat-label">Resultado Búsqueda</span><span id="stat-fil-cajas" class="stat-main">0</span></div>
-                <div style="border-top:1px solid #eee; padding-top:8px; font-size:12px; font-weight:800;" id="stat-fil-envios">0 CLI</div>
+                <div><span class="stat-label">Filtro Actual</span><span id="stat-fil-cajas" class="stat-main">0</span></div>
+                <div style="border-top:1px solid #eee; padding-top:8px; font-size:11px; font-weight:800;" id="stat-fil-envios">0 CLI</div>
             </div>
         </div>
 
@@ -88,27 +86,40 @@
     </div>
 
     <div id="page-data" class="page">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Rendimiento Personal</h1>
-        
+        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Rendimiento</h1>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:25px;">
             <input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0">
-            <button onclick="injectFakeData()" style="background:#f3f4f6; border:none; border-radius:12px; font-size:10px; font-weight:800;">SIMULAR DATOS</button>
+            <button onclick="injectFakeData()" style="background:#000; color:#fff; border:none; border-radius:12px; font-size:10px; font-weight:800;">SIMULAR DATOS</button>
         </div>
-
-        <div class="rank-box">
-            <div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Choferes</div>
-            <div id="rank-choferes-list"></div>
-        </div>
-
-        <div class="rank-box">
-            <div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares</div>
-            <div id="rank-auxiliares-list"></div>
-        </div>
+        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Choferes</div><div id="rank-choferes-list"></div></div>
+        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-users-three"></i> Auxiliares</div><div id="rank-auxiliares-list"></div></div>
     </div>
 
     <div id="page-units" class="page">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Nueva Carga</h1>
+        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Seleccionar Unidad</h1>
         <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
+    </div>
+
+    <div id="page-assign" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h1 style="margin:0">Configurar</h1>
+            <span id="view-placa-assign" style="background:#000; color:#fff; padding:5px 15px; border-radius:10px; font-weight:800;">---</span>
+        </div>
+        <label class="stat-label">Fecha de Salida</label><input type="date" id="date-assign" class="field">
+        <label class="stat-label">Chofer Encargado</label><select id="chofer-assign" class="field"></select>
+        <label class="stat-label">Auxiliar de Apoyo</label><select id="aux-assign" class="field"></select>
+        <button onclick="goLoad()" style="width:100%; height:60px; background:#000; color:#fff; border:none; border-radius:15px; font-weight:800; font-size:16px; margin-top:10px;">INICIAR CARGA</button>
+    </div>
+
+    <div id="page-load" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px;">
+            <div><span class="stat-label" id="view-placa-load">PLACAS</span><h1 style="margin:0">Carga Activa</h1></div>
+            <div style="text-align:right;"><span id="view-total-load" style="font-size:32px; font-weight:900;">0</span><div class="stat-label">CAJAS</div></div>
+        </div>
+        <div style="display:flex; gap:8px; margin-bottom:15px;"><input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0"><input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1; margin:0"></div>
+        <button onclick="addItem()" style="width:100%; background:#000; color:#fff; border:none; padding:16px; border-radius:14px; font-weight:800; margin-bottom:20px;">+ AGREGAR A LISTA</button>
+        <div id="load-list"></div>
+        <button id="btn-save" onclick="saveRoute()" style="display:none; width:100%; background:#10b981; color:#fff; border:none; padding:18px; border-radius:15px; font-weight:900; margin-top:20px;">FINALIZAR Y GUARDAR</button>
     </div>
 
     <nav class="nav-bottom">
@@ -117,134 +128,169 @@
         <button class="nav-btn" id="n-data" onclick="go('page-data')"><i class="ph-bold ph-chart-bar"></i>DATA</button>
     </nav>
 
-    <div id="modal-view" class="modal"><div class="modal-box"><h3 id="m-title"></h3><div id="m-body"></div><button onclick="closeModal('modal-view')" class="field" style="margin-top:20px;">CERRAR</button></div></div>
-
     <script>
         let db = JSON.parse(localStorage.getItem('twins_v50_db')) || [];
+        let current = { items: [] };
 
+        const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
 
-        function getDates() {
-            const hoy = new Date().toISOString().split('T')[0];
-            const ayerDate = new Date(); ayerDate.setDate(ayerDate.getDate() - 1);
-            const ayer = ayerDate.toISOString().split('T')[0];
-            const mañanaDate = new Date(); mañanaDate.setDate(mañanaDate.getDate() + 1);
-            const mañana = mañanaDate.toISOString().split('T')[0];
-            return { hoy, ayer, mañana };
+        window.onload = () => {
+            document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
+            // Cargar selectores
+            const sc = document.getElementById('chofer-assign'), sa = document.getElementById('aux-assign'), ug = document.getElementById('units-grid');
+            CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
+            AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
+            for(let p in FLOTA) ug.innerHTML += `<div class="placa-btn" onclick="startNewRoute('${p}')">${p}</div>`;
+            
+            renderSmartHistory(); renderStats();
+        };
+
+        // --- LÓGICA DE CARGA ---
+        function startNewRoute(p) {
+            current = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0] };
+            document.getElementById('view-placa-assign').innerText = p;
+            document.getElementById('date-assign').value = current.fecha;
+            document.getElementById('chofer-assign').value = FLOTA[p] || CONDUCTORES[0];
+            go('page-assign');
         }
 
+        function goLoad() {
+            current.fecha = document.getElementById('date-assign').value;
+            current.chofer = document.getElementById('chofer-assign').value;
+            current.auxiliar = document.getElementById('aux-assign').value;
+            document.getElementById('view-placa-load').innerText = current.placa;
+            refreshLoadList();
+            go('page-load');
+        }
+
+        function addItem() {
+            const cli = document.getElementById('i-cli').value.toUpperCase().trim();
+            const can = parseInt(document.getElementById('i-can').value);
+            if(!cli || isNaN(can)) return;
+            current.items.push({cli, can});
+            document.getElementById('i-cli').value = ""; document.getElementById('i-can').value = "";
+            document.getElementById('i-cli').focus();
+            refreshLoadList();
+        }
+
+        function refreshLoadList() {
+            const list = document.getElementById('load-list');
+            const total = current.items.reduce((a,b)=>a+b.can, 0);
+            document.getElementById('view-total-load').innerText = total;
+            document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
+            list.innerHTML = current.items.map((it, i) => `
+                <div style="display:flex; justify-content:space-between; padding:12px; background:#fff; border-radius:12px; border:1px solid #eee; margin-bottom:8px; font-weight:700;">
+                    <span>${it.can} • ${it.cli}</span>
+                    <i class="ph-bold ph-trash" style="color:red" onclick="current.items.splice(${i},1);refreshLoadList()"></i>
+                </div>`).reverse().join('');
+        }
+
+        function saveRoute() {
+            const idx = db.findIndex(r => r.id === current.id);
+            if(idx > -1) db[idx] = current; else db.unshift(current);
+            localStorage.setItem('twins_v50_db', JSON.stringify(db));
+            go('page-dash'); renderSmartHistory(); renderStats();
+        }
+
+        // --- HISTORIAL INTELIGENTE ---
         function renderSmartHistory() {
             const query = document.getElementById('main-search').value.toLowerCase();
+            const datePick = document.getElementById('date-picker').value;
             const cont = document.getElementById('smart-history');
-            const { hoy, ayer, mañana } = getDates();
-            
+            const hoy = new Date().toISOString().split('T')[0];
+            const ayer = new Date(Date.now() - 864e5).toISOString().split('T')[0];
+            const mañana = new Date(Date.now() + 864e5).toISOString().split('T')[0];
+
             let filtered = db.filter(r => {
-                const matchGeneral = r.chofer.toLowerCase().includes(query) || 
-                                   r.placa.toLowerCase().includes(query) || 
-                                   r.auxiliar.toLowerCase().includes(query) ||
-                                   r.fecha.includes(query);
-                const matchCliente = r.items.some(i => i.cli.toLowerCase().includes(query));
-                return matchGeneral || matchCliente;
+                const matchBusqueda = r.chofer.toLowerCase().includes(query) || r.placa.toLowerCase().includes(query) || r.items.some(i => i.cli.toLowerCase().includes(query));
+                const matchFecha = datePick ? r.fecha === datePick : true;
+                return matchBusqueda && matchFecha;
             });
 
-            document.getElementById('stat-fil-cajas').innerText = filtered.reduce((a,b) => a + b.items.reduce((x,y)=>x+y.can,0), 0);
-            document.getElementById('stat-fil-envios').innerText = filtered.reduce((a,b) => a + b.items.length, 0) + " CLI";
+            document.getElementById('stat-fil-cajas').innerText = filtered.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
+            document.getElementById('stat-fil-envios').innerText = filtered.reduce((a,b)=>a+b.items.length, 0) + " CLI";
 
             let html = "";
+            const drawSection = (title, data) => {
+                if(!data.length) return "";
+                return `<div class="section-tag">${title}</div>` + data.map(r => card(r)).join('');
+            };
 
-            if(query === "") {
-                // Vista Estándar: Mañana, Hoy, Ayer
-                const rFut = db.filter(r => r.fecha >= mañana);
-                const rHoy = db.filter(r => r.fecha === hoy);
-                const rAyer = db.filter(r => r.fecha === ayer);
-
-                if(rFut.length) { html += `<div class="section-tag">Programado</div>`; rFut.forEach(r => html += card(r)); }
-                html += `<div class="section-tag">Hoy</div>`;
-                if(!rHoy.length) html += `<p style="font-size:12px;color:gray;margin-left:10px;">Sin rutas hoy.</p>`;
-                rHoy.forEach(r => html += card(r, true));
-                if(rAyer.length) { html += `<div class="section-tag">Ayer</div>`; rAyer.forEach(r => html += card(r)); }
+            if(!query && !datePick) {
+                html += drawSection("Mañana / Programado", filtered.filter(r => r.fecha === mañana));
+                html += drawSection("Hoy", filtered.filter(r => r.fecha === hoy));
+                html += drawSection("Ayer", filtered.filter(r => r.fecha === ayer));
+                html += drawSection("Este Mes", filtered.filter(r => r.fecha.startsWith(hoy.substring(0,7)) && ![hoy, ayer, mañana].includes(r.fecha)));
             } else {
-                // Vista Búsqueda: Todo lo que coincida
-                html += `<div class="section-tag">Resultados de Búsqueda</div>`;
-                filtered.forEach(r => html += card(r));
+                html += drawSection("Resultados del Filtro", filtered);
             }
-            
-            cont.innerHTML = html;
+            cont.innerHTML = html || '<p style="text-align:center; color:gray; margin-top:20px;">No hay registros.</p>';
         }
 
-        function card(r, highlight = false) {
+        function card(r) {
             const t = r.items.reduce((a,b)=>a+b.can,0);
             return `
-            <div class="route-card" style="${highlight?'border-left:4px solid #000':''}">
+            <div class="route-card">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                     <div><b style="font-size:17px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer} | ${r.auxiliar}</div></div>
-                    <div style="text-align:right;"><span style="font-size:9px; display:block; opacity:0.6;">${r.fecha}</span><b style="font-size:17px;">${t} CJS</b><div style="font-size:10px;font-weight:800;">${r.items.length} CLI</div></div>
+                    <div style="text-align:right;"><span style="font-size:10px; display:block; opacity:0.6;">${r.fecha}</span><b style="font-size:17px;">${t} CJS</b></div>
                 </div>
                 <div class="route-actions">
-                    <button class="btn-action" onclick="view('${r.id}')"><i class="ph-bold ph-eye"></i>VER</button>
-                    <button class="btn-action" onclick="edit('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
-                    <button class="btn-action wa" onclick="prepWA('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WA</button>
+                    <button class="btn-action" onclick="alert('Ver Detalle: '+JSON.stringify(r.items))"><i class="ph-bold ph-eye"></i>VER</button>
+                    <button class="btn-action" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
+                    <button class="btn-action" style="background:#000; color:#fff; border:none;"><i class="ph-bold ph-whatsapp-logo"></i>WA</button>
                 </div>
             </div>`;
         }
 
+        function editRoute(id) {
+            current = JSON.parse(JSON.stringify(db.find(r => r.id === id)));
+            goLoad();
+        }
+
+        // --- SECCIÓN DATA ---
         function renderData() {
-            const m = document.getElementById('f-month').value || new Date().toISOString().substring(0,7);
+            const m = document.getElementById('f-month').value;
             let filt = db.filter(r => r.fecha.startsWith(m));
-            
-            let cStats = {}, aStats = {};
+            let cS = {}, aS = {};
             filt.forEach(r => {
                 let cjs = r.items.reduce((a,b)=>a+b.can,0);
-                cStats[r.chofer] = cStats[r.chofer] || {cjs:0, cls:0};
-                cStats[r.chofer].cjs += cjs; cStats[r.chofer].cls += r.items.length;
-                aStats[r.auxiliar] = aStats[r.auxiliar] || {cjs:0, r:0};
-                aStats[r.auxiliar].cjs += cjs; aStats[r.auxiliar].r++;
+                cS[r.chofer] = cS[r.chofer] || {cjs:0, cls:0}; cS[r.chofer].cjs += cjs; cS[r.chofer].cls += r.items.length;
+                aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0}; aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
             });
 
-            const draw = (data, targetId, isAux = false) => {
-                let sorted = Object.entries(data).sort((a,b) => b[1].cjs - a[1].cjs).slice(0,5);
-                let maxCjs = sorted[0] ? sorted[0][1].cjs : 1;
-                document.getElementById(targetId).innerHTML = sorted.map(([name, val], i) => {
-                    let perc = (val.cjs / maxCjs) * 100;
-                    return `
+            const drawRank = (data, id, isAux) => {
+                let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
+                let max = sorted[0] ? sorted[0][1].cjs : 1;
+                document.getElementById(id).innerHTML = sorted.map(([n, v], i) => `
                     <div class="rank-item">
-                        <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
-                        <div class="rank-info">
-                            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700;"><span>${name}</span><span>${val.cjs} CJS</span></div>
-                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${perc}%"></div></div>
-                            <div class="rank-meta">
-                                <span><i class="ph-bold ph-package"></i> <b>${val.cjs}</b> Cajas</span>
-                                <span><i class="ph-bold ph-users"></i> <b>${isAux?val.r:val.cls}</b> ${isAux?'Rutas':'Clientes'}</span>
-                            </div>
+                        <div class="rank-pos ${i<3?'pos-'+(i+1):''}">${i+1}</div>
+                        <div style="flex:1">
+                            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:13px;"><span>${n}</span><span>${v.cjs} CJS</span></div>
+                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
+                            <div class="rank-meta"><b>${v.cjs}</b> Cajas | <b>${isAux?v.r:v.cls}</b> ${isAux?'Rutas':'Clientes'}</div>
                         </div>
-                    </div>`;
-                }).join('') || '<p style="font-size:12px;color:gray">Sin registros.</p>';
+                    </div>`).join('');
             };
-
-            draw(cStats, 'rank-choferes-list');
-            draw(aStats, 'rank-auxiliares-list', true);
+            drawRank(cS, 'rank-choferes-list', false);
+            drawRank(aS, 'rank-auxiliares-list', true);
         }
 
         function renderStats() {
-            const { hoy } = getDates();
-            const rHoy = db.filter(r => r.fecha === hoy);
-            document.getElementById('stat-hoy-cajas').innerText = rHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
-            document.getElementById('stat-hoy-envios').innerText = rHoy.reduce((a,b)=>a+b.items.length, 0) + " CLI";
+            const hoy = new Date().toISOString().split('T')[0];
+            const rH = db.filter(r => r.fecha === hoy);
+            document.getElementById('stat-hoy-cajas').innerText = rH.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
+            document.getElementById('stat-hoy-envios').innerText = rH.reduce((a,b)=>a+b.items.length, 0) + " CLI";
         }
 
         function injectFakeData() {
-            let fake = [];
-            for(let i=0; i<15; i++) {
-                let d = new Date(); d.setDate(d.getDate() - i);
-                fake.push({
-                    id: 'F'+Date.now()+i, fecha: d.toISOString().split('T')[0], placa: "BPN-711",
-                    chofer: CONDUCTORES[Math.floor(Math.random()*CONDUCTORES.length)],
-                    auxiliar: AUXILIARES[Math.floor(Math.random()*AUXILIARES.length)],
-                    items: [{cli: "TIENDA A", can: 40}, {cli: "ABARROTES B", can: 25}]
-                });
+            let f = []; for(let i=0; i<15; i++) {
+                let d = new Date(Date.now() - i*864e5).toISOString().split('T')[0];
+                f.push({id:'F'+i, fecha:d, placa:"BPN-711", chofer:CONDUCTORES[i%6], auxiliar:AUXILIARES[i%9], items:[{cli:"PROBANDO", can:50}]});
             }
-            db = fake; localStorage.setItem('twins_v50_db', JSON.stringify(db));
+            db = f; localStorage.setItem('twins_v50_db', JSON.stringify(db));
             renderSmartHistory(); renderData(); renderStats();
         }
 
@@ -252,27 +298,9 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
+            document.getElementById('n-'+id.split('-')[1]).classList.add('active');
             if(id === 'page-data') renderData();
         }
-
-        function view(id) {
-            const r = db.find(x => x.id === id);
-            document.getElementById('m-title').innerText = `Detalle ${r.placa}`;
-            document.getElementById('m-body').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;"><span>${i.cli}</span><b>${i.can} Cjs</b></div>`).join('');
-            document.getElementById('modal-view').style.display = 'flex';
-        }
-
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        window.onload = () => {
-            document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
-            const ug = document.getElementById('units-grid');
-            ["CEP-929", "BPN-711", "BVN-704", "BUL-742", "BVN-930"].forEach(p => {
-                ug.innerHTML += `<div style="background:#fff; padding:20px; border-radius:18px; text-align:center; font-weight:800; border:1px solid var(--border); shadow:0 4px 12px rgba(0,0,0,0.03)">${p}</div>`;
-            });
-            renderSmartHistory(); renderStats();
-        };
     </script>
 </body>
 </html>
