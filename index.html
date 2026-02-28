@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V34 COMPACT</title>
+    <title>TWINS ELITE - V35 FLEX</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -23,63 +23,44 @@
         .page { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
         .active { display: block; }
 
-        /* Cuadros Estadísticos Compactos */
+        /* Dashboard Stats */
         .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-box { padding: 12px; border-radius: 18px; position: relative; overflow: hidden; }
+        .stat-box { padding: 12px; border-radius: 18px; }
         .stat-box.blue { background: var(--accent); color: #fff; }
         .stat-box.white { background: #fff; color: var(--text); border: 1px solid var(--border); }
-        .stat-title { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; margin-bottom: 8px; display: block; }
+        .stat-title { font-size: 9px; font-weight: 800; text-transform: uppercase; opacity: 0.8; margin-bottom: 8px; display: block; }
         .stat-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
         .stat-num { font-size: 18px; font-weight: 800; }
-        .stat-icon { font-size: 14px; opacity: 0.7; }
 
         .card { background: #fff; border-radius: 18px; padding: 15px; border: 1px solid var(--border); margin-bottom: 10px; }
         .btn-main { background: var(--accent); color: #fff; border: none; border-radius: 15px; padding: 18px; width: 100%; font-weight: 800; font-size: 15px; margin-top: 5px; }
+        .btn-sub { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 8px; font-size: 11px; font-weight: 700; margin-top: 5px; width: 100%; }
+        
         .input-box { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 16px; font-weight: 600; margin-bottom: 10px; outline: none; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(4px); }
+        
+        .driver-chip { padding: 10px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 5px; font-weight: 700; font-size: 13px; }
     </style>
 </head>
 <body>
-
-    <div id="page-login" class="page active">
-        <div style="text-align:center; padding:50px 0 30px;">
-            <i class="ph-fill ph-truck" style="font-size:40px; color:var(--accent);"></i>
-            <h2 style="font-weight:800; margin:10px 0 0;">TWINS ELITE</h2>
-        </div>
-        <div id="login-options"></div>
-    </div>
 
     <div id="page-dashboard" class="page">
         <div class="stats-container">
             <div class="stat-box blue">
                 <span class="stat-title">Acumulado Mes</span>
-                <div class="stat-row">
-                    <div class="stat-num" id="m-cajas">0</div>
-                    <i class="ph-bold ph-package stat-icon"></i>
-                </div>
-                <div class="stat-row">
-                    <div class="stat-num" id="m-clientes" style="font-size:14px;">0</div>
-                    <i class="ph-bold ph-users stat-icon" style="font-size:12px;"></i>
-                </div>
+                <div class="stat-row"><div class="stat-num" id="m-cajas">0</div><i class="ph-bold ph-package"></i></div>
+                <div class="stat-row"><div class="stat-num" id="m-clientes" style="font-size:14px;">0</div><i class="ph-bold ph-users" style="font-size:12px;"></i></div>
             </div>
             <div class="stat-box white">
                 <span class="stat-title" style="color:var(--accent)">Hoy</span>
-                <div class="stat-row">
-                    <div class="stat-num" id="d-cajas">0</div>
-                    <i class="ph-bold ph-package stat-icon" style="color:var(--accent)"></i>
-                </div>
-                <div class="stat-row">
-                    <div class="stat-num" id="d-clientes" style="font-size:14px;">0</div>
-                    <i class="ph-bold ph-users stat-icon" style="color:var(--accent); font-size:12px;"></i>
-                </div>
+                <div class="stat-row"><div class="stat-num" id="d-cajas">0</div><i class="ph-bold ph-package" style="color:var(--accent)"></i></div>
+                <div class="stat-row"><div class="stat-num" id="d-clientes" style="font-size:14px;">0</div><i class="ph-bold ph-users" style="color:var(--accent); font-size:12px;"></i></div>
             </div>
         </div>
-
         <div class="input-box" style="display:flex; align-items:center; gap:8px; padding:10px 14px; margin-bottom:15px;">
             <i class="ph-bold ph-magnifying-glass" style="color:var(--accent); font-size:18px;"></i>
             <input type="text" id="smart-search" placeholder="Buscar registros..." style="border:none; width:100%; outline:none; font-size:14px;" oninput="renderHistory()">
         </div>
-        
         <div id="history-feed"></div>
     </div>
 
@@ -90,32 +71,39 @@
 
     <div id="page-crew" class="page">
         <h3 style="margin-bottom:15px;">Tripulación</h3>
-        <div class="card">
-            <div id="crew-plate" style="font-size:22px; font-weight:800; color:var(--accent); margin-bottom:15px; text-align:center;">---</div>
-            <label style="font-size:10px; font-weight:800;">CONDUCTOR:</label>
-            <input type="text" id="inp-driver" class="input-box" placeholder="Nombre">
-            <label style="font-size:10px; font-weight:800;">AUXILIAR:</label>
-            <select id="sel-aux" class="input-box">
-                <option value="SIN AUX">-- Seleccionar --</option>
-                <option value="CRISTOPHER">CRISTOPHER</option>
-                <option value="PERCY">PERCY</option>
-                <option value="PLACIDO">PLACIDO</option>
-                <option value="RODOLFO">RODOLFO</option>
-                <option value="RICARDO">RICARDO</option>
-                <option value="ELIO">ELIO</option>
-                <option value="JOFER">JOFER</option>
-                <option value="MARTIN">MARTIN</option>
-                <option value="NELSON">NELSON</option>
-                <option value="JULIO">JULIO</option>
-                <option value="DANIEL C.">DANIEL C.</option>
-            </select>
-            <button onclick="confirmCrew()" class="btn-main">CARGAR</button>
+        <div class="card" id="crew-card">
+            <div id="crew-plate" style="font-size:24px; font-weight:900; color:var(--accent); text-align:center; margin-bottom:15px;">---</div>
+            
+            <div style="margin-bottom:15px;">
+                <label style="font-size:10px; font-weight:800; color:var(--text-dim);">CONDUCTOR ASIGNADO:</label>
+                <div id="display-driver" style="font-weight:800; font-size:16px; padding:10px 0;">---</div>
+                <button class="btn-sub" onclick="openModal('modal-drivers')">🔄 CAMBIAR CONDUCTOR</button>
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <label style="font-size:10px; font-weight:800; color:var(--text-dim);">AUXILIAR DE CARGA:</label>
+                <select id="sel-aux" class="input-box" style="margin-top:5px;">
+                    <option value="POR DEFINIR">-- POR DEFINIR (MAÑANA) --</option>
+                    <option value="CRISTOPHER">CRISTOPHER</option>
+                    <option value="PERCY">PERCY</option>
+                    <option value="PLACIDO">PLACIDO</option>
+                    <option value="RODOLFO">RODOLFO</option>
+                    <option value="RICARDO">RICARDO</option>
+                    <option value="ELIO">ELIO</option>
+                    <option value="JOFER">JOFER</option>
+                    <option value="MARTIN">MARTIN</option>
+                    <option value="NELSON">NELSON</option>
+                    <option value="JULIO">JULIO</option>
+                    <option value="DANIEL C.">DANIEL C.</option>
+                </select>
+            </div>
+            <button onclick="confirmCrew()" class="btn-main">CONTINUAR A CARGA</button>
         </div>
     </div>
 
     <div id="page-route" class="page">
         <div style="background:var(--text); padding:15px; border-radius:15px; color:#fff; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-            <div><b id="active-plate">---</b></div>
+            <div id="route-info" style="font-size:12px; font-weight:700;"></div>
             <div style="font-size:24px; font-weight:800;" id="count-cajas">0</div>
         </div>
         <input type="text" id="inp-cli" placeholder="Cliente" class="input-box">
@@ -124,57 +112,76 @@
             <button onclick="addPoint()" style="background:var(--accent); color:#fff; border:none; border-radius:12px; width:55px; font-size:20px;">+</button>
         </div>
         <div id="live-list" style="margin-top:10px;"></div>
-        <button id="btn-save" onclick="openModal('modal-date')" style="display:none; background:var(--success); color:#fff; width:100%; padding:18px; border-radius:15px; border:none; font-weight:800; margin-top:15px;">GUARDAR</button>
+        <button id="btn-save" onclick="openModal('modal-date')" style="display:none; background:var(--success); color:#fff; width:100%; padding:18px; border-radius:15px; border:none; font-weight:800; margin-top:15px;">GUARDAR RUTA</button>
+    </div>
+
+    <div id="modal-drivers" class="modal">
+        <div style="background:#fff; border-radius:25px; padding:20px; width:100%; max-height:80vh; overflow-y:auto;">
+            <h4 style="margin:0 0 15px 0; text-align:center;">Seleccionar Conductor</h4>
+            <div id="drivers-list"></div>
+            <button onclick="document.getElementById('modal-drivers').style.display='none'" class="btn-sub" style="margin-top:10px; color:var(--danger);">CERRAR</button>
+        </div>
     </div>
 
     <div id="modal-date" class="modal">
         <div style="background:#fff; border-radius:25px; padding:25px; width:100%; text-align:center;">
-            <h4 style="margin:0 0 20px 0;">¿Cuándo sale?</h4>
+            <h4 style="margin:0 0 10px 0;">¿Cuándo sale?</h4>
             <button onclick="finalize('hoy')" class="btn-main" style="background:var(--success); margin-bottom:10px;">PARA HOY</button>
             <button onclick="finalize('mañana')" class="btn-main">PARA MAÑANA</button>
             <button onclick="document.getElementById('modal-date').style.display='none'" style="margin-top:10px; border:none; background:none; color:var(--danger); font-weight:800; font-size:12px;">CANCELAR</button>
         </div>
     </div>
 
-    <nav id="app-nav" class="nav-bar" style="display:none">
+    <nav id="app-nav" class="nav-bar">
         <button class="nav-item active" id="n-dashboard" onclick="go('page-dashboard')"><i class="ph-fill ph-chart-pie"></i>CONTROL</button>
         <button class="nav-item" id="n-route" onclick="go('page-select-plate')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
     </nav>
 
     <script>
         const API = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
-        let db = [], currentCarga = [], activeUser = "";
+        let db = [], currentCarga = [];
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
+        const CONDUCTORES = ["ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO", "RELEVO 1", "RELEVO 2"];
 
         window.onload = () => {
-            const saved = localStorage.getItem('tw_db_v34');
+            const saved = localStorage.getItem('tw_db_v35');
             if(saved) { db = JSON.parse(saved); renderHistory(); renderStats(); }
-            setupUI();
-            if(localStorage.getItem('tw_logged')) login(localStorage.getItem('tw_logged'));
+            setupPlates();
+            setupDrivers();
+            go('page-dashboard');
         };
 
-        function setupUI() {
-            const l = document.getElementById('login-options');
-            ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                l.innerHTML += `<div onclick="checkPass('${u}')" class="card" style="font-weight:700; padding:18px; margin-bottom:8px;">${u}</div>`;
-            });
+        function setupPlates() {
             const f = document.getElementById('plate-grid');
             for(let p in FLOTA) {
                 f.innerHTML += `<div class="card" onclick="openCrew('${p}')" style="display:flex; justify-content:space-between; font-weight:800; padding:20px;">${p} <i class="ph ph-caret-right"></i></div>`;
             }
         }
 
+        function setupDrivers() {
+            const list = document.getElementById('drivers-list');
+            CONDUCTORES.forEach(d => {
+                list.innerHTML += `<div class="driver-chip" onclick="selectDriver('${d}')">${d}</div>`;
+            });
+        }
+
         function openCrew(p) {
             localStorage.setItem('tmp_p', p);
+            localStorage.setItem('tmp_d', FLOTA[p]); // Sugerencia inicial
             document.getElementById('crew-plate').innerText = p;
-            document.getElementById('inp-driver').value = FLOTA[p];
+            document.getElementById('display-driver').innerText = FLOTA[p];
             go('page-crew');
         }
 
+        function selectDriver(d) {
+            localStorage.setItem('tmp_d', d);
+            document.getElementById('display-driver').innerText = d;
+            document.getElementById('modal-drivers').style.display = 'none';
+        }
+
         function confirmCrew() {
-            localStorage.setItem('tmp_d', document.getElementById('inp-driver').value.toUpperCase());
             localStorage.setItem('tmp_a', document.getElementById('sel-aux').value);
-            document.getElementById('active-plate').innerText = localStorage.getItem('tmp_p');
+            document.getElementById('route-info').innerHTML = `${localStorage.getItem('tmp_p')}<br>${localStorage.getItem('tmp_d')}`;
             currentCarga = []; refreshRouteUI();
             go('page-route');
         }
@@ -213,7 +220,7 @@
                 puntos: currentCarga.length,
                 id: 'R'+Date.now()
             };
-            db.unshift(r); localStorage.setItem('tw_db_v34', JSON.stringify(db));
+            db.unshift(r); localStorage.setItem('tw_db_v35', JSON.stringify(db));
             fetch(API, {method:'POST', mode:'no-cors', body:JSON.stringify(r)});
             document.getElementById('modal-date').style.display = 'none';
             go('page-dashboard'); renderStats(); renderHistory();
@@ -224,7 +231,6 @@
             const mes = hoy.substring(0, 7);
             const dataHoy = db.filter(r => r.fecha === hoy);
             const dataMes = db.filter(r => r.fecha.startsWith(mes));
-            
             document.getElementById('d-cajas').innerText = dataHoy.reduce((a,b)=>a+b.total,0);
             document.getElementById('d-clientes').innerText = dataHoy.reduce((a,b)=>a+(b.puntos||0),0);
             document.getElementById('m-cajas').innerText = dataMes.reduce((a,b)=>a+b.total,0);
@@ -235,29 +241,22 @@
             const q = document.getElementById('smart-search').value.toLowerCase();
             let h = "";
             db.filter(r => JSON.stringify(r).toLowerCase().includes(q)).slice(0,15).forEach(r => {
-                h += `<div class="card" style="padding:12px;">
+                const isPending = r.auxiliar === "POR DEFINIR";
+                h += `<div class="card" style="padding:12px; border-top: ${isPending ? '3px solid var(--danger)' : 'none'}">
                     <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:5px;">
                         <b style="font-size:15px;">${r.placa}</b>
                         <span style="font-weight:800; color:var(--accent); font-size:15px;">${r.total}</span>
                     </div>
-                    <div style="font-size:11px; color:var(--text-dim);">${r.chofer} | ${r.auxiliar}</div>
+                    <div style="font-size:11px; color:var(--text-dim);">${r.chofer} | <span style="${isPending ? 'color:var(--danger); font-weight:800;' : ''}">${r.auxiliar}</span></div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
                         <span style="font-size:10px; font-weight:700;">${r.fecha.split('-').reverse().join('/')}</span>
                         <button onclick="sendWA('${r.id}')" style="border:none; background:#ecfdf5; color:#10b981; padding:6px 12px; border-radius:8px; font-weight:800; font-size:10px;">WHATSAPP</button>
                     </div>
                 </div>`;
             });
-            document.getElementById('history-feed').innerHTML = h;
+            document.getElementById('history-feed').innerHTML = h || "<p style='text-align:center; opacity:0.5;'>Sin registros</p>";
         }
 
-        function login(u) {
-            activeUser = u; localStorage.setItem('tw_logged', u);
-            document.getElementById('page-login').classList.remove('active');
-            document.getElementById('app-nav').style.display = 'flex';
-            go('page-dashboard');
-        }
-
-        function checkPass(u) { if(u==='TAJHO ADMIN' && prompt("Clave:")!=="1994") return; login(u); }
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -267,12 +266,14 @@
             if(id === 'page-dashboard') renderStats();
             window.scrollTo(0,0);
         }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        
         function sendWA(id) {
             const r = db.find(x => x.id === id);
-            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n🤝 *Auxiliar:* ${r.auxiliar}\n📅 *Fecha:* ${r.fecha}\n\n*TOTAL: ${r.total} CAJAS*`;
+            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n🤝 *Auxiliar:* ${r.auxiliar}\n📅 *Salida:* ${r.fecha.split('-').reverse().join('/')}\n\n*TOTAL: ${r.total} CAJAS*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
-        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     </script>
 </body>
 </html>
