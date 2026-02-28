@@ -3,347 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V65.9 Master Fix</title>
+    <title>TWINS ELITE - V66.0 PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
             --bg: #f4f6f8; --surface: #ffffff; --accent: #000000; 
             --text: #111827; --text-dim: #6b7280; --border: #e5e7eb; 
-            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32; --green: #10b981; --red: #ef4444;
+            --green: #10b981; --red: #ef4444;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
+        /* Login Estricto */
         #login-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 25px; }
         .login-card { background: #fff; width: 100%; max-width: 400px; padding: 40px 25px; border-radius: 35px; text-align: center; }
 
-        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: fade 0.2s ease; }
+        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
         .active { display: block; }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Dashboard */
-        .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .master-card { background: #fff; padding: 18px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 120px; }
-        .master-card.black { background: #000; color: #fff; border: none; }
-        .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.6; margin-bottom: 5px; display: block; }
-        .stat-main { font-size: 28px; font-weight: 900; line-height: 1; display: block; }
-        .stat-sub { font-size: 11px; font-weight: 800; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(150,150,150,0.2); display: block; }
+        /* Tarjeta de Historial Compacta */
+        .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .card-date { font-size: 11px; font-weight: 800; color: var(--text-dim); background: #f3f4f6; padding: 4px 8px; border-radius: 6px; }
+        .card-main { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .btn-action { padding: 8px; border-radius: 10px; border: 1px solid #eee; background: #fff; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 5px; text-transform: uppercase; }
 
-        /* Data & Ranking */
-        .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; text-transform: uppercase; color: var(--text-dim); }
-        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-        .rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; background: #eee; color: #aaa; flex-shrink: 0; }
-        .pos-1 { background: var(--gold); color: #000; }
-        .pos-2 { background: var(--silver); color: #000; }
-        .pos-3 { background: var(--bronze); color: #000; }
-        .rank-info { flex: 1; }
-        .rank-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; overflow: hidden; }
-        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.8s ease; }
-        .rank-stats { font-size: 10px; font-weight: 800; color: var(--text-dim); margin-top: 4px; display: flex; gap: 10px; }
-        .rank-stats b { color: #000; }
-
-        /* Search & Route Card */
-        .search-box { position: relative; margin-bottom: 20px; }
-        .search-box input { width: 100%; padding: 16px 20px 16px 50px; background: #fff; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; outline: none; }
-        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-dim); }
+        /* Inputs y Botones */
+        .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 700; outline: none; margin-bottom: 10px; }
+        .btn-primary { width: 100%; padding: 18px; background: #000; color: #fff; border-radius: 18px; font-weight: 800; border: none; cursor: pointer; }
         
-        .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 10px; padding: 12px; background: #f9fafb; border-radius: 12px; }
-        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 12px; }
-        .btn-card { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 10px; font-weight: 800; font-size: 10px; text-transform: uppercase; color: var(--text); }
-
-        /* Loading */
-        .truck-load-header { background: #000; color: #fff; padding: 25px; border-radius: 28px; margin-bottom: 20px; }
-        .truck-progress-bg { height: 8px; background: rgba(255,255,255,0.15); border-radius: 10px; margin-top: 15px; }
-        .truck-progress-fill { height: 100%; background: var(--green); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: flex-end; z-index: 2000; }
-        .modal-content { background: #fff; width: 100%; border-radius: 35px 35px 0 0; padding: 30px 20px; max-height: 85vh; overflow-y: auto; }
-        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: none; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 75px; display: none; border-top: 1px solid var(--border); z-index: 1000; align-items: center; }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
-        .field { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 15px; font-weight: 700; outline: none; margin-bottom: 12px; }
+
+        /* Dashboard Stats */
+        .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .master-card { background: #fff; padding: 15px; border-radius: 20px; border: 1px solid var(--border); }
+        .master-card.black { background: #000; color: #fff; border: none; }
+        .stat-val { font-size: 24px; font-weight: 900; display: block; }
+        .stat-lab { font-size: 9px; font-weight: 700; opacity: 0.6; text-transform: uppercase; }
+
+        .truck-load-header { background: #000; color: #fff; padding: 20px; border-radius: 24px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-card">
-            <h2 style="font-weight:900; margin-bottom:5px;">Twins Elite</h2>
-            <p style="color:var(--text-dim); font-size:12px; margin-bottom:25px;">CONTROL DE ACCESO</p>
-            <select id="user-select" class="field" onchange="checkUserType()">
-                <option value="">Seleccione Usuario</option>
+            <h2 style="font-weight:900;">Twins Elite</h2>
+            <select id="user-select" class="field" onchange="uCheck()">
+                <option value="">Usuario</option>
                 <option value="TAJHO">TAJHO</option>
                 <option value="FRANCHESCO">FRANCHESCO</option>
                 <option value="OSCAR">OSCAR</option>
                 <option value="LUIS HERBER">LUIS HERBER</option>
             </select>
-            <input type="password" id="pass-field" class="field" placeholder="Contraseña Admin" style="display:none;">
-            <button onclick="login()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none; margin-top:10px;">ACCEDER</button>
+            <input type="password" id="pass-field" class="field" placeholder="Clave Admin" style="display:none;">
+            <button onclick="login()" class="btn-primary">ENTRAR</button>
         </div>
     </div>
 
     <div id="page-units" class="page">
-        <h1 style="font-weight:900; margin-bottom:20px;">Despacho</h1>
-        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
+        <h2 style="font-weight:900;">Nueva Ruta</h2>
+        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
     </div>
 
     <div id="page-dash" class="page active">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h1 style="font-weight:900; margin:0;">Twins Elite</h1>
-            <div id="sync-indicator" style="width:8px; height:8px; border-radius:50%; background:var(--green); opacity:0.5;"></div>
-        </div>
+        <h2 style="font-weight:900; margin-bottom:15px;">Historial</h2>
         <div class="core-dash">
             <div class="master-card black">
-                <div><span class="stat-label">Cajas Hoy</span><span id="stat-hoy-cajas" class="stat-main">0</span></div>
-                <span id="stat-hoy-envios" class="stat-sub">0 RUTAS</span>
+                <span class="stat-lab">Hoy</span>
+                <span id="stat-hoy" class="stat-val">0</span>
             </div>
             <div class="master-card">
-                <div><span class="stat-label">Cajas Mes</span><span id="stat-mes-cajas" class="stat-main">0</span></div>
-                <span id="stat-mes-envios" class="stat-sub">0 RUTAS</span>
+                <span class="stat-lab">Mes</span>
+                <span id="stat-mes" class="stat-val">0</span>
             </div>
         </div>
-        <div class="search-box">
-            <i class="ph-bold ph-magnifying-glass"></i>
-            <input type="text" id="smart-search" placeholder="Buscar cliente, chofer o placa..." onkeyup="renderHistory()">
+        <div style="position:relative; margin-bottom:15px;">
+            <input type="text" id="search" class="field" placeholder="Buscar..." onkeyup="renderHist()" style="padding-left:45px;">
+            <i class="ph-bold ph-magnifying-glass" style="position:absolute; left:15px; top:18px; color:#999;"></i>
         </div>
-        <div id="hist-cont"></div>
-    </div>
-
-    <div id="page-data" class="page">
-        <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
-        <input type="month" id="f-month" class="field" onchange="renderData()">
-        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Conductores</div><div id="rank-choferes-list"></div></div>
-        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares</div><div id="rank-auxiliares-list"></div></div>
+        <div id="hist-list"></div>
     </div>
 
     <div id="page-load" class="page">
         <div class="truck-load-header">
-            <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:10px; font-weight:800; opacity:0.7;">CARGANDO</span><b id="load-perc-txt" style="font-size:12px; color:var(--green);">0%</b></div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:5px;"><h2 id="load-placa-txt" style="margin:0; font-size:32px; font-weight:900;">---</h2><div><span style="font-size:24px; font-weight:900;" id="load-total">0</span> <small style="opacity:0.6; font-size:10px;">/ 150</small></div></div>
-            <div class="truck-progress-bg"><div id="load-bar" class="truck-progress-fill"></div></div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="load-date-view" style="font-size:10px; font-weight:800; opacity:0.7;">---</span>
+                <b id="load-placa-view" style="font-size:18px;">---</b>
+            </div>
+            <div style="text-align:center; margin:10px 0;">
+                <span id="load-total" style="font-size:42px; font-weight:900;">0</span>
+                <div style="height:6px; background:rgba(255,255,255,0.1); border-radius:10px; margin-top:5px;">
+                    <div id="load-bar" style="height:100%; background:var(--green); width:0%; border-radius:10px; transition:0.3s;"></div>
+                </div>
+            </div>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0">
-            <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1; margin:0">
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2;">
+            <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1;">
         </div>
-        <button onclick="addItem()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">AGREGAR</button>
-        <div id="load-list" style="margin-top:20px;"></div>
-        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:22px; background:var(--green); color:#fff; border-radius:22px; font-weight:900; border:none; margin-top:20px;">GUARDAR RUTA</button>
+        <button onclick="addItem()" class="btn-primary" style="background:var(--green); margin-bottom:15px;">AÑADIR</button>
+        <div id="load-items"></div>
+        <button id="btn-save" onclick="saveRoute()" class="btn-primary" style="display:none; margin-top:20px;">FINALIZAR RUTA</button>
     </div>
 
     <div id="page-config" class="page">
-        <div style="background:#000; color:#fff; padding:30px; border-radius:30px; margin-bottom:25px; text-align:center;"><h2 id="conf-placa" style="margin:0; font-size:36px;">---</h2></div>
-        <input type="date" id="c-fecha" class="field">
-        <select id="c-chofer" class="field"></select>
-        <select id="c-aux" class="field"></select>
-        <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">INICIAR CARGA</button>
-    </div>
-
-    <div id="modal-list" class="modal">
-        <div class="modal-content"><div id="m-items"></div><button onclick="closeM()" style="width:100%; margin-top:20px; padding:20px; border-radius:20px; background:#eee; border:none; font-weight:800;">CERRAR</button></div>
-    </div>
-
-    <div id="modal-crew" class="modal">
-        <div class="modal-content">
-            <h3 style="font-weight:900; margin-bottom:20px;">Editar Equipo</h3>
-            <select id="qe-chofer" class="field"></select>
-            <select id="qe-aux" class="field"></select>
-            <button onclick="saveQuickCrew()" style="width:100%; margin-top:10px; padding:20px; border-radius:20px; background:#000; color:#fff; border:none; font-weight:800;">ACTUALIZAR</button>
-            <button onclick="closeCrew()" style="width:100%; margin-top:10px; padding:15px; border-radius:20px; background:#eee; border:none; font-weight:800;">CANCELAR</button>
+        <div style="background:#fff; padding:25px; border-radius:24px; border:1px solid #eee; text-align:center;">
+            <h1 id="conf-placa" style="font-size:40px; margin:0 0 20px 0;">---</h1>
+            <input type="date" id="c-fecha" class="field">
+            <select id="c-chofer" class="field"></select>
+            <select id="c-aux" class="field"></select>
+            <button onclick="startLoad()" class="btn-primary">INICIAR CARGA</button>
         </div>
     </div>
 
+    <div id="page-data" class="page">
+        <h2 style="font-weight:900;">Ranking</h2>
+        <input type="month" id="data-month" class="field" onchange="renderData()">
+        <div id="rank-content"></div>
+    </div>
+
     <nav class="nav-bottom" id="main-nav">
-        <button class="nav-btn" id="n-units" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
-        <button class="nav-btn active" id="n-dash" onclick="go('page-dash')"><i class="ph-bold ph-clock-counter-clockwise"></i>HISTORIAL</button>
-        <button class="nav-btn" id="n-data" onclick="go('page-data')"><i class="ph-bold ph-chart-bar"></i>DATA</button>
+        <button class="nav-btn" onclick="go('page-units')" id="n-units"><i class="ph-bold ph-plus-circle" style="font-size:24px;"></i>NUEVA</button>
+        <button class="nav-btn active" onclick="go('page-dash')" id="n-dash"><i class="ph-bold ph-clock-counter-clockwise" style="font-size:24px;"></i>HISTORIAL</button>
+        <button class="nav-btn" onclick="go('page-data')" id="n-data"><i class="ph-bold ph-chart-line-up" style="font-size:24px;"></i>DATA</button>
     </nav>
 
     <script>
-        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzkIqN5__aLRTfyeJSWAAB-pUmt54kGsv4Ex2KWz_dgAvrCT_Gty05uZelf6gbcL4p7/exec";
-        let db = JSON.parse(localStorage.getItem('twins_v63_db')) || [];
-        let cur = { items: [] };
-        let userAuth = JSON.parse(localStorage.getItem('twins_auth')) || null;
-        let isSyncing = false;
-        let quickEditId = null;
+        const CLOUD = "https://script.google.com/macros/s/AKfycbzkIqN5__aLRTfyeJSWAAB-pUmt54kGsv4Ex2KWz_dgAvrCT_Gty05uZelf6gbcL4p7/exec";
+        let db = JSON.parse(localStorage.getItem('twins_db')) || [];
+        let cur = JSON.parse(localStorage.getItem('twins_draft')) || null;
+        let auth = JSON.parse(localStorage.getItem('twins_auth')) || null;
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
-        const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
+        const CHOFERES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["POR ASIGNAR", "CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
 
         window.onload = () => {
-            const ug = document.getElementById('units-grid');
-            for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:25px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="initConf('${p}')"><i class="ph-bold ph-truck" style="font-size:28px;"></i><br><b>${p}</b></div>`;
-            const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
-            const qec = document.getElementById('qe-chofer'), qea = document.getElementById('qe-aux');
-            CONDUCTORES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; qec.innerHTML += `<option value="${c}">${c}</option>`; });
-            AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
-            document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
-            if(userAuth) applyAuth();
-            renderStats(); 
-            renderHistory();
-            setInterval(() => { if(userAuth) pullCloudData(true); }, 15000);
+            initInputs();
+            if(auth) {
+                showApp();
+                if(cur) { 
+                    go('page-load'); 
+                    refreshLoadUI();
+                }
+            }
+            setInterval(sync, 20000);
         };
 
-        function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
-        function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
-        function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('n-data').style.display = userAuth.admin ? 'flex' : 'none'; pullCloudData(); }
+        function initInputs() {
+            const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
+            CHOFERES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
+            AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
+            const ug = document.getElementById('units-grid');
+            for(let p in FLOTA) ug.innerHTML += `<div onclick="setupRoute('${p}')" style="background:#fff; padding:20px; border-radius:20px; border:1px solid #eee; text-align:center; font-weight:800;">${p}</div>`;
+            document.getElementById('data-month').value = new Date().toISOString().substring(0,7);
+        }
 
-        async function pullCloudData(silent = false) {
-            if(isSyncing) return; isSyncing = true;
-            try {
-                const res = await fetch(CLOUD_URL);
-                const cloud = await res.json();
-                if(cloud && JSON.stringify(cloud) !== JSON.stringify(db)) {
-                    db = cloud; localStorage.setItem('twins_v63_db', JSON.stringify(db));
-                    renderStats(); renderHistory();
-                }
-            } catch(e){} finally { isSyncing = false; }
+        function uCheck() { document.getElementById('pass-field').style.display = (document.getElementById('user-select').value === 'TAJHO') ? 'block' : 'none'; }
+        function login() {
+            const u = document.getElementById('user-select').value;
+            const p = document.getElementById('pass-field').value;
+            if(!u) return;
+            if(u === 'TAJHO' && p !== '1994') return alert("Error");
+            auth = { name: u, admin: u === 'TAJHO' };
+            localStorage.setItem('twins_auth', JSON.stringify(auth));
+            showApp();
+        }
+
+        function showApp() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-nav').style.display = 'flex';
+            document.getElementById('n-data').style.display = auth.admin ? 'flex' : 'none';
+            sync();
         }
 
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            const btnId = 'n-' + id.split('-')[1];
-            if(document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('n-' + id.split('-')[1]);
+            if(btn) btn.classList.add('active');
+            if(id === 'page-dash') renderHist();
             if(id === 'page-data') renderData();
-            if(id === 'page-dash') renderHistory();
         }
 
-        function initConf(p) { 
+        function setupRoute(p) {
             const hoy = new Date().toISOString().split('T')[0];
-            cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: hoy, chofer: FLOTA[p], auxiliar: "POR ASIGNAR" }; 
-            document.getElementById('conf-placa').innerText = p; 
-            document.getElementById('c-fecha').value = hoy; 
-            go('page-config'); 
+            document.getElementById('conf-placa').innerText = p;
+            document.getElementById('c-fecha').value = hoy;
+            document.getElementById('c-chofer').value = FLOTA[p] || "TAJHO";
+            go('page-config');
         }
 
-        function goLoad() { 
-            cur.fecha = document.getElementById('c-fecha').value; // FECHA SELECCIONADA
-            cur.chofer = document.getElementById('c-chofer').value; 
-            cur.auxiliar = document.getElementById('c-aux').value; 
-            document.getElementById('load-placa-txt').innerText = cur.placa; 
-            refreshLoad(); go('page-load'); 
+        function startLoad() {
+            cur = {
+                id: 'ID-' + Date.now(),
+                placa: document.getElementById('conf-placa').innerText,
+                fecha: document.getElementById('c-fecha').value,
+                chofer: document.getElementById('c-chofer').value,
+                aux: document.getElementById('c-aux').value,
+                items: []
+            };
+            localStorage.setItem('twins_draft', JSON.stringify(cur));
+            refreshLoadUI();
+            go('page-load');
         }
 
-        function addItem() { 
-            const cli = document.getElementById('i-cli').value.toUpperCase().trim(); 
-            const can = parseInt(document.getElementById('i-can').value); 
-            if(cli && can) { cur.items.push({cli, can}); refreshLoad(); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; } 
+        function addItem() {
+            const cli = document.getElementById('i-cli').value.toUpperCase();
+            const can = parseInt(document.getElementById('i-can').value);
+            if(!cli || !can) return;
+            cur.items.push({cli, can});
+            localStorage.setItem('twins_draft', JSON.stringify(cur));
+            document.getElementById('i-cli').value = "";
+            document.getElementById('i-can').value = "";
+            refreshLoadUI();
         }
-        
-        function refreshLoad() { 
-            const total = cur.items.reduce((a,b)=>a+b.can, 0); 
-            const perc = Math.min((total/150)*100, 100).toFixed(0);
+
+        function refreshLoadUI() {
+            document.getElementById('load-placa-view').innerText = cur.placa;
+            document.getElementById('load-date-view').innerText = "Ruta: " + cur.fecha;
+            const total = cur.items.reduce((s, i) => s + i.can, 0);
             document.getElementById('load-total').innerText = total;
-            document.getElementById('load-perc-txt').innerText = perc+"%";
-            document.getElementById('load-bar').style.width = perc+"%";
-            document.getElementById('btn-save').style.display = total>0 ? 'block' : 'none';
-            document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
-                <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
-                    <span><i class="ph-bold ph-trash" style="color:var(--red); margin-right:12px;" onclick="cur.items.splice(${i},1); refreshLoad();"></i>${it.cli}</span>
-                    <b>${it.can}</b>
-                </div>`).reverse().join(''); 
+            document.getElementById('load-bar').style.width = Math.min((total/150)*100, 100) + "%";
+            document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
+            document.getElementById('load-items').innerHTML = cur.items.map((it, i) => `
+                <div style="background:#fff; padding:12px; border-radius:12px; margin-bottom:6px; display:flex; justify-content:space-between; border:1px solid #eee;">
+                    <span><b>${it.cli}</b></span>
+                    <span>${it.can} cjs <i class="ph-bold ph-x-circle" style="color:red; margin-left:10px;" onclick="removeItem(${i})"></i></span>
+                </div>
+            `).reverse().join('');
         }
 
-        function save() { 
-            const idx = db.findIndex(r => r.id === cur.id); 
-            if(idx > -1) db[idx] = JSON.parse(JSON.stringify(cur)); else db.unshift(JSON.parse(JSON.stringify(cur)));
-            localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
-            renderStats(); renderHistory();
-            cur = { items: [] }; go('page-dash'); 
+        function removeItem(i) { cur.items.splice(i, 1); localStorage.setItem('twins_draft', JSON.stringify(cur)); refreshLoadUI(); }
+
+        function saveRoute() {
+            const existing = db.findIndex(r => r.id === cur.id);
+            if(existing > -1) db[existing] = cur;
+            else db.unshift(cur);
+            
+            localStorage.setItem('twins_db', JSON.stringify(db));
+            fetch(CLOUD, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
+            cur = null;
+            localStorage.removeItem('twins_draft');
+            go('page-dash');
         }
 
-        function renderHistory() {
-            const q = document.getElementById('smart-search').value.toLowerCase();
-            let filt = db.filter(r => r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.includes(q));
-            document.getElementById('hist-cont').innerHTML = filt.map(r => `
+        function renderHist() {
+            const q = document.getElementById('search').value.toLowerCase();
+            const hoyStr = new Date().toISOString().split('T')[0];
+            
+            // Stats Exactas
+            const rHoy = db.filter(r => r.fecha === hoyStr);
+            const rMes = db.filter(r => r.fecha.startsWith(hoyStr.substring(0,7)));
+            document.getElementById('stat-hoy').innerText = rHoy.reduce((s,r) => s + r.items.reduce((a,b)=>a+b.can,0), 0);
+            document.getElementById('stat-mes').innerText = rMes.reduce((s,r) => s + r.items.reduce((a,b)=>a+b.can,0), 0);
+
+            let filt = db.filter(r => r.placa.toLowerCase().includes(q) || r.chofer.toLowerCase().includes(q) || r.fecha.includes(q));
+            
+            document.getElementById('hist-list').innerHTML = filt.map(r => `
                 <div class="route-card">
-                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
-                        <span>📅 ${r.fecha}</span>
-                        <span>${r.placa}</span>
+                    <div class="card-header">
+                        <span class="card-date">📅 ${r.fecha}</span>
+                        <b style="font-size:14px;">${r.placa}</b>
                     </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                        <b style="font-size:24px;">${r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0} CJS</b>
-                        <b>${r.items ? r.items.length : 0} CLI.</b>
+                    <div class="card-main">
+                        <div>
+                            <span style="display:block; font-size:13px; font-weight:800;">${r.chofer}</span>
+                            <span style="font-size:10px; color:var(--text-dim);">Aux: ${r.aux}</span>
+                        </div>
+                        <div style="text-align:right;">
+                            <b style="font-size:20px;">${r.items.reduce((s,i)=>s+i.can,0)}</b> <small>cjs</small>
+                        </div>
                     </div>
-                    <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                     <div class="card-actions">
-                        <button onclick="viewL('${r.id}')" class="btn-card">Lista</button>
-                        <button onclick="openCrew('${r.id}')" class="btn-card">Equipo</button>
-                        <button onclick="editR('${r.id}')" class="btn-card">Editar</button>
-                        <button onclick="shareW('${r.id}')" class="btn-card" style="border-color:var(--green); color:var(--green);">Reporte</button>
+                        <button class="btn-action" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil"></i> Editar</button>
+                        <button class="btn-action" onclick="shareW('${r.id}')" style="color:#10b981; border-color:#10b981;"><i class="ph-bold ph-whatsapp-logo"></i> Reporte</button>
                     </div>
-                </div>`).join('');
+                </div>
+            `).join('');
         }
 
-        function openCrew(id) { quickEditId = id; const r = db.find(x => x.id === id); document.getElementById('qe-chofer').value = r.chofer; document.getElementById('qe-aux').value = r.auxiliar; document.getElementById('modal-crew').style.display = 'flex'; }
-        function saveQuickCrew() { 
-            const idx = db.findIndex(x => x.id === quickEditId); 
-            if(idx > -1) { 
-                db[idx].chofer = document.getElementById('qe-chofer').value; 
-                db[idx].auxiliar = document.getElementById('qe-aux').value; 
-                localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-                fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
-                renderHistory(); closeCrew(); 
-            } 
-        }
-        function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
-        function viewL(id) { const r = db.find(x => x.id === id); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
-        function closeM() { document.getElementById('modal-list').style.display = 'none'; }
-        function editR(id) { const r = db.find(x => x.id === id); if(r) { cur = JSON.parse(JSON.stringify(r)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); } }
-        function shareW(id) { 
-            const r = db.find(x => x.id === id); 
-            const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0; 
-            let msg = `*TWINS ELITE*%0A%0A📅 *FECHA:* ${r.fecha}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`; 
-            r.items.forEach(i => { msg += `• ${i.cli}: ${i.can}%0A`; }); 
-            msg += `%0A📦 *TOTAL:* ${totalCajas} Cjs`; 
-            window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
+        function editRoute(id) {
+            const r = db.find(x => x.id === id);
+            if(!r) return;
+            cur = JSON.parse(JSON.stringify(r));
+            localStorage.setItem('twins_draft', JSON.stringify(cur));
+            refreshLoadUI();
+            go('page-load');
         }
 
-        function renderStats() {
-            const hoy = new Date().toISOString().split('T')[0];
-            const rHoy = db.filter(r => r.fecha === hoy);
-            const rMes = db.filter(r => r.fecha.startsWith(hoy.substring(0,7)));
-            const sum = (a) => a.reduce((x,y) => x + (y.items ? y.items.reduce((z,w)=>z+w.can,0) : 0), 0);
-            document.getElementById('stat-hoy-cajas').innerText = sum(rHoy);
-            document.getElementById('stat-hoy-envios').innerText = rHoy.length + " RUTAS";
-            document.getElementById('stat-mes-cajas').innerText = sum(rMes);
-            document.getElementById('stat-mes-envios').innerText = rMes.length + " RUTAS";
+        function shareW(id) {
+            const r = db.find(x => x.id === id);
+            let m = `*TWINS ELITE*%0A📅 *FECHA:* ${r.fecha}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.aux}%0A%0A*CARGA:*%0A`;
+            r.items.forEach(i => m += `• ${i.cli}: ${i.can}%0A`);
+            m += `%0A📦 *TOTAL:* ${r.items.reduce((s,i)=>s+i.can,0)} cjs`;
+            window.location.href = "https://api.whatsapp.com/send?text=" + m;
+        }
+
+        async function sync() {
+            try {
+                const res = await fetch(CLOUD);
+                const cloudData = await res.json();
+                if(JSON.stringify(cloudData) !== JSON.stringify(db)) {
+                    db = cloudData;
+                    localStorage.setItem('twins_db', JSON.stringify(db));
+                    renderHist();
+                }
+            } catch(e){}
         }
 
         function renderData() {
-            const m = document.getElementById('f-month').value;
-            let filt = db.filter(r => r.fecha.startsWith(m));
-            let cS = {}, aS = {};
-            filt.forEach(r => { 
-                let cjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
-                // Registro de conductores (incluyendo a TAJHO)
-                cS[r.chofer] = cS[r.chofer] || {cjs:0, r:0}; cS[r.chofer].cjs += cjs; cS[r.chofer].r++;
-                // Registro de auxiliares
-                aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0}; aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
+            const month = document.getElementById('data-month').value;
+            const filt = db.filter(r => r.fecha.startsWith(month));
+            let rank = {};
+            filt.forEach(r => {
+                rank[r.chofer] = (rank[r.chofer] || 0) + r.items.reduce((s,i)=>s+i.can,0);
             });
-            const draw = (data, targetId, label) => {
-                let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
-                let max = sorted[0] ? sorted[0][1].cjs : 1;
-                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `
-                    <div class="rank-item">
-                        <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
-                        <div class="rank-info">
-                            <div class="rank-name"><span>${n}</span><span>${v.cjs} CJS</span></div>
-                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
-                            <div class="rank-stats"><span>📦 <b>${v.cjs}</b> Cajas</span><span>🚚 <b>${v.r}</b> Rutas</span></div>
-                        </div>
-                    </div>`).join('');
-            };
-            draw(cS, 'rank-choferes-list', 'Rutas'); 
-            draw(aS, 'rank-auxiliares-list', 'Rutas');
+            let sorted = Object.entries(rank).sort((a,b)=>b[1]-a[1]);
+            document.getElementById('rank-content').innerHTML = sorted.map(([name, val], i) => `
+                <div style="background:#fff; padding:15px; border-radius:15px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee;">
+                    <span><b>${i+1}. ${name}</b></span>
+                    <b style="color:var(--green);">${val} CJS</b>
+                </div>
+            `).join('');
         }
     </script>
 </body>
