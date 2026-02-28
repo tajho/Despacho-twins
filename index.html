@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V40 SMART</title>
+    <title>TWINS ELITE - V41 RECOVERY</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -20,87 +20,92 @@
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 22px; margin-bottom: 2px; }
 
-        .page { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
+        .page { display: none; padding: 15px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .active { display: block; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-card { padding: 12px; border-radius: 18px; position: relative; overflow: hidden; }
+        .stat-card.blue { background: var(--accent); color: #fff; }
+        .stat-card.white { background: #fff; border: 1px solid var(--border); color: var(--text); }
+        .stat-label { font-size: 9px; font-weight: 800; text-transform: uppercase; opacity: 0.8; margin-bottom: 8px; display: block; }
+        .stat-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+        .stat-val { font-size: 18px; font-weight: 800; }
 
         .card { background: #fff; border-radius: 18px; padding: 15px; border: 1px solid var(--border); margin-bottom: 10px; }
         .card-actions { display: flex; gap: 10px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
-        .btn-action { flex: 1; border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; }
+        .btn-action { flex: 1; border: none; border-radius: 12px; padding: 12px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; }
         
         .input-box { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 16px; font-weight: 600; margin-bottom: 10px; outline: none; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(4px); }
         .modal-content { background: #fff; border-radius: 25px; padding: 20px; width: 100%; max-height: 90vh; overflow-y: auto; }
         
-        .chip-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .chip { background: var(--bg); border: 1px solid var(--border); padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; color: var(--text-dim); }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+        .chip { background: var(--bg); border: 1px solid var(--border); padding: 8px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; color: var(--text-dim); }
         .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
     </style>
 </head>
 <body>
 
     <div id="page-dashboard" class="page active">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-            <div style="background:var(--accent); color:#fff; padding:15px; border-radius:20px;">
-                <span style="font-size:9px; font-weight:800; opacity:0.8;">ESTE MES</span>
-                <div style="font-size:22px; font-weight:900;" id="m-cajas">0</div>
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <span class="stat-label">Acumulado Mes</span>
+                <div class="stat-row"><span class="stat-val" id="m-cajas">0</span><i class="ph-bold ph-package"></i></div>
+                <div class="stat-row"><span style="font-size:13px; font-weight:700;" id="m-envios">0</span><i class="ph-bold ph-users" style="font-size:12px;"></i></div>
             </div>
-            <div style="background:#fff; border:1px solid var(--border); padding:15px; border-radius:20px;">
-                <span style="font-size:9px; font-weight:800; color:var(--accent);">HOY</span>
-                <div style="font-size:22px; font-weight:900;" id="d-cajas">0</div>
+            <div class="stat-card white">
+                <span class="stat-label" style="color:var(--accent)">Hoy</span>
+                <div class="stat-row"><span class="stat-val" id="d-cajas">0</span><i class="ph-bold ph-package" style="color:var(--accent)"></i></div>
+                <div class="stat-row"><span style="font-size:13px; font-weight:700;" id="d-envios">0</span><i class="ph-bold ph-users" style="color:var(--accent); font-size:12px;"></i></div>
             </div>
         </div>
-        <input type="text" id="smart-search" placeholder="Filtrar por placa o chofer..." class="input-box" oninput="renderHistory()">
+        <input type="text" id="smart-search" placeholder="Buscar placa, cliente o chofer..." class="input-box" oninput="renderHistory()">
         <div id="history-feed"></div>
     </div>
 
     <div id="page-route" class="page">
-        <div class="card" style="background:var(--text); color:#fff;">
+        <div class="card" style="background:var(--text); color:#fff; border:none;">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                    <h2 id="route-placa" style="margin:0;">---</h2>
-                    <span id="route-meta" style="font-size:11px; opacity:0.7;">---</span>
-                </div>
-                <div style="font-size:28px; font-weight:900;" id="count-cajas">0</div>
+                <div><h2 id="route-placa" style="margin:0; letter-spacing:1px;">---</h2><span id="route-meta" style="font-size:11px; opacity:0.7;">---</span></div>
+                <div style="text-align:right;"><div style="font-size:28px; font-weight:900;" id="count-cajas">0</div><div style="font-size:10px; font-weight:700; opacity:0.7;">CAJAS TOTAL</div></div>
             </div>
         </div>
 
-        <div id="edit-header" class="card" style="display:none; margin-top:10px;">
-            <label style="font-size:10px; font-weight:800;">CAMBIAR CHOFER:</label>
+        <div id="edit-header" class="card" style="display:none; margin-top:10px; border-top: 4px solid var(--accent);">
+            <label style="font-size:10px; font-weight:800; color:var(--text-dim);">EDITAR CHOFER:</label>
             <input type="text" id="edit-chofer-val" class="input-box">
-            <label style="font-size:10px; font-weight:800;">CAMBIAR AUXILIAR:</label>
+            <label style="font-size:10px; font-weight:800; color:var(--text-dim);">EDITAR AUXILIAR:</label>
             <input type="text" id="edit-aux-val" class="input-box">
         </div>
 
         <div class="card" style="margin-top:10px;">
             <input type="text" id="inp-cli" placeholder="Nombre del Cliente" class="input-box">
             <div style="display:flex; gap:8px;">
-                <input type="number" id="inp-can" placeholder="Cant." class="input-box" style="flex:1;">
-                <button onclick="addPoint()" style="background:var(--accent); color:#fff; border:none; border-radius:14px; width:60px; font-size:24px;">+</button>
+                <input type="number" id="inp-can" placeholder="Cajas" class="input-box" style="flex:1;">
+                <button onclick="addPoint()" style="background:var(--accent); color:#fff; border:none; border-radius:14px; width:65px; font-size:28px;">+</button>
             </div>
-            <div id="live-list" style="margin-top:15px;"></div>
+            <div id="live-list" style="margin-top:15px; max-height: 300px; overflow-y: auto;"></div>
         </div>
         
-        <button id="btn-save" onclick="openModal('modal-date')" style="display:none; background:var(--success); color:#fff; width:100%; padding:20px; border-radius:18px; border:none; font-weight:800; font-size:16px;">FINALIZAR Y GUARDAR</button>
+        <button id="btn-save" onclick="openModal('modal-date')" style="display:none; background:var(--success); color:#fff; width:100%; padding:20px; border-radius:18px; border:none; font-weight:800; font-size:16px; margin-top:10px;">GUARDAR RUTA</button>
     </div>
 
     <div id="modal-wa" class="modal">
         <div class="modal-content">
-            <h3 style="margin:0 0 15px 0;"><i class="ph-fill ph-whatsapp-logo" style="color:#10b981"></i> Reporte WhatsApp</h3>
-            
-            <label style="font-size:10px; font-weight:800;">CHOFER:</label>
+            <h3 style="margin:0 0 15px 0; display:flex; align-items:center; gap:8px;"><i class="ph-fill ph-whatsapp-logo" style="color:#10b981; font-size:28px;"></i> Confirmar Reporte</h3>
+            <label style="font-size:10px; font-weight:800; color:var(--text-dim);">CHOFER:</label>
             <input type="text" id="wa-chofer" class="input-box">
-            
-            <label style="font-size:10px; font-weight:800;">AUXILIAR (Sugerencias):</label>
+            <label style="font-size:10px; font-weight:800; color:var(--text-dim);">AUXILIAR (Selecciona o escribe):</label>
             <div class="chip-container" id="aux-suggestions"></div>
-            <input type="text" id="wa-aux" class="input-box" placeholder="O escribe otro nombre...">
-            
-            <button onclick="sendWA()" class="input-box" style="background:#10b981; color:#fff; border:none; margin-top:10px;">ENVIAR AHORA</button>
-            <button onclick="closeModals()" style="width:100%; background:none; border:none; color:var(--text-dim); font-weight:700;">REGRESAR</button>
+            <input type="text" id="wa-aux" class="input-box" placeholder="Nombre del auxiliar...">
+            <button onclick="sendWA()" class="input-box" style="background:#10b981; color:#fff; border:none; margin-top:10px;">CONFIRMAR Y ENVIAR</button>
+            <button onclick="closeModals()" style="width:100%; background:none; border:none; color:var(--text-dim); font-weight:700; padding:10px;">CANCELAR</button>
         </div>
     </div>
 
-    <div id="modal-date" class="modal"><div class="modal-content" style="text-align:center;"><h4>¿Fecha de Salida?</h4><button onclick="saveFinal('hoy')" class="input-box" style="background:var(--success); color:#fff; border:none;">HOY</button><button onclick="saveFinal('mañana')" class="input-box" style="background:var(--accent); color:#fff; border:none;">MAÑANA</button></div></div>
-    <div id="page-select-plate" class="page"><h3 style="font-weight:800;">Nueva Unidad</h3><div id="plate-grid"></div></div>
+    <div id="modal-date" class="modal"><div class="modal-content" style="text-align:center;"><h4>Programar Salida</h4><button onclick="saveFinal('hoy')" class="input-box" style="background:var(--success); color:#fff; border:none;">HOY</button><button onclick="saveFinal('mañana')" class="input-box" style="background:var(--accent); color:#fff; border:none;">PARA MAÑANA</button></div></div>
+    <div id="page-select-plate" class="page"><h3 style="font-weight:800;">Seleccionar Placa</h3><div id="plate-grid"></div></div>
 
     <nav class="nav-bar">
         <button class="nav-item active" id="n-dashboard" onclick="go('page-dashboard')"><i class="ph-fill ph-chart-pie"></i>CONTROL</button>
@@ -108,9 +113,8 @@
     </nav>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('tw_db_v40') || '[]');
+        let db = JSON.parse(localStorage.getItem('tw_db_v41') || '[]');
         let current = { items: [] }, activeId = null, isEdit = false;
-        
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON", "JULIO", "DANIEL C."];
 
@@ -118,14 +122,12 @@
 
         function setupPlates() {
             const g = document.getElementById('plate-grid');
-            for(let p in FLOTA) g.innerHTML += `<div class="card" onclick="startNew('${p}')" style="font-weight:800; padding:20px; text-align:center; font-size:18px;">${p}</div>`;
+            for(let p in FLOTA) g.innerHTML += `<div class="card" onclick="startNew('${p}')" style="font-weight:800; padding:22px; text-align:center; font-size:18px; border-left:5px solid var(--accent);">${p}</div>`;
         }
 
         function setupSuggestions() {
             const container = document.getElementById('aux-suggestions');
-            AUXILIARES.forEach(name => {
-                container.innerHTML += `<div class="chip" onclick="selectChip('${name}')">${name}</div>`;
-            });
+            AUXILIARES.forEach(name => { container.innerHTML += `<div class="chip" onclick="selectChip('${name}')">${name}</div>`; });
         }
 
         function selectChip(name) {
@@ -165,9 +167,9 @@
             let t = 0, h = "";
             current.items.forEach((it, i) => {
                 t += it.can;
-                h += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee; font-size:13px;">
-                    <span><b>${it.can}</b> ${it.cli}</span>
-                    <i class="ph ph-trash" style="color:var(--danger)" onclick="current.items.splice(${i},1);refreshUI()"></i>
+                h += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                    <span><b style="color:var(--accent)">${it.can}</b> ${it.cli}</span>
+                    <i class="ph-bold ph-trash" style="color:var(--danger)" onclick="current.items.splice(${i},1);refreshUI()"></i>
                 </div>`;
             });
             document.getElementById('count-cajas').innerText = t;
@@ -186,27 +188,28 @@
                 current.id = 'ID' + Date.now();
                 db.unshift(current);
             }
-            localStorage.setItem('tw_db_v40', JSON.stringify(db));
+            localStorage.setItem('tw_db_v41', JSON.stringify(db));
             closeModals(); go('page-dashboard'); renderHistory(); renderStats();
         }
 
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
             let h = "";
-            db.filter(r => JSON.stringify(r).toLowerCase().includes(q)).slice(0,20).forEach(r => {
-                const total = r.items.reduce((a,b)=>a+b.can,0);
-                h += `<div class="card">
+            db.filter(r => JSON.stringify(r).toLowerCase().includes(q)).slice(0,25).forEach(r => {
+                const totalCajas = r.items.reduce((a,b)=>a+b.can,0);
+                const totalEnvios = r.items.length;
+                h += `<div class="card" style="border-left: 5px solid ${r.auxiliar === 'POR DEFINIR' ? 'var(--danger)' : 'var(--success)'}">
                     <div style="display:flex; justify-content:space-between; align-items:start;">
                         <div><b style="font-size:16px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim);">${r.chofer} | ${r.auxiliar}</div></div>
-                        <b style="color:var(--accent); font-size:16px;">${total} CJS</b>
+                        <div style="text-align:right;"><b style="color:var(--accent); font-size:16px;">${totalCajas} CJS</b><div style="font-size:10px; font-weight:800;">${totalEnvios} ENVÍOS</div></div>
                     </div>
                     <div class="card-actions">
-                        <button class="btn-action" style="background:#f1f5f9; color:var(--text);" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil-simple"></i> Editar</button>
-                        <button class="btn-action" style="background:#ecfdf5; color:#10b981;" onclick="prepWA('${r.id}')"><i class="ph-fill ph-whatsapp-logo"></i> WhatsApp</button>
+                        <button class="btn-action" style="background:var(--bg); color:var(--text);" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil-simple"></i> EDITAR</button>
+                        <button class="btn-action" style="background:#ecfdf5; color:#10b981;" onclick="prepWA('${r.id}')"><i class="ph-fill ph-whatsapp-logo"></i> WHATSAPP</button>
                     </div>
                 </div>`;
             });
-            document.getElementById('history-feed').innerHTML = h || "<p style='text-align:center; opacity:0.4;'>No hay registros</p>";
+            document.getElementById('history-feed').innerHTML = h || "<p style='text-align:center; opacity:0.4; margin-top:20px;'>No hay registros guardados</p>";
         }
 
         function prepWA(id) {
@@ -222,20 +225,24 @@
             const chofer = document.getElementById('wa-chofer').value;
             const aux = document.getElementById('wa-aux').value || "POR DEFINIR";
             r.chofer = chofer; r.auxiliar = aux;
-            localStorage.setItem('tw_db_v40', JSON.stringify(db));
+            localStorage.setItem('tw_db_v41', JSON.stringify(db));
 
-            const items = r.items.map(i => `${i.cli}: ${i.can}`).join(", ");
-            const total = r.items.reduce((a,b)=>a+b.can,0);
-            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${chofer}\n🤝 *Auxiliar:* ${aux}\n📅 *Fecha:* ${r.fecha}\n\n*TOTAL: ${total} CAJAS*`;
+            const totalCajas = r.items.reduce((a,b)=>a+b.can,0);
+            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${chofer}\n🤝 *Auxiliar:* ${aux}\n📅 *Fecha:* ${r.fecha.split('-').reverse().join('/')}\n📍 *Puntos:* ${r.items.length}\n\n*TOTAL: ${totalCajas} CAJAS*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
             closeModals(); renderHistory();
         }
 
         function renderStats() {
-            const h = new Date().toISOString().split('T')[0];
+            const h = new Date().toISOString().split('T')[0], m = h.substring(0,7);
             const dH = db.filter(r => r.fecha === h);
+            const dM = db.filter(r => r.fecha.startsWith(m));
+            
             document.getElementById('d-cajas').innerText = dH.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
-            document.getElementById('m-cajas').innerText = db.filter(r => r.fecha.startsWith(h.substring(0,7))).reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
+            document.getElementById('d-envios').innerText = dH.reduce((a,b)=>a+b.items.length, 0) + " ENVÍOS";
+            
+            document.getElementById('m-cajas').innerText = dM.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
+            document.getElementById('m-envios').innerText = dM.reduce((a,b)=>a+b.items.length, 0) + " ENVÍOS";
         }
 
         function go(id) {
@@ -243,6 +250,7 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id === 'page-dashboard' ? 'n-dashboard' : 'n-route').classList.add('active');
+            if(id === 'page-dashboard') { renderStats(); renderHistory(); }
         }
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
