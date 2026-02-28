@@ -15,7 +15,7 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* --- BLOQUEO DE SEGURIDAD --- */
+        /* --- BLOQUEO DE SEGURIDAD (UNICA ADICION) --- */
         #login-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 25px; }
         .login-card { background: #fff; width: 100%; max-width: 400px; padding: 40px 25px; border-radius: 35px; text-align: center; }
 
@@ -23,7 +23,7 @@
         .active { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- ESTADÍSTICAS (COMO TE GUSTAN) --- */
+        /* --- ESTADÍSTICAS OFICIALES --- */
         .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .master-card { background: #fff; padding: 18px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 120px; }
         .master-card.black { background: #000; color: #fff; border: none; }
@@ -31,7 +31,7 @@
         .stat-main { font-size: 28px; font-weight: 900; line-height: 1; display: block; }
         .stat-sub { font-size: 11px; font-weight: 800; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(150,150,150,0.2); display: block; }
 
-        /* --- DATA --- */
+        /* --- DATA RANKING (RESTAURADO) --- */
         .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; text-transform: uppercase; color: var(--text-dim); }
         .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -46,19 +46,19 @@
         .rank-stats { font-size: 10px; font-weight: 800; color: var(--text-dim); margin-top: 4px; display: flex; gap: 10px; }
         .rank-stats b { color: #000; }
 
-        /* --- BUSCADOR E HISTORIAL --- */
+        /* --- HISTORIAL Y BUSCADOR --- */
         .search-box { position: relative; margin-bottom: 20px; }
         .search-box input { width: 100%; padding: 16px 20px 16px 50px; background: #fff; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; outline: none; }
         .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-dim); }
         .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 15px; }
 
-        /* --- CARGADOR --- */
+        /* --- CARGA --- */
         .truck-load-header { background: #000; color: #fff; padding: 25px; border-radius: 28px; margin-bottom: 20px; }
         .truck-progress-bg { height: 8px; background: rgba(255,255,255,0.15); border-radius: 10px; margin-top: 15px; }
         .truck-progress-fill { height: 100%; background: var(--green); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
 
-        /* --- MODALES Y NAV --- */
+        /* --- MODAL Y NAV --- */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: flex-end; z-index: 2000; }
         .modal-content { background: #fff; width: 100%; border-radius: 35px 35px 0 0; padding: 30px 20px; max-height: 85vh; overflow-y: auto; }
         .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: none; border-top: 1px solid var(--border); z-index: 1000; }
@@ -166,85 +166,102 @@
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
-            
             if(userAuth) applyAuth();
             renderStats(); renderHistory();
         };
 
         // --- SEGURIDAD ---
-        function checkUserType() {
-            const u = document.getElementById('user-select').value;
-            document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none';
-        }
+        function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
+        function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
+        function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; if(userAuth.admin) document.getElementById('n-data').style.display = 'flex'; pullCloudData(); }
 
-        function login() {
-            const u = document.getElementById('user-select').value;
-            const p = document.getElementById('pass-field').value;
-            if(!u) return;
-            if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; }
-            userAuth = { name: u, admin: (u === 'TAJHO') };
-            localStorage.setItem('twins_auth', JSON.stringify(userAuth));
-            applyAuth();
-        }
-
-        function applyAuth() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-nav').style.display = 'flex';
-            if(userAuth.admin) document.getElementById('n-data').style.display = 'flex';
-            pullCloudData();
-        }
-
-        // --- LÓGICA DE CLOUD E INTERFAZ ---
+        // --- CLOUD ---
         async function syncCloud(data) { if(!CLOUD_URL.includes("ESCRIBE")) fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }); }
         async function pullCloudData() { if(!CLOUD_URL.includes("ESCRIBE")) { try { const res = await fetch(CLOUD_URL); const cloud = await res.json(); if(cloud) { db = cloud; localStorage.setItem('twins_v63_db', JSON.stringify(db)); renderStats(); renderHistory(); } } catch(e){} } }
 
-        function go(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById('n-'+id.split('-')[1]).classList.add('active');
-            if(id === 'page-data') renderData();
-        }
+        // --- NAVEGACIÓN ---
+        function go(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active')); document.getElementById('n-'+id.split('-')[1]).classList.add('active'); if(id === 'page-data') renderData(); if(id === 'page-dash') pullCloudData(); }
 
+        // --- STATS ---
         function renderStats() {
             const hoy = new Date().toISOString().split('T')[0];
-            const mes = hoy.substring(0,7);
             const rHoy = db.filter(r => r.fecha.includes(hoy));
-            const rMes = db.filter(r => r.fecha.startsWith(mes));
-            const cjs = (a) => a.reduce((x,y) => x + y.items.reduce((z,w)=>z+w.can,0), 0);
+            const rMes = db.filter(r => r.fecha.startsWith(hoy.substring(0,7)));
+            const sum = (a) => a.reduce((x,y) => x + y.items.reduce((z,w)=>z+w.can,0), 0);
             const cli = (a) => a.reduce((x,y) => x + y.items.length, 0);
-            document.getElementById('stat-hoy-cajas').innerText = cjs(rHoy);
+            document.getElementById('stat-hoy-cajas').innerText = sum(rHoy);
             document.getElementById('stat-hoy-envios').innerText = cli(rHoy) + " CLIENTES";
-            document.getElementById('stat-mes-cajas').innerText = cjs(rMes);
+            document.getElementById('stat-mes-cajas').innerText = sum(rMes);
             document.getElementById('stat-mes-envios').innerText = cli(rMes) + " CLIENTES";
         }
 
+        // --- CARGA (RESTAURADO ELIMINAR) ---
+        function initConf(p) { cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0] }; document.getElementById('conf-placa').innerText = p; document.getElementById('c-fecha').value = cur.fecha; go('page-config'); }
+        function goLoad() { cur.fecha = document.getElementById('c-fecha').value; cur.chofer = document.getElementById('c-chofer').value; cur.auxiliar = document.getElementById('c-aux').value; document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
+        function addItem() { const cli = document.getElementById('i-cli').value.toUpperCase().trim(); const can = parseInt(document.getElementById('i-can').value); if(cli && can) { cur.items.push({cli, can}); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refreshLoad(); } }
+        
+        function refreshLoad() { 
+            const total = cur.items.reduce((a,b)=>a+b.can, 0); 
+            const perc = Math.min((total/150)*100, 100).toFixed(0);
+            document.getElementById('load-total').innerText = total;
+            document.getElementById('load-perc-txt').innerText = perc+"%";
+            document.getElementById('load-bar').style.width = perc+"%";
+            document.getElementById('btn-save').style.display = total>0 ? 'block' : 'none';
+            document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
+                <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
+                    <span><i class="ph-bold ph-trash" style="color:red; margin-right:12px;" onclick="cur.items.splice(${i},1); refreshLoad();"></i>${it.cli}</span>
+                    <b>${it.can}</b>
+                </div>`).reverse().join(''); 
+        }
+
+        function save() { const idx = db.findIndex(r => r.id === cur.id); if(idx > -1) db[idx] = cur; else db.unshift(cur); localStorage.setItem('twins_v63_db', JSON.stringify(db)); syncCloud(cur); go('page-dash'); renderStats(); renderHistory(); }
+
+        // --- HISTORIAL ---
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
-            let filt = db.filter(r => r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.includes(q) || r.items.some(i => i.cli.toLowerCase().includes(q)));
+            let filt = db.filter(r => r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.includes(q));
             document.getElementById('hist-cont').innerHTML = filt.map(r => `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);"><span>📅 ${r.fecha.split('T')[0]}</span><span>${r.placa}</span></div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;"><b style="font-size:24px;">${r.items.reduce((a,b)=>a+b.can,0)} CJS</b><b>${r.items.length} CLI.</b></div>
                     <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:15px; border-top:1px solid #eee; padding-top:15px;">
-                        <button class="btn-act" onclick="viewL('${r.id}')" style="background:#fff; border:1px solid #eee; padding:10px; border-radius:12px; font-weight:800; font-size:10px;">LISTA</button>
-                        <button class="btn-act" onclick="editR('${r.id}')" style="background:#fff; border:1px solid #eee; padding:10px; border-radius:12px; font-weight:800; font-size:10px;">EDITAR</button>
-                        <button class="btn-act" onclick="shareW('${r.id}')" style="background:#fff; border:1px solid #eee; padding:10px; border-radius:12px; font-weight:800; font-size:10px;">REPORT</button>
+                        <button onclick="viewL('${r.id}')" style="background:#fff; border:1px solid #eee; padding:10px; border-radius:12px; font-weight:800; font-size:10px;">LISTA</button>
+                        <button onclick="editR('${r.id}')" style="background:#fff; border:1px solid #eee; padding:10px; border-radius:12px; font-weight:800; font-size:10px;">EDITAR</button>
+                        <button onclick="shareW('${r.id}')" style="background:#fff; border:1px solid #eee; padding:10px; border-radius:12px; font-weight:800; font-size:10px;">REPORTE</button>
                     </div>
                 </div>`).join('');
         }
 
-        // --- FUNCIONES RESTANTES MANTENIDAS ---
-        function initConf(p) { cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0] }; document.getElementById('conf-placa').innerText = p; document.getElementById('c-fecha').value = cur.fecha; go('page-config'); }
-        function goLoad() { cur.fecha = document.getElementById('c-fecha').value; cur.chofer = document.getElementById('c-chofer').value; cur.auxiliar = document.getElementById('c-aux').value; document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
-        function addItem() { const cli = document.getElementById('i-cli').value.toUpperCase(); const can = parseInt(document.getElementById('i-can').value); if(cli && can) { cur.items.push({cli, can}); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refreshLoad(); } }
-        function refreshLoad() { const t = cur.items.reduce((a,b)=>a+b.can, 0); const p = Math.min((t/150)*100, 100).toFixed(0); document.getElementById('load-total').innerText = t; document.getElementById('load-perc-txt').innerText = p+"%"; document.getElementById('load-bar').style.width = p+"%"; document.getElementById('btn-save').style.display = t>0 ? 'block' : 'none'; document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `<div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;"><span>${it.cli}</span><b>${it.can}</b></div>`).reverse().join(''); }
-        function save() { const idx = db.findIndex(r => r.id === cur.id); if(idx > -1) db[idx] = cur; else db.unshift(cur); localStorage.setItem('twins_v63_db', JSON.stringify(db)); syncCloud(cur); go('page-dash'); renderStats(); renderHistory(); }
-        function viewL(id) { const r = db.find(x => x.id === id); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:700;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
+        // --- DATA RANKING (RESTAURADO COMPLETO) ---
+        function renderData() {
+            const m = document.getElementById('f-month').value;
+            let filt = db.filter(r => r.fecha.startsWith(m));
+            let cS = {}, aS = {};
+            filt.forEach(r => { 
+                let cjs = r.items.reduce((a,b)=>a+b.can,0);
+                cS[r.chofer] = cS[r.chofer] || {cjs:0, cls:0}; cS[r.chofer].cjs += cjs; cS[r.chofer].cls += r.items.length;
+                aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0}; aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
+            });
+            const draw = (data, targetId, isAux) => {
+                let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
+                let max = sorted[0] ? sorted[0][1].cjs : 1;
+                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `
+                    <div class="rank-item">
+                        <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
+                        <div class="rank-info">
+                            <div class="rank-name"><span>${n}</span><span>${v.cjs} CJS</span></div>
+                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
+                            <div class="rank-stats"><span>Cjs: <b>${v.cjs}</b></span><span>${isAux?'Rut':'Cli'}: <b>${isAux?v.r:v.cls}</b></span></div>
+                        </div>
+                    </div>`).join('');
+            };
+            draw(cS, 'rank-choferes-list', false); draw(aS, 'rank-auxiliares-list', true);
+        }
+
+        function viewL(id) { const r = db.find(x => x.id === id); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
         function editR(id) { cur = JSON.parse(JSON.stringify(db.find(x => x.id === id))); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
-        function renderData() { const m = document.getElementById('f-month').value; let filt = db.filter(r => r.fecha.startsWith(m)); let cS = {}; filt.forEach(r => { let cjs = r.items.reduce((a,b)=>a+b.can,0); cS[r.chofer] = (cS[r.chofer] || 0) + cjs; }); document.getElementById('rank-choferes-list').innerHTML = Object.entries(cS).map(([n,v]) => `<div class="rank-item"><div class="rank-info"><div class="rank-name"><span>${n}</span><span>${v} CJS</span></div></div></div>`).join(''); }
         function shareW(id) { const r = db.find(x => x.id === id); let t = `*TWINS ELITE*%0A🚛 ${r.placa}%0A📅 ${r.fecha.split('T')[0]}%0A%0A*CARGA:*%0A`; r.items.forEach(i => t += `• ${i.cli}: ${i.can}%0A`); window.location.href = "https://api.whatsapp.com/send?text=" + t; }
     </script>
 </body>
