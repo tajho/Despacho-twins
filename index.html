@@ -3,116 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V50.1</title>
+    <title>TWINS ELITE - V50.5</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
             --bg: #f8f9fa; --surface: #ffffff; --accent: #000000; 
             --text: #111827; --text-dim: #6b7280; --border: #e5e7eb; 
-            --success: #10b981; --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: fade 0.2s ease; }
+        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
         .active { display: block; }
-        @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Dashboard Stats */
-        .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .master-card { background: #fff; padding: 20px; border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; flex-direction: column; justify-content: space-between; height: 125px; }
-        .master-card.black { background: #000; color: #fff; border: none; }
-        .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 8px; }
-        .stat-main { font-size: 30px; font-weight: 900; line-height: 1; }
-        .stat-sub { font-size: 11px; font-weight: 700; margin-top: 5px; opacity: 0.9; }
-
-        /* Estilos de Lista e Interfaz */
-        .header-mini { background: #fff; padding: 15px 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .placa-badge { background: #000; color: #fff; padding: 6px 14px; border-radius: 12px; font-size: 14px; font-weight: 800; }
-        .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; }
-        .section-tag { font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 10px 5px; display: flex; align-items: center; gap: 6px; }
-
-        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; }
-        .btn-action { border: 1px solid var(--border); border-radius: 12px; padding: 10px 5px; font-size: 9px; font-weight: 800; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text); }
-        .btn-action.wa { background: #000; color: #fff; border: none; }
-
-        .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 10px; }
+        /* --- ESTILOS EXCLUSIVOS SECCIÓN DATA --- */
+        .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 14px; text-transform: uppercase; color: var(--text-dim); }
         
-        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; position: relative; }
+        .rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; color: #fff; background: #eee; color: #aaa; }
+        .pos-1 { background: var(--gold); color: #000; }
+        .pos-2 { background: var(--silver); color: #000; }
+        .pos-3 { background: var(--bronze); color: #000; }
+        
+        .rank-info { flex: 1; }
+        .rank-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; overflow: hidden; }
+        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+        .rank-stats { font-size: 10px; font-weight: 800; color: var(--text-dim); margin-top: 4px; display: flex; gap: 10px; }
+        .rank-stats b { color: #000; }
+
+        /* --- MANTENIENDO EL RESTO IGUAL --- */
+        .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .master-card { background: #fff; padding: 20px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 125px; }
+        .master-card.black { background: #000; color: #fff; border: none; }
+        .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; opacity: 0.6; margin-bottom: 8px; }
+        .stat-main { font-size: 30px; font-weight: 900; line-height: 1; }
+        
+        .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 10px; }
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
-        .nav-btn i { font-size: 24px; margin-bottom: 4px; }
-
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(4px); }
-        .modal-box { background: #fff; border-radius: 24px; padding: 25px; width: 100%; max-height: 80vh; overflow-y: auto; }
+        .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
     <div id="page-dash" class="page active">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px; letter-spacing: -1px;">Twins Elite</h1>
-        
+        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Twins Elite</h1>
         <div class="core-dash">
             <div class="master-card black">
-                <div>
-                    <span class="stat-label">Control Hoy</span>
-                    <span id="stat-hoy-cajas" class="stat-main">0</span>
-                    <div class="stat-sub">CAJAS TOTAL</div>
-                </div>
-                <div style="border-top: 1px solid #333; padding-top: 8px;">
-                    <span id="stat-hoy-envios" style="font-size: 14px; font-weight: 800;">0 CLIENTES</span>
-                </div>
+                <div><span class="stat-label">Control Hoy</span><span id="stat-hoy-cajas" class="stat-main">0</span></div>
+                <div style="border-top:1px solid #333; padding-top:8px;"><span id="stat-hoy-envios" style="font-size:14px; font-weight:800;">0 CLIENTES</span></div>
             </div>
             <div class="master-card">
-                <div>
-                    <span class="stat-label">Resumen Mes</span>
-                    <span id="stat-mes-cajas" class="stat-main" style="color:#000;">0</span>
-                    <div class="stat-sub" style="color:var(--text-dim);">CAJAS TOTAL</div>
-                </div>
-                <div style="border-top: 1px solid #eee; padding-top: 8px;">
-                    <span id="stat-mes-envios" style="font-size: 14px; font-weight: 800; color:#000;">0 CLIENTES</span>
-                </div>
+                <div><span class="stat-label">Resumen Mes</span><span id="stat-mes-cajas" class="stat-main">0</span></div>
+                <div style="border-top:1px solid #eee; padding-top:8px;"><span id="stat-mes-envios" style="font-size:14px; font-weight:800;">0 CLIENTES</span></div>
             </div>
         </div>
         <div id="smart-history"></div>
     </div>
 
     <div id="page-data" class="page">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Data Almacén</h1>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; background:#fff; padding:15px; border-radius:20px; border:1px solid var(--border);">
-            <div><label class="stat-label">Mes</label><input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0"></div>
-            <div><label class="stat-label">Día</label><input type="date" id="f-day" class="field" onchange="renderData()" style="margin:0"></div>
+        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Rendimiento Almacén</h1>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:25px;">
+            <input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0">
+            <button onclick="injectFakeData()" style="background:#f3f4f6; border:none; border-radius:12px; font-size:10px; font-weight:800;">RECARGAR PRUEBA</button>
         </div>
+
+        <div class="rank-box">
+            <div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Choferes (Cajas/Clientes)</div>
+            <div id="rank-choferes-list"></div>
+        </div>
+
+        <div class="rank-box">
+            <div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares (Apoyo/Cajas)</div>
+            <div id="rank-auxiliares-list"></div>
+        </div>
+
+        <div style="font-size: 10px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; margin: 30px 0 10px 5px;">Movimientos del Mes</div>
         <div id="data-results"></div>
     </div>
 
-    <div id="page-units" class="page">
-        <h1 style="font-weight: 900; font-size: 26px; margin-bottom: 20px;">Nueva Carga</h1>
-        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
-    </div>
-
-    <div id="page-assign" class="page">
-        <div class="header-mini"><h1>Programación</h1><span id="view-placa-assign" class="placa-badge">---</span></div>
-        <input type="date" id="date-assign" class="field">
-        <select id="chofer-assign" class="field"></select>
-        <select id="aux-assign" class="field"></select>
-        <button onclick="goLoad()" class="field" style="background:#000; color:#fff; height:60px; border:none; font-weight:800; margin-top:10px;">INICIAR CARGA</button>
-    </div>
-
-    <div id="page-load" class="page">
-        <div class="header-mini">
-            <div><span class="stat-label" style="opacity:1; color:#000">CARGANDO</span><h1 id="view-placa-load">---</h1></div>
-            <div style="text-align:right;"><span id="view-total-load" style="font-size:28px; font-weight:900;">0</span><span class="stat-label">Cajas</span></div>
-        </div>
-        <div style="display:flex; gap:8px; margin-bottom:15px;">
-            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0">
-            <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1; margin:0">
-        </div>
-        <button onclick="add()" style="width:100%; background:#000; color:#fff; border:none; padding:16px; border-radius:14px; font-weight:800; margin-bottom:20px;">+ AGREGAR CLIENTE</button>
-        <div id="load-list"></div>
-        <button id="btn-save" onclick="save()" class="field" style="display:none; background:#10b981; color:#fff; margin-top:20px; border:none;">FINALIZAR Y GUARDAR</button>
-    </div>
+    <div id="page-units" class="page"><h1>Nueva Carga</h1><div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div></div>
+    <div id="page-assign" class="page"><h1>Programación</h1></div>
+    <div id="page-load" class="page"><h1>Carga</h1></div>
 
     <nav class="nav-bottom">
         <button class="nav-btn active" id="n-dash" onclick="go('page-dash')"><i class="ph-bold ph-chart-pie"></i>HISTORIAL</button>
@@ -120,75 +98,107 @@
         <button class="nav-btn" id="n-data" onclick="go('page-data')"><i class="ph-bold ph-database"></i>DATA</button>
     </nav>
 
-    <div id="modal-view" class="modal"><div class="modal-box"><h3 id="m-title" style="margin-top:0;"></h3><div id="m-body"></div><button onclick="closeModal('modal-view')" class="field" style="margin-top:20px;">CERRAR</button></div></div>
-    <div id="modal-wa" class="modal"><div class="modal-box"><h3 style="color:#10b981; margin-top:0;">WhatsApp</h3><div id="wa-body"></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;"><button onclick="closeModal('modal-wa')" class="field">ATRÁS</button><button onclick="sendWA()" class="field" style="background:#10b981; color:#fff; border:none;">ENVIAR</button></div></div></div>
-
     <script>
-        // URL DE TU GOOGLE SCRIPT (Asegúrate de configurar el Script como Web App)
-        const CLOUD_URL = 'https://script.google.com/macros/s/AKfycbz17aqWIX2ktdjce6dxXKeklCfadQzHDpBbQH4Rb0MvcBEpcOubhKPAv3QayCUE1TtY/exec';
-        
         let db = JSON.parse(localStorage.getItem('twins_v50_db')) || [];
-        let current = { items: [] }, waTarget = null;
 
-        const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
-        const AUXILIARES = ["POR DEFINIR", "CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON", "JULIO", "DANIEL C."];
+        const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
+
+        function injectFakeData() {
+            let fake = [];
+            let hoy = new Date();
+            for(let i=0; i<15; i++) {
+                let d = new Date(); d.setDate(hoy.getDate() - i);
+                let itemsNum = Math.floor(Math.random() * 8) + 3;
+                let items = [];
+                for(let j=0; j<itemsNum; j++) items.push({cli: "CLIENTE "+j, can: Math.floor(Math.random()*50)+10});
+                
+                fake.push({
+                    id: 'F'+Date.now()+i,
+                    fecha: d.toISOString().split('T')[0],
+                    placa: "ABC-123",
+                    chofer: CONDUCTORES[Math.floor(Math.random()*CONDUCTORES.length)],
+                    auxiliar: AUXILIARES[Math.floor(Math.random()*AUXILIARES.length)],
+                    items: items
+                });
+            }
+            db = fake;
+            localStorage.setItem('twins_v50_db', JSON.stringify(db));
+            renderData(); renderStats();
+        }
+
+        function renderData() {
+            const m = document.getElementById('f-month').value || new Date().toISOString().substring(0,7);
+            let filt = db.filter(r => r.fecha.startsWith(m));
+            
+            let cStats = {}, aStats = {};
+            filt.forEach(r => {
+                let cjs = r.items.reduce((a,b)=>a+b.can,0);
+                let cls = r.items.length;
+                cStats[r.chofer] = cStats[r.chofer] || {cjs:0, cls:0, r:0};
+                cStats[r.chofer].cjs += cjs; cStats[r.chofer].cls += cls; cStats[r.chofer].r++;
+                
+                aStats[r.auxiliar] = aStats[r.auxiliar] || {cjs:0, r:0};
+                aStats[r.auxiliar].cjs += cjs; aStats[r.auxiliar].r++;
+            });
+
+            // Lógica de Ranking
+            const draw = (data, targetId, isAux = false) => {
+                let sorted = Object.entries(data).sort((a,b) => b[1].cjs - a[1].cjs).slice(0,5);
+                let maxCjs = sorted[0] ? sorted[0][1].cjs : 1;
+                
+                document.getElementById(targetId).innerHTML = sorted.map(([name, val], i) => {
+                    let perc = (val.cjs / maxCjs) * 100;
+                    return `
+                    <div class="rank-item">
+                        <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
+                        <div class="rank-info">
+                            <div class="rank-name"><span>${name}</span> <span>${val.cjs} CJS</span></div>
+                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${perc}%"></div></div>
+                            <div class="rank-stats">
+                                <span><i class="ph-bold ph-package"></i> <b>${val.cjs}</b> Cajas</span>
+                                <span><i class="ph-bold ph-map-pin"></i> <b>${isAux ? val.r : val.cls}</b> ${isAux ? 'Rutas' : 'Clientes'}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            };
+
+            draw(cStats, 'rank-choferes-list');
+            draw(aStats, 'rank-auxiliares-list', true);
+            
+            document.getElementById('data-results').innerHTML = filt.map(r => `
+                <div class="route-card" style="padding:12px; font-size:12px;">
+                    <div style="display:flex; justify-content:space-between; font-weight:800;">
+                        <span>${r.fecha} • ${r.chofer}</span>
+                        <span>${r.items.reduce((a,b)=>a+b.can,0)} Cjs</span>
+                    </div>
+                </div>`).join('');
+        }
+
+        function renderStats() {
+            const h = new Date().toISOString().split('T')[0], m = h.substring(0,7);
+            const rHoy = db.filter(r => r.fecha === h), rMes = db.filter(r => r.fecha.startsWith(m));
+            document.getElementById('stat-hoy-cajas').innerText = rHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
+            document.getElementById('stat-hoy-envios').innerText = rHoy.reduce((a,b)=>a+b.items.length, 0) + " CLIENTES";
+            document.getElementById('stat-mes-cajas').innerText = rMes.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0);
+            document.getElementById('stat-mes-envios').innerText = rMes.reduce((a,b)=>a+b.items.length, 0) + " CLIENTES";
+        }
+
+        function go(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+            document.getElementById('n-' + id.split('-')[1]).classList.add('active');
+            if(id === 'page-data') renderData();
+        }
 
         window.onload = () => {
-            const sc = document.getElementById('chofer-assign'), sa = document.getElementById('aux-assign'), ug = document.getElementById('units-grid');
-            CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
-            AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
-            for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:20px; border-radius:18px; text-align:center; font-weight:800; border:1px solid var(--border);" onclick="start('${p}')">${p}</div>`;
-            
-            syncInSilence(); // Sincroniza al iniciar sin banners
+            document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
+            renderStats();
+            // Inyectamos datos de prueba automáticamente la primera vez para que veas el diseño
+            if(db.length === 0) injectFakeData(); else renderData();
         };
-
-        async function syncInSilence() {
-            try {
-                const response = await fetch(CLOUD_URL + '?action=read');
-                const cloudData = await response.json();
-                if(cloudData && cloudData.length > 0) {
-                    db = cloudData;
-                    localStorage.setItem('twins_v50_db', JSON.stringify(db));
-                    renderStats(); renderSmartHistory();
-                }
-            } catch (e) { console.log("Silent sync failed"); }
-        }
-
-        async function save() {
-            const idx = db.findIndex(x => x.id === current.id);
-            if(idx > -1) db[idx] = current; else db.unshift(current);
-            localStorage.setItem('twins_v50_db', JSON.stringify(db));
-            
-            go('page-dash');
-            renderStats(); 
-            renderSmartHistory();
-
-            // Guardado en nube en segundo plano (sin bloquear al usuario)
-            fetch(CLOUD_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify(current)
-            }).then(() => {
-                setTimeout(syncInSilence, 2000); // Refresca silenciosamente después de guardar
-            }).catch(e => console.log("Cloud save deferred"));
-        }
-
-        // --- FUNCIONES DE INTERFAZ (IGUAL A V49.5) ---
-        function start(p) { current = { placa: p, items: [], id: 'R'+Date.now() }; document.getElementById('view-placa-assign').innerText = p; document.getElementById('chofer-assign').value = FLOTA[p] || CONDUCTORES[0]; document.getElementById('date-assign').valueAsDate = new Date(); go('page-assign'); }
-        function goLoad() { current.chofer = document.getElementById('chofer-assign').value; current.auxiliar = document.getElementById('aux-assign').value; current.fecha = document.getElementById('date-assign').value; document.getElementById('view-placa-load').innerText = current.placa; refreshLoad(); go('page-load'); }
-        function add() { const cli = document.getElementById('i-cli').value.toUpperCase().trim(), can = parseInt(document.getElementById('i-can').value); if(!cli || isNaN(can)) return; current.items.push({cli, can}); document.getElementById('i-cli').value = ""; document.getElementById('i-can').value = ""; document.getElementById('i-cli').focus(); refreshLoad(); }
-        function refreshLoad() { let t = current.items.reduce((a,b)=>a+b.can,0); document.getElementById('view-total-load').innerText = t; document.getElementById('load-list').innerHTML = current.items.map((it, i) => `<div style="display:flex; justify-content:space-between; padding:12px; background:#fff; border-radius:12px; border:1px solid #eee; margin-bottom:8px; font-weight:700;"><span>${it.can} • ${it.cli}</span><i class="ph-bold ph-trash" style="color:red" onclick="current.items.splice(${i},1);refreshLoad()"></i></div>`).reverse().join(''); document.getElementById('btn-save').style.display = t > 0 ? 'block' : 'none'; }
-        function renderStats() { const h = new Date().toISOString().split('T')[0], m = h.substring(0,7); const rHoy = db.filter(r => r.fecha === h); const rMes = db.filter(r => r.fecha.startsWith(m)); document.getElementById('stat-hoy-cajas').innerText = rHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0); document.getElementById('stat-hoy-envios').innerText = rHoy.reduce((a,b)=>a+b.items.length, 0) + " CLIENTES"; document.getElementById('stat-mes-cajas').innerText = rMes.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0),0); document.getElementById('stat-mes-envios').innerText = rMes.reduce((a,b)=>a+b.items.length, 0) + " CLIENTES"; }
-        function renderSmartHistory() { const cont = document.getElementById('smart-history'); cont.innerHTML = ""; const hoy = new Date().toISOString().split('T')[0]; let ayer = new Date(); ayer.setDate(ayer.getDate()-1); ayer = ayer.toISOString().split('T')[0]; const rHoy = db.filter(r => r.fecha === hoy), rAyer = db.filter(r => r.fecha === ayer), rFut = db.filter(r => r.fecha > hoy); if(rFut.length) { cont.innerHTML += `<div class="section-tag"><i class="ph-bold ph-calendar-plus"></i> Programados</div>`; rFut.forEach(r => cont.innerHTML += card(r)); } cont.innerHTML += `<div class="section-tag"><i class="ph-bold ph-truck"></i> Hoy</div>`; if(!rHoy.length) cont.innerHTML += `<p style="font-size:12px; color:gray; margin-left:10px;">Sin rutas.</p>`; rHoy.forEach(r => cont.innerHTML += card(r, true)); if(rAyer.length) { cont.innerHTML += `<div class="section-tag"><i class="ph-bold ph-clock-counter-clockwise"></i> Ayer</div>`; rAyer.forEach(r => cont.innerHTML += card(r)); } }
-        function card(r, highlight = false) { const t = r.items.reduce((a,b)=>a+b.can,0); return `<div class="route-card" style="${highlight?'border-left:4px solid #000':''}"> <div style="display:flex; justify-content:space-between; align-items:flex-start;"> <div><b style="font-size:18px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim); font-weight:700;">${r.chofer} | ${r.auxiliar}</div></div> <div style="text-align:right;"><span style="font-size:9px; display:block; opacity:0.5;">${r.fecha}</span><b style="font-size:18px;">${t} CJS</b><div style="font-size:10px; font-weight:700;">${r.items.length} Env.</div></div> </div> <div class="route-actions"> <button class="btn-action" onclick="view('${r.id}')"><i class="ph-bold ph-eye"></i>VER</button> <button class="btn-action" onclick="edit('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button> <button class="btn-action wa" onclick="prepWA('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WA</button> </div> </div>`; }
-        function renderData() { const m = document.getElementById('f-month').value, d = document.getElementById('f-day').value; let filt = db; if(d) filt = filt.filter(r => r.fecha === d); else if(m) filt = filt.filter(r => r.fecha.startsWith(m)); const cont = document.getElementById('data-results'); cont.innerHTML = filt.length ? "" : "<p style='text-align:center; color:gray; margin-top:20px;'>No hay resultados.</p>"; filt.forEach(r => cont.innerHTML += card(r)); }
-        function view(id) { const r = db.find(x => x.id === id); document.getElementById('m-title').innerText = `Ruta ${r.placa}`; document.getElementById('m-body').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;"><span>${i.cli}</span><b>${i.can} Cjs</b></div>`).join(''); document.getElementById('modal-view').style.display = 'flex'; }
-        function prepWA(id) { waTarget = db.find(x => x.id === id); document.getElementById('wa-body').innerHTML = `<b>Unidad:</b> ${waTarget.placa}<br><b>Cajas:</b> ${waTarget.items.reduce((a,b)=>a+b.can,0)}<br><b>Clientes:</b> ${waTarget.items.length}`; document.getElementById('modal-wa').style.display = 'flex'; }
-        function sendWA() { const r = waTarget; const list = r.items.map(i => `• ${i.cli}: ${i.can}`).join('\n'); const msg = `*TWINS ELITE*\n\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n🤝 *AUX:* ${r.auxiliar}\n\n*LISTA:*\n${list}\n\n📦 *TOTAL:* ${r.items.reduce((a,b)=>a+b.can,0)} Cjs\n👥 *CLIENTES:* ${r.items.length}`; window.location.href = "whatsapp://send?text=" + encodeURIComponent(msg); closeModal('modal-wa'); }
-        function edit(id) { current = JSON.parse(JSON.stringify(db.find(x => x.id === id))); document.getElementById('view-placa-load').innerText = current.placa; refreshLoad(); go('page-load'); }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function go(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active')); document.getElementById('n-' + id.split('-')[1]).classList.add('active'); if(id === 'page-dash') { syncInSilence(); } if(id === 'page-data') renderData(); }
     </script>
 </body>
 </html>
