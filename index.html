@@ -3,134 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V45.6</title>
+    <title>TWINS ELITE - V46.0 INTELLIGENCE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #f8fafc; --surface: #ffffff; --accent: #0062ff; 
-            --text: #0f172a; --text-dim: #64748b; --border: #e2e8f0; 
-            --success: #10b981; --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --bg: #0f172a; --surface: #1e293b; --accent: #38bdf8; 
+            --text: #f8fafc; --text-dim: #94a3b8; --border: #334155; 
+            --success: #22c55e; --shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 90px; }
+        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        .page { display: none; padding: 18px; max-width: 500px; margin: 0 auto; animation: fadeIn 0.3s; }
+        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: slideUp 0.4s ease; }
         .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Cuadros de Estadísticas con Logos */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .stat-card { padding: 18px; border-radius: 24px; background: white; border: 1px solid var(--border); box-shadow: var(--shadow); position: relative; overflow: hidden; }
-        .stat-card i { position: absolute; right: -10px; bottom: -10px; font-size: 60px; opacity: 0.1; }
-        .stat-card.blue { background: var(--accent); color: white; border: none; }
-        .stat-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
-        .stat-value { font-size: 26px; font-weight: 900; margin-top: 5px; }
+        /* Dashboard Inteligente */
+        .smart-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .stat-card { background: var(--surface); padding: 15px; border-radius: 20px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .stat-card.highlight { border-color: var(--accent); background: linear-gradient(145deg, #1e293b, #0f172a); }
+        .stat-icon { position: absolute; right: -5px; top: -5px; font-size: 40px; color: var(--accent); opacity: 0.15; }
+        .stat-label { font-size: 9px; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { font-size: 22px; font-weight: 900; margin-top: 4px; display: block; }
 
-        .date-divider { display: flex; align-items: center; gap: 10px; margin: 25px 0 12px 5px; font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; }
-        .date-divider::after { content: ""; flex: 1; height: 2px; background: var(--border); }
+        /* Lista Inteligente */
+        .route-card { background: var(--surface); border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--border); }
+        .action-btn { border: none; border-radius: 12px; padding: 12px 5px; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 6px; background: rgba(255,255,255,0.03); color: var(--text-dim); }
+        .action-btn.wa { color: var(--success); }
 
-        /* Tarjeta de Ruta */
-        .route-card { background: #fff; border-radius: 24px; padding: 18px; margin-bottom: 15px; box-shadow: var(--shadow); border: 1px solid var(--border); }
-        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
-        .action-btn { border: none; border-radius: 14px; padding: 12px 5px; font-size: 10px; font-weight: 800; display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--bg); color: var(--text-dim); transition: 0.2s; }
-        .action-btn:active { transform: scale(0.95); background: #eee; }
+        .input-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 16px; color: #fff; outline: none; transition: 0.3s; }
+        .input-box:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
 
-        .input-box { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 16px; width: 100%; font-size: 16px; font-weight: 600; outline: none; }
-        
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 75px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; gap: 4px; }
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(30, 41, 59, 0.8); backdrop-filter: blur(15px); height: 70px; display: flex; border-radius: 25px; border: 1px solid var(--border); z-index: 1000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 10px; font-weight: 700; gap: 4px; }
         .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 24px; }
+        .nav-item i { font-size: 22px; }
 
-        /* Modal para Ver Lista */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(5px); }
-        .modal-content { background: #fff; border-radius: 28px; padding: 25px; width: 100%; max-height: 80vh; overflow-y: auto; }
-
-        #sync-toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 10px 25px; border-radius: 30px; font-size: 13px; font-weight: 800; z-index: 3000; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--surface); border-radius: 30px; padding: 25px; width: 100%; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border); }
+        
+        #sync-bar { display: none; position: fixed; top: 0; left: 0; right: 0; background: var(--accent); color: var(--bg); text-align: center; padding: 5px; font-size: 10px; font-weight: 900; z-index: 5000; }
     </style>
 </head>
 <body>
 
-    <div id="sync-toast"><i class="ph-bold ph-cloud-arrow-up"></i> SUBIENDO AL EXCEL...</div>
+    <div id="sync-bar">INTELIGENCIA SINCRONIZANDO CON NUBE...</div>
 
     <div id="page-dash" class="page active">
-        <div class="stat-grid">
-            <div class="stat-card blue">
-                <i class="ph-fill ph-package"></i>
-                <div class="stat-label">Total Cajas (Hoy)</div>
-                <div id="d-cajas" class="stat-value">0</div>
+        <h2 style="font-weight: 800; letter-spacing: -1px; margin-bottom: 20px;">Twins Intel <span style="color:var(--accent)">.</span></h2>
+        
+        <div class="smart-dash">
+            <div class="stat-card highlight">
+                <i class="ph-fill ph-package stat-icon"></i>
+                <span class="stat-label">Cajas Hoy</span>
+                <span id="stat-cajas-hoy" class="stat-val">0</span>
             </div>
             <div class="stat-card">
-                <i class="ph-fill ph-truck"></i>
-                <div class="stat-label" style="color:var(--accent)">Total Envios</div>
-                <div id="d-envios" class="stat-value">0</div>
+                <i class="ph-fill ph-truck stat-icon"></i>
+                <span class="stat-label">Envíos Hoy</span>
+                <span id="stat-envios-hoy" class="stat-val">0</span>
+            </div>
+            <div class="stat-card">
+                <i class="ph-fill ph-calendar-check stat-icon"></i>
+                <span class="stat-label">Cajas Mes</span>
+                <span id="stat-cajas-mes" class="stat-val">0</span>
+            </div>
+            <div class="stat-card">
+                <i class="ph-fill ph-chart-line-up stat-icon"></i>
+                <span class="stat-label">Envíos Mes</span>
+                <span id="stat-envios-mes" class="stat-val">0</span>
             </div>
         </div>
 
-        <div style="display:flex; gap:8px; margin-bottom:20px;">
-            <input type="text" id="search" placeholder="Buscar placa/chofer..." class="input-box" oninput="renderHistory()" style="flex:1;">
-            <input type="date" id="filter-date" class="input-box" style="width:55px; padding:10px;" onchange="renderHistory()">
-        </div>
-        
         <div id="history-container"></div>
     </div>
 
     <div id="page-units" class="page">
-        <h2 style="font-weight:800; margin-bottom:20px;">Nueva Unidad</h2>
+        <h2 style="font-weight:800;">Seleccionar Unidad</h2>
         <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
     </div>
 
     <div id="page-assign" class="page">
-        <h2 id="title-placa" style="font-weight:800;">---</h2>
-        <div style="background:white; padding:20px; border-radius:24px; border:1px solid var(--border);">
-            <label class="stat-label" style="color:var(--text-dim)">FECHA</label>
+        <h2 id="title-placa" style="font-weight:800; color:var(--accent);">---</h2>
+        <div style="background:var(--surface); padding:20px; border-radius:24px; border:1px solid var(--border);">
+            <label class="stat-label">Programación</label>
             <select id="sel-date" class="input-box" style="margin-bottom:15px;">
-                <option value="hoy">Hoy</option>
-                <option value="mañana" selected>Mañana</option>
+                <option value="hoy">Para Hoy</option>
+                <option value="mañana" selected>Para Mañana</option>
             </select>
-            <label class="stat-label" style="color:var(--text-dim)">CHOFER</label>
-            <select id="sel-chofer" class="input-box" style="margin-bottom:15px;"></select>
-            <label class="stat-label" style="color:var(--text-dim)">AUXILIAR</label>
+            <label class="stat-label">Responsables</label>
+            <select id="sel-chofer" class="input-box" style="margin-bottom:10px;"></select>
             <select id="sel-aux" class="input-box"></select>
-            <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:#fff; border:none; margin-top:20px; padding:22px; font-weight:800;">SIGUIENTE</button>
+            <button onclick="confirmAssign()" class="input-box" style="background:var(--accent); color:var(--bg); border:none; margin-top:20px; font-weight:800; height:65px;">INICIAR CARGA INTELIGENTE</button>
         </div>
     </div>
 
     <div id="page-load" class="page">
-        <div style="background:var(--text); color:#fff; padding:20px; border-radius:24px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
-            <div><h3 id="load-placa" style="margin:0;">---</h3><span id="load-meta" style="font-size:11px; opacity:0.7;"></span></div>
+        <div style="background:var(--accent); color:var(--bg); padding:20px; border-radius:24px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+            <div><h3 id="load-placa" style="margin:0; font-weight:900;">---</h3><span id="load-meta" style="font-size:10px; font-weight:700; text-transform:uppercase;"></span></div>
             <span id="load-total" style="font-size:32px; font-weight:900;">0</span>
         </div>
-        <div style="background:white; padding:20px; border-radius:24px; border:1px solid var(--border);">
-            <input type="text" id="inp-cli" placeholder="Cliente" class="input-box" style="margin-bottom:10px;">
+        
+        <div style="background:var(--surface); padding:20px; border-radius:24px; border:1px solid var(--border);">
+            <input type="text" id="inp-cli" placeholder="Nombre del Cliente" class="input-box" style="margin-bottom:10px;" list="suggest-clients">
+            <datalist id="suggest-clients"></datalist>
+            
             <div style="display:flex; gap:10px;">
                 <input type="number" id="inp-can" placeholder="Cant." class="input-box" style="flex:1;">
-                <button onclick="addItem()" style="background:var(--accent); color:#fff; border:none; border-radius:18px; width:70px; font-size:32px;">+</button>
+                <button onclick="addItem()" style="background:var(--success); color:#fff; border:none; border-radius:18px; width:70px; font-size:30px;"><i class="ph-bold ph-plus"></i></button>
             </div>
             <div id="items-list" style="margin-top:20px;"></div>
         </div>
-        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:var(--success); color:#fff; border:none; margin-top:15px; padding:22px; font-weight:800;">SUBIR A EXCEL</button>
+        <button id="btn-finish" onclick="saveAndSync()" class="input-box" style="display:none; background:#fff; color:var(--bg); border:none; margin-top:15px; font-weight:800; height:65px;">FINALIZAR Y SINCRONIZAR</button>
     </div>
 
     <div id="modal-list" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title" style="margin-top:0;">Lista de Clientes</h3>
+            <h3 id="modal-title" style="margin-top:0; color:var(--accent)">Detalle de Carga</h3>
             <div id="modal-body"></div>
-            <button onclick="closeModal()" class="input-box" style="margin-top:20px; border:none; background:var(--bg);">CERRAR</button>
+            <button onclick="closeModal()" class="input-box" style="margin-top:20px; border:none; background:rgba(255,255,255,0.05);">CERRAR VENTANA</button>
         </div>
     </div>
 
     <nav class="nav-bar">
-        <button class="nav-item active" id="n-dash" onclick="go('page-dash')"><i class="ph-fill ph-chart-pie"></i>DATOS</button>
-        <button class="nav-item" id="n-units" onclick="go('page-units')"><i class="ph-fill ph-plus-circle"></i>CARGAR</button>
+        <button class="nav-item active" id="n-dash" onclick="go('page-dash')"><i class="ph-fill ph-squares-four"></i>PANEL</button>
+        <button class="nav-item" id="n-units" onclick="go('page-units')"><i class="ph-fill ph-plus-circle"></i>NUEVO</button>
     </nav>
 
     <script>
-        // URL DE TU SCRIPT
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby59273ThmezjUQ9-AB6Gx5O8G6J6zMB7SAtzImDhUfEoXBlCx-mT9h4AvzVI_2C56O/exec';
 
-        let db = JSON.parse(localStorage.getItem('twins_v45_6') || '[]');
+        let db = JSON.parse(localStorage.getItem('twins_intel_v46')) || [];
+        let clientsRegistry = JSON.parse(localStorage.getItem('twins_clients')) || [];
         let current = { items: [] };
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
@@ -141,11 +147,23 @@
             const sc = document.getElementById('sel-chofer'), sa = document.getElementById('sel-aux'), ug = document.getElementById('units-grid');
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
-            for(let p in FLOTA) ug.innerHTML += `<div style="background:white; padding:25px; border-radius:20px; text-align:center; font-weight:800; border:1px solid var(--border);" onclick="startAssign('${p}')">${p}</div>`;
-            renderHistory(); renderStats();
+            for(let p in FLOTA) ug.innerHTML += `<div style="background:var(--surface); padding:25px; border-radius:20px; text-align:center; font-weight:800; border:1px solid var(--border);" onclick="startAssign('${p}')">${p}</div>`;
+            updateSuggestions();
+            renderHistory(); 
+            renderStats();
         };
 
+        function updateSuggestions() {
+            const list = document.getElementById('suggest-clients');
+            list.innerHTML = [...new Set(clientsRegistry)].map(c => `<option value="${c}">`).join('');
+        }
+
         function startAssign(p) {
+            // Inteligencia: Verificar si la unidad ya se cargó hoy
+            const hoy = new Date().toISOString().split('T')[0];
+            const duplicado = db.find(r => r.placa === p && r.fecha === hoy);
+            if(duplicado && !confirm(`Aviso: La unidad ${p} ya tiene una carga hoy. ¿Deseas crear otra?`)) return;
+
             current = { placa: p, items: [], id: 'R' + Date.now() };
             document.getElementById('title-placa').innerText = p;
             document.getElementById('sel-chofer').value = FLOTA[p] || CONDUCTORES[0];
@@ -162,31 +180,40 @@
         }
 
         function addItem() {
-            const cli = document.getElementById('inp-cli').value.toUpperCase(), can = parseInt(document.getElementById('inp-can').value);
+            const cli = document.getElementById('inp-cli').value.toUpperCase().trim(), can = parseInt(document.getElementById('inp-can').value);
             if(!cli || !can) return;
+            
             current.items.push({cli, can});
+            if(!clientsRegistry.includes(cli)) {
+                clientsRegistry.push(cli);
+                localStorage.setItem('twins_clients', JSON.stringify(clientsRegistry));
+                updateSuggestions();
+            }
+
             document.getElementById('inp-cli').value = ""; document.getElementById('inp-can').value = "";
+            document.getElementById('inp-cli').focus();
             refreshLoadUI();
         }
 
         function refreshLoadUI() {
             document.getElementById('load-placa').innerText = current.placa;
+            document.getElementById('load-meta').innerText = `Destino: ${current.fecha}`;
             let t = current.items.reduce((a,b)=>a+b.can,0);
             document.getElementById('load-total').innerText = t;
             document.getElementById('items-list').innerHTML = current.items.map((it, i) => `
-                <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; font-weight:600;">
-                    <span>${it.can} ${it.cli}</span>
-                    <i class="ph-bold ph-trash" style="color:red" onclick="current.items.splice(${i},1);refreshLoadUI()"></i>
-                </div>`).join('');
+                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid var(--border); font-weight:600; background:rgba(255,255,255,0.02); margin-bottom:5px; border-radius:10px;">
+                    <span>${it.can} <small style="color:var(--accent)">📦</small> ${it.cli}</span>
+                    <i class="ph-bold ph-x-circle" style="color:#ff4444; font-size:20px;" onclick="current.items.splice(${i},1);refreshLoadUI()"></i>
+                </div>`).reverse().join('');
             document.getElementById('btn-finish').style.display = t > 0 ? 'block' : 'none';
         }
 
         async function saveAndSync() {
             const idx = db.findIndex(x => x.id === current.id);
             if(idx > -1) db[idx] = current; else db.unshift(current);
-            localStorage.setItem('twins_v45_6', JSON.stringify(db));
+            localStorage.setItem('twins_intel_v46', JSON.stringify(db));
             
-            document.getElementById('sync-toast').style.display = 'block';
+            document.getElementById('sync-bar').style.display = 'block';
             
             try {
                 await fetch(WEB_APP_URL, {
@@ -194,42 +221,58 @@
                     mode: 'no-cors',
                     body: JSON.stringify(current)
                 });
-            } catch (e) { console.log("Offline save"); }
+            } catch (e) { console.log("Cloud sync delayed"); }
 
             setTimeout(() => {
-                document.getElementById('sync-toast').style.display = 'none';
+                document.getElementById('sync-bar').style.display = 'none';
                 go('page-dash'); renderHistory(); renderStats();
-            }, 1200);
+            }, 1000);
+        }
+
+        function renderStats() {
+            const hoy = new Date().toISOString().split('T')[0];
+            const mesActual = hoy.substring(0,7);
+
+            const dataHoy = db.filter(r => r.fecha === hoy);
+            const dataMes = db.filter(r => r.fecha.startsWith(mesActual));
+
+            document.getElementById('stat-cajas-hoy').innerText = dataHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
+            document.getElementById('stat-envios-hoy').innerText = dataHoy.length;
+            document.getElementById('stat-cajas-mes').innerText = dataMes.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
+            document.getElementById('stat-envios-mes').innerText = dataMes.length;
         }
 
         function renderHistory() {
-            const q = document.getElementById('search').value.toLowerCase();
             const container = document.getElementById('history-container');
             container.innerHTML = "";
             const hoy = new Date().toISOString().split('T')[0];
             let mañana = new Date(); mañana.setDate(mañana.getDate() + 1); mañana = mañana.toISOString().split('T')[0];
 
-            let data = db.filter(r => JSON.stringify(r).toLowerCase().includes(q));
-
-            renderBlock(container, "PARA MAÑANA", data.filter(r => r.fecha === mañana));
-            renderBlock(container, "DESPACHOS DE HOY", data.filter(r => r.fecha === hoy));
+            renderBlock(container, "Próximos Despachos", db.filter(r => r.fecha === mañana));
+            renderBlock(container, "Despachados Hoy", db.filter(r => r.fecha === hoy));
         }
 
         function renderBlock(cont, titulo, items) {
             if(items.length === 0) return;
-            cont.innerHTML += `<div class="date-divider">${titulo}</div>`;
+            cont.innerHTML += `<div style="font-size:11px; font-weight:800; color:var(--accent); margin:20px 0 10px; text-transform:uppercase;">${titulo}</div>`;
             items.forEach(r => {
                 const total = r.items.reduce((a,b)=>a+b.can,0);
                 cont.innerHTML += `
                 <div class="route-card">
-                    <div style="display:flex; justify-content:space-between; align-items:start;">
-                        <div><b style="font-size:18px;">${r.placa}</b><div style="font-size:11px; color:var(--text-dim);">${r.chofer}</div></div>
-                        <div style="text-align:right;"><b style="color:var(--accent); font-size:22px;">${total}</b><div style="font-size:9px; font-weight:800;">CAJAS</div></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <b style="font-size:19px; letter-spacing:1px;">${r.placa}</b>
+                            <div style="font-size:11px; color:var(--text-dim); font-weight:600;">${r.chofer} | ${r.items.length} Cli.</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <b style="color:var(--accent); font-size:24px;">${total}</b>
+                            <div style="font-size:9px; font-weight:800; opacity:0.6;">TOTAL CAJAS</div>
+                        </div>
                     </div>
                     <div class="route-actions">
-                        <button class="action-btn" onclick="viewList('${r.id}')"><i class="ph-bold ph-list-bullets"></i>VER LISTA</button>
-                        <button class="action-btn" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil-simple"></i>EDITAR</button>
-                        <button class="action-btn" style="color:#25D366" onclick="sendWA('${r.id}')"><i class="ph-fill ph-whatsapp-logo"></i>WHATSAPP</button>
+                        <button class="action-btn" onclick="viewList('${r.id}')"><i class="ph-bold ph-eye"></i>VER</button>
+                        <button class="action-btn" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
+                        <button class="action-btn wa" onclick="sendWA('${r.id}')"><i class="ph-fill ph-whatsapp-logo"></i>WHATSAPP</button>
                     </div>
                 </div>`;
             });
@@ -237,11 +280,11 @@
 
         function viewList(id) {
             const r = db.find(x => x.id === id);
-            document.getElementById('modal-title').innerText = r.placa + " - Detalle";
+            document.getElementById('modal-title').innerText = `${r.placa} - Detalle`;
             document.getElementById('modal-body').innerHTML = r.items.map(i => `
-                <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #eee; font-weight:700;">
-                    <span>${i.cli}</span><span>${i.can} Cjs</span>
-                </div>`).join('') + `<div style="padding:15px; text-align:right; font-weight:900; font-size:18px;">Total: ${r.items.reduce((a,b)=>a+b.can,0)}</div>`;
+                <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); font-weight:600;">
+                    <span>${i.cli}</span><span style="color:var(--accent)">${i.can} Cjs</span>
+                </div>`).join('') + `<div style="padding:15px; text-align:right; font-weight:900; font-size:20px; color:var(--success);">Total: ${r.items.reduce((a,b)=>a+b.can,0)}</div>`;
             document.getElementById('modal-list').style.display = 'flex';
         }
 
@@ -252,15 +295,8 @@
 
         function sendWA(id) {
             const r = db.find(x => x.id === id);
-            const msg = `*TWINS ELITE*\n📦 *Unidad:* ${r.placa}\n👤 *Chofer:* ${r.chofer}\n🤝 *Auxiliar:* ${r.auxiliar}\n\n*LISTA DE CARGA:*\n${r.items.map(i=>`• ${i.cli}: ${i.can}`).join('\n')}\n\n*TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)} Cjs*`;
+            const msg = `*TWINS ELITE - DESPACHO*\n━━━━━━━━━━━━━━\n🚛 *UNIDAD:* ${r.placa}\n👤 *CHOFER:* ${r.chofer}\n🤝 *AUX:* ${r.auxiliar}\n📅 *FECHA:* ${r.fecha}\n━━━━━━━━━━━━━━\n*CLIENTES:*\n${r.items.map(i=>`• ${i.cli}: ${i.can} Cjs`).join('\n')}\n━━━━━━━━━━━━━━\n📦 *TOTAL: ${r.items.reduce((a,b)=>a+b.can,0)} Cajas*`;
             window.location.href = "whatsapp://send?text=" + encodeURIComponent(msg);
-        }
-
-        function renderStats() {
-            const hoy = new Date().toISOString().split('T')[0];
-            const itemsHoy = db.filter(r => r.fecha === hoy);
-            document.getElementById('d-cajas').innerText = itemsHoy.reduce((a,b)=>a+b.items.reduce((x,y)=>x+y.can,0), 0);
-            document.getElementById('d-envios').innerText = itemsHoy.length;
         }
 
         function go(id) {
