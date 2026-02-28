@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V66.0 PRO</title>
+    <title>TWINS ELITE - V66.2 OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -15,14 +15,13 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* Login Estricto */
         #login-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 25px; }
         .login-card { background: #fff; width: 100%; max-width: 400px; padding: 40px 25px; border-radius: 35px; text-align: center; }
 
         .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
         .active { display: block; }
 
-        /* Tarjeta de Historial Compacta */
+        /* Tarjeta de Historial que te gusta */
         .route-card { background: #fff; border-radius: 20px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .card-date { font-size: 11px; font-weight: 800; color: var(--text-dim); background: #f3f4f6; padding: 4px 8px; border-radius: 6px; }
@@ -30,7 +29,6 @@
         .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .btn-action { padding: 8px; border-radius: 10px; border: 1px solid #eee; background: #fff; font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 5px; text-transform: uppercase; }
 
-        /* Inputs y Botones */
         .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 700; outline: none; margin-bottom: 10px; }
         .btn-primary { width: 100%; padding: 18px; background: #000; color: #fff; border-radius: 18px; font-weight: 800; border: none; cursor: pointer; }
         
@@ -38,14 +36,15 @@
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
 
-        /* Dashboard Stats */
         .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .master-card { background: #fff; padding: 15px; border-radius: 20px; border: 1px solid var(--border); }
         .master-card.black { background: #000; color: #fff; border: none; }
         .stat-val { font-size: 24px; font-weight: 900; display: block; }
         .stat-lab { font-size: 9px; font-weight: 700; opacity: 0.6; text-transform: uppercase; }
 
-        .truck-load-header { background: #000; color: #fff; padding: 20px; border-radius: 24px; margin-bottom: 15px; }
+        /* Modal para Emergencias */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 3000; padding: 20px; }
+        .modal-content { background: #fff; padding: 25px; border-radius: 25px; width: 100%; max-width: 400px; }
     </style>
 </head>
 <body>
@@ -82,38 +81,13 @@
                 <span id="stat-mes" class="stat-val">0</span>
             </div>
         </div>
-        <div style="position:relative; margin-bottom:15px;">
-            <input type="text" id="search" class="field" placeholder="Buscar..." onkeyup="renderHist()" style="padding-left:45px;">
-            <i class="ph-bold ph-magnifying-glass" style="position:absolute; left:15px; top:18px; color:#999;"></i>
-        </div>
         <div id="hist-list"></div>
-    </div>
-
-    <div id="page-load" class="page">
-        <div class="truck-load-header">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span id="load-date-view" style="font-size:10px; font-weight:800; opacity:0.7;">---</span>
-                <b id="load-placa-view" style="font-size:18px;">---</b>
-            </div>
-            <div style="text-align:center; margin:10px 0;">
-                <span id="load-total" style="font-size:42px; font-weight:900;">0</span>
-                <div style="height:6px; background:rgba(255,255,255,0.1); border-radius:10px; margin-top:5px;">
-                    <div id="load-bar" style="height:100%; background:var(--green); width:0%; border-radius:10px; transition:0.3s;"></div>
-                </div>
-            </div>
-        </div>
-        <div style="display:flex; gap:8px;">
-            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2;">
-            <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1;">
-        </div>
-        <button onclick="addItem()" class="btn-primary" style="background:var(--green); margin-bottom:15px;">AÑADIR</button>
-        <div id="load-items"></div>
-        <button id="btn-save" onclick="saveRoute()" class="btn-primary" style="display:none; margin-top:20px;">FINALIZAR RUTA</button>
     </div>
 
     <div id="page-config" class="page">
         <div style="background:#fff; padding:25px; border-radius:24px; border:1px solid #eee; text-align:center;">
             <h1 id="conf-placa" style="font-size:40px; margin:0 0 20px 0;">---</h1>
+            <label style="font-size:10px; font-weight:800; display:block; text-align:left; margin-bottom:5px;">FECHA DE RUTA (PROGRAMABLE)</label>
             <input type="date" id="c-fecha" class="field">
             <select id="c-chofer" class="field"></select>
             <select id="c-aux" class="field"></select>
@@ -121,16 +95,35 @@
         </div>
     </div>
 
-    <div id="page-data" class="page">
-        <h2 style="font-weight:900;">Ranking</h2>
-        <input type="month" id="data-month" class="field" onchange="renderData()">
-        <div id="rank-content"></div>
+    <div id="page-load" class="page">
+        <div style="background:#000; color:#fff; padding:20px; border-radius:24px; margin-bottom:15px; text-align:center;">
+            <b id="load-placa-view" style="font-size:24px;">---</b><br>
+            <small id="load-date-view" style="opacity:0.7;">---</small>
+        </div>
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2;">
+            <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1;">
+        </div>
+        <button onclick="addItem()" class="btn-primary" style="background:var(--green); margin-bottom:15px;">AÑADIR</button>
+        <div id="load-items"></div>
+        <button id="btn-save" onclick="saveRoute()" class="btn-primary" style="display:none; margin-top:20px;">GUARDAR RUTA</button>
+    </div>
+
+    <div id="modal-crew" class="modal">
+        <div class="modal-content">
+            <h3 style="font-weight:900; margin-top:0;">Cambio de Equipo</h3>
+            <p style="font-size:11px; color:var(--text-dim); margin-bottom:20px;">Realice el cambio de conductor o auxiliar para esta ruta específica.</p>
+            <select id="m-chofer" class="field"></select>
+            <select id="m-aux" class="field"></select>
+            <button onclick="saveCrewEmergency()" class="btn-primary">CONFIRMAR CAMBIO</button>
+            <button onclick="closeCrew()" style="width:100%; margin-top:10px; border:none; background:none; font-weight:800; font-size:12px;">CANCELAR</button>
+        </div>
     </div>
 
     <nav class="nav-bottom" id="main-nav">
         <button class="nav-btn" onclick="go('page-units')" id="n-units"><i class="ph-bold ph-plus-circle" style="font-size:24px;"></i>NUEVA</button>
         <button class="nav-btn active" onclick="go('page-dash')" id="n-dash"><i class="ph-bold ph-clock-counter-clockwise" style="font-size:24px;"></i>HISTORIAL</button>
-        <button class="nav-btn" onclick="go('page-data')" id="n-data"><i class="ph-bold ph-chart-line-up" style="font-size:24px;"></i>DATA</button>
+        <button class="nav-btn" onclick="go('page-data')" id="n-data" style="display:none;"><i class="ph-bold ph-chart-line-up" style="font-size:24px;"></i>DATA</button>
     </nav>
 
     <script>
@@ -138,31 +131,23 @@
         let db = JSON.parse(localStorage.getItem('twins_db')) || [];
         let cur = JSON.parse(localStorage.getItem('twins_draft')) || null;
         let auth = JSON.parse(localStorage.getItem('twins_auth')) || null;
+        let emergencyId = null;
 
-        const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CHOFERES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["POR ASIGNAR", "CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
+        const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
 
         window.onload = () => {
-            initInputs();
-            if(auth) {
-                showApp();
-                if(cur) { 
-                    go('page-load'); 
-                    refreshLoadUI();
-                }
-            }
-            setInterval(sync, 20000);
-        };
-
-        function initInputs() {
             const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
-            CHOFERES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
-            AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
+            const mc = document.getElementById('m-chofer'), ma = document.getElementById('m-aux');
+            CHOFERES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; mc.innerHTML += `<option value="${c}">${c}</option>`; });
+            AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; ma.innerHTML += `<option value="${a}">${a}</option>`; });
+            
             const ug = document.getElementById('units-grid');
             for(let p in FLOTA) ug.innerHTML += `<div onclick="setupRoute('${p}')" style="background:#fff; padding:20px; border-radius:20px; border:1px solid #eee; text-align:center; font-weight:800;">${p}</div>`;
-            document.getElementById('data-month').value = new Date().toISOString().substring(0,7);
-        }
+
+            if(auth) { showApp(); if(cur) { go('page-load'); refreshLoadUI(); } }
+        };
 
         function uCheck() { document.getElementById('pass-field').style.display = (document.getElementById('user-select').value === 'TAJHO') ? 'block' : 'none'; }
         function login() {
@@ -175,43 +160,32 @@
             showApp();
         }
 
-        function showApp() {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('main-nav').style.display = 'flex';
-            document.getElementById('n-data').style.display = auth.admin ? 'flex' : 'none';
-            sync();
-        }
+        function showApp() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; renderHist(); }
 
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            const btn = document.getElementById('n-' + id.split('-')[1]);
-            if(btn) btn.classList.add('active');
             if(id === 'page-dash') renderHist();
-            if(id === 'page-data') renderData();
         }
 
         function setupRoute(p) {
-            const hoy = new Date().toISOString().split('T')[0];
             document.getElementById('conf-placa').innerText = p;
-            document.getElementById('c-fecha').value = hoy;
+            document.getElementById('c-fecha').value = new Date().toISOString().split('T')[0];
             document.getElementById('c-chofer').value = FLOTA[p] || "TAJHO";
             go('page-config');
         }
 
         function startLoad() {
-            cur = {
-                id: 'ID-' + Date.now(),
-                placa: document.getElementById('conf-placa').innerText,
-                fecha: document.getElementById('c-fecha').value,
-                chofer: document.getElementById('c-chofer').value,
-                aux: document.getElementById('c-aux').value,
-                items: []
+            cur = { 
+                id: 'ID-' + Date.now(), 
+                placa: document.getElementById('conf-placa').innerText, 
+                fecha: document.getElementById('c-fecha').value, // FECHA ELEGIDA
+                chofer: document.getElementById('c-chofer').value, 
+                aux: document.getElementById('c-aux').value, 
+                items: [] 
             };
             localStorage.setItem('twins_draft', JSON.stringify(cur));
-            refreshLoadUI();
-            go('page-load');
+            refreshLoadUI(); go('page-load');
         }
 
         function addItem() {
@@ -220,82 +194,70 @@
             if(!cli || !can) return;
             cur.items.push({cli, can});
             localStorage.setItem('twins_draft', JSON.stringify(cur));
-            document.getElementById('i-cli').value = "";
-            document.getElementById('i-can').value = "";
+            document.getElementById('i-cli').value = ""; document.getElementById('i-can').value = "";
             refreshLoadUI();
         }
 
         function refreshLoadUI() {
             document.getElementById('load-placa-view').innerText = cur.placa;
-            document.getElementById('load-date-view').innerText = "Ruta: " + cur.fecha;
+            document.getElementById('load-date-view').innerText = "Ruta para: " + cur.fecha;
             const total = cur.items.reduce((s, i) => s + i.can, 0);
-            document.getElementById('load-total').innerText = total;
-            document.getElementById('load-bar').style.width = Math.min((total/150)*100, 100) + "%";
             document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
             document.getElementById('load-items').innerHTML = cur.items.map((it, i) => `
                 <div style="background:#fff; padding:12px; border-radius:12px; margin-bottom:6px; display:flex; justify-content:space-between; border:1px solid #eee;">
-                    <span><b>${it.cli}</b></span>
-                    <span>${it.can} cjs <i class="ph-bold ph-x-circle" style="color:red; margin-left:10px;" onclick="removeItem(${i})"></i></span>
-                </div>
-            `).reverse().join('');
+                    <span><b>${it.cli}</b></span><span>${it.can} cjs</span>
+                </div>`).reverse().join('');
         }
 
-        function removeItem(i) { cur.items.splice(i, 1); localStorage.setItem('twins_draft', JSON.stringify(cur)); refreshLoadUI(); }
-
         function saveRoute() {
-            const existing = db.findIndex(r => r.id === cur.id);
-            if(existing > -1) db[existing] = cur;
-            else db.unshift(cur);
-            
+            const idx = db.findIndex(r => r.id === cur.id);
+            if(idx > -1) db[idx] = cur; else db.unshift(cur);
             localStorage.setItem('twins_db', JSON.stringify(db));
             fetch(CLOUD, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
-            cur = null;
-            localStorage.removeItem('twins_draft');
-            go('page-dash');
+            cur = null; localStorage.removeItem('twins_draft'); go('page-dash');
         }
 
         function renderHist() {
-            const q = document.getElementById('search').value.toLowerCase();
             const hoyStr = new Date().toISOString().split('T')[0];
-            
-            // Stats Exactas
             const rHoy = db.filter(r => r.fecha === hoyStr);
             const rMes = db.filter(r => r.fecha.startsWith(hoyStr.substring(0,7)));
             document.getElementById('stat-hoy').innerText = rHoy.reduce((s,r) => s + r.items.reduce((a,b)=>a+b.can,0), 0);
             document.getElementById('stat-mes').innerText = rMes.reduce((s,r) => s + r.items.reduce((a,b)=>a+b.can,0), 0);
-
-            let filt = db.filter(r => r.placa.toLowerCase().includes(q) || r.chofer.toLowerCase().includes(q) || r.fecha.includes(q));
             
-            document.getElementById('hist-list').innerHTML = filt.map(r => `
+            document.getElementById('hist-list').innerHTML = db.map(r => `
                 <div class="route-card">
-                    <div class="card-header">
-                        <span class="card-date">📅 ${r.fecha}</span>
-                        <b style="font-size:14px;">${r.placa}</b>
-                    </div>
+                    <div class="card-header"><span class="card-date">📅 ${r.fecha}</span><b>${r.placa}</b></div>
                     <div class="card-main">
-                        <div>
-                            <span style="display:block; font-size:13px; font-weight:800;">${r.chofer}</span>
-                            <span style="font-size:10px; color:var(--text-dim);">Aux: ${r.aux}</span>
-                        </div>
-                        <div style="text-align:right;">
-                            <b style="font-size:20px;">${r.items.reduce((s,i)=>s+i.can,0)}</b> <small>cjs</small>
-                        </div>
+                        <div><span style="display:block; font-size:13px; font-weight:800;">${r.chofer}</span><span style="font-size:10px; color:var(--text-dim);">Aux: ${r.aux}</span></div>
+                        <div style="text-align:right;"><b style="font-size:20px;">${r.items.reduce((s,i)=>s+i.can,0)}</b> <small>cjs</small></div>
                     </div>
                     <div class="card-actions">
-                        <button class="btn-action" onclick="editRoute('${r.id}')"><i class="ph-bold ph-pencil"></i> Editar</button>
-                        <button class="btn-action" onclick="shareW('${r.id}')" style="color:#10b981; border-color:#10b981;"><i class="ph-bold ph-whatsapp-logo"></i> Reporte</button>
+                        <button class="btn-action" onclick="openCrewEmergency('${r.id}')"><i class="ph-bold ph-steering-wheel"></i> Equipo</button>
+                        <button class="btn-action" onclick="shareW('${r.id}')" style="color:#10b981;"><i class="ph-bold ph-whatsapp-logo"></i> Reporte</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
-        function editRoute(id) {
+        // FUNCION PARA CAMBIO DE EQUIPO POR EMERGENCIA
+        function openCrewEmergency(id) {
+            emergencyId = id;
             const r = db.find(x => x.id === id);
-            if(!r) return;
-            cur = JSON.parse(JSON.stringify(r));
-            localStorage.setItem('twins_draft', JSON.stringify(cur));
-            refreshLoadUI();
-            go('page-load');
+            document.getElementById('m-chofer').value = r.chofer;
+            document.getElementById('m-aux').value = r.aux;
+            document.getElementById('modal-crew').style.display = 'flex';
+        }
+
+        function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
+
+        function saveCrewEmergency() {
+            const idx = db.findIndex(x => x.id === emergencyId);
+            if(idx > -1) {
+                db[idx].chofer = document.getElementById('m-chofer').value;
+                db[idx].aux = document.getElementById('m-aux').value;
+                localStorage.setItem('twins_db', JSON.stringify(db));
+                fetch(CLOUD, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
+                renderHist(); closeCrew();
+            }
         }
 
         function shareW(id) {
@@ -304,34 +266,6 @@
             r.items.forEach(i => m += `• ${i.cli}: ${i.can}%0A`);
             m += `%0A📦 *TOTAL:* ${r.items.reduce((s,i)=>s+i.can,0)} cjs`;
             window.location.href = "https://api.whatsapp.com/send?text=" + m;
-        }
-
-        async function sync() {
-            try {
-                const res = await fetch(CLOUD);
-                const cloudData = await res.json();
-                if(JSON.stringify(cloudData) !== JSON.stringify(db)) {
-                    db = cloudData;
-                    localStorage.setItem('twins_db', JSON.stringify(db));
-                    renderHist();
-                }
-            } catch(e){}
-        }
-
-        function renderData() {
-            const month = document.getElementById('data-month').value;
-            const filt = db.filter(r => r.fecha.startsWith(month));
-            let rank = {};
-            filt.forEach(r => {
-                rank[r.chofer] = (rank[r.chofer] || 0) + r.items.reduce((s,i)=>s+i.can,0);
-            });
-            let sorted = Object.entries(rank).sort((a,b)=>b[1]-a[1]);
-            document.getElementById('rank-content').innerHTML = sorted.map(([name, val], i) => `
-                <div style="background:#fff; padding:15px; border-radius:15px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; border:1px solid #eee;">
-                    <span><b>${i+1}. ${name}</b></span>
-                    <b style="color:var(--green);">${val} CJS</b>
-                </div>
-            `).join('');
         }
     </script>
 </body>
