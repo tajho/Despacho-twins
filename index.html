@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V65.3 Final</title>
+    <title>TWINS ELITE - V65.4 Stable</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -156,13 +156,13 @@
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzkIqN5__aLRTfyeJSWAAB-pUmt54kGsv4Ex2KWz_dgAvrCT_Gty05uZelf6gbcL4p7/exec";
         
         let db = JSON.parse(localStorage.getItem('twins_v63_db')) || [];
-        let cur = { items: [] };
+        let cur = JSON.parse(localStorage.getItem('twins_cur_draft')) || { items: [] };
         let userAuth = JSON.parse(localStorage.getItem('twins_auth')) || null;
         let isSyncing = false;
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
-        const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
+        const AUXILIARES = ["POR ASIGNAR", "CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
 
         window.onload = () => {
             const ug = document.getElementById('units-grid');
@@ -175,6 +175,13 @@
             if(userAuth) applyAuth();
             renderStats(); 
             renderHistory();
+
+            // Restaurar borrador si existe
+            if(cur.placa) {
+                document.getElementById('load-placa-txt').innerText = cur.placa;
+                refreshLoad();
+            }
+
             setInterval(() => { if(userAuth) pullCloudData(true); }, 15000);
         };
 
@@ -231,9 +238,9 @@
             document.getElementById('stat-mes-envios').innerText = cli(rMes) + " CLIENTES";
         }
 
-        function initConf(p) { cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0] }; document.getElementById('conf-placa').innerText = p; document.getElementById('c-fecha').value = cur.fecha; go('page-config'); }
-        function goLoad() { cur.fecha = document.getElementById('c-fecha').value; cur.chofer = document.getElementById('c-chofer').value; cur.auxiliar = document.getElementById('c-aux').value; document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
-        function addItem() { const cli = document.getElementById('i-cli').value.toUpperCase().trim(); const can = parseInt(document.getElementById('i-can').value); if(cli && can) { cur.items.push({cli, can}); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refreshLoad(); } }
+        function initConf(p) { cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: "POR ASIGNAR" }; localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); document.getElementById('conf-placa').innerText = p; document.getElementById('c-fecha').value = cur.fecha; go('page-config'); }
+        function goLoad() { cur.fecha = document.getElementById('c-fecha').value; cur.chofer = document.getElementById('c-chofer').value; cur.auxiliar = document.getElementById('c-aux').value; localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
+        function addItem() { const cli = document.getElementById('i-cli').value.toUpperCase().trim(); const can = parseInt(document.getElementById('i-can').value); if(cli && can) { cur.items.push({cli, can}); localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refreshLoad(); } }
         
         function refreshLoad() { 
             const total = cur.items.reduce((a,b)=>a+b.can, 0); 
@@ -244,17 +251,23 @@
             document.getElementById('btn-save').style.display = total>0 ? 'block' : 'none';
             document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
                 <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
-                    <span><i class="ph-bold ph-trash" style="color:var(--red); margin-right:12px;" onclick="cur.items.splice(${i},1); refreshLoad();"></i>${it.cli}</span>
+                    <span><i class="ph-bold ph-trash" style="color:var(--red); margin-right:12px;" onclick="cur.items.splice(${i},1); localStorage.setItem('twins_cur_draft', JSON.stringify(cur)); refreshLoad();"></i>${it.cli}</span>
                     <b>${it.can}</b>
                 </div>`).reverse().join(''); 
         }
 
         function save() { 
             const idx = db.findIndex(r => r.id === cur.id); 
-            if(idx > -1) db[idx] = cur; else db.unshift(cur); 
+            if(idx > -1) {
+                db[idx] = JSON.parse(JSON.stringify(cur));
+            } else {
+                db.unshift(JSON.parse(JSON.stringify(cur)));
+            }
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+            localStorage.removeItem('twins_cur_draft'); // Limpiar borrador al guardar
             renderStats(); renderHistory();
             syncCloud(cur);
+            cur = { items: [] }; // Resetear objeto actual
             go('page-dash'); 
         }
 
@@ -302,29 +315,30 @@
 
         function viewL(id) { const r = db.find(x => x.id === id); if(!r.items) return; document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
-        function editR(id) { cur = JSON.parse(JSON.stringify(db.find(x => x.id === id))); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
         
-        // --- WHATSAPP FORMATO OFICIAL ---
+        function editR(id) { 
+            const rFound = db.find(x => x.id === id);
+            if(rFound) {
+                cur = JSON.parse(JSON.stringify(rFound)); // Copia exacta con el mismo ID
+                localStorage.setItem('twins_cur_draft', JSON.stringify(cur));
+                document.getElementById('load-placa-txt').innerText = cur.placa;
+                refreshLoad(); 
+                go('page-load'); 
+            }
+        }
+        
         function shareW(id) { 
             const r = db.find(x => x.id === id); 
             const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
             const totalClientes = r.items ? r.items.length : 0;
-            
             let msg = `*TWINS ELITE*%0A%0A`;
             msg += `🚛 *UNIDAD:* ${r.placa}%0A`;
             msg += `👤 *CHOFER:* ${r.chofer}%0A`;
             msg += `🤝 *AUX:* ${r.auxiliar}%0A%0A`;
             msg += `*LISTA:*%0A`;
-            
-            if(r.items) {
-                r.items.forEach(i => {
-                    msg += `• ${i.cli}: ${i.can}%0A`;
-                });
-            }
-            
+            if(r.items) r.items.forEach(i => { msg += `• ${i.cli}: ${i.can}%0A`; });
             msg += `%0A📦 *TOTAL:* ${totalCajas} Cjs`;
             msg += `%0A👥 *CLIENTES:* ${totalClientes}`;
-            
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
     </script>
