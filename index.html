@@ -3,121 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V59.0</title>
+    <title>TWINS ELITE - V60.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #f8f9fa; --surface: #ffffff; --accent: #000000; 
+            --bg: #f4f6f8; --surface: #ffffff; --accent: #000000; 
             --text: #111827; --text-dim: #6b7280; --border: #e5e7eb; 
             --green: #10b981; --red: #ef4444;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
+        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* Animaciones suaves para celular */
-        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: slideUp 0.3s ease-out; }
+        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: fade 0.2s ease; }
         .active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Historial y Filtros */
-        .filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .filter-btn { background: #fff; border: 1px solid var(--border); padding: 12px 20px; border-radius: 14px; font-size: 11px; font-weight: 800; white-space: nowrap; transition: 0.2s; }
-        .filter-btn.active { background: #000; color: #fff; border-color: #000; transform: scale(1.05); }
+        /* Filtros Historial */
+        .filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .filter-btn { background: #fff; border: 1px solid var(--border); padding: 10px 18px; border-radius: 12px; font-size: 11px; font-weight: 800; white-space: nowrap; color: var(--text-dim); }
+        .filter-btn.active { background: #000; color: #fff; border-color: #000; }
 
-        .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .card-meta { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: var(--text-dim); margin-bottom: 12px; }
+        /* Tarjetas de Ruta con Detalle Completo */
+        .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .card-meta { display: flex; justify-content: space-between; font-size: 10px; font-weight: 800; color: var(--text-dim); margin-bottom: 8px; text-transform: uppercase; }
+        .card-crew { font-size: 12px; font-weight: 700; color: #4b5563; margin-top: 4px; display: flex; align-items: center; gap: 5px; }
         
         .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 15px; border-top: 1px solid #f3f4f6; padding-top: 15px; }
-        .btn-act { border: 1px solid var(--border); border-radius: 14px; padding: 12px 5px; font-size: 10px; font-weight: 800; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .btn-act { border: 1px solid var(--border); border-radius: 14px; padding: 12px 5px; font-size: 10px; font-weight: 800; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text); }
         .btn-act.wa { background: #000; color: #fff; border: none; }
 
-        /* Selector de Unidades */
-        .unit-card { background: #fff; padding: 30px 15px; border-radius: 24px; text-align: center; border: 1px solid var(--border); transition: 0.2s; }
-        .unit-card:active { transform: scale(0.95); background: #f9f9f9; }
-
-        /* DATA: El diseño bonito original */
+        /* DATA: DISEÑO ORIGINAL (BARRAS NEGRAS) */
         .rank-card { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
-        .rank-pos { width: 32px; height: 32px; border-radius: 10px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; }
-        .rank-bar-bg { background: #f3f4f6; height: 10px; border-radius: 20px; margin: 6px 0; overflow: hidden; flex: 1; }
+        .rank-bar-bg { background: #f3f4f6; height: 10px; border-radius: 20px; margin: 6px 0; overflow: hidden; }
         .rank-bar-fill { background: #000; height: 100%; border-radius: 20px; width: 0; transition: width 1s ease-out; }
 
-        /* Formulario y Nav */
-        .field { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 16px; font-weight: 700; outline: none; margin-bottom: 12px; appearance: none; }
+        /* Navegación Reordenada */
         .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: flex; border-top: 1px solid var(--border); z-index: 1000; padding: 0 10px; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
         .nav-btn i { font-size: 26px; margin-bottom: 4px; }
 
-        /* Modal Lista Bonita */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
-        .modal-box { background: #fff; width: 100%; max-width: 400px; border-radius: 30px; padding: 25px; max-height: 80vh; overflow-y: auto; }
+        .field { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 15px; font-weight: 700; outline: none; margin-bottom: 12px; }
+        .unit-card { background: #fff; padding: 25px 15px; border-radius: 22px; text-align: center; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
     <div id="page-units" class="page active">
-        <h1 style="font-weight:900; margin-bottom:5px;">Twins Elite</h1>
-        <p style="color:var(--text-dim); font-size:13px; font-weight:700; margin-bottom:25px;">Selecciona unidad de salida:</p>
+        <h1 style="font-weight:900; margin-bottom:20px;">Nueva Carga</h1>
         <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
-        <button onclick="injectFullData()" style="width:100%; margin-top:40px; padding:15px; border-radius:15px; background:none; border:2px dashed #ccc; color:gray; font-weight:800; font-size:11px;">SIMULAR DATOS PARA REVISAR DATA</button>
+        <button onclick="injectData()" style="width:100%; margin-top:30px; padding:15px; border-radius:15px; background:none; border:2px dashed #ccc; color:gray; font-weight:800; font-size:11px;">SIMULAR DATOS</button>
     </div>
 
     <div id="page-dash" class="page">
-        <h1 style="font-weight:900; margin-bottom:20px;">Control Diario</h1>
+        <h1 style="font-weight:900; margin-bottom:20px;">Historial</h1>
         <div class="filter-tabs">
             <button class="filter-btn" id="f-ayer" onclick="setFilter('ayer')">AYER</button>
             <button class="filter-btn active" id="f-hoy" onclick="setFilter('hoy')">HOY</button>
-            <button class="filter-btn" id="f-mañana" onclick="setFilter('mañana')">PRÓX. RUTA</button>
+            <button class="filter-btn" id="f-mañana" onclick="setFilter('mañana')">PRÓXIMA</button>
             <button class="filter-btn" id="f-todos" onclick="setFilter('todos')">TODO EL MES</button>
         </div>
         <div id="hist-cont"></div>
     </div>
 
     <div id="page-data" class="page">
-        <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
+        <h1 style="font-weight:900;">Data Mensual</h1>
         <input type="month" id="f-month" class="field" onchange="renderData()">
-        
         <div class="rank-card">
-            <div style="font-weight:800; font-size:11px; color:var(--text-dim); margin-bottom:20px; text-transform:uppercase;">🏆 Top Choferes</div>
+            <div style="font-weight:800; font-size:11px; color:var(--text-dim); margin-bottom:15px;">TOP CHOFERES</div>
             <div id="rank-choferes"></div>
         </div>
-
         <div class="rank-card">
-            <div style="font-weight:800; font-size:11px; color:var(--text-dim); margin-bottom:20px; text-transform:uppercase;">🤝 Top Auxiliares</div>
+            <div style="font-weight:800; font-size:11px; color:var(--text-dim); margin-bottom:15px;">TOP AUXILIARES</div>
             <div id="rank-auxiliares"></div>
         </div>
     </div>
 
     <div id="page-config" class="page">
-        <div style="background:#000; color:#fff; padding:25px; border-radius:25px; margin-bottom:20px; text-align:center;">
-            <h2 id="conf-placa" style="margin:0; font-size:32px;">---</h2>
-        </div>
-        <label style="font-size:11px; font-weight:800; margin-left:5px;">FECHA DE LA RUTA</label>
+        <h2 id="conf-placa" style="font-weight:900; font-size:32px; margin-bottom:20px;">---</h2>
         <input type="date" id="c-fecha" class="field">
-        <label style="font-size:11px; font-weight:800; margin-left:5px;">CHOFER ASIGNADO</label>
         <select id="c-chofer" class="field"></select>
-        <label style="font-size:11px; font-weight:800; margin-left:5px;">AUXILIAR DE APOYO</label>
         <select id="c-aux" class="field"></select>
-        <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none; margin-top:10px;">CONTINUAR CARGA</button>
+        <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">INICIAR CARGA</button>
     </div>
 
     <div id="page-load" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; background:#fff; padding:15px; border-radius:20px; border:1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px; background:#fff; padding:15px; border-radius:20px; border:1px solid var(--border);">
             <b id="load-placa-txt">---</b>
-            <b id="load-total" style="font-size:22px; color:#000;">0 CJS</b>
+            <b id="load-total" style="font-size:22px;">0</b>
         </div>
         <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0">
             <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1; margin:0">
         </div>
-        <button onclick="addItem()" style="width:100%; padding:18px; background:#000; color:#fff; border-radius:18px; font-weight:800; border:none;">+ AGREGAR</button>
+        <button onclick="addItem()" style="width:100%; padding:18px; background:#000; color:#fff; border-radius:18px; font-weight:800; border:none;">AGREGAR CLIENTE</button>
         <div id="load-list" style="margin-top:20px;"></div>
-        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:22px; background:var(--green); color:#fff; border-radius:22px; font-weight:900; border:none; margin-top:20px;">GUARDAR RUTA FINAL</button>
+        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:20px; background:var(--green); color:#fff; border-radius:20px; font-weight:900; border:none; margin-top:20px;">GUARDAR TODO</button>
     </div>
-
-    <div id="modal-list" class="modal"><div class="modal-box"><h3 id="m-title" style="margin:0; font-weight:900;"></h3><hr style="opacity:0.1; margin:15px 0;"><div id="m-items"></div><button onclick="closeM()" style="width:100%; margin-top:25px; padding:18px; border-radius:15px; background:#000; color:#fff; font-weight:800; border:none;">CERRAR</button></div></div>
 
     <nav class="nav-bottom">
         <button class="nav-btn active" id="n-units" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
@@ -126,7 +109,7 @@
     </nav>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('twins_db_v59')) || [];
+        let db = JSON.parse(localStorage.getItem('twins_db_v60')) || [];
         let cur = { items: [] };
         let activeFilter = 'hoy';
 
@@ -136,23 +119,13 @@
 
         window.onload = () => {
             const ug = document.getElementById('units-grid');
-            for(let p in FLOTA) ug.innerHTML += `<div class="unit-card" onclick="initConf('${p}')"><i class="ph-bold ph-truck" style="font-size:28px;"></i><br><b>${p}</b></div>`;
+            for(let p in FLOTA) ug.innerHTML += `<div class="unit-card" onclick="initConf('${p}')"><i class="ph-bold ph-truck" style="font-size:24px;"></i><br><b>${p}</b></div>`;
             const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
             renderHistory();
         };
-
-        function go(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById('n-'+id.split('-')[1]).classList.add('active');
-            if(id === 'page-data') renderData();
-            if(id === 'page-dash') renderHistory();
-            window.scrollTo(0,0);
-        }
 
         function initConf(p) {
             cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0] };
@@ -167,7 +140,7 @@
             cur.fecha = document.getElementById('c-fecha').value;
             cur.chofer = document.getElementById('c-chofer').value;
             cur.auxiliar = document.getElementById('c-aux').value;
-            document.getElementById('load-placa-txt').innerText = cur.placa + " (" + cur.fecha + ")";
+            document.getElementById('load-placa-txt').innerText = cur.placa;
             refreshLoad();
             go('page-load');
         }
@@ -182,14 +155,11 @@
 
         function refreshLoad() {
             const total = cur.items.reduce((a,b)=>a+b.can, 0);
-            document.getElementById('load-total').innerText = total + " CJS";
+            document.getElementById('load-total').innerText = total;
             document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
             document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
                 <div style="display:flex; justify-content:space-between; align-items:center; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px; font-weight:700;">
-                    <div style="display:flex; align-items:center; gap:12px;">
-                        <i class="ph-bold ph-trash" style="color:var(--red); font-size:22px;" onclick="removeItem(${i})"></i>
-                        <span>${it.cli}</span>
-                    </div>
+                    <span><i class="ph-bold ph-trash" style="color:red; margin-right:10px" onclick="removeItem(${i})"></i>${it.cli}</span>
                     <b>${it.can}</b>
                 </div>`).reverse().join('');
         }
@@ -197,7 +167,7 @@
         function save() {
             const idx = db.findIndex(r => r.id === cur.id);
             if(idx > -1) db[idx] = cur; else db.unshift(cur);
-            localStorage.setItem('twins_db_v59', JSON.stringify(db));
+            localStorage.setItem('twins_db_v60', JSON.stringify(db));
             go('page-dash'); setFilter('hoy');
         }
 
@@ -220,35 +190,27 @@
             }
             document.getElementById('hist-cont').innerHTML = filt.map(r => `
                 <div class="route-card">
-                    <div class="card-meta"><span>${r.fecha}</span><span>${r.chofer}</span></div>
+                    <div class="card-meta"><span>📅 ${r.fecha}</span><span>ID: ${r.id.slice(-4)}</span></div>
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <b style="font-size:18px;">${r.placa}</b>
                         <b style="font-size:22px;">${r.items.reduce((a,b)=>a+b.can,0)} CJS</b>
                     </div>
+                    <div class="card-crew"><i class="ph-bold ph-user"></i> ${r.chofer} | <i class="ph-bold ph-users"></i> ${r.auxiliar}</div>
                     <div class="route-actions">
-                        <button class="btn-act" onclick="viewL('${r.id}')"><i class="ph-bold ph-list-bullets"></i>LISTA</button>
-                        <button class="btn-act" onclick="editR('${r.id}')"><i class="ph-bold ph-pencil-simple"></i>EDITAR</button>
+                        <button class="btn-act" onclick="alert('Lista: '+JSON.stringify(r.items))"><i class="ph-bold ph-list"></i>LISTA</button>
+                        <button class="btn-act" onclick="editR('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
                         <button class="btn-act wa" onclick="shareW('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>REPORTE</button>
                     </div>
-                </div>`).join('') || '<p style="text-align:center; padding:50px; color:gray; font-weight:700;">No hay registros aquí.</p>';
+                </div>`).join('') || '<p style="text-align:center; padding:40px; color:gray;">No hay registros.</p>';
         }
 
         function editR(id) {
             const r = db.find(x => x.id === id);
-            cur = JSON.parse(JSON.stringify(r)); // Clonar para editar
-            document.getElementById('load-placa-txt').innerText = cur.placa + " (" + cur.fecha + ")";
+            cur = JSON.parse(JSON.stringify(r));
+            document.getElementById('load-placa-txt').innerText = cur.placa;
             refreshLoad();
             go('page-load');
         }
-
-        function viewL(id) {
-            const r = db.find(x => x.id === id);
-            document.getElementById('m-title').innerText = "Carga " + r.placa;
-            document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:12px 5px; border-bottom:1px solid #f3f4f6; font-weight:700;"><span>${i.cli}</span><b>${i.can} CJS</b></div>`).join('');
-            document.getElementById('modal-list').style.display = 'flex';
-        }
-
-        function closeM() { document.getElementById('modal-list').style.display = 'none'; }
 
         function renderData() {
             const m = document.getElementById('f-month').value;
@@ -256,46 +218,43 @@
             let cS = {}, aS = {};
             filt.forEach(r => {
                 let cjs = r.items.reduce((a,b)=>a+b.can,0);
-                cS[r.chofer] = (cS[r.chofer] || {cjs:0, cli:0}); cS[r.chofer].cjs += cjs; cS[r.chofer].cli += r.items.length;
-                aS[r.auxiliar] = (aS[r.auxiliar] || {cjs:0, rut:0}); aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].rut++;
+                cS[r.chofer] = (cS[r.chofer] || {cjs:0}); cS[r.chofer].cjs += cjs;
+                aS[r.auxiliar] = (aS[r.auxiliar] || {cjs:0}); aS[r.auxiliar].cjs += cjs;
             });
 
-            const draw = (data, id, isAux) => {
+            const draw = (data, id) => {
                 let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
                 let max = sorted[0] ? sorted[0][1].cjs : 1;
-                document.getElementById(id).innerHTML = sorted.map(([n, v], i) => `
-                    <div class="rank-item">
-                        <div class="rank-pos">${i+1}</div>
-                        <div style="flex:1">
-                            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:13px;"><span>${n}</span><span>${v.cjs} CJS</span></div>
-                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
-                            <div style="font-size:10px; font-weight:800; color:gray;">${isAux ? v.rut+' RUTAS' : v.cli+' CLIENTES'}</div>
-                        </div>
+                document.getElementById(id).innerHTML = sorted.map(([n, v]) => `
+                    <div style="margin-bottom:15px;">
+                        <div style="display:flex; justify-content:space-between; font-weight:800; font-size:12px;"><span>${n}</span><span>${v.cjs} CJS</span></div>
+                        <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
                     </div>`).join('');
             };
-            draw(cS, 'rank-choferes', false); draw(aS, 'rank-auxiliares', true);
+            draw(cS, 'rank-choferes'); draw(aS, 'rank-auxiliares');
         }
 
-        function injectFullData() {
-            const mes = new Date().toISOString().substring(0,7);
-            let fake = [];
-            for(let i=1; i<=10; i++) {
-                fake.push({
-                    id: 'F'+i, fecha: `${mes}-${i < 10 ? '0'+i : i}`, placa: "BPN-711", 
-                    chofer: CONDUCTORES[i % 6], auxiliar: AUXILIARES[i % 9],
-                    items: [{cli: "MARKET "+i, can: 25}, {cli: "TIENDA "+i, can: 15}]
-                });
-            }
-            db = fake; localStorage.setItem('twins_db_v59', JSON.stringify(db));
-            alert("¡Data de prueba inyectada!"); location.reload();
+        function injectData() {
+            const m = new Date().toISOString().substring(0,7);
+            db = Array.from({length:10}, (_,i)=>({id:'F'+i, fecha:`${m}-0${i+1}`, placa:'CEP-929', chofer:CONDUCTORES[i%6], auxiliar:AUXILIARES[i%9], items:[{cli:'CLI', can:20+i}]}));
+            localStorage.setItem('twins_db_v60', JSON.stringify(db));
+            location.reload();
         }
 
         function shareW(id) {
             const r = db.find(x => x.id === id);
-            let txt = `*TWINS ELITE*%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A📅 *FECHA:* ${r.fecha}%0A%0A*LISTA:*%0A`;
+            let txt = `*TWINS ELITE*%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`;
             r.items.forEach(i => txt += `• ${i.cli}: ${i.can}%0A`);
             txt += `%0A📦 *TOTAL:* ${r.items.reduce((a,b)=>a+b.can,0)} Cjs`;
             window.location.href = "https://api.whatsapp.com/send?text=" + txt;
+        }
+
+        function go(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+            document.getElementById('n-'+id.split('-')[1]).classList.add('active');
+            window.scrollTo(0,0);
         }
     </script>
 </body>
