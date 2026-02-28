@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V35 FLEX</title>
+    <title>TWINS ELITE - V36 DIRECT</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -23,7 +23,6 @@
         .page { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
         .active { display: block; }
 
-        /* Dashboard Stats */
         .stats-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .stat-box { padding: 12px; border-radius: 18px; }
         .stat-box.blue { background: var(--accent); color: #fff; }
@@ -34,12 +33,14 @@
 
         .card { background: #fff; border-radius: 18px; padding: 15px; border: 1px solid var(--border); margin-bottom: 10px; }
         .btn-main { background: var(--accent); color: #fff; border: none; border-radius: 15px; padding: 18px; width: 100%; font-weight: 800; font-size: 15px; margin-top: 5px; }
-        .btn-sub { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 12px; padding: 8px; font-size: 11px; font-weight: 700; margin-top: 5px; width: 100%; }
+        
+        .driver-selector { display: flex; justify-content: space-between; align-items: center; background: var(--bg); padding: 15px; border-radius: 14px; border: 1px solid var(--border); margin-top: 5px; cursor: pointer; }
         
         .input-box { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 16px; font-weight: 600; margin-bottom: 10px; outline: none; }
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 15px; backdrop-filter: blur(4px); }
         
-        .driver-chip { padding: 10px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 5px; font-weight: 700; font-size: 13px; }
+        .driver-chip { padding: 15px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .driver-chip:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -49,12 +50,12 @@
             <div class="stat-box blue">
                 <span class="stat-title">Acumulado Mes</span>
                 <div class="stat-row"><div class="stat-num" id="m-cajas">0</div><i class="ph-bold ph-package"></i></div>
-                <div class="stat-row"><div class="stat-num" id="m-clientes" style="font-size:14px;">0</div><i class="ph-bold ph-users" style="font-size:12px;"></i></div>
+                <div class="stat-row"><div class="stat-num" id="m-clientes" style="font-size:14px;">0</div><i class="ph-bold ph-users"></i></div>
             </div>
             <div class="stat-box white">
                 <span class="stat-title" style="color:var(--accent)">Hoy</span>
                 <div class="stat-row"><div class="stat-num" id="d-cajas">0</div><i class="ph-bold ph-package" style="color:var(--accent)"></i></div>
-                <div class="stat-row"><div class="stat-num" id="d-clientes" style="font-size:14px;">0</div><i class="ph-bold ph-users" style="color:var(--accent); font-size:12px;"></i></div>
+                <div class="stat-row"><div class="stat-num" id="d-clientes" style="font-size:14px;">0</div><i class="ph-bold ph-users" style="color:var(--accent)"></i></div>
             </div>
         </div>
         <div class="input-box" style="display:flex; align-items:center; gap:8px; padding:10px 14px; margin-bottom:15px;">
@@ -70,19 +71,21 @@
     </div>
 
     <div id="page-crew" class="page">
-        <h3 style="margin-bottom:15px;">Tripulación</h3>
-        <div class="card" id="crew-card">
-            <div id="crew-plate" style="font-size:24px; font-weight:900; color:var(--accent); text-align:center; margin-bottom:15px;">---</div>
+        <h3 style="margin-bottom:15px;">Asignación de Personal</h3>
+        <div class="card">
+            <div id="crew-plate" style="font-size:24px; font-weight:900; color:var(--accent); text-align:center; margin-bottom:20px; letter-spacing:1px;">---</div>
             
             <div style="margin-bottom:15px;">
-                <label style="font-size:10px; font-weight:800; color:var(--text-dim);">CONDUCTOR ASIGNADO:</label>
-                <div id="display-driver" style="font-weight:800; font-size:16px; padding:10px 0;">---</div>
-                <button class="btn-sub" onclick="openModal('modal-drivers')">🔄 CAMBIAR CONDUCTOR</button>
+                <label style="font-size:10px; font-weight:800; color:var(--text-dim);">CONDUCTOR:</label>
+                <div class="driver-selector" onclick="openModal('modal-drivers')">
+                    <span id="display-driver" style="font-weight:800; font-size:15px;">---</span>
+                    <i class="ph-bold ph-caret-right" style="color:var(--accent)"></i>
+                </div>
             </div>
 
-            <div style="margin-bottom:15px;">
-                <label style="font-size:10px; font-weight:800; color:var(--text-dim);">AUXILIAR DE CARGA:</label>
-                <select id="sel-aux" class="input-box" style="margin-top:5px;">
+            <div style="margin-bottom:20px;">
+                <label style="font-size:10px; font-weight:800; color:var(--text-dim);">AUXILIAR:</label>
+                <select id="sel-aux" class="input-box" style="margin-top:5px; background: var(--bg);">
                     <option value="POR DEFINIR">-- POR DEFINIR (MAÑANA) --</option>
                     <option value="CRISTOPHER">CRISTOPHER</option>
                     <option value="PERCY">PERCY</option>
@@ -97,7 +100,7 @@
                     <option value="DANIEL C.">DANIEL C.</option>
                 </select>
             </div>
-            <button onclick="confirmCrew()" class="btn-main">CONTINUAR A CARGA</button>
+            <button onclick="confirmCrew()" class="btn-main">IR A CARGA DE CAJAS</button>
         </div>
     </div>
 
@@ -106,9 +109,9 @@
             <div id="route-info" style="font-size:12px; font-weight:700;"></div>
             <div style="font-size:24px; font-weight:800;" id="count-cajas">0</div>
         </div>
-        <input type="text" id="inp-cli" placeholder="Cliente" class="input-box">
+        <input type="text" id="inp-cli" placeholder="Nombre Cliente" class="input-box">
         <div style="display:flex; gap:8px;">
-            <input type="number" id="inp-can" placeholder="Cant." class="input-box" style="flex:1;">
+            <input type="number" id="inp-can" placeholder="Cajas" class="input-box" style="flex:1;">
             <button onclick="addPoint()" style="background:var(--accent); color:#fff; border:none; border-radius:12px; width:55px; font-size:20px;">+</button>
         </div>
         <div id="live-list" style="margin-top:10px;"></div>
@@ -116,10 +119,14 @@
     </div>
 
     <div id="modal-drivers" class="modal">
-        <div style="background:#fff; border-radius:25px; padding:20px; width:100%; max-height:80vh; overflow-y:auto;">
-            <h4 style="margin:0 0 15px 0; text-align:center;">Seleccionar Conductor</h4>
-            <div id="drivers-list"></div>
-            <button onclick="document.getElementById('modal-drivers').style.display='none'" class="btn-sub" style="margin-top:10px; color:var(--danger);">CERRAR</button>
+        <div style="background:#fff; border-radius:25px; width:100%; max-height:80vh; overflow:hidden; display:flex; flex-direction:column;">
+            <div style="padding:20px; border-bottom:1px solid var(--border); text-align:center;">
+                <h4 style="margin:0;">Seleccionar Conductor</h4>
+            </div>
+            <div id="drivers-list" style="overflow-y:auto; flex:1;"></div>
+            <div style="padding:15px;">
+                <button onclick="document.getElementById('modal-drivers').style.display='none'" class="btn-main" style="background:var(--text); padding:12px;">CERRAR</button>
+            </div>
         </div>
     </div>
 
@@ -141,10 +148,10 @@
         const API = "https://script.google.com/macros/s/AKfycbxuVVOZfMx8jkN-q079s6g7ppPAF4XIkNG-DEQGt6MqiownzLo3NMyWBIZ1hkTyoPBl/exec";
         let db = [], currentCarga = [];
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
-        const CONDUCTORES = ["ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO", "RELEVO 1", "RELEVO 2"];
+        const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO", "RELEVO 1", "RELEVO 2"];
 
         window.onload = () => {
-            const saved = localStorage.getItem('tw_db_v35');
+            const saved = localStorage.getItem('tw_db_v36');
             if(saved) { db = JSON.parse(saved); renderHistory(); renderStats(); }
             setupPlates();
             setupDrivers();
@@ -154,20 +161,20 @@
         function setupPlates() {
             const f = document.getElementById('plate-grid');
             for(let p in FLOTA) {
-                f.innerHTML += `<div class="card" onclick="openCrew('${p}')" style="display:flex; justify-content:space-between; font-weight:800; padding:20px;">${p} <i class="ph ph-caret-right"></i></div>`;
+                f.innerHTML += `<div class="card" onclick="openCrew('${p}')" style="display:flex; justify-content:space-between; font-weight:800; padding:20px;">${p} <i class="ph ph-caret-right" style="color:var(--accent)"></i></div>`;
             }
         }
 
         function setupDrivers() {
             const list = document.getElementById('drivers-list');
             CONDUCTORES.forEach(d => {
-                list.innerHTML += `<div class="driver-chip" onclick="selectDriver('${d}')">${d}</div>`;
+                list.innerHTML += `<div class="driver-chip" onclick="selectDriver('${d}')">${d} <i class="ph ph-check" style="opacity:0.2"></i></div>`;
             });
         }
 
         function openCrew(p) {
             localStorage.setItem('tmp_p', p);
-            localStorage.setItem('tmp_d', FLOTA[p]); // Sugerencia inicial
+            localStorage.setItem('tmp_d', FLOTA[p]);
             document.getElementById('crew-plate').innerText = p;
             document.getElementById('display-driver').innerText = FLOTA[p];
             go('page-crew');
@@ -220,7 +227,7 @@
                 puntos: currentCarga.length,
                 id: 'R'+Date.now()
             };
-            db.unshift(r); localStorage.setItem('tw_db_v35', JSON.stringify(db));
+            db.unshift(r); localStorage.setItem('tw_db_v36', JSON.stringify(db));
             fetch(API, {method:'POST', mode:'no-cors', body:JSON.stringify(r)});
             document.getElementById('modal-date').style.display = 'none';
             go('page-dashboard'); renderStats(); renderHistory();
