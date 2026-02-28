@@ -3,23 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V63.5</title>
+    <title>TWINS ELITE - V65.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
             --bg: #f4f6f8; --surface: #ffffff; --accent: #000000; 
             --text: #111827; --text-dim: #6b7280; --border: #e5e7eb; 
-            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32; --green: #10b981; --red: #ef4444;
+            --gold: #FFD700; --silver: #C0C0C0; --green: #10b981; --red: #ef4444;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
+        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
 
+        /* --- PANTALLA LOGIN --- */
+        #page-login { 
+            position: fixed; inset: 0; background: #fff; z-index: 5000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;
+        }
+        .login-card { width: 100%; max-width: 350px; text-align: center; }
+        .user-sel { 
+            width: 100%; padding: 20px; margin-bottom: 12px; border-radius: 20px; 
+            border: 1px solid var(--border); background: #fff; font-weight: 800; 
+            display: flex; align-items: center; gap: 15px; transition: 0.2s;
+        }
+        .user-sel:active { background: #f0f0f0; transform: scale(0.98); }
+        .user-sel i { font-size: 24px; color: #000; }
+        .badge-admin { background: #000; color: #fff; font-size: 9px; padding: 2px 8px; border-radius: 10px; margin-left: auto; }
+
+        /* --- ESTILOS APP (MANTENIDOS) --- */
         .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: fade 0.2s ease; }
         .active { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- CUADROS DE ESTADÍSTICAS MAESTROS --- */
         .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .master-card { background: #fff; padding: 18px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 120px; }
         .master-card.black { background: #000; color: #fff; border: none; }
@@ -27,14 +42,13 @@
         .stat-main { font-size: 28px; font-weight: 900; line-height: 1; display: block; }
         .stat-sub { font-size: 11px; font-weight: 800; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(150,150,150,0.2); display: block; }
 
-        /* --- SECCIÓN DATA (INTACTA) --- */
         .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; text-transform: uppercase; color: var(--text-dim); }
         .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
         .rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; background: #eee; color: #aaa; flex-shrink: 0; }
         .pos-1 { background: var(--gold); color: #000; }
         .pos-2 { background: var(--silver); color: #000; }
-        .pos-3 { background: var(--bronze); color: #000; }
+        .pos-3 { background: #CD7F32; color: #000; }
         .rank-info { flex: 1; }
         .rank-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
         .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; overflow: hidden; }
@@ -42,19 +56,16 @@
         .rank-stats { font-size: 10px; font-weight: 800; color: var(--text-dim); margin-top: 4px; display: flex; gap: 10px; }
         .rank-stats b { color: #000; }
 
-        /* --- BUSCADOR E HISTORIAL --- */
         .search-box { position: relative; margin-bottom: 20px; }
         .search-box input { width: 100%; padding: 16px 20px 16px 50px; background: #fff; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; outline: none; }
         .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-dim); }
         .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 12px; padding: 12px; background: #f9fafb; border-radius: 15px; }
 
-        /* --- CARGADOR NEGRO --- */
         .truck-load-header { background: #000; color: #fff; padding: 25px; border-radius: 28px; margin-bottom: 20px; }
         .truck-progress-bg { height: 8px; background: rgba(255,255,255,0.15); border-radius: 10px; margin-top: 15px; }
         .truck-progress-fill { height: 100%; background: var(--green); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
 
-        /* MODALES Y NAV */
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: flex-end; z-index: 2000; }
         .modal-content { background: #fff; width: 100%; border-radius: 35px 35px 0 0; padding: 30px 20px; max-height: 85vh; overflow-y: auto; }
         .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
@@ -65,14 +76,37 @@
 </head>
 <body>
 
+    <div id="page-login">
+        <div class="login-card">
+            <i class="ph-bold ph-shield-check" style="font-size: 60px; margin-bottom: 10px;"></i>
+            <h1 style="font-weight: 900; margin: 0;">Twins Elite</h1>
+            <p style="color: var(--text-dim); font-weight: 700; margin-bottom: 40px;">Selecciona tu Usuario</p>
+            
+            <div class="user-sel" onclick="login('TAJHO')">
+                <i class="ph-bold ph-user-circle-gear"></i> TAJHO <span class="badge-admin">ADMIN</span>
+            </div>
+            <div class="user-sel" onclick="login('FRANCHESCO')">
+                <i class="ph-bold ph-user-circle"></i> FRANCHESCO
+            </div>
+            <div class="user-sel" onclick="login('OSCAR')">
+                <i class="ph-bold ph-user-circle"></i> OSCAR
+            </div>
+            <div class="user-sel" onclick="login('LUIS HERBER')">
+                <i class="ph-bold ph-user-circle"></i> LUIS HERBER
+            </div>
+        </div>
+    </div>
+
     <div id="page-units" class="page">
         <h1 style="font-weight:900; margin-bottom:20px;">Despacho</h1>
         <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
     </div>
 
-    <div id="page-dash" class="page active">
-        <h1 style="font-weight:900; margin-bottom:20px;">Twins Elite</h1>
-        
+    <div id="page-dash" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h1 style="font-weight:900; margin:0;">Historial</h1>
+            <span id="user-tag" style="font-size:10px; font-weight:800; background:#eee; padding:5px 12px; border-radius:20px;">---</span>
+        </div>
         <div class="core-dash">
             <div class="master-card black">
                 <div><span class="stat-label">Control Hoy</span><span id="stat-hoy-cajas" class="stat-main">0</span></div>
@@ -83,7 +117,6 @@
                 <span id="stat-mes-envios" class="stat-sub">0 CLIENTES</span>
             </div>
         </div>
-
         <div class="search-box">
             <i class="ph-bold ph-magnifying-glass"></i>
             <input type="text" id="smart-search" placeholder="Buscar cliente, chofer o fecha..." onkeyup="renderHistory()">
@@ -131,19 +164,32 @@
         <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">INICIAR PROCESO</button>
     </div>
 
-    <nav class="nav-bottom">
+    <nav id="navbar" class="nav-bottom" style="display:none;">
         <button class="nav-btn" id="n-units" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
-        <button class="nav-btn active" id="n-dash" onclick="go('page-dash')"><i class="ph-bold ph-clock-counter-clockwise"></i>HISTORIAL</button>
+        <button class="nav-btn" id="n-dash" onclick="go('page-dash')"><i class="ph-bold ph-clock-counter-clockwise"></i>HISTORIAL</button>
         <button class="nav-btn" id="n-data" onclick="go('page-data')"><i class="ph-bold ph-database"></i>DATA</button>
     </nav>
 
     <script>
+        // --- CONFIG CLOUD ---
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbw4OYM62wblduBDeC5CvqI_srCA372l63Yhy1SzMYk6SHNNOM2_GC9FXIbAb9Ufv3na/exec";
+        
         let db = JSON.parse(localStorage.getItem('twins_v63_db')) || [];
         let cur = { items: [] };
+        let currentUser = "";
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
+
+        function login(user) {
+            currentUser = user;
+            document.getElementById('page-login').style.display = 'none';
+            document.getElementById('navbar').style.display = 'flex';
+            document.getElementById('user-tag').innerText = "👤 " + user;
+            go('page-dash');
+            pullCloudData();
+        }
 
         window.onload = () => {
             const ug = document.getElementById('units-grid');
@@ -152,37 +198,46 @@
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
-            renderStats();
-            renderHistory();
         };
+
+        async function syncCloud(data) {
+            if(CLOUD_URL.includes("AQUI")) return;
+            try { await fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }); } catch (e) {}
+        }
+
+        async function pullCloudData() {
+            if(CLOUD_URL.includes("AQUI")) return;
+            try {
+                const response = await fetch(CLOUD_URL);
+                const cloudDb = await response.json();
+                if(cloudDb) { db = cloudDb; localStorage.setItem('twins_v63_db', JSON.stringify(db)); renderHistory(); renderStats(); }
+            } catch (e) {}
+        }
 
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById('n-'+id.split('-')[1]).classList.add('active');
+            const btn = document.getElementById('n-'+id.split('-')[1]);
+            if(btn) btn.classList.add('active');
             if(id === 'page-data') renderData();
-            if(id === 'page-dash') renderStats();
+            if(id === 'page-dash') { renderStats(); renderHistory(); }
         }
 
         function renderStats() {
             const hoy = new Date().toISOString().split('T')[0];
-            const mes = hoy.substring(0,7);
             const rHoy = db.filter(r => r.fecha === hoy);
-            const rMes = db.filter(r => r.fecha.startsWith(mes));
-
+            const rMes = db.filter(r => r.fecha.startsWith(hoy.substring(0,7)));
             const sumCjs = (arr) => arr.reduce((a,b) => a + b.items.reduce((x,y)=>x+y.can,0), 0);
             const sumCli = (arr) => arr.reduce((a,b) => a + b.items.length, 0);
-
             document.getElementById('stat-hoy-cajas').innerText = sumCjs(rHoy);
             document.getElementById('stat-hoy-envios').innerText = sumCli(rHoy) + " CLIENTES";
             document.getElementById('stat-mes-cajas').innerText = sumCjs(rMes);
             document.getElementById('stat-mes-envios').innerText = sumCli(rMes) + " CLIENTES";
         }
 
-        // FUNCIONES DE CARGA Y LOGICA (MANTENIDAS)
         function initConf(p) {
-            cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0] };
+            cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0], registradoPor: currentUser };
             document.getElementById('conf-placa').innerText = p;
             document.getElementById('c-fecha').value = cur.fecha;
             document.getElementById('c-chofer').value = cur.chofer;
@@ -195,8 +250,7 @@
             cur.chofer = document.getElementById('c-chofer').value;
             cur.auxiliar = document.getElementById('c-aux').value;
             document.getElementById('load-placa-txt').innerText = cur.placa;
-            refreshLoad();
-            go('page-load');
+            refreshLoad(); go('page-load');
         }
 
         function addItem() {
@@ -223,17 +277,13 @@
             const idx = db.findIndex(r => r.id === cur.id);
             if(idx > -1) db[idx] = cur; else db.unshift(cur);
             localStorage.setItem('twins_v63_db', JSON.stringify(db));
-            go('page-dash'); renderStats(); renderHistory();
+            syncCloud(cur);
+            go('page-dash');
         }
 
         function renderHistory() {
-            const query = document.getElementById('smart-search').value.toLowerCase();
-            let filt = db.filter(r => 
-                r.chofer.toLowerCase().includes(query) || 
-                r.placa.toLowerCase().includes(query) || 
-                r.fecha.includes(query) ||
-                r.items.some(i => i.cli.toLowerCase().includes(query))
-            );
+            const q = document.getElementById('smart-search').value.toLowerCase();
+            let filt = db.filter(r => r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.includes(q) || r.items.some(i => i.cli.toLowerCase().includes(q)));
             document.getElementById('hist-cont').innerHTML = filt.map(r => `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);"><span>📅 ${r.fecha}</span><span>${r.placa}</span></div>
@@ -241,22 +291,21 @@
                         <b style="font-size:24px;">${r.items.reduce((a,b)=>a+b.can,0)} CJS</b>
                         <b style="color:var(--text-dim); font-size:12px;">${r.items.length} CLI.</b>
                     </div>
-                    <div class="card-crew"><i class="ph-bold ph-identification-badge"></i> ${r.chofer} | <i class="ph-bold ph-users"></i> ${r.auxiliar}</div>
-                    <div class="route-actions">
-                        <button class="btn-act" onclick="viewL('${r.id}')"><i class="ph-bold ph-list-plus"></i>LISTA</button>
-                        <button class="btn-act" onclick="editR('${r.id}')"><i class="ph-bold ph-pencil"></i>EDITAR</button>
-                        <button class="btn-act wa" onclick="shareW('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>REPORT</button>
+                    <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
+                    <div class="route-actions" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:15px; border-top:1px solid #eee; padding-top:15px;">
+                        <button class="btn-act" style="border:1px solid var(--border); background:#fff; padding:10px; border-radius:12px; font-size:10px; font-weight:800;" onclick="viewL('${r.id}')">LISTA</button>
+                        <button class="btn-act" style="border:1px solid var(--border); background:#fff; padding:10px; border-radius:12px; font-size:10px; font-weight:800;" onclick="editR('${r.id}')">EDITAR</button>
+                        <button class="btn-act" style="border:1px solid var(--border); background:#fff; padding:10px; border-radius:12px; font-size:10px; font-weight:800;" onclick="shareW('${r.id}')">WA</button>
                     </div>
-                </div>`).join('') || '<p style="text-align:center; padding:40px; color:gray;">Sin resultados.</p>';
+                </div>`).join('');
         }
 
         function viewL(id) {
             const r = db.find(x => x.id === id);
-            document.getElementById('m-sub').innerText = `${r.placa} • ${r.chofer} • ${r.fecha}`;
-            document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:18px; background:#f9fafb; border-radius:18px; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join('');
+            document.getElementById('m-sub').innerText = `${r.placa} • ${r.chofer}`;
+            document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; background:#f9fafb; border-radius:12px; font-weight:700; margin-bottom:8px;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join('');
             document.getElementById('modal-list').style.display = 'flex';
         }
-
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
         function editR(id) { cur = JSON.parse(JSON.stringify(db.find(x => x.id === id))); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
 
@@ -266,10 +315,8 @@
             let cS = {}, aS = {};
             filt.forEach(r => {
                 let cjs = r.items.reduce((a,b)=>a+b.can,0);
-                cS[r.chofer] = cS[r.chofer] || {cjs:0, cls:0};
-                cS[r.chofer].cjs += cjs; cS[r.chofer].cls += r.items.length;
-                aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0};
-                aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
+                cS[r.chofer] = cS[r.chofer] || {cjs:0, cls:0}; cS[r.chofer].cjs += cjs; cS[r.chofer].cls += r.items.length;
+                aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0}; aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
             });
             const draw = (data, targetId, isAux) => {
                 let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
@@ -280,19 +327,15 @@
                         <div class="rank-info">
                             <div class="rank-name"><span>${n}</span> <span>${v.cjs} CJS</span></div>
                             <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
-                            <div class="rank-stats"><span>Cajas: <b>${v.cjs}</b></span><span>${isAux?'Rutas':'Cli'}: <b>${isAux?v.r:v.cls}</b></span></div>
                         </div>
                     </div>`).join('');
             };
-            draw(cS, 'rank-choferes-list', false);
-            draw(aS, 'rank-auxiliares-list', true);
+            draw(cS, 'rank-choferes-list', false); draw(aS, 'rank-auxiliares-list', true);
         }
 
         function shareW(id) {
             const r = db.find(x => x.id === id);
-            let t = `*TWINS ELITE*%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A📅 *FECHA:* ${r.fecha}%0A%0A*CARGA:*%0A`;
-            r.items.forEach(i => t += `• ${i.cli}: ${i.can}%0A`);
-            t += `%0A📦 *TOTAL:* ${r.items.reduce((a,b)=>a+b.can,0)} Cjs`;
+            let t = `*TWINS ELITE*%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A📅 *FECHA:* ${r.fecha}%0A📦 *TOTAL:* ${r.items.reduce((a,b)=>a+b.can,0)} Cjs`;
             window.location.href = "https://api.whatsapp.com/send?text=" + t;
         }
     </script>
