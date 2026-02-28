@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V54.0</title>
+    <title>TWINS ELITE - V55.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -13,42 +13,46 @@
             --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
+        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
 
-        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: fade 0.2s ease; }
+        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: fade 0.3s ease; }
         .active { display: block; }
-        @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Buscador */
-        .search-bar { position: sticky; top: 10px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); z-index: 100; padding: 12px; border-radius: 20px; border: 1px solid var(--border); display: flex; gap: 8px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .search-bar { position: sticky; top: 10px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); z-index: 100; padding: 12px; border-radius: 20px; border: 1px solid var(--border); display: flex; gap: 8px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .search-input { background: transparent; border: none; flex: 1; font-size: 14px; font-weight: 600; outline: none; }
 
-        /* Rankings DATA */
-        .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; color: var(--text-dim); text-transform: uppercase; }
-        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-        .rank-pos { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; background: #eee; color: #aaa; }
-        .pos-1 { background: var(--gold); color: #000; }
-        .pos-2 { background: var(--silver); color: #000; }
-        .pos-3 { background: var(--bronze); color: #000; }
-        .rank-bar-bg { background: #f3f4f6; height: 8px; border-radius: 10px; margin: 6px 0; overflow: hidden; }
-        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.8s ease; }
-        .rank-meta { font-size: 10px; font-weight: 800; color: var(--text-dim); display: flex; gap: 10px; }
-
-        /* Cards Historial */
+        /* Tarjetas Historial */
         .section-tag { font-size: 11px; font-weight: 800; color: #000; text-transform: uppercase; margin: 25px 0 12px 5px; border-left: 3px solid #000; padding-left: 8px; }
-        .route-card { background: #fff; border-radius: 22px; padding: 18px; margin-bottom: 12px; border: 1px solid var(--border); }
-        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #f3f4f6; padding-top: 12px; }
-        .btn-act { border: 1px solid var(--border); border-radius: 12px; padding: 10px; font-size: 10px; font-weight: 800; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text); }
+        .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .card-date { font-size: 10px; font-weight: 800; color: var(--text-dim); margin-bottom: 5px; display: block; }
+        
+        .route-actions { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #f3f4f6; padding-top: 15px; }
+        .btn-act { border: 1px solid var(--border); border-radius: 14px; padding: 12px 5px; font-size: 10px; font-weight: 800; background: #fff; display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text); transition: 0.2s; }
+        .btn-act:active { transform: scale(0.95); background: #f9f9f9; }
         .btn-act.wa { background: #000; color: #fff; border: none; }
 
+        /* Selector de Unidades Interactivo */
+        .unit-card { background: #fff; padding: 30px 15px; border-radius: 24px; text-align: center; border: 2px solid transparent; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.03); cursor: pointer; }
+        .unit-card:active { transform: scale(0.92); border-color: #000; }
+        .unit-card b { font-size: 20px; display: block; margin-top: 5px; }
+        .unit-card span { font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; }
+
         /* Nav */
-        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: flex; border-top: 1px solid var(--border); z-index: 1000; padding: 0 10px; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
-        .nav-btn i { font-size: 24px; margin-bottom: 4px; }
+        .nav-btn i { font-size: 26px; margin-bottom: 4px; }
 
-        .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 12px; }
+        .field { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 15px; font-weight: 600; outline: none; margin-bottom: 12px; appearance: none; }
+        .label-min { font-size: 10px; font-weight: 800; color: var(--text-dim); margin: 0 0 5px 5px; display: block; text-transform: uppercase; }
+
+        /* Ranking */
+        .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .rank-bar-bg { background: #f3f4f6; height: 8px; border-radius: 10px; margin: 6px 0; overflow: hidden; flex: 1; }
+        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 1s ease; }
     </style>
 </head>
 <body>
@@ -56,53 +60,54 @@
     <div id="page-dash" class="page active">
         <div class="search-bar">
             <i class="ph-bold ph-magnifying-glass"></i>
-            <input type="text" id="main-search" class="search-input" placeholder="Chofer, placa o cliente..." oninput="renderHistory()">
+            <input type="text" id="main-search" class="search-input" placeholder="Buscar por chofer, placa o cliente..." oninput="renderHistory()">
             <input type="date" id="date-picker" onchange="renderHistory()" style="border:none; outline:none; background:transparent; font-size:12px; font-weight:800;">
         </div>
         <div id="hist-cont"></div>
     </div>
 
     <div id="page-data" class="page">
-        <h1 style="font-weight:900;">Rendimiento</h1>
+        <h1 style="font-weight:900;">Data & Auditoría</h1>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
             <input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0">
-            <button onclick="injectFakeData()" style="background:#000; color:#fff; border:none; border-radius:12px; font-size:10px; font-weight:800;">SIMULAR DATOS</button>
+            <button onclick="injectFakeData()" style="background:#000; color:#fff; border:none; border-radius:12px; font-size:10px; font-weight:800;">INYECTAR PRUEBA</button>
         </div>
-        <div class="rank-box">
-            <div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Choferes</div>
-            <div id="rank-choferes"></div>
-        </div>
-        <div class="rank-box">
-            <div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares</div>
-            <div id="rank-auxiliares"></div>
-        </div>
+        <div class="rank-box"><div id="rank-choferes"></div></div>
+        <div class="rank-box"><div id="rank-auxiliares"></div></div>
     </div>
 
     <div id="page-units" class="page">
-        <h1 style="font-weight:900; margin-bottom:20px;">Unidades</h1>
-        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
+        <h1 style="font-weight:900; margin-bottom:5px;">Nueva Ruta</h1>
+        <p style="color:var(--text-dim); font-size:13px; margin-bottom:25px; font-weight:600;">Selecciona la unidad que sale hoy:</p>
+        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
     </div>
 
     <div id="page-config" class="page">
-        <h2 id="conf-placa">---</h2>
+        <div style="display:flex; align-items:center; gap:15px; margin-bottom:25px;">
+            <div id="conf-icon" style="background:#000; color:#fff; width:60px; height:60px; border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:30px;"><i class="ph-bold ph-truck"></i></div>
+            <div><h2 id="conf-placa" style="margin:0">---</h2><span class="label-min">Configuración de Salida</span></div>
+        </div>
+        <span class="label-min">Fecha Programada</span>
         <input type="date" id="c-fecha" class="field">
+        <span class="label-min">Chofer Responsable</span>
         <select id="c-chofer" class="field"></select>
+        <span class="label-min">Auxiliar de Reparto</span>
         <select id="c-aux" class="field"></select>
-        <button onclick="goLoad()" style="width:100%; padding:18px; background:#000; color:#fff; border-radius:15px; font-weight:800; border:none;">INICIAR CARGA</button>
+        <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none; font-size:16px; margin-top:10px;">CONTINUAR A CARGA <i class="ph-bold ph-arrow-right"></i></button>
     </div>
 
     <div id="page-load" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 id="load-placa" style="margin:0">---</h2>
-            <div style="text-align:right;"><b id="load-total" style="font-size:24px;">0</b><br><small>CAJAS</small></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; background:#fff; padding:20px; border-radius:22px; border:1px solid var(--border);">
+            <div><span class="label-min" style="margin:0">UNIDAD</span><h2 id="load-placa" style="margin:0">---</h2></div>
+            <div style="text-align:right;"><b id="load-total" style="font-size:32px; font-weight:900;">0</b><span class="label-min" style="margin:0">TOTAL CAJAS</span></div>
         </div>
-        <div style="display:flex; gap:8px;">
-            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2">
-            <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1">
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="text" id="i-cli" placeholder="Nombre del Cliente" class="field" style="flex:2; margin:0">
+            <input type="number" id="i-can" placeholder="Cant." class="field" style="flex:1; margin:0">
         </div>
-        <button onclick="addItem()" style="width:100%; padding:15px; background:#000; color:#fff; border-radius:12px; font-weight:800; border:none; margin-bottom:20px;">AGREGAR</button>
+        <button onclick="addItem()" style="width:100%; padding:18px; background:#000; color:#fff; border-radius:16px; font-weight:800; border:none; margin-bottom:25px;">+ AGREGAR A LISTA</button>
         <div id="load-list"></div>
-        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:18px; background:#10b981; color:#fff; border-radius:16px; font-weight:800; border:none; margin-top:20px;">FINALIZAR</button>
+        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:20px; background:#10b981; color:#fff; border-radius:20px; font-weight:900; border:none; margin-top:20px; font-size:16px;">GUARDAR RUTA COMPLETA</button>
     </div>
 
     <nav class="nav-bottom">
@@ -112,7 +117,7 @@
     </nav>
 
     <script>
-        let db = JSON.parse(localStorage.getItem('twins_db')) || [];
+        let db = JSON.parse(localStorage.getItem('twins_db_v55')) || [];
         let cur = { items: [] };
 
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
@@ -122,12 +127,23 @@
         window.onload = () => {
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
             const ug = document.getElementById('units-grid');
-            for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:25px; border-radius:20px; text-align:center; font-weight:800; border:1px solid var(--border);" onclick="initConfig('${p}')">${p}</div>`;
+            for(let p in FLOTA) {
+                ug.innerHTML += `<div class="unit-card" onclick="initConfig('${p}')"><span>PLACA</span><b>${p}</b></div>`;
+            }
             const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
             renderHistory();
         };
+
+        function go(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+            document.getElementById('n-'+id.split('-')[1]).classList.add('active');
+            if(id === 'page-data') renderData();
+            window.scrollTo(0,0);
+        }
 
         function initConfig(p) {
             cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0] };
@@ -158,16 +174,16 @@
             document.getElementById('load-total').innerText = total;
             document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
             document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
-                <div style="display:flex; justify-content:space-between; padding:12px; background:#fff; border-radius:12px; border:1px solid #eee; margin-bottom:8px; font-weight:700;">
+                <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px; font-weight:700;">
                     <span>${it.can} • ${it.cli}</span>
-                    <i class="ph-bold ph-trash" style="color:red" onclick="cur.items.splice(${i},1);refreshLoad()"></i>
+                    <i class="ph-bold ph-trash" style="color:#ff4d4d; font-size:20px;" onclick="cur.items.splice(${i},1);refreshLoad()"></i>
                 </div>`).reverse().join('');
         }
 
         function save() {
             const idx = db.findIndex(r => r.id === cur.id);
             if(idx > -1) db[idx] = cur; else db.unshift(cur);
-            localStorage.setItem('twins_db', JSON.stringify(db));
+            localStorage.setItem('twins_db_v55', JSON.stringify(db));
             go('page-dash'); renderHistory();
         }
 
@@ -188,14 +204,15 @@
                     const total = r.items.reduce((a,b)=>a+b.can,0);
                     h += `
                     <div class="route-card">
-                        <div style="display:flex; justify-content:space-between;">
-                            <div><b style="font-size:18px;">${r.placa}</b><div style="font-size:11px; font-weight:700; color:gray;">${r.chofer} | ${r.auxiliar}</div></div>
-                            <div style="text-align:right;"><b style="font-size:18px;">${total} CJS</b><br><small style="font-weight:800; color:gray;">${r.items.length} CLI</small></div>
+                        <span class="card-date"><i class="ph-bold ph-calendar"></i> ${r.fecha}</span>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div><b style="font-size:20px;">${r.placa}</b><div style="font-size:12px; font-weight:700; color:gray; margin-top:3px;">${r.chofer} | ${r.auxiliar}</div></div>
+                            <div style="text-align:right;"><b style="font-size:20px;">${total} CJS</b><br><small style="font-weight:800; color:#000; opacity:0.5;">${r.items.length} CLIENTES</small></div>
                         </div>
                         <div class="route-actions">
-                            <button class="btn-act" onclick="alert(JSON.stringify(r.items))"><i class="ph-bold ph-eye"></i>VER</button>
-                            <button class="btn-act" onclick="edit('${r.id}')"><i class="ph-bold ph-pencil"></i>EDIT</button>
-                            <button class="btn-act wa" onclick="share('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WA</button>
+                            <button class="btn-act" onclick="viewR('${r.id}')"><i class="ph-bold ph-eye"></i>VER</button>
+                            <button class="btn-act" onclick="editR('${r.id}')"><i class="ph-bold ph-pencil"></i>EDIT</button>
+                            <button class="btn-act wa" onclick="shareR('${r.id}')"><i class="ph-bold ph-whatsapp-logo"></i>WHATSAPP</button>
                         </div>
                     </div>`;
                 });
@@ -203,25 +220,39 @@
             };
 
             if(!q && !d) {
-                html += draw("Mañana", filt.filter(r => r.fecha === mañana));
+                html += draw("Mañana / Programado", filt.filter(r => r.fecha === mañana));
                 html += draw("Hoy", filt.filter(r => r.fecha === hoy));
                 html += draw("Ayer", filt.filter(r => r.fecha === ayer));
+                html += draw("Anteriores", filt.filter(r => ![hoy, ayer, mañana].includes(r.fecha)));
             } else {
-                html += draw("Resultados", filt);
+                html += draw("Resultados de Búsqueda", filt);
             }
-            document.getElementById('hist-cont').innerHTML = html || '<p style="text-align:center; color:gray; margin-top:40px;">Sin registros.</p>';
+            document.getElementById('hist-cont').innerHTML = html || '<p style="text-align:center; color:gray; margin-top:50px; font-weight:700;">No hay rutas registradas.</p>';
         }
 
-        function share(id) {
+        function shareR(id) {
             const r = db.find(x => x.id === id);
             const total = r.items.reduce((a,b)=>a+b.can,0);
             let txt = `*TWINS ELITE*%0A%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`;
             r.items.forEach(i => txt += `• ${i.cli}: ${i.can}%0A`);
             txt += `%0A📦 *TOTAL:* ${total} Cjs%0A👥 *CLIENTES:* ${r.items.length}`;
-            window.open(`https://api.whatsapp.com/send?text=${txt}`, '_blank');
+            
+            // Fix pantalla negra: Usar link directo sin confirmación intermedia pesada
+            const url = "https://api.whatsapp.com/send?text=" + txt;
+            window.location.href = url;
         }
 
-        function edit(id) { cur = JSON.parse(JSON.stringify(db.find(r => r.id === id))); document.getElementById('load-placa').innerText = cur.placa; refreshLoad(); go('page-load'); }
+        function viewR(id) {
+            const r = db.find(x => x.id === id);
+            alert("CLIENTES:\n" + r.items.map(i => `• ${i.cli}: ${i.can} Cjs`).join("\n"));
+        }
+
+        function editR(id) {
+            cur = JSON.parse(JSON.stringify(db.find(r => r.id === id)));
+            document.getElementById('load-placa').innerText = cur.placa;
+            refreshLoad();
+            go('page-load');
+        }
 
         function renderData() {
             const m = document.getElementById('f-month').value;
@@ -233,38 +264,31 @@
                 aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0}; aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
             });
 
-            const drawRank = (data, id, isAux) => {
+            const drawRank = (data, id, title, isAux) => {
                 let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
                 let max = sorted[0] ? sorted[0][1].cjs : 1;
-                document.getElementById(id).innerHTML = sorted.map(([n, v], i) => `
+                let h = `<div style="font-weight:800; font-size:13px; margin-bottom:15px; text-transform:uppercase; color:gray;">${title}</div>`;
+                h += sorted.map(([n, v], i) => `
                     <div class="rank-item">
-                        <div class="rank-pos ${i<3?'pos-'+(i+1):''}">${i+1}</div>
                         <div style="flex:1">
-                            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:13px;"><span>${n}</span><span>${v.cjs} CJS</span></div>
+                            <div style="display:flex; justify-content:space-between; font-weight:800; font-size:13px;"><span>${n}</span><span>${v.cjs} CJS</span></div>
                             <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
-                            <div class="rank-meta"><b>${v.cjs}</b> Cajas | <b>${isAux?v.r:v.cli}</b> ${isAux?'Rutas':'Clientes'}</div>
+                            <div style="font-size:10px; font-weight:800; color:gray;"><b>${v.cjs}</b> Cajas | <b>${isAux?v.r:v.cli}</b> ${isAux?'Rutas':'Clientes'}</div>
                         </div>
-                    </div>`).join('') || '<p style="font-size:12px;color:gray">Sin datos.</p>';
+                    </div>`).join('');
+                document.getElementById(id).innerHTML = h || '<p>Sin datos.</p>';
             };
-            drawRank(cS, 'rank-choferes', false);
-            drawRank(aS, 'rank-auxiliares', true);
+            drawRank(cS, 'rank-choferes', 'Top Choferes', false);
+            drawRank(aS, 'rank-auxiliares', 'Top Auxiliares', true);
         }
 
         function injectFakeData() {
-            let f = []; for(let i=0; i<15; i++) {
+            let f = []; for(let i=0; i<10; i++) {
                 let d = new Date(Date.now() - i*864e5).toISOString().split('T')[0];
-                f.push({id:'F'+i, fecha:d, placa:"BPN-711", chofer:CONDUCTORES[i%6], auxiliar:AUXILIARES[i%9], items:[{cli:"CLIENTE "+i, can:10+i}, {cli:"TIENDA "+i, can:5+i}]});
+                f.push({id:'F'+i, fecha:d, placa:"BPN-711", chofer:CONDUCTORES[i%6], auxiliar:AUXILIARES[i%9], items:[{cli:"TIENDA "+i, can:25}, {cli:"ABARROTES "+i, can:15}]});
             }
-            db = f; localStorage.setItem('twins_db', JSON.stringify(db));
+            db = f; localStorage.setItem('twins_db_v55', JSON.stringify(db));
             renderHistory(); renderData();
-        }
-
-        function go(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById('n-'+id.split('-')[1]).classList.add('active');
-            if(id === 'page-data') renderData();
         }
     </script>
 </body>
