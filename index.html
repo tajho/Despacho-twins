@@ -3,94 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TWINS ELITE - V32 DASHBOARD</title>
+    <title>TWINS ELITE - V33 METRICS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #f1f5f9; --surface: #ffffff; --accent: #0062ff; 
+            --bg: #f4f7fa; --surface: #ffffff; --accent: #0062ff; 
             --text: #0f172a; --text-dim: #64748b; --border: #e2e8f0; 
             --success: #10b981; --danger: #f43f5e;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        
         body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* Navegación Inferior */
-        .nav-bar { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: #fff; height: 75px; display: flex; 
-            border-top: 1px solid var(--border); z-index: 1000; 
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
-        }
-        .nav-item { 
-            flex: 1; display: flex; flex-direction: column; align-items: center; 
-            justify-content: center; color: var(--text-dim); background: none; 
-            border: none; font-size: 11px; font-weight: 700; 
-        }
+        /* Navegación */
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 75px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-dim); background: none; border: none; font-size: 11px; font-weight: 700; }
         .nav-item.active { color: var(--accent); }
         .nav-item i { font-size: 24px; margin-bottom: 2px; }
 
-        /* Contenedores */
+        /* Estructura */
         .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; }
         .active { display: block; }
 
-        /* Cards y UI */
+        /* Paneles de Control (Admin) */
+        .dash-panel { background: var(--accent); color: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,98,255,0.1); }
+        .dash-panel.white { background: #fff; color: var(--text); border: 1px solid var(--border); }
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .dash-val { font-size: 24px; font-weight: 800; display: block; }
+        .dash-lab { font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.9; }
+
+        /* UI General */
         .card { background: #fff; border-radius: 20px; padding: 18px; border: 1px solid var(--border); margin-bottom: 15px; }
         .btn-main { background: var(--accent); color: #fff; border: none; border-radius: 18px; padding: 20px; width: 100%; font-weight: 800; font-size: 16px; margin-top: 10px; }
         .input-box { background: #fff; border: 1px solid var(--border); border-radius: 15px; padding: 15px; width: 100%; font-size: 16px; font-weight: 600; margin-bottom: 12px; outline: none; }
-
-        /* Dashboard Stats */
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .stat-card { background: var(--accent); color: #fff; padding: 15px; border-radius: 20px; text-align: center; }
-        .stat-card h2 { margin: 5px 0; font-size: 28px; }
-        
-        /* Modal */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(4px); }
     </style>
 </head>
 <body>
 
     <div id="page-login" class="page active">
-        <div style="text-align:center; padding:40px 0;">
+        <div style="text-align:center; padding:60px 0 40px;">
+            <div style="width:70px; height:70px; background:var(--accent); border-radius:22px; margin:0 auto 20px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:35px;"><i class="ph-fill ph-user-focus"></i></div>
             <h1 style="font-weight:800; margin:0;">TWINS ELITE</h1>
-            <p style="color:var(--text-dim);">Acceso de Personal</p>
+            <p style="color:var(--text-dim);">Warehouse Manager</p>
         </div>
         <div id="login-options"></div>
     </div>
 
     <div id="page-dashboard" class="page">
-        <h2 style="font-weight:800; margin-bottom:15px;">Dashboard</h2>
+        <h2 style="font-weight:800; margin-bottom:15px;">Resumen Operativo</h2>
         
-        <div class="stat-grid">
-            <div class="stat-card"><small>CAJAS HOY</small><h2 id="st-cajas">0</h2></div>
-            <div class="stat-card" style="background:#fff; color:var(--accent); border:1px solid var(--accent);"><small>RUTAS</small><h2 id="st-rutas">0</h2></div>
+        <div class="dash-panel">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+                <i class="ph-bold ph-calendar-blank"></i> <b style="font-size:14px;">ESTADÍSTICAS DEL MES</b>
+            </div>
+            <div class="dash-grid">
+                <div><span class="dash-lab">Cajas Enviadas</span><span class="dash-val" id="m-cajas">0</span></div>
+                <div><span class="dash-lab">Clientes Hoy</span><span class="dash-val" id="m-clientes">0</span></div>
+            </div>
         </div>
 
-        <div class="input-box" style="display:flex; align-items:center; gap:10px; position:sticky; top:10px; z-index:100; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+        <div class="dash-panel white">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px; color:var(--accent);">
+                <i class="ph-bold ph-clock"></i> <b style="font-size:14px;">PRODUCTIVIDAD HOY</b>
+            </div>
+            <div class="dash-grid">
+                <div><span class="dash-lab" style="color:var(--text-dim)">Cajas del Día</span><span class="dash-val" id="d-cajas" style="color:var(--accent)">0</span></div>
+                <div><span class="dash-lab" style="color:var(--text-dim)">Clientes del Día</span><span class="dash-val" id="d-clientes" style="color:var(--accent)">0</span></div>
+            </div>
+        </div>
+
+        <div class="input-box" style="display:flex; align-items:center; gap:10px; margin-top:25px;">
             <i class="ph-bold ph-magnifying-glass" style="color:var(--accent)"></i>
-            <input type="text" id="smart-search" placeholder="Buscar placa, chofer, auxiliar..." style="border:none; width:100%; outline:none;" oninput="renderHistory()">
+            <input type="text" id="smart-search" placeholder="Filtrar historial..." style="border:none; width:100%; outline:none;" oninput="renderHistory()">
         </div>
-
-        <div id="history-feed" style="margin-top:20px;"></div>
+        <div id="history-feed" style="margin-top:10px;"></div>
     </div>
 
     <div id="page-select-plate" class="page">
-        <h2 style="font-weight:800; margin-bottom:20px;">Seleccionar Unidad</h2>
+        <h2 style="font-weight:800; margin-bottom:20px;">Nueva Ruta</h2>
         <div id="plate-grid"></div>
     </div>
 
     <div id="page-crew" class="page">
-        <h2 style="margin-bottom:20px;">Equipo de Ruta</h2>
+        <h2 style="margin-bottom:20px;">Configurar Tripulación</h2>
         <div class="card">
-            <label style="font-size:11px; font-weight:800;">UNIDAD:</label>
-            <div id="crew-plate" style="font-size:20px; font-weight:800; color:var(--accent); margin-bottom:15px;">---</div>
+            <label style="font-size:11px; font-weight:800;">CAMIÓN SELECCIONADO:</label>
+            <div id="crew-plate" style="font-size:24px; font-weight:800; color:var(--accent); margin-bottom:20px;">---</div>
             
             <label style="font-size:11px; font-weight:800;">CONDUCTOR:</label>
-            <input type="text" id="inp-driver" class="input-box">
+            <input type="text" id="inp-driver" class="input-box" placeholder="Nombre del chofer">
             
             <label style="font-size:11px; font-weight:800;">AUXILIAR:</label>
             <select id="sel-aux" class="input-box">
+                <option value="SIN AUXILIAR">--- Seleccionar ---</option>
                 <option value="CRISTOPHER">CRISTOPHER</option>
                 <option value="PERCY">PERCY</option>
                 <option value="PLACIDO">PLACIDO</option>
@@ -103,32 +109,33 @@
                 <option value="JULIO">JULIO</option>
                 <option value="DANIEL C.">DANIEL C.</option>
             </select>
-            <button onclick="confirmCrew()" class="btn-main">CONTINUAR</button>
+            <button onclick="confirmCrew()" class="btn-main">CONTINUAR A CARGA</button>
         </div>
     </div>
 
     <div id="page-route" class="page">
-        <div style="background: var(--accent); padding: 20px; border-radius: 20px; color:#fff; margin-bottom: 20px;">
-            <b id="active-plate" style="font-size:20px;">---</b><br>
-            <small id="active-crew"></small>
-            <h1 id="count-cajas" style="margin:10px 0 0 0;">0 CJS</h1>
+        <div style="background: var(--text); padding: 20px; border-radius: 20px; color:#fff; margin-bottom: 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div><b id="active-plate" style="font-size:20px;">---</b><br><small id="active-crew" style="opacity:0.7;"></small></div>
+                <h1 id="count-cajas" style="margin:0; font-size:35px;">0</h1>
+            </div>
         </div>
-        <input type="text" id="inp-cli" placeholder="Cliente" class="input-box" list="suggestions">
-        <datalist id="suggestions"></datalist>
+        <input type="text" id="inp-cli" placeholder="Nombre del Cliente" class="input-box">
         <div style="display:flex; gap:10px; margin-bottom:15px;">
             <input type="number" id="inp-can" placeholder="Cant." class="input-box" style="flex:1;">
-            <button onclick="addPoint()" style="background:var(--text); color:#fff; border:none; border-radius:15px; width:60px; font-size:22px;">+</button>
+            <button onclick="addPoint()" style="background:var(--accent); color:#fff; border:none; border-radius:15px; width:65px; font-size:24px;">+</button>
         </div>
         <div id="live-list"></div>
-        <button id="btn-save" onclick="openModal('modal-date')" style="display:none; background:var(--success); color:#fff; width:100%; padding:20px; border-radius:18px; border:none; font-weight:800; margin-top:20px;">GUARDAR RUTA</button>
+        <button id="btn-save" onclick="openModal('modal-date')" style="display:none; background:var(--success); color:#fff; width:100%; padding:22px; border-radius:18px; border:none; font-weight:800; margin-top:20px;">GUARDAR DESPACHO</button>
     </div>
 
     <div id="modal-date" class="modal">
-        <div style="background:#fff; border-radius:25px; padding:30px; width:100%; text-align:center;">
-            <h3 style="margin-top:0;">¿Cuándo sale?</h3>
-            <button onclick="finalize('hoy')" class="btn-main" style="background:var(--success); margin-bottom:10px;">HOY</button>
-            <button onclick="finalize('mañana')" class="btn-main">MAÑANA</button>
-            <button onclick="document.getElementById('modal-date').style.display='none'" style="margin-top:15px; border:none; background:none; color:var(--danger); font-weight:700;">CANCELAR</button>
+        <div style="background:#fff; border-radius:28px; padding:30px; width:100%; text-align:center;">
+            <h3 style="margin:0 0 10px 0;">¿Cuándo sale la ruta?</h3>
+            <p style="color:var(--text-dim); margin-bottom:25px;">Selecciona el tiempo de despacho.</p>
+            <button onclick="finalize('hoy')" class="btn-main" style="background:var(--success); margin-bottom:10px;">PARA HOY</button>
+            <button onclick="finalize('mañana')" class="btn-main">PARA MAÑANA</button>
+            <button onclick="document.getElementById('modal-date').style.display='none'" style="margin-top:15px; border:none; background:none; color:var(--danger); font-weight:800;">CANCELAR</button>
         </div>
     </div>
 
@@ -143,8 +150,8 @@
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
 
         window.onload = () => {
-            const saved = localStorage.getItem('tw_db_v32');
-            if(saved) { db = JSON.parse(saved); renderHistory(); renderAdmin(); }
+            const saved = localStorage.getItem('tw_db_v33');
+            if(saved) { db = JSON.parse(saved); renderHistory(); renderStats(); }
             setupUI();
             if(localStorage.getItem('tw_logged')) login(localStorage.getItem('tw_logged'));
         };
@@ -152,22 +159,12 @@
         function setupUI() {
             const l = document.getElementById('login-options');
             ['TAJHO ADMIN', 'FRANCESCO', 'OSCAR', 'LUIS HERBER'].forEach(u => {
-                l.innerHTML += `<div onclick="checkPass('${u}')" class="card" style="font-weight:700;">${u}</div>`;
+                l.innerHTML += `<div onclick="checkPass('${u}')" class="card" style="font-weight:700; cursor:pointer;">${u}</div>`;
             });
             const f = document.getElementById('plate-grid');
             for(let p in FLOTA) {
-                f.innerHTML += `<div class="card" onclick="openCrew('${p}')" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:800;">${p} <i class="ph ph-plus-circle"></i></div>`;
+                f.innerHTML += `<div class="card" onclick="openCrew('${p}')" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:800; padding:22px;">${p} <i class="ph ph-caret-right"></i></div>`;
             }
-        }
-
-        async function syncData() {
-            try {
-                const r = await fetch(API);
-                const data = await r.json();
-                db = data.map((x,i)=>({...x, id: 'R'+Date.now()+i, fecha: x.fecha.split('T')[0]}));
-                localStorage.setItem('tw_db_v32', JSON.stringify(db));
-                renderHistory(); renderAdmin();
-            } catch(e) { console.warn("Modo Offline"); }
         }
 
         function openCrew(p) {
@@ -198,12 +195,12 @@
             let t = 0, h = "";
             currentCarga.forEach((it, i) => {
                 t += it.can;
-                h += `<div class="card" style="display:flex; justify-content:space-between; padding:12px; border-left:4px solid var(--accent);">
+                h += `<div class="card" style="display:flex; justify-content:space-between; padding:12px; border-left:5px solid var(--accent);">
                     <span><b>${it.can}</b> ${it.cli}</span>
                     <i class="ph ph-trash" style="color:var(--danger)" onclick="currentCarga.splice(${i},1);refreshRouteUI()"></i>
                 </div>`;
             });
-            document.getElementById('count-cajas').innerText = t + " CJS";
+            document.getElementById('count-cajas').innerText = t;
             document.getElementById('btn-save').style.display = t > 0 ? 'block' : 'none';
             document.getElementById('live-list').innerHTML = h;
         }
@@ -217,43 +214,53 @@
                 auxiliar: localStorage.getItem('tmp_a'),
                 items: currentCarga.map(i => `${i.cli}: ${i.can}`).join(", "),
                 total: currentCarga.reduce((a,b)=>a+b.can,0),
+                puntos: currentCarga.length,
                 operario: activeUser,
                 id: 'R'+Date.now()
             };
-            db.unshift(r); localStorage.setItem('tw_db_v32', JSON.stringify(db));
+            db.unshift(r); localStorage.setItem('tw_db_v33', JSON.stringify(db));
             fetch(API, {method:'POST', mode:'no-cors', body:JSON.stringify(r)});
             document.getElementById('modal-date').style.display = 'none';
-            go('page-dashboard'); renderHistory(); renderAdmin();
+            go('page-dashboard'); renderHistory(); renderStats();
+        }
+
+        function renderStats() {
+            const hoy = new Date().toISOString().split('T')[0];
+            const mesActual = hoy.substring(0, 7); // YYYY-MM
+            
+            const dataHoy = db.filter(r => r.fecha === hoy);
+            const dataMes = db.filter(r => r.fecha.startsWith(mesActual));
+
+            // DIARIO
+            document.getElementById('d-cajas').innerText = dataHoy.reduce((a,b)=>a+b.total,0);
+            document.getElementById('d-clientes').innerText = dataHoy.reduce((a,b)=>a+(b.puntos||0),0);
+
+            // MENSUAL
+            document.getElementById('m-cajas').innerText = dataMes.reduce((a,b)=>a+b.total,0);
+            document.getElementById('m-clientes').innerText = dataMes.reduce((a,b)=>a+(b.puntos||0),0);
         }
 
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
             let h = "";
-            db.filter(r => JSON.stringify(r).toLowerCase().includes(q)).forEach(r => {
+            db.filter(r => JSON.stringify(r).toLowerCase().includes(q)).slice(0,20).forEach(r => {
                 h += `<div class="card">
                     <div style="display:flex; justify-content:space-between; align-items:start;">
                         <div><b>${r.placa}</b><div style="font-size:11px; color:var(--text-dim);">${r.chofer} | ${r.auxiliar}</div></div>
                         <span style="font-weight:800; color:var(--accent)">${r.total} CJS</span>
                     </div>
-                    <div style="font-size:11px; margin:8px 0;">${r.fecha.split('-').reverse().join('/')}</div>
-                    <button onclick="sendWA('${r.id}')" style="width:100%; border:none; background:#ecfdf5; color:#10b981; padding:10px; border-radius:12px; font-weight:800; font-size:12px;">ENVIAR WHATSAPP</button>
+                    <div style="font-size:11px; margin-top:8px; color:var(--text-dim);">${r.fecha.split('-').reverse().join('/')}</div>
+                    <button onclick="sendWA('${r.id}')" style="width:100%; border:none; background:#ecfdf5; color:#10b981; padding:12px; border-radius:12px; font-weight:800; font-size:12px; margin-top:10px;">RE-ENVIAR DETALLE</button>
                 </div>`;
             });
             document.getElementById('history-feed').innerHTML = h;
-        }
-
-        function renderAdmin() {
-            const hoy = new Date().toISOString().split('T')[0];
-            const dataHoy = db.filter(r => r.fecha === hoy);
-            document.getElementById('st-cajas').innerText = dataHoy.reduce((a,b)=>a+b.total,0);
-            document.getElementById('st-rutas').innerText = dataHoy.length;
         }
 
         function login(u) {
             activeUser = u; localStorage.setItem('tw_logged', u);
             document.getElementById('page-login').classList.remove('active');
             document.getElementById('app-nav').style.display = 'flex';
-            syncData(); go('page-dashboard');
+            go('page-dashboard');
         }
 
         function checkPass(u) { if(u==='TAJHO ADMIN' && prompt("Clave:")!=="1994") return; login(u); }
@@ -263,6 +270,7 @@
             document.getElementById(id).classList.add('active');
             const bid = id.includes('dashboard') ? 'n-dashboard' : 'n-route';
             document.getElementById(bid).classList.add('active');
+            if(id === 'page-dashboard') renderStats();
             window.scrollTo(0,0);
         }
         function sendWA(id) {
