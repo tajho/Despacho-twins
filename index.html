@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V65.0 OFFICIAL</title>
+    <title>TWINS ELITE - V65.0 FINAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -27,7 +27,7 @@
         .active { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
-        /* --- DASHBOARD --- */
+        /* --- DASHBOARD & STATS --- */
         .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .master-card { background: #fff; padding: 18px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 120px; }
         .master-card.black { background: #000; color: #fff; border: none; }
@@ -35,7 +35,20 @@
         .stat-main { font-size: 28px; font-weight: 900; line-height: 1; }
         .stat-sub { font-size: 11px; font-weight: 800; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(150,150,150,0.2); }
 
-        /* --- CARDS & BUSQUEDA --- */
+        /* --- RANKINGS (DATA) --- */
+        .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; text-transform: uppercase; color: var(--text-dim); }
+        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; background: #eee; color: #aaa; flex-shrink: 0; }
+        .pos-1 { background: var(--gold); color: #000; }
+        .pos-2 { background: var(--silver); color: #000; }
+        .pos-3 { background: #CD7F32; color: #000; }
+        .rank-info { flex: 1; }
+        .rank-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; overflow: hidden; }
+        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.8s ease; }
+
+        /* --- BUSQUEDA & CARDS --- */
         .search-box { position: relative; margin-bottom: 20px; }
         .search-box input { width: 100%; padding: 16px 20px 16px 50px; background: #fff; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; outline: none; }
         .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-dim); }
@@ -47,27 +60,24 @@
         .truck-progress-bg { height: 8px; background: rgba(255,255,255,0.15); border-radius: 10px; margin-top: 15px; }
         .truck-progress-fill { height: 100%; background: var(--green); border-radius: 10px; transition: width 0.5s ease; width: 0%; }
 
-        /* --- UI ELEMENTS --- */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: flex-end; z-index: 2000; }
-        .modal-content { background: #fff; width: 100%; border-radius: 35px 35px 0 0; padding: 30px 20px; max-height: 85vh; overflow-y: auto; }
+        /* --- NAV --- */
         .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
         .field { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 15px; font-weight: 700; outline: none; margin-bottom: 12px; }
         
-        .sync-loader { position: fixed; top: 20px; right: 20px; background: #000; color: #fff; padding: 8px 15px; border-radius: 20px; font-size: 10px; font-weight: 800; display: none; z-index: 6000; }
+        #sync-status { position: fixed; top: 10px; right: 10px; background: var(--green); color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 900; display: none; z-index: 6000; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
 
-    <div id="sync-status" class="sync-loader">SINCRONIZANDO...</div>
+    <div id="sync-status">SUBIENDO AL EXCEL...</div>
 
     <div id="page-login">
         <div class="login-card">
             <i class="ph-bold ph-shield-check" style="font-size: 60px; margin-bottom: 10px;"></i>
             <h1 style="font-weight: 900; margin: 0;">Twins Elite</h1>
-            <p style="color: var(--text-dim); font-weight: 700; margin-bottom: 40px;">Acceso de Almacén</p>
-            
+            <p style="color: var(--text-dim); font-weight: 700; margin-bottom: 40px;">Acceso de Inventario</p>
             <div class="user-sel" onclick="login('TAJHO')">
                 <i class="ph-bold ph-user-circle-gear"></i> TAJHO <span class="badge-admin">ADMIN</span>
             </div>
@@ -96,11 +106,11 @@
         <div class="core-dash">
             <div class="master-card black">
                 <div><span class="stat-label">Hoy</span><br><span id="stat-hoy-cajas" class="stat-main">0</span></div>
-                <span id="stat-hoy-envios" class="stat-sub">0 CLIENTES</span>
+                <span id="stat-hoy-envios" class="stat-sub">0 RUTAS</span>
             </div>
             <div class="master-card">
                 <div><span class="stat-label">Este Mes</span><br><span id="stat-mes-cajas" class="stat-main">0</span></div>
-                <span id="stat-mes-envios" class="stat-sub">0 CLIENTES</span>
+                <span id="stat-mes-envios" class="stat-sub">0 RUTAS</span>
             </div>
         </div>
         <div class="search-box">
@@ -110,24 +120,16 @@
         <div id="hist-cont"></div>
     </div>
 
-    <div id="page-load" class="page">
-        <div class="truck-load-header">
-            <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:10px; font-weight:800; opacity:0.7;">CARGANDO UNIDAD</span><b id="load-perc-txt" style="font-size:12px; color:var(--green);">0%</b></div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:5px;"><h2 id="load-placa-txt" style="margin:0; font-size:32px; font-weight:900;">---</h2><div><span style="font-size:24px; font-weight:900;" id="load-total">0</span> <small style="opacity:0.6; font-size:10px;">/ 150</small></div></div>
-            <div class="truck-progress-bg"><div id="load-bar" class="truck-progress-fill"></div></div>
-        </div>
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
-            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0">
-            <input type="number" id="i-can" placeholder="Cant." class="field" style="flex:1; margin:0">
-        </div>
-        <button onclick="addItem()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none; cursor:pointer;">AÑADIR A LISTA</button>
-        <div id="load-list" style="margin-top:20px;"></div>
-        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:22px; background:var(--green); color:#fff; border-radius:22px; font-weight:900; border:none; margin-top:20px; cursor:pointer;">FINALIZAR Y SUBIR AL EXCEL</button>
+    <div id="page-data" class="page">
+        <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
+        <input type="month" id="f-month" class="field" onchange="renderData()">
+        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Choferes</div><div id="rank-choferes-list"></div></div>
+        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares</div><div id="rank-auxiliares-list"></div></div>
     </div>
 
     <div id="page-config" class="page">
         <div style="background:#000; color:#fff; padding:30px; border-radius:30px; margin-bottom:25px; text-align:center;"><h2 id="conf-placa" style="margin:0; font-size:36px;">---</h2></div>
-        <label style="font-size:10px; font-weight:800; margin-left:10px;">FECHA DE RUTA</label>
+        <label style="font-size:10px; font-weight:800; margin-left:10px;">FECHA</label>
         <input type="date" id="c-fecha" class="field">
         <label style="font-size:10px; font-weight:800; margin-left:10px;">CONDUCTOR</label>
         <select id="c-chofer" class="field"></select>
@@ -136,14 +138,29 @@
         <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none; margin-top:10px;">INICIAR CARGA</button>
     </div>
 
+    <div id="page-load" class="page">
+        <div class="truck-load-header">
+            <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:10px; font-weight:800; opacity:0.7;">CARGANDO</span><b id="load-perc-txt" style="font-size:12px; color:var(--green);">0%</b></div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:5px;"><h2 id="load-placa-txt" style="margin:0; font-size:32px; font-weight:900;">---</h2><div><span style="font-size:24px; font-weight:900;" id="load-total">0</span> <small style="opacity:0.6; font-size:10px;">/ 150</small></div></div>
+            <div class="truck-progress-bg"><div id="load-bar" class="truck-progress-fill"></div></div>
+        </div>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0">
+            <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1; margin:0">
+        </div>
+        <button onclick="addItem()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none; cursor:pointer;">AGREGAR CLIENTE</button>
+        <div id="load-list" style="margin-top:20px;"></div>
+        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:22px; background:var(--green); color:#fff; border-radius:22px; font-weight:900; border:none; margin-top:20px; cursor:pointer;">FINALIZAR Y GUARDAR</button>
+    </div>
+
     <nav id="navbar" class="nav-bottom" style="display:none;">
         <button class="nav-btn" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
         <button class="nav-btn" onclick="go('page-dash')"><i class="ph-bold ph-clock-counter-clockwise"></i>HISTORIAL</button>
+        <button class="nav-btn" onclick="go('page-data')"><i class="ph-bold ph-database"></i>DATA</button>
     </nav>
 
     <script>
-        // --- CONFIGURACIÓN ---
-        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbw4OYM62wblduBDeC5CvqI_srCA372l63Yhy1SzMYk6SHNNOM2_GC9FXIbAb9Ufv3na/exec";
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzkIqN5__aLRTfyeJSWAAB-pUmt54kGsv4Ex2KWz_dgAvrCT_Gty05uZelf6gbcL4p7/exec";
         
         let db = JSON.parse(localStorage.getItem('twins_v65_db')) || [];
         let cur = { items: [] };
@@ -153,11 +170,11 @@
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
 
-        function login(user) {
-            currentUser = user;
+        function login(u) {
+            currentUser = u;
             document.getElementById('page-login').style.display = 'none';
             document.getElementById('navbar').style.display = 'flex';
-            document.getElementById('user-tag').innerText = "👤 " + user;
+            document.getElementById('user-tag').innerText = "👤 " + u;
             go('page-dash');
             pullCloudData();
         }
@@ -168,44 +185,42 @@
             const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
             CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
+            document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
         };
 
-        // FUNCIÓN CORREGIDA PARA GUARDAR EN GOOGLE
         async function syncCloud(data) {
             document.getElementById('sync-status').style.display = 'block';
             try {
                 await fetch(CLOUD_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Necesario para Google Apps Script
-                    cache: 'no-cache',
-                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors',
                     body: JSON.stringify(data)
                 });
-                console.log("Datos enviados a Google");
-                setTimeout(() => document.getElementById('sync-status').style.display = 'none', 2000);
-            } catch (e) {
-                console.error("Error de sincronización:", e);
-                alert("Error al conectar con Excel. Revisa tu internet.");
-            }
+                setTimeout(() => {
+                    document.getElementById('sync-status').style.display = 'none';
+                    pullCloudData(); 
+                }, 2000);
+            } catch (e) { alert("Error al subir."); }
         }
 
         async function pullCloudData() {
             try {
                 const response = await fetch(CLOUD_URL);
                 const cloudDb = await response.json();
-                if(cloudDb && cloudDb.length > 0) {
+                if(cloudDb) {
                     db = cloudDb;
                     localStorage.setItem('twins_v65_db', JSON.stringify(db));
-                    renderHistory();
-                    renderStats();
+                    renderHistory(); renderStats();
                 }
-            } catch (e) { console.log("Usando base de datos local"); }
+            } catch (e) { console.log("Modo local"); }
         }
 
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if(id === 'page-dash') { renderStats(); renderHistory(); }
+            if(id === 'page-data') renderData();
         }
 
         function renderStats() {
@@ -220,15 +235,7 @@
         }
 
         function initConf(p) {
-            cur = { 
-                id: 'R' + Date.now(), 
-                placa: p, 
-                items: [], 
-                fecha: new Date().toISOString().split('T')[0], 
-                chofer: FLOTA[p], 
-                auxiliar: AUXILIARES[0], 
-                registradoPor: currentUser 
-            };
+            cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0], registradoPor: currentUser };
             document.getElementById('conf-placa').innerText = p;
             document.getElementById('c-fecha').value = cur.fecha;
             document.getElementById('c-chofer').value = cur.chofer;
@@ -247,12 +254,7 @@
         function addItem() {
             const cli = document.getElementById('i-cli').value.toUpperCase().trim();
             const can = parseInt(document.getElementById('i-can').value);
-            if(cli && can) {
-                cur.items.push({cli, can});
-                document.getElementById('i-cli').value="";
-                document.getElementById('i-can').value="";
-                refreshLoad();
-            }
+            if(cli && can) { cur.items.push({cli, can}); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refreshLoad(); }
         }
 
         function refreshLoad() {
@@ -264,26 +266,20 @@
             document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
             document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
                 <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px; font-weight:700;">
-                    <span>${it.cli}</span>
-                    <b>${it.can} CJS</b>
+                    <span><i class="ph-bold ph-trash" style="color:red; margin-right:10px;" onclick="cur.items.splice(${i},1); refreshLoad();"></i>${it.cli}</span><b>${it.can} CJS</b>
                 </div>`).reverse().join('');
         }
 
         function save() {
-            // Guardar localmente
             db.unshift(cur);
             localStorage.setItem('twins_v65_db', JSON.stringify(db));
-            
-            // Enviar a la nube (Google Excel)
             syncCloud(cur);
-            
-            // Volver al inicio
             go('page-dash');
         }
 
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
-            let filt = db.filter(r => r.placa.toLowerCase().includes(q) || r.items.some(i => i.cli.toLowerCase().includes(q)));
+            let filt = db.filter(r => r.placa.toLowerCase().includes(q) || r.chofer.toLowerCase().includes(q) || r.items.some(i => i.cli.toLowerCase().includes(q)));
             document.getElementById('hist-cont').innerHTML = filt.map(r => `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);"><span>📅 ${r.fecha}</span><span>${r.placa}</span></div>
@@ -293,6 +289,30 @@
                     </div>
                     <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                 </div>`).join('');
+        }
+
+        function renderData() {
+            const m = document.getElementById('f-month').value;
+            let filt = db.filter(r => r.fecha.startsWith(m));
+            let cS = {}, aS = {};
+            filt.forEach(r => {
+                let cjs = r.items.reduce((a,b)=>a+b.can,0);
+                cS[r.chofer] = (cS[r.chofer] || 0) + cjs;
+                aS[r.auxiliar] = (aS[r.auxiliar] || 0) + cjs;
+            });
+            const draw = (data, targetId) => {
+                let sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,5);
+                let max = sorted[0] ? sorted[0][1] : 1;
+                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `
+                    <div class="rank-item">
+                        <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
+                        <div class="rank-info">
+                            <div class="rank-name"><span>${n}</span> <span>${v} CJS</span></div>
+                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v/max)*100}%"></div></div>
+                        </div>
+                    </div>`).join('');
+            };
+            draw(cS, 'rank-choferes-list'); draw(aS, 'rank-auxiliares-list');
         }
     </script>
 </body>
