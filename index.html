@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V65.2 Hyper-Sync</title>
+    <title>TWINS ELITE - V65.3 Final</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -175,22 +175,17 @@
             if(userAuth) applyAuth();
             renderStats(); 
             renderHistory();
-
-            // Sincronización automática cada 15 segundos en segundo plano
             setInterval(() => { if(userAuth) pullCloudData(true); }, 15000);
         };
 
-        // --- SEGURIDAD ---
         function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
         function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
         function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; if(userAuth.admin) document.getElementById('n-data').style.display = 'flex'; pullCloudData(); }
 
-        // --- CLOUD HYPER-SYNC ---
         async function syncCloud(data) {
             const indicator = document.getElementById('sync-indicator');
-            indicator.style.opacity = "1"; // Indica que está subiendo
+            indicator.style.opacity = "1";
             try {
-                // Envío en background (no bloquea el UI)
                 fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) })
                 .then(() => { indicator.style.opacity = "0.5"; });
             } catch(e){ indicator.style.background = "var(--red)"; }
@@ -201,7 +196,6 @@
             isSyncing = true;
             const indicator = document.getElementById('sync-indicator');
             if(!silent) indicator.style.opacity = "1";
-            
             try {
                 const res = await fetch(CLOUD_URL);
                 const cloud = await res.json();
@@ -213,15 +207,9 @@
                     if(document.getElementById('page-data').classList.contains('active')) renderData();
                 }
                 indicator.style.background = "var(--green)";
-            } catch(e){
-                indicator.style.background = "var(--red)";
-            } finally {
-                isSyncing = false;
-                indicator.style.opacity = "0.5";
-            }
+            } catch(e){ indicator.style.background = "var(--red)"; } finally { isSyncing = false; indicator.style.opacity = "0.5"; }
         }
 
-        // --- NAVEGACIÓN ---
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -231,7 +219,6 @@
             if(id === 'page-dash') pullCloudData(true);
         }
 
-        // --- STATS ---
         function renderStats() {
             const hoy = new Date().toISOString().split('T')[0];
             const rHoy = db.filter(r => r.fecha.includes(hoy));
@@ -244,7 +231,6 @@
             document.getElementById('stat-mes-envios').innerText = cli(rMes) + " CLIENTES";
         }
 
-        // --- CARGA ---
         function initConf(p) { cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: new Date().toISOString().split('T')[0], chofer: FLOTA[p], auxiliar: AUXILIARES[0] }; document.getElementById('conf-placa').innerText = p; document.getElementById('c-fecha').value = cur.fecha; go('page-config'); }
         function goLoad() { cur.fecha = document.getElementById('c-fecha').value; cur.chofer = document.getElementById('c-chofer').value; cur.auxiliar = document.getElementById('c-aux').value; document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
         function addItem() { const cli = document.getElementById('i-cli').value.toUpperCase().trim(); const can = parseInt(document.getElementById('i-can').value); if(cli && can) { cur.items.push({cli, can}); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refreshLoad(); } }
@@ -267,12 +253,11 @@
             const idx = db.findIndex(r => r.id === cur.id); 
             if(idx > -1) db[idx] = cur; else db.unshift(cur); 
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-            renderStats(); renderHistory(); // Actualización visual inmediata
-            syncCloud(cur); // Envío en background
+            renderStats(); renderHistory();
+            syncCloud(cur);
             go('page-dash'); 
         }
 
-        // --- HISTORIAL ---
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
             let filt = db.filter(r => r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.includes(q));
@@ -289,7 +274,6 @@
                 </div>`).join('');
         }
 
-        // --- DATA RANKING ---
         function renderData() {
             const m = document.getElementById('f-month').value;
             let filt = db.filter(r => r.fecha.startsWith(m));
@@ -319,7 +303,30 @@
         function viewL(id) { const r = db.find(x => x.id === id); if(!r.items) return; document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
         function editR(id) { cur = JSON.parse(JSON.stringify(db.find(x => x.id === id))); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); }
-        function shareW(id) { const r = db.find(x => x.id === id); let t = `*TWINS ELITE*%0A🚛 ${r.placa}%0A📅 ${r.fecha.split('T')[0]}%0A%0A*CARGA:*%0A`; if(r.items) r.items.forEach(i => t += `• ${i.cli}: ${i.can}%0A`); window.location.href = "https://api.whatsapp.com/send?text=" + t; }
+        
+        // --- WHATSAPP FORMATO OFICIAL ---
+        function shareW(id) { 
+            const r = db.find(x => x.id === id); 
+            const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
+            const totalClientes = r.items ? r.items.length : 0;
+            
+            let msg = `*TWINS ELITE*%0A%0A`;
+            msg += `🚛 *UNIDAD:* ${r.placa}%0A`;
+            msg += `👤 *CHOFER:* ${r.chofer}%0A`;
+            msg += `🤝 *AUX:* ${r.auxiliar}%0A%0A`;
+            msg += `*LISTA:*%0A`;
+            
+            if(r.items) {
+                r.items.forEach(i => {
+                    msg += `• ${i.cli}: ${i.can}%0A`;
+                });
+            }
+            
+            msg += `%0A📦 *TOTAL:* ${totalCajas} Cjs`;
+            msg += `%0A👥 *CLIENTES:* ${totalClientes}`;
+            
+            window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
+        }
     </script>
 </body>
 </html>
