@@ -3,282 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V66.0</title>
+    <title>TWINS ELITE - V67.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
         :root {
-            --bg: #f4f6f8; --surface: #ffffff; --accent: #000000; 
-            --text: #111827; --text-dim: #6b7280; --border: #e5e7eb; 
-            --gold: #FFD700; --silver: #C0C0C0; --green: #10b981; --red: #ef4444;
+            --bg: #f8fafc; --surface: #ffffff; --accent: #000000; 
+            --text: #1e293b; --text-dim: #64748b; --border: #e2e8f0; 
+            --green: #10b981; --blue: #3b82f6;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; }
+        body { margin: 0; background: var(--bg); color: var(--text); padding-bottom: 100px; }
 
-        /* --- ESTRUCTURA --- */
-        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: fade 0.2s ease; }
+        .page { display: none; padding: 20px; max-width: 500px; margin: 0 auto; animation: fade 0.3s ease; }
         .active { display: block; }
-        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- DASHBOARD REESTRUCTURADO --- */
-        .dash-container { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: #fff; padding: 20px; border-radius: 28px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .stat-card.dark { background: #000; color: #fff; border: none; }
-        .stat-header { font-size: 11px; font-weight: 800; text-transform: uppercase; opacity: 0.6; margin-bottom: 15px; display: flex; align-items: center; gap: 6px; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .stat-val { font-size: 32px; font-weight: 900; line-height: 1; display: block; }
-        .stat-desc { font-size: 11px; font-weight: 700; margin-top: 4px; opacity: 0.8; }
+        /* --- DASHBOARD 4 CUADROS PEQUEÑOS --- */
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .mini-card { background: #fff; padding: 16px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .mini-card.black { background: #000; color: #fff; border: none; }
+        .m-label { font-size: 9px; font-weight: 800; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 4px; }
+        .m-val { font-size: 24px; font-weight: 900; line-height: 1; }
+        .m-sub { font-size: 10px; font-weight: 700; margin-top: 4px; opacity: 0.8; display: block; }
 
-        /* --- RANKINGS --- */
-        .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
-        .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; text-transform: uppercase; color: var(--text-dim); }
-        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-        .rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; background: #eee; color: #aaa; }
-        .pos-1 { background: var(--gold); color: #000; }
-        .rank-info { flex: 1; }
-        .rank-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
-        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; overflow: hidden; }
-        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; }
+        /* --- LISTADO DE RUTAS --- */
+        .route-item { background: #fff; padding: 16px; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .r-info b { font-size: 14px; display: block; }
+        .r-info span { font-size: 11px; color: var(--text-dim); font-weight: 700; }
+        .r-stat { text-align: right; }
+        .r-stat b { font-size: 18px; color: #000; }
+        .r-stat span { font-size: 10px; font-weight: 800; display: block; color: var(--text-dim); }
 
-        /* --- LOGIN & UI --- */
-        #page-login { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; }
-        .user-sel { width: 100%; max-width: 300px; padding: 20px; margin-bottom: 12px; border-radius: 20px; border: 1px solid var(--border); background: #fff; font-weight: 800; display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
-        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
+        /* --- UI GENERAL --- */
+        .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 80px; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
-        .field { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 15px; font-weight: 700; outline: none; margin-bottom: 12px; }
-        #sync-status { position: fixed; top: 10px; right: 10px; background: var(--green); color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 900; display: none; z-index: 6000; }
+        .nav-btn i { font-size: 22px; margin-bottom: 4px; }
+        .field { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 14px; width: 100%; font-size: 14px; font-weight: 700; outline: none; margin-bottom: 10px; }
+        #sync-status { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--green); color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 10px; font-weight: 900; display: none; z-index: 6000; }
+        
+        #page-login { position: fixed; inset: 0; background: #fff; z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+        .user-btn { width: 100%; max-width: 280px; padding: 18px; margin-bottom: 10px; border-radius: 15px; border: 1px solid var(--border); background: #fff; font-weight: 800; text-align: center; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="sync-status">GUARDAR RUTA</div>
+    <div id="sync-status">ENVIANDO AL EXCEL...</div>
 
     <div id="page-login">
-        <h1 style="font-weight: 900; margin-bottom: 40px;">Twins DESPACHOS</h1>
-        <div class="user-sel" onclick="login('TAJHO')">TAJHO</div>
-        <div class="user-sel" onclick="login('FRANCHESCO')">FRANCHESCO</div>
-        <div class="user-sel" onclick="login('OSCAR')">OSCAR</div>
-        <div class="user-sel" onclick="login('LUIS HERBER')">LUIS HERBER</div>
+        <i class="ph-bold ph-truck" style="font-size: 50px; margin-bottom: 20px;"></i>
+        <h2 style="margin-bottom: 30px; font-weight: 900;">TWINS ELITE</h2>
+        <div class="user-btn" onclick="login('TAJHO')">TAJHO</div>
+        <div class="user-btn" onclick="login('FRANCHESCO')">FRANCHESCO</div>
+        <div class="user-btn" onclick="login('OSCAR')">OSCAR</div>
+        <div class="user-btn" onclick="login('LUIS HERBER')">LUIS HERBER</div>
     </div>
 
     <div id="page-dash" class="page">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h1 style="font-weight:900; margin:0;">Dashboard</h1>
-            <span id="user-tag" style="font-size:10px; font-weight:800; background:#eee; padding:5px 12px; border-radius:20px;">---</span>
-        </div>
-
-        <div class="dash-container">
-            <div class="stat-card dark">
-                <div class="stat-header"><i class="ph-bold ph-calendar-check"></i> Conteo del Día</div>
-                <div class="stat-grid">
-                    <div><span id="stat-hoy-cajas" class="stat-val">0</span><div class="stat-desc">CAJAS HOY</div></div>
-                    <div><span id="stat-hoy-clientes" class="stat-val">0</span><div class="stat-desc">CLIENTES HOY</div></div>
-                </div>
+        <h2 style="font-weight:900; margin-bottom:20px;">Dashboard</h2>
+        
+        <div class="dash-grid">
+            <div class="mini-card black">
+                <span class="m-label">Cajas Hoy</span>
+                <span id="h-cajas" class="m-val">0</span>
+                <span class="m-sub">TOTAL</span>
             </div>
-
-            <div class="stat-card">
-                <div class="stat-header" style="color:var(--text-dim)"><i class="ph-bold ph-chart-line-up"></i> Conteo Mensual</div>
-                <div class="stat-grid">
-                    <div><span id="stat-mes-cajas" class="stat-val" style="color:#000">0</span><div class="stat-desc" style="color:var(--text-dim)">TOTAL CAJAS</div></div>
-                    <div><span id="stat-mes-clientes" class="stat-val" style="color:#000">0</span><div class="stat-desc" style="color:var(--text-dim)">TOTAL CLIENTES</div></div>
-                </div>
+            <div class="mini-card black">
+                <span class="m-label">Clientes Hoy</span>
+                <span id="h-cli" class="m-val">0</span>
+                <span class="m-sub">ENTREGAS</span>
+            </div>
+            <div class="mini-card">
+                <span class="m-label">Cajas Mes</span>
+                <span id="m-cajas" class="m-val">0</span>
+                <span class="m-sub">ACUMULADO</span>
+            </div>
+            <div class="mini-card">
+                <span class="m-label">Clientes Mes</span>
+                <span id="m-cli" class="m-val">0</span>
+                <span class="m-sub">ACUMULADO</span>
             </div>
         </div>
 
         <div style="position: relative; margin-bottom:15px;">
-            <input type="text" id="smart-search" placeholder="Buscar placa o chofer..." onkeyup="renderHistory()" style="width:100%; padding:15px 15px 15px 45px; border-radius:15px; border:1px solid var(--border); font-weight:700;">
-            <i class="ph-bold ph-magnifying-glass" style="position:absolute; left:15px; top:18px; color:var(--text-dim);"></i>
+            <input type="text" id="q" placeholder="Buscar placa o chofer..." onkeyup="renderHistory()" style="width:100%; padding:14px 14px 14px 40px; border-radius:12px; border:1px solid var(--border); font-weight:700;">
+            <i class="ph-bold ph-magnifying-glass" style="position:absolute; left:14px; top:16px; color:var(--text-dim);"></i>
         </div>
-        <div id="hist-cont"></div>
-    </div>
-
-    <div id="page-data" class="page">
-        <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
-        <input type="month" id="f-month" class="field" onchange="renderData()">
-        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Choferes</div><div id="rank-choferes-list"></div></div>
-        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares</div><div id="rank-auxiliares-list"></div></div>
+        <div id="hist-list"></div>
     </div>
 
     <div id="page-units" class="page">
-        <h1 style="font-weight:900; margin-bottom:20px;">Despacho</h1>
-        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
+        <h2 style="font-weight:900; margin-bottom:20px;">Nueva Carga</h2>
+        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
     </div>
 
     <div id="page-config" class="page">
-        <div style="background:#000; color:#fff; padding:30px; border-radius:30px; margin-bottom:25px; text-align:center;"><h2 id="conf-placa" style="margin:0; font-size:36px;">---</h2></div>
-        <input type="date" id="c-fecha" class="field">
-        <select id="c-chofer" class="field"></select>
-        <select id="c-aux" class="field"></select>
-        <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">INICIAR CARGA</button>
+        <div style="background:#000; color:#fff; padding:25px; border-radius:20px; margin-bottom:20px; text-align:center;"><h2 id="p-placa" style="margin:0;">---</h2></div>
+        <input type="date" id="p-fecha" class="field">
+        <select id="p-chofer" class="field"></select>
+        <select id="p-aux" class="field"></select>
+        <button onclick="goLoad()" style="width:100%; padding:18px; background:#000; color:#fff; border-radius:15px; font-weight:800; border:none; margin-top:10px;">CONTINUAR</button>
     </div>
 
     <div id="page-load" class="page">
-        <div style="background:#000; color:#fff; padding:20px; border-radius:20px; margin-bottom:15px;">
-            <h2 id="load-placa-txt" style="margin:0;">---</h2>
-            <div style="font-size:24px; font-weight:900;"><span id="load-total">0</span> CAJAS</div>
+        <div style="background:#000; color:#fff; padding:20px; border-radius:15px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+            <div><b id="l-placa">---</b><br><small id="l-total-txt">0 Cajas</small></div>
+            <div id="l-perc" style="font-weight:900; color:var(--green);">0%</div>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
             <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0">
             <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1; margin:0">
         </div>
-        <button onclick="addItem()" style="width:100%; padding:18px; background:#eee; border-radius:15px; font-weight:800; border:none; margin-bottom:10px;">+ AGREGAR</button>
-        <div id="load-list"></div>
-        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:22px; background:var(--green); color:#fff; border-radius:22px; font-weight:900; border:none; margin-top:20px;">GUARDAR EN EXCEL</button>
+        <button onclick="addItem()" style="width:100%; padding:15px; background:#eee; border-radius:12px; font-weight:800; border:none; margin-bottom:15px;">+ AGREGAR CLIENTE</button>
+        <div id="l-list"></div>
+        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:20px; background:var(--green); color:#fff; border-radius:15px; font-weight:900; border:none; margin-top:20px;">GUARDAR TODO</button>
     </div>
 
     <nav id="navbar" class="nav-bottom" style="display:none;">
         <button class="nav-btn" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
-        <button class="nav-btn" onclick="go('page-dash')"><i class="ph-bold ph-chart-pie"></i>DASHBOARD</button>
-        <button class="nav-btn" onclick="go('page-data')"><i class="ph-bold ph-database"></i>DATA</button>
+        <button class="nav-btn" onclick="go('page-dash')"><i class="ph-bold ph-chart-bar"></i>DASHBOARD</button>
     </nav>
 
     <script>
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzkIqN5__aLRTfyeJSWAAB-pUmt54kGsv4Ex2KWz_dgAvrCT_Gty05uZelf6gbcL4p7/exec";
-        
-        let db = JSON.parse(localStorage.getItem('twins_v65_db')) || [];
+        let db = JSON.parse(localStorage.getItem('twins_v67_db')) || [];
         let cur = { items: [] };
         let currentUser = "";
 
-        // FUNCION PARA OBTENER FECHA LIMA (CORRECCION ZONA HORARIA)
-        function getLimaDate() {
-            const now = new Date();
-            const lima = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
-            return lima; // Retorna YYYY-MM-DD
+        // FECHA CORRECTA PERÚ
+        function getPeruDate() {
+            return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
         }
 
         function login(u) {
             currentUser = u;
             document.getElementById('page-login').style.display = 'none';
             document.getElementById('navbar').style.display = 'flex';
-            document.getElementById('user-tag').innerText = "👤 " + u;
             go('page-dash');
-            pullCloudData();
+            pull();
         }
 
         window.onload = () => {
-            const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
+            const F = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
             const ug = document.getElementById('units-grid');
-            for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:25px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="initConf('${p}', '${FLOTA[p]}')"><i class="ph-bold ph-truck" style="font-size:28px;"></i><br><b>${p}</b></div>`;
-            
-            const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
-            const AUXILIARES = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
-            const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
-            CONDUCTORES.forEach(c => sc.innerHTML += `<option value="${c}">${c}</option>`);
-            AUXILIARES.forEach(a => sa.innerHTML += `<option value="${a}">${a}</option>`);
-            document.getElementById('f-month').value = getLimaDate().substring(0,7);
+            for(let p in F) ug.innerHTML += `<div style="background:#fff; padding:20px; border-radius:18px; text-align:center; border:1px solid var(--border);" onclick="init('${p}', '${F[p]}')"><b>${p}</b></div>`;
+            const conds = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
+            const auxs = ["CRISTOPHER", "PERCY", "PLACIDO", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
+            conds.forEach(c => document.getElementById('p-chofer').innerHTML += `<option value="${c}">${c}</option>`);
+            auxs.forEach(a => document.getElementById('p-aux').innerHTML += `<option value="${a}">${a}</option>`);
         };
 
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            if(id === 'page-dash') { renderStats(); renderHistory(); }
-            if(id === 'page-data') renderData();
+            if(id === 'page-dash') stats();
         }
 
-        function renderStats() {
-            const hoy = getLimaDate();
-            const mes = hoy.substring(0,7);
-            
-            const rHoy = db.filter(r => r.fecha === hoy);
-            const rMes = db.filter(r => r.fecha.startsWith(mes));
-
-            const sumCajas = (arr) => arr.reduce((a,b) => a + b.items.reduce((x,y)=>x+y.can,0), 0);
-            const sumClientes = (arr) => arr.reduce((a,b) => a + b.items.length, 0);
-
-            document.getElementById('stat-hoy-cajas').innerText = sumCajas(rHoy);
-            document.getElementById('stat-hoy-clientes').innerText = sumClientes(rHoy);
-            document.getElementById('stat-mes-cajas').innerText = sumCajas(rMes);
-            document.getElementById('stat-mes-clientes').innerText = sumClientes(rMes);
+        function stats() {
+            const h = getPeruDate(), m = h.substring(0,7);
+            const rH = db.filter(r => r.fecha === h), rM = db.filter(r => r.fecha.startsWith(m));
+            const sumC = (a) => a.reduce((x,y) => x + y.items.reduce((v,z)=>v+z.can,0), 0);
+            const sumL = (a) => a.reduce((x,y) => x + y.items.length, 0);
+            document.getElementById('h-cajas').innerText = sumC(rH);
+            document.getElementById('h-cli').innerText = sumL(rH);
+            document.getElementById('m-cajas').innerText = sumC(rM);
+            document.getElementById('m-cli').innerText = sumL(rM);
+            renderHistory();
         }
 
-        function initConf(p, c) {
-            cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: getLimaDate(), chofer: c, auxiliar: "CRISTOPHER", registradoPor: currentUser };
-            document.getElementById('conf-placa').innerText = p;
-            document.getElementById('c-fecha').value = cur.fecha;
-            document.getElementById('c-chofer').value = cur.chofer;
+        function init(p, c) {
+            cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: getPeruDate(), chofer: c, auxiliar: "CRISTOPHER", registradoPor: currentUser };
+            document.getElementById('p-placa').innerText = p;
+            document.getElementById('p-fecha').value = cur.fecha;
+            document.getElementById('p-chofer').value = c;
             go('page-config');
         }
 
         function goLoad() {
-            cur.fecha = document.getElementById('c-fecha').value;
-            cur.chofer = document.getElementById('c-chofer').value;
-            cur.auxiliar = document.getElementById('c-aux').value;
-            document.getElementById('load-placa-txt').innerText = cur.placa;
-            refreshLoad(); go('page-load');
+            cur.fecha = document.getElementById('p-fecha').value;
+            cur.chofer = document.getElementById('p-chofer').value;
+            cur.auxiliar = document.getElementById('p-aux').value;
+            document.getElementById('l-placa').innerText = cur.placa;
+            refresh(); go('page-load');
         }
 
         function addItem() {
-            const cli = document.getElementById('i-cli').value.toUpperCase().trim();
-            const can = parseInt(document.getElementById('i-can').value);
-            if(cli && can) { cur.items.push({cli, can}); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refreshLoad(); }
+            const cli = document.getElementById('i-cli').value.toUpperCase().trim(), can = parseInt(document.getElementById('i-can').value);
+            if(cli && can) { cur.items.push({cli, can}); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; refresh(); }
         }
 
-        function refreshLoad() {
-            const total = cur.items.reduce((a,b)=>a+b.can, 0);
-            document.getElementById('load-total').innerText = total;
-            document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
-            document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
-                <div style="display:flex; justify-content:space-between; padding:12px; background:#fff; border-radius:12px; border:1px solid #eee; margin-bottom:8px; font-weight:700;">
-                    <span>${it.cli}</span><b>${it.can} CJS</b>
-                </div>`).reverse().join('');
+        function refresh() {
+            const tot = cur.items.reduce((a,b)=>a+b.can,0);
+            document.getElementById('l-total-txt').innerText = tot + " Cajas";
+            document.getElementById('l-perc').innerText = Math.min((tot/150)*100, 100).toFixed(0) + "%";
+            document.getElementById('btn-save').style.display = tot > 0 ? 'block' : 'none';
+            document.getElementById('l-list').innerHTML = cur.items.map(i => `<div style="padding:10px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;"><span>${i.cli}</span><b>${i.can}</b></div>`).reverse().join('');
         }
 
         async function save() {
             db.unshift(cur);
-            localStorage.setItem('twins_v65_db', JSON.stringify(db));
+            localStorage.setItem('twins_v67_db', JSON.stringify(db));
             document.getElementById('sync-status').style.display = 'block';
-            try {
-                await fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
-                setTimeout(() => { document.getElementById('sync-status').style.display = 'none'; pullCloudData(); }, 2000);
-            } catch (e) { alert("Error de red"); }
+            await fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
+            setTimeout(() => { document.getElementById('sync-status').style.display = 'none'; pull(); }, 2000);
             go('page-dash');
         }
 
-        async function pullCloudData() {
-            try {
-                const response = await fetch(CLOUD_URL);
-                const cloudDb = await response.json();
-                if(cloudDb) { db = cloudDb; localStorage.setItem('twins_v65_db', JSON.stringify(db)); renderStats(); renderHistory(); }
-            } catch (e) {}
+        async function pull() {
+            try { const r = await fetch(CLOUD_URL); const d = await r.json(); if(d) { db = d; localStorage.setItem('twins_v67_db', JSON.stringify(db)); stats(); } } catch(e){}
         }
 
         function renderHistory() {
-            const q = document.getElementById('smart-search').value.toLowerCase();
-            let filt = db.filter(r => r.placa.toLowerCase().includes(q) || r.chofer.toLowerCase().includes(q));
-            document.getElementById('hist-cont').innerHTML = filt.map(r => `
-                <div style="background:#fff; padding:15px; border-radius:20px; border:1px solid #eee; margin-bottom:12px;">
-                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);"><span>${r.fecha}</span><span>${r.placa}</span></div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                        <b style="font-size:20px;">${r.items.reduce((a,b)=>a+b.can,0)} CJS</b>
-                        <span style="font-size:11px; font-weight:800; color:var(--text-dim);">${r.items.length} CLI.</span>
-                    </div>
+            const q = document.getElementById('q').value.toLowerCase();
+            const filt = db.filter(r => r.placa.toLowerCase().includes(q) || r.chofer.toLowerCase().includes(q));
+            document.getElementById('hist-list').innerHTML = filt.map(r => `
+                <div class="route-item">
+                    <div class="r-info"><b>${r.placa}</b><span>${r.fecha} • ${r.chofer}</span></div>
+                    <div class="r-stat"><b>${r.items.reduce((a,b)=>a+b.can,0)}</b><span>CAJAS</span></div>
                 </div>`).join('');
-        }
-
-        function renderData() {
-            const m = document.getElementById('f-month').value;
-            let filt = db.filter(r => r.fecha.startsWith(m));
-            let cS = {}, aS = {};
-            filt.forEach(r => {
-                let cjs = r.items.reduce((a,b)=>a+b.can,0);
-                cS[r.chofer] = (cS[r.chofer] || 0) + cjs;
-                aS[r.auxiliar] = (aS[r.auxiliar] || 0) + cjs;
-            });
-            const draw = (data, targetId) => {
-                let sorted = Object.entries(data).sort((a,b)=>b[1]-a[1]).slice(0,5);
-                let max = sorted[0] ? sorted[0][1] : 1;
-                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `
-                    <div class="rank-item">
-                        <div class="rank-pos ${i===0 ? 'pos-1' : ''}">${i+1}</div>
-                        <div class="rank-info">
-                            <div class="rank-name"><span>${n}</span> <span>${v} CJS</span></div>
-                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v/max)*100}%"></div></div>
-                        </div>
-                    </div>`).join('');
-            };
-            draw(cS, 'rank-choferes-list'); draw(aS, 'rank-auxiliares-list');
         }
     </script>
 </body>
