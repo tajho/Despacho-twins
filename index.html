@@ -36,7 +36,6 @@
         .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 10px; padding: 12px; background: #f9fafb; border-radius: 12px; }
         
-        /* BOTONES LINEALES OPTIMIZADOS */
         .card-actions { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
@@ -62,7 +61,6 @@
         .btn-card i { font-size: 16px; }
         .btn-card.whatsapp { border-color: var(--green); color: var(--green); }
 
-        /* Estilos de Data (Ranking) */
         .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; text-transform: uppercase; color: var(--text-dim); }
         .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -343,6 +341,10 @@
 
         function save() { 
             if (!cur.id) cur.id = 'R' + Date.now(); 
+            
+            // REGISTRO DEL USUARIO QUE GENERA LA RUTA
+            cur.usuario = userAuth ? userAuth.name : "SISTEMA";
+
             const idx = db.findIndex(r => String(r.id) === String(cur.id)); 
             if (idx !== -1) db[idx] = JSON.parse(JSON.stringify(cur)); 
             else db.unshift(JSON.parse(JSON.stringify(cur)));
@@ -356,15 +358,20 @@
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
             document.getElementById('hist-cont').innerHTML = db.filter(r => 
-                r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.toString().includes(q)
+                r.chofer.toLowerCase().includes(q) || 
+                r.placa.toLowerCase().includes(q) || 
+                r.fecha.toString().includes(q) ||
+                (r.usuario && r.usuario.toLowerCase().includes(q))
             ).map(r => {
                 const cleanDate = r.fecha.toString().split('T')[0];
                 const totalCjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
                 const totalCli = r.items ? r.items.length : 0;
+                const registradoPor = r.usuario || "---";
+
                 return `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
-                        <span>📅 ${cleanDate}</span>
+                        <span>📅 ${cleanDate} | 🆔 ${registradoPor}</span>
                         <span>${r.placa}</span>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
