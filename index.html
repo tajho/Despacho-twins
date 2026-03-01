@@ -190,15 +190,25 @@
         const res = await fetch(CLOUD_URL);
         const cloud = await res.json();
         if(cloud && Array.isArray(cloud)) { 
-            // Esto elimina duplicados por ID antes de guardar localmente
-            const uniqueDb = [...new Map(cloud.map(item => [item.id, item])).values()];
-            db = uniqueDb; 
+            // Crea un mapa usando el ID como clave. 
+            // Esto descarta versiones antiguas y deja solo la última edición de cada ruta.
+            const uniqueMap = new Map();
+            cloud.forEach(item => {
+                uniqueMap.set(item.id, item);
+            });
+
+            // Convertimos el mapa de nuevo a un array para la base de datos local
+            db = Array.from(uniqueMap.values()).reverse(); 
+            
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
             renderStats(); 
             renderHistory(); 
         }
-    } catch(e){ console.error("Error de sincronización", e); }
+    } catch(e){
+        console.error("Error al sincronizar:", e);
+    }
 }
+
         function go(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
