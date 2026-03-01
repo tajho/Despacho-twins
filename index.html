@@ -228,12 +228,9 @@
             
             if(userAuth) applyAuth();
             renderHistory();
-            
-            // VERIFICAR EMERGENCIA AL INICIAR
             checkEmergency();
         };
 
-        // --- LÓGICA DE FILTRADO ---
         function filterByQuick(type) {
             currentFilter = type;
             document.getElementById('search-date').value = "";
@@ -265,15 +262,12 @@
                 acc.clientes += (r.items ? r.items.length : 0);
                 return acc;
             }, { cajas: 0, clientes: 0 });
-
             const stats = getTotals(filteredData);
             document.getElementById('stat-hoy-cajas').innerText = stats.cajas;
             document.getElementById('stat-hoy-sub').innerHTML = `<span>${filteredData.length} RUTAS</span><span>${stats.clientes} CLI.</span>`;
-
             const panel = document.getElementById('main-stat-card');
             if (currentFilter === 'manana') panel.className = "master-card blue";
             else panel.className = "master-card black";
-
             const hoyStr = new Date().toLocaleDateString('en-CA');
             const rMes = db.filter(r => r.fecha && r.fecha.toString().startsWith(hoyStr.substring(0,7)));
             const statsMes = getTotals(rMes);
@@ -290,7 +284,6 @@
             const ayerStr = getStr(new Date(new Date().setDate(hoyObj.getDate() - 1)));
             const hoyStr = getStr(hoyObj);
             const mananaStr = getStr(new Date(new Date().setDate(hoyObj.getDate() + 1)));
-
             const filtered = db.filter(r => {
                 if(!r.fecha) return false;
                 const rFecha = r.fecha.toString().split('T')[0];
@@ -301,42 +294,18 @@
                 else if (currentFilter === 'exact-date') matchTime = (rFecha === dateInput);
                 else if (currentFilter === 'month') matchTime = (rFecha.startsWith(monthInput));
                 else if (currentFilter === 'todos') matchTime = true;
-
-                const matchText = r.chofer.toLowerCase().includes(q) || 
-                                  r.placa.toLowerCase().includes(q) || 
-                                  (r.usuario && r.usuario.toLowerCase().includes(q)) ||
-                                  (r.items && r.items.some(it => it.cli.toLowerCase().includes(q)));
+                const matchText = r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || (r.usuario && r.usuario.toLowerCase().includes(q)) || (r.items && r.items.some(it => it.cli.toLowerCase().includes(q)));
                 return matchTime && matchText;
             });
-
             updateDynamicStats(filtered);
-
             document.getElementById('hist-cont').innerHTML = filtered.map(r => {
                 const cleanDate = r.fecha.toString().split('T')[0];
                 const totalCjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
                 const totalCli = r.items ? r.items.length : 0;
-                return `
-                <div class="route-card">
-                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
-                        <span>📅 ${cleanDate} | 🆔 ${r.usuario || 'SISTEMA'}</span>
-                        <span>${r.placa}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                        <b style="font-size:24px;">${totalCjs} <span style="font-size:12px; opacity:0.6;">CJS</span></b>
-                        <b style="font-size:16px;">${totalCli} <span style="font-size:12px; opacity:0.6;">CLI.</span></b>
-                    </div>
-                    <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
-                    <div class="card-actions">
-                        <button onclick="viewL('${r.id}')" class="btn-card"><i class="ph-bold ph-list-bullets"></i>Lista</button>
-                        <button onclick="openCrew('${r.id}')" class="btn-card"><i class="ph-bold ph-users"></i>Equipo</button>
-                        <button onclick="editR('${r.id}')" class="btn-card"><i class="ph-bold ph-pencil-simple"></i>Editar</button>
-                        <button onclick="shareW('${r.id}')" class="btn-card whatsapp"><i class="ph-bold ph-whatsapp-logo"></i>Reporte</button>
-                    </div>
-                </div>`;
+                return `<div class="route-card"><div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);"><span>📅 ${cleanDate} | 🆔 ${r.usuario || 'SISTEMA'}</span><span>${r.placa}</span></div><div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;"><b style="font-size:24px;">${totalCjs} <span style="font-size:12px; opacity:0.6;">CJS</span></b><b style="font-size:16px;">${totalCli} <span style="font-size:12px; opacity:0.6;">CLI.</span></b></div><div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div><div class="card-actions"><button onclick="viewL('${r.id}')" class="btn-card"><i class="ph-bold ph-list-bullets"></i>Lista</button><button onclick="openCrew('${r.id}')" class="btn-card"><i class="ph-bold ph-users"></i>Equipo</button><button onclick="editR('${r.id}')" class="btn-card"><i class="ph-bold ph-pencil-simple"></i>Editar</button><button onclick="shareW('${r.id}')" class="btn-card whatsapp"><i class="ph-bold ph-whatsapp-logo"></i>Reporte</button></div></div>`;
             }).join('');
         }
 
-        // --- AUTH ---
         function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
         function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
         function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
@@ -366,18 +335,13 @@
             if(id === 'page-dash') renderHistory();
         }
 
-        // --- SUGERENCIA AUTOMÁTICA DE CONDUCTOR ---
         function initConf(p) { 
             const hoy = new Date().toLocaleDateString('en-CA'); 
             cur = { id: null, placa: p, items: [], fecha: hoy, chofer: FLOTA[p], auxiliar: "POR ASIGNAR", usuario: userAuth ? userAuth.name : "SISTEMA" }; 
-            
             document.getElementById('conf-placa').innerText = p; 
             document.getElementById('c-fecha').value = hoy; 
-            
-            // Llenar selects con sugerencias
             document.getElementById('c-chofer').value = FLOTA[p] || "TAJHO";
             document.getElementById('c-aux').value = "POR ASIGNAR";
-            
             go('page-config'); 
         }
 
@@ -397,7 +361,6 @@
 
         function removeItem(index) { cur.items.splice(index, 1); refreshLoad(); }
 
-        // --- LÓGICA DE ACTUALIZACIÓN Y AUTOGUARDADO ---
         function refreshLoad() { 
             const total = cur.items.reduce((a, b) => a + b.can, 0); 
             const limite = (cur.placa === "CEP-929") ? 210 : 180;
@@ -406,19 +369,10 @@
             document.getElementById('load-count').innerText = `${total} / ${limite} CJS`;
             document.getElementById('load-bar').style.background = (total > limite) ? "var(--red)" : "var(--green)";
             document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
-            document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
-                <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
-                    <span><i class="ph-bold ph-trash" style="color:var(--red); margin-right:12px;" onclick="removeItem(${i})"></i>${it.cli}</span>
-                    <b>${it.can}</b>
-                </div>`).reverse().join(''); 
-
-            // GUARDAR BACKUP DE EMERGENCIA
-            if(cur.items.length > 0) {
-                localStorage.setItem('twins_emergency_backup', JSON.stringify(cur));
-            }
+            document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `<div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;"><span><i class="ph-bold ph-trash" style="color:var(--red); margin-right:12px;" onclick="removeItem(${i})"></i>${it.cli}</span><b>${it.can}</b></div>`).reverse().join(''); 
+            if(cur.items.length > 0) { localStorage.setItem('twins_emergency_backup', JSON.stringify(cur)); }
         }
 
-        // --- FUNCIONES DE RECUPERACIÓN ---
         function checkEmergency() {
             const backup = localStorage.getItem('twins_emergency_backup');
             if (backup) {
@@ -433,37 +387,23 @@
         function confirmRecover(yes) {
             if (yes) {
                 cur = JSON.parse(localStorage.getItem('twins_emergency_backup'));
-                // Asegurar que mantenga los datos de registro del usuario logueado
                 cur.usuario = userAuth ? userAuth.name : "SISTEMA";
                 document.getElementById('load-placa-txt').innerText = cur.placa;
                 refreshLoad();
                 go('page-load');
-            } else {
-                localStorage.removeItem('twins_emergency_backup');
-            }
+            } else { localStorage.removeItem('twins_emergency_backup'); }
             document.getElementById('modal-recover').style.display = 'none';
         }
 
-        // --- GUARDADO FINAL ---
         function save() { 
             if (!cur.id) cur.id = 'R' + Date.now(); 
             cur.usuario = userAuth ? userAuth.name : "SISTEMA";
-
             const idx = db.findIndex(r => String(r.id) === String(cur.id)); 
             if (idx !== -1) db[idx] = JSON.parse(JSON.stringify(cur)); 
             else db.unshift(JSON.parse(JSON.stringify(cur)));
-
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-            
-            // LIMPIAR BACKUP AL GUARDAR
             localStorage.removeItem('twins_emergency_backup');
-
-            fetch(CLOUD_URL, { 
-                method: 'POST', 
-                mode: 'no-cors', 
-                body: JSON.stringify(cur) 
-            });
-
+            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
             cur = { items: [] }; 
             renderHistory(); 
             go('page-dash'); 
@@ -482,18 +422,9 @@
             if (idx !== -1) { 
                 db[idx].chofer = document.getElementById('qe-chofer').value; 
                 db[idx].auxiliar = document.getElementById('qe-aux').value; 
-                
-                // Mantiene el usuario de registro original o actualiza si no existía
                 if(!db[idx].usuario) db[idx].usuario = userAuth ? userAuth.name : "SISTEMA";
-
                 localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-                
-                fetch(CLOUD_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: JSON.stringify(db[idx]) 
-                });
-
+                fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
                 renderHistory(); 
                 closeCrew(); 
             }
@@ -514,12 +445,35 @@
             } 
         }
 
+        // --- FUNCIÓN SHAREW ACTUALIZADA (PROFESIONAL, SIN FECHA Y CON INDICADOR DE PUNTOS) ---
         function shareW(id) { 
             const r = db.find(x => String(x.id) === String(id)); 
-            const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0; 
-            let msg = `*TWINS ELITE*%0A%0A📅 *FECHA:* ${r.fecha.split('T')[0]}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`; 
-            r.items.forEach(i => { msg += `• ${i.cli}: ${i.can}%0A`; }); 
-            msg += `%0A📦 *TOTAL:* ${totalCajas} Cjs`; 
+            const totalCajas = r.items ? r.items.reduce((a, b) => a + b.can, 0) : 0; 
+            const totalPuntos = r.items ? r.items.length : 0;
+            const usuarioDespacho = r.usuario || "SISTEMA";
+
+            let msg = `*--- REPORTE DE DESPACHO ---*%0A`;
+            msg += `🚛 *UNIDAD:* ${r.placa}%0A`;
+            msg += `━━━━━━━━━━━━━━━━━━%0A%0A`;
+            msg += `👤 *CHOFER:* ${r.chofer}%0A`;
+            msg += `🤝 *AUX:* ${r.auxiliar}%0A%0A`;
+            msg += `*RESUMEN DE CARGA:*%0A`;
+            msg += `📦 *TOTAL:* ${totalCajas} Cajas%0A`;
+            msg += `📍 *PUNTOS:* ${totalPuntos} Clientes%0A%0A`;
+            msg += `*DETALLE DE RUTA:*%0A`;
+            
+            if (r.items && r.items.length > 0) {
+                r.items.forEach(i => { 
+                    msg += `🔹 ${i.cli} → *${i.can}*%0A`; 
+                }); 
+            } else { 
+                msg += `_(Sin detalle de carga)_%0A`; 
+            }
+
+            msg += `%0A━━━━━━━━━━━━━━━━━━%0A`;
+            msg += `✅ *DESPACHADO POR:* ${usuarioDespacho}%0A`;
+            msg += `*TWINS ELITE V66.6*`;
+
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
@@ -535,15 +489,7 @@
             const draw = (data, targetId) => {
                 let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
                 let max = sorted[0] ? sorted[0][1].cjs : 1;
-                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `
-                    <div class="rank-item">
-                        <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
-                        <div class="rank-info">
-                            <div class="rank-name"><span>${n}</span><span>${v.cjs} CJS</span></div>
-                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
-                            <div class="rank-stats"><span>📦 <b>${v.cjs}</b> Cjs</span><span>🚚 <b>${v.r}</b> Rutas</span></div>
-                        </div>
-                    </div>`).join('');
+                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `<div class="rank-item"><div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div><div class="rank-info"><div class="rank-name"><span>${n}</span><span>${v.cjs} CJS</span></div><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div><div class="rank-stats"><span>📦 <b>${v.cjs}</b> Cjs</span><span>🚚 <b>${v.r}</b> Rutas</span></div></div></div>`).join('');
             };
             draw(cS, 'rank-choferes-list'); draw(aS, 'rank-auxiliares-list');
         }
