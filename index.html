@@ -245,28 +245,22 @@
         }
 
         function save() { 
-    // 1. Si es nueva (no tiene ID), se lo asignamos ahora
-    if (!cur.id) {
-        cur.id = 'R' + Date.now();
-        db.unshift(JSON.parse(JSON.stringify(cur)));
-    } else {
-        // 2. Si ya tiene ID, buscamos dónde está para SOBREESCRIBIR
-        const idx = db.findIndex(r => r.id === cur.id);
-        if (idx !== -1) {
-            db[idx] = JSON.parse(JSON.stringify(cur));
-        } else {
-            // Caso de seguridad por si el ID no se encuentra en el array local
-            db.unshift(JSON.parse(JSON.stringify(cur)));
-        }
-    }
-
-    // 3. Persistencia limpia
-    localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+    // Buscamos si el ID de la ruta actual ya existe en la base de datos
+    const index = db.findIndex(r => r.id === cur.id); 
     
-    // 4. Envío a la nube (solo la ruta actual, no todo el DB)
+    if (index !== -1) {
+        // SI EXISTE: Sobrescribimos los datos en la misma posición (evita duplicidad)
+        db[index] = JSON.parse(JSON.stringify(cur)); 
+    } else {
+        // SI ES NUEVA: La añadimos al principio
+        db.unshift(JSON.parse(JSON.stringify(cur)));
+    }
+    
+    // Guardar y Sincronizar
+    localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
     fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
 
-    // 5. Reset y navegación
+    // Resetear variable de trabajo y refrescar vista
     cur = { items: [] }; 
     renderStats(); 
     renderHistory(); 
@@ -304,15 +298,26 @@
         function openCrew(id) { quickEditId = id; const r = db.find(x => x.id === id); document.getElementById('qe-chofer').value = r.chofer; document.getElementById('qe-aux').value = r.auxiliar; document.getElementById('modal-crew').style.display = 'flex'; }
         
         function saveQuickCrew() { 
-            const idx = db.findIndex(x => x.id === quickEditId); 
-            if(idx > -1) { 
-                db[idx].chofer = document.getElementById('qe-chofer').value; 
-                db[idx].auxiliar = document.getElementById('qe-aux').value; 
-                localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-                fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
-                renderHistory(); closeCrew(); 
-            } 
-        }
+    // Buscamos el índice exacto de la ruta que estamos editando por su ID
+    const idx = db.findIndex(x => x.id === quickEditId); 
+    
+    if (idx !== -1) { 
+        // Actualizamos los valores de chofer y auxiliar en el objeto existente
+        db[idx].chofer = document.getElementById('qe-chofer').value; 
+        db[idx].auxiliar = document.getElementById('qe-aux').value; 
+        
+        // Guardar cambios localmente
+        localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+        
+        // Enviar actualización a la nube (solo esa ruta específica)
+        fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
+        
+        // Refrescar historial y cerrar modal
+        renderHistory(); 
+        closeCrew(); 
+    } 
+}
+
 
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
         function viewL(id) { const r = db.find(x => x.id === id); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
