@@ -204,12 +204,21 @@
         }
 
         function initConf(p) { 
-            const hoy = new Date().toLocaleDateString('en-CA'); 
-            cur = { id: 'R'+Date.now(), placa: p, items: [], fecha: hoy, chofer: FLOTA[p], auxiliar: "POR ASIGNAR" }; 
-            document.getElementById('conf-placa').innerText = p; 
-            document.getElementById('c-fecha').value = hoy; 
-            go('page-config'); 
-        }
+    const hoy = new Date().toLocaleDateString('en-CA'); 
+    // Resetear cur pero sin ID definitivo aquí para evitar conflictos
+    cur = { 
+        id: null, 
+        placa: p, 
+        items: [], 
+        fecha: hoy, 
+        chofer: FLOTA[p], 
+        auxiliar: "POR ASIGNAR" 
+    }; 
+    document.getElementById('conf-placa').innerText = p; 
+    document.getElementById('c-fecha').value = hoy; 
+    go('page-config'); 
+}
+
 
         function goLoad() { 
             cur.fecha = document.getElementById('c-fecha').value; 
@@ -236,33 +245,33 @@
         }
 
         function save() { 
-    if (!cur.id) return; // Seguridad: No guardar si no hay ID
-
-    const index = db.findIndex(r => r.id === cur.id); 
-    
-    if (index > -1) {
-        // ACTUALIZAR: Reemplaza la ruta existente
-        db[index] = JSON.parse(JSON.stringify(cur)); 
-    } else {
-        // CREAR: Solo si no existe el ID en el historial
+    // 1. Si es nueva (no tiene ID), se lo asignamos ahora
+    if (!cur.id) {
+        cur.id = 'R' + Date.now();
         db.unshift(JSON.parse(JSON.stringify(cur)));
+    } else {
+        // 2. Si ya tiene ID, buscamos dónde está para SOBREESCRIBIR
+        const idx = db.findIndex(r => r.id === cur.id);
+        if (idx !== -1) {
+            db[idx] = JSON.parse(JSON.stringify(cur));
+        } else {
+            // Caso de seguridad por si el ID no se encuentra en el array local
+            db.unshift(JSON.parse(JSON.stringify(cur)));
+        }
     }
-    
-    // Guardar en LocalStorage
+
+    // 3. Persistencia limpia
     localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
     
-    // Sincronizar con la nube
+    // 4. Envío a la nube (solo la ruta actual, no todo el DB)
     fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
 
-    // REINICIO TOTAL DE VARIABLE
+    // 5. Reset y navegación
     cur = { items: [] }; 
-    
-    // Refrescar vistas
     renderStats(); 
     renderHistory(); 
     go('page-dash'); 
 }
-
 
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
