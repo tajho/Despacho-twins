@@ -87,16 +87,32 @@
             <h1 style="font-weight:900; margin:0;">Twins Elite</h1>
             <button class="btn-off" onclick="logout()"><i class="ph-bold ph-power"></i></button>
         </div>
+        
         <div class="core-dash">
             <div class="master-card black">
-                <div><span class="stat-label">Cajas Hoy</span><span id="stat-hoy-cajas" class="stat-main">0</span></div>
-                <span id="stat-hoy-envios" class="stat-sub">0 RUTAS</span>
+                <div>
+                    <span class="stat-label">Hoy</span>
+                    <span id="stat-hoy-cajas" class="stat-main">0</span>
+                    <span style="font-size: 10px; font-weight: 800; opacity: 0.7;">CAJAS</span>
+                </div>
+                <div id="stat-hoy-sub" class="stat-sub" style="display: flex; justify-content: space-between;">
+                    <span>0 RUTAS</span>
+                    <span>0 CLI.</span>
+                </div>
             </div>
             <div class="master-card">
-                <div><span class="stat-label">Cajas Mes</span><span id="stat-mes-cajas" class="stat-main">0</span></div>
-                <span id="stat-mes-envios" class="stat-sub">0 RUTAS</span>
+                <div>
+                    <span class="stat-label">Este Mes</span>
+                    <span id="stat-mes-cajas" class="stat-main">0</span>
+                    <span style="font-size: 10px; font-weight: 800; color: var(--text-dim);">CAJAS</span>
+                </div>
+                <div id="stat-mes-sub" class="stat-sub" style="display: flex; justify-content: space-between;">
+                    <span>0 RUTAS</span>
+                    <span>0 CLI.</span>
+                </div>
             </div>
         </div>
+
         <div class="search-box">
             <i class="ph-bold ph-magnifying-glass"></i>
             <input type="text" id="smart-search" placeholder="Buscar cliente, chofer o placa..." onkeyup="renderHistory()">
@@ -195,7 +211,6 @@
             AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
             
-            // LÓGICA DE RECUPERACIÓN VISUAL
             const draft = localStorage.getItem('twins_draft');
             if(draft) {
                 const recover = JSON.parse(draft);
@@ -272,7 +287,7 @@
             const can = parseInt(document.getElementById('i-can').value); 
             if(cli && can) { 
                 cur.items.push({cli, can}); 
-                localStorage.setItem('twins_draft', JSON.stringify(cur)); // GUARDAR BORRADOR
+                localStorage.setItem('twins_draft', JSON.stringify(cur)); 
                 refreshLoad(); 
                 document.getElementById('i-cli').value=""; 
                 document.getElementById('i-can').value=""; 
@@ -281,7 +296,7 @@
 
         function removeItem(index) {
             cur.items.splice(index, 1);
-            localStorage.setItem('twins_draft', JSON.stringify(cur)); // ACTUALIZAR BORRADOR
+            localStorage.setItem('twins_draft', JSON.stringify(cur)); 
             refreshLoad();
         }
 
@@ -310,9 +325,7 @@
             
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
             fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
-            
-            localStorage.removeItem('twins_draft'); // ELIMINAR BORRADOR AL GUARDAR ÉXITO
-
+            localStorage.removeItem('twins_draft');
             cur = { items: [] }; renderStats(); renderHistory(); go('page-dash'); 
         }
 
@@ -378,15 +391,28 @@
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
+        // FUNCIÓN DE STATS MEJORADA CON CONTEO DE CLIENTES
         function renderStats() {
             const hoy = new Date().toLocaleDateString('en-CA');
             const rHoy = db.filter(r => r.fecha.toString().includes(hoy));
             const rMes = db.filter(r => r.fecha.toString().startsWith(hoy.substring(0,7)));
-            const sum = (a) => a.reduce((x,y) => x + (y.items ? y.items.reduce((z,w)=>z+w.can,0) : 0), 0);
-            document.getElementById('stat-hoy-cajas').innerText = sum(rHoy);
-            document.getElementById('stat-hoy-envios').innerText = rHoy.length + " RUTAS";
-            document.getElementById('stat-mes-cajas').innerText = sum(rMes);
-            document.getElementById('stat-mes-envios').innerText = rMes.length + " RUTAS";
+
+            const getTotals = (data) => {
+                return data.reduce((acc, r) => {
+                    acc.cajas += (r.items ? r.items.reduce((sum, item) => sum + item.can, 0) : 0);
+                    acc.clientes += (r.items ? r.items.length : 0);
+                    return acc;
+                }, { cajas: 0, clientes: 0 });
+            };
+
+            const totalHoy = getTotals(rHoy);
+            const totalMes = getTotals(rMes);
+
+            document.getElementById('stat-hoy-cajas').innerText = totalHoy.cajas;
+            document.getElementById('stat-hoy-sub').innerHTML = `<span>${rHoy.length} RUTAS</span><span>${totalHoy.clientes} CLI.</span>`;
+
+            document.getElementById('stat-mes-cajas').innerText = totalMes.cajas;
+            document.getElementById('stat-mes-sub').innerHTML = `<span>${rMes.length} RUTAS</span><span>${totalMes.clientes} CLI.</span>`;
         }
 
         function renderData() {
