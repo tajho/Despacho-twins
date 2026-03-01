@@ -306,8 +306,17 @@
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
         function viewL(id) { const r = db.find(x => x.id === id); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
-        function editR(id) { const r = db.find(x => x.id === id); if(r) { cur = JSON.parse(JSON.stringify(r)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); } }
-        
+        function editR(id) { 
+    const r = db.find(x => x.id === id); 
+    if(r) { 
+        // Clonamos el objeto existente manteniendo su ID original
+        cur = JSON.parse(JSON.stringify(r)); 
+        document.getElementById('load-placa-txt').innerText = cur.placa; 
+        refreshLoad(); 
+        go('page-load'); 
+    } 
+}
+
         function shareW(id) { 
             const r = db.find(x => x.id === id); 
             const cleanDate = r.fecha.toString().split('T')[0];
