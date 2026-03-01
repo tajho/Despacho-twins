@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V66.7 OFICIAL</title>
+    <title>TWINS ELITE - V66.6 OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -33,15 +33,12 @@
         .search-box input { width: 100%; padding: 16px 20px 16px 50px; background: #fff; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; outline: none; }
         .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-dim); }
         
-        /* TARJETA OPTIMIZADA */
-        .route-card { background: #fff; border-radius: 24px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
-        .card-crew { font-size: 10px; font-weight: 700; color: #4b5563; margin: 8px 0; padding: 8px 12px; background: #f9fafb; border-radius: 12px; display: flex; justify-content: space-between; }
-        
-        /* BOTONES COMPACTOS EN 2X2 */
-        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
-        .btn-card { background: #fff; border: 1px solid #eee; padding: 8px; border-radius: 10px; font-weight: 800; font-size: 9px; text-transform: uppercase; color: var(--text); transition: 0.2s; }
-        .btn-card:active { background: #f0f0f0; }
+        .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 10px; padding: 12px; background: #f9fafb; border-radius: 12px; }
+        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 12px; }
+        .btn-card { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 10px; font-weight: 800; font-size: 10px; text-transform: uppercase; color: var(--text); }
 
+        /* Estilos de Data (Ranking) */
         .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; text-transform: uppercase; color: var(--text-dim); }
         .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
@@ -54,6 +51,7 @@
         .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; overflow: hidden; }
         .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.8s ease; }
         .rank-stats { font-size: 10px; font-weight: 800; color: var(--text-dim); margin-top: 4px; display: flex; gap: 10px; }
+        .rank-stats b { color: #000; }
 
         .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: none; border-top: 1px solid var(--border); z-index: 1000; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
@@ -62,6 +60,7 @@
 
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: flex-end; z-index: 2000; }
         .modal-content { background: #fff; width: 100%; border-radius: 35px 35px 0 0; padding: 30px 20px; max-height: 85vh; overflow-y: auto; }
+
         .btn-off { position: absolute; right: 20px; top: 25px; background: #fff; border: 1px solid #eee; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--red); }
     </style>
 </head>
@@ -69,7 +68,8 @@
 
     <div id="login-screen">
         <div class="login-card">
-            <h2 style="font-weight:900;">Twins Elite</h2>
+            <h2 style="font-weight:900; margin-bottom:5px;">Twins Elite</h2>
+            <p style="color:var(--text-dim); font-size:12px; margin-bottom:25px;">CONTROL DE ACCESO</p>
             <select id="user-select" class="field" onchange="checkUserType()">
                 <option value="">Seleccione Usuario</option>
                 <option value="TAJHO">TAJHO</option>
@@ -99,7 +99,7 @@
         </div>
         <div class="search-box">
             <i class="ph-bold ph-magnifying-glass"></i>
-            <input type="text" id="smart-search" placeholder="Buscar..." onkeyup="renderHistory()">
+            <input type="text" id="smart-search" placeholder="Buscar cliente, chofer o placa..." onkeyup="renderHistory()">
         </div>
         <div id="hist-cont"></div>
     </div>
@@ -174,9 +174,10 @@
             CONDUCTORES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; qec.innerHTML += `<option value="${c}">${c}</option>`; });
             AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
+            
+            // SESIÓN PERSISTENTE
             if(userAuth) applyAuth();
             renderStats(); renderHistory();
-            setInterval(pullCloudData, 15000); // Actualización en segundo plano cada 15 seg
         };
 
         function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
@@ -188,7 +189,7 @@
             try {
                 const res = await fetch(CLOUD_URL);
                 const cloud = await res.json();
-                if(cloud && Array.isArray(cloud)) { db = cloud; localStorage.setItem('twins_v63_db', JSON.stringify(db)); renderStats(); if(document.getElementById('page-dash').classList.contains('active')) renderHistory(); }
+                if(cloud && Array.isArray(cloud)) { db = cloud; localStorage.setItem('twins_v63_db', JSON.stringify(db)); renderStats(); renderHistory(); }
             } catch(e){}
         }
 
@@ -235,41 +236,58 @@
         }
 
         function save() { 
-            // SOLUCIÓN DUPLICIDAD: Reemplazar por ID
-            const idx = db.findIndex(r => r.id === cur.id); 
-            if(idx > -1) db[idx] = JSON.parse(JSON.stringify(cur)); 
-            else db.unshift(JSON.parse(JSON.stringify(cur)));
-            
-            localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
-            cur = { items: [] }; renderStats(); renderHistory(); go('page-dash'); 
-        }
+    // Buscamos si el ID de la ruta actual ya existe en nuestra base de datos
+    const index = db.findIndex(r => r.id === cur.id); 
+    
+    if (index !== -1) {
+        // Si existe, actualizamos la posición exacta en el historial
+        db[index] = JSON.parse(JSON.stringify(cur)); 
+    } else {
+        // Si es nueva, la añadimos al inicio
+        db.unshift(JSON.parse(JSON.stringify(cur)));
+    }
+    
+    // Persistencia y sincronización
+    localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+    fetch(CLOUD_URL, { 
+        method: 'POST', 
+        mode: 'no-cors', 
+        body: JSON.stringify(cur) 
+    });
+
+    // Reset y limpieza de vista
+    cur = { items: [] }; 
+    renderStats(); 
+    renderHistory(); 
+    go('page-dash'); 
+}
 
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
             document.getElementById('hist-cont').innerHTML = db.filter(r => 
                 r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.toString().includes(q)
-            ).map(r => `
+            ).map(r => {
+                // CORRECCIÓN FECHA: Limpiar formato ISO si existe
+                const cleanDate = r.fecha.toString().split('T')[0];
+                return `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
-                        <span>📅 ${r.fecha.toString().split('T')[0]}</span>
+                        <span>📅 ${cleanDate}</span>
                         <span>${r.placa}</span>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                        <b style="font-size:22px;">${r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0} CJS</b>
-                        <span style="font-size:11px; font-weight:800;">${r.items ? r.items.length : 0} CLI.</span>
+                        <b style="font-size:24px;">${r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0} CJS</b>
+                        <b>${r.items ? r.items.length : 0} CLI.</b>
                     </div>
-                    <div class="card-crew">
-                        <span>👤 ${r.chofer}</span>
-                        <span>👥 ${r.auxiliar}</span>
-                    </div>
+                    <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                     <div class="card-actions">
                         <button onclick="viewL('${r.id}')" class="btn-card">Lista</button>
                         <button onclick="openCrew('${r.id}')" class="btn-card">Equipo</button>
                         <button onclick="editR('${r.id}')" class="btn-card">Editar</button>
-                        <button onclick="shareW('${r.id}')" class="btn-card" style="border-color:var(--green); color:var(--green);">WhatsApp</button>
+                        <button onclick="shareW('${r.id}')" class="btn-card" style="border-color:var(--green); color:var(--green);">Reporte</button>
                     </div>
-                </div>`).join('');
+                </div>`;
+            }).join('');
         }
 
         function openCrew(id) { quickEditId = id; const r = db.find(x => x.id === id); document.getElementById('qe-chofer').value = r.chofer; document.getElementById('qe-aux').value = r.auxiliar; document.getElementById('modal-crew').style.display = 'flex'; }
@@ -292,7 +310,11 @@
         
         function shareW(id) { 
             const r = db.find(x => x.id === id); 
-            let msg = `*TWINS ELITE*%0A📅 *FECHA:* ${r.fecha.toString().split('T')[0]}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A📦 *TOTAL:* ${r.items.reduce((a,b)=>a+b.can,0)} Cjs`; 
+            const cleanDate = r.fecha.toString().split('T')[0];
+            const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0; 
+            let msg = `*TWINS ELITE*%0A%0A📅 *FECHA:* ${cleanDate}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`; 
+            r.items.forEach(i => { msg += `• ${i.cli}: ${i.can}%0A`; }); 
+            msg += `%0A📦 *TOTAL:* ${totalCajas} Cjs`; 
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
