@@ -454,7 +454,6 @@
 
             let msg = `*--- REPORTE DE DESPACHO ---*%0A`;
             msg += `🚛 *UNIDAD:* ${r.placa}%0A`;
-            msg += `━━━━━━━━━━━━━━━━━━%0A%0A`;
             msg += `👤 *CHOFER:* ${r.chofer}%0A`;
             msg += `🤝 *AUX:* ${r.auxiliar}%0A%0A`;
             msg += `*RESUMEN DE CARGA:*%0A`;
@@ -469,11 +468,6 @@
             } else { 
                 msg += `_(Sin detalle de carga)_%0A`; 
             }
-
-            msg += `%0A━━━━━━━━━━━━━━━━━━%0A`;
-            msg += `✅ *DESPACHADO POR:* ${usuarioDespacho}%0A`;
-            msg += `*TWINS ELITE V66.6*`;
-
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
