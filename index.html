@@ -182,6 +182,22 @@
             AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
             
+            // LÓGICA DE RECUPERACIÓN DE BORRADOR
+            const draft = localStorage.getItem('twins_draft');
+            if(draft) {
+                const recover = JSON.parse(draft);
+                if(recover.items && recover.items.length > 0) {
+                    if(confirm("Tienes una carga pendiente de la placa " + recover.placa + ". ¿Deseas continuarla?")) {
+                        cur = recover;
+                        document.getElementById('load-placa-txt').innerText = cur.placa;
+                        refreshLoad();
+                        go('page-load');
+                    } else {
+                        localStorage.removeItem('twins_draft');
+                    }
+                }
+            }
+
             if(userAuth) applyAuth();
             renderStats(); renderHistory();
         };
@@ -234,10 +250,23 @@
         function addItem() { 
             const cli = document.getElementById('i-cli').value.toUpperCase().trim(); 
             const can = parseInt(document.getElementById('i-can').value); 
-            if(cli && can) { cur.items.push({cli, can}); refreshLoad(); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; } 
+            if(cli && can) { 
+                cur.items.push({cli, can}); 
+                // GUARDAR BORRADOR
+                localStorage.setItem('twins_draft', JSON.stringify(cur));
+                refreshLoad(); 
+                document.getElementById('i-cli').value=""; 
+                document.getElementById('i-can').value=""; 
+            } 
         }
 
-        // MEJORA: FUNCIÓN CON BARRA DE PROGRESO SEGÚN CAPACIDAD
+        function removeItem(index) {
+            cur.items.splice(index, 1);
+            // ACTUALIZAR BORRADOR TRAS ELIMINAR
+            localStorage.setItem('twins_draft', JSON.stringify(cur));
+            refreshLoad();
+        }
+
         function refreshLoad() { 
             const total = cur.items.reduce((a, b) => a + b.can, 0); 
             const limite = (cur.placa === "CEP-929") ? 210 : 180;
@@ -250,7 +279,7 @@
             document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
             document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
                 <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
-                    <span><i class="ph-bold ph-trash" style="color:var(--red); margin-right:12px;" onclick="cur.items.splice(${i},1); refreshLoad();"></i>${it.cli}</span>
+                    <span><i class="ph-bold ph-trash" style="color:var(--red); margin-right:12px;" onclick="removeItem(${i})"></i>${it.cli}</span>
                     <b>${it.can}</b>
                 </div>`).reverse().join(''); 
         }
@@ -263,6 +292,10 @@
             
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
             fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
+            
+            // ELIMINAR BORRADOR AL GUARDAR ÉXITO
+            localStorage.removeItem('twins_draft');
+
             cur = { items: [] }; renderStats(); renderHistory(); go('page-dash'); 
         }
 
