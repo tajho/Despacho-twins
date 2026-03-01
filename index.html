@@ -6,6 +6,8 @@
     <title>TWINS ELITE - V66.6 OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --bg: #f4f6f8; --surface: #ffffff; --accent: #000000; 
@@ -166,7 +168,12 @@
 
     <div id="page-data" class="page">
         <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
-        <input type="month" id="f-month" class="field" onchange="renderData()">
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0; flex:1;">
+            <button onclick="exportPDF()" style="background:var(--red); color:#fff; border:none; border-radius:16px; padding:0 20px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                <i class="ph-bold ph-file-pdf" style="font-size:20px;"></i> PDF
+            </button>
+        </div>
         <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Conductores</div><div id="rank-choferes-list"></div></div>
         <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares</div><div id="rank-auxiliares-list"></div></div>
     </div>
@@ -445,7 +452,6 @@
             } 
         }
 
-        // --- FUNCIÓN SHAREW ACTUALIZADA (PROFESIONAL, SIN FECHA Y CON INDICADOR DE PUNTOS) ---
         function shareW(id) { 
             const r = db.find(x => String(x.id) === String(id)); 
             const totalCajas = r.items ? r.items.reduce((a, b) => a + b.can, 0) : 0; 
@@ -462,9 +468,7 @@
             msg += `*DETALLE DE RUTA:*%0A`;
             
             if (r.items && r.items.length > 0) {
-                r.items.forEach(i => { 
-                    msg += `🔹 ${i.cli} → *${i.can}*%0A`; 
-                }); 
+                r.items.forEach(i => { msg += `🔹 ${i.cli} → *${i.can}*%0A`; }); 
             } else { 
                 msg += `_(Sin detalle de carga)_%0A`; 
             }
@@ -486,6 +490,59 @@
                 document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `<div class="rank-item"><div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div><div class="rank-info"><div class="rank-name"><span>${n}</span><span>${v.cjs} CJS</span></div><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div><div class="rank-stats"><span>📦 <b>${v.cjs}</b> Cjs</span><span>🚚 <b>${v.r}</b> Rutas</span></div></div></div>`).join('');
             };
             draw(cS, 'rank-choferes-list'); draw(aS, 'rank-auxiliares-list');
+        }
+
+        // --- FUNCIÓN PARA GENERAR EL REPORTE PDF DEL MES ---
+        async function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const mesSeleccionado = document.getElementById('f-month').value;
+            
+            if(!mesSeleccionado) return alert("Selecciona un mes primero");
+
+            const filt = db.filter(r => r.fecha && r.fecha.toString().startsWith(mesSeleccionado));
+            if(filt.length === 0) return alert("No hay datos para este mes");
+
+            // Totales para el resumen
+            const tCjs = filt.reduce((acc, r) => acc + (r.items ? r.items.reduce((s, i) => s + i.can, 0) : 0), 0);
+            const tPts = filt.reduce((acc, r) => acc + (r.items ? r.items.length : 0), 0);
+
+            // Cabecera Profesional
+            doc.setFontSize(20);
+            doc.text("REPORTE MENSUAL DESPACHO", 15, 20);
+            doc.setFontSize(10);
+            doc.text(`Mes: ${mesSeleccionado} | Generado por: ${userAuth ? userAuth.name : 'SISTEMA'}`, 15, 28);
+            
+            // Cuadros de Resumen Estilizados
+            doc.setDrawColor(230);
+            doc.rect(15, 35, 180, 20);
+            doc.setFont(undefined, 'bold');
+            doc.text(`TOTAL CAJAS: ${tCjs}`, 25, 47);
+            doc.text(`TOTAL RUTAS: ${filt.length}`, 85, 47);
+            doc.text(`TOTAL CLIENTES: ${tPts}`, 145, 47);
+
+            // Mapeo de Filas para la tabla
+            const rows = filt.map(r => [
+                r.fecha.split('T')[0],
+                r.placa,
+                r.chofer,
+                r.auxiliar,
+                r.items ? r.items.reduce((s, i) => s + i.can, 0) : 0,
+                r.items ? r.items.length : 0
+            ]);
+
+            // Generación de la Tabla Automática
+            doc.autoTable({
+                startY: 65,
+                head: [['Fecha', 'Placa', 'Conductor', 'Auxiliar', 'Cjs', 'Pts']],
+                body: rows,
+                theme: 'striped',
+                headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] },
+                styles: { fontSize: 8, font: 'helvetica' }
+            });
+
+            // Guardar el archivo
+            doc.save(`Reporte_Twins_${mesSeleccionado}.pdf`);
         }
     </script>
 </body>
