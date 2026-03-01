@@ -156,6 +156,18 @@
         <div class="modal-content"><div id="m-items"></div><button onclick="closeM()" style="width:100%; margin-top:20px; padding:20px; border-radius:20px; background:#eee; border:none; font-weight:800;">CERRAR</button></div>
     </div>
 
+    <div id="modal-recover" class="modal" style="display:none; align-items: center; justify-content: center; padding: 20px;">
+        <div class="modal-content" style="border-radius: 30px; text-align: center; max-width: 350px;">
+            <div style="background: #f3f4f6; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <i class="ph-bold ph-arrow-counter-clockwise" style="font-size: 30px; color: var(--text);"></i>
+            </div>
+            <h3 style="font-weight: 900; margin-bottom: 10px;">¿Continuar Carga?</h3>
+            <p id="recover-msg" style="color: var(--text-dim); font-size: 14px; margin-bottom: 25px; line-height: 1.4;"></p>
+            <button onclick="confirmRecover(true)" style="width: 100%; padding: 18px; background: #000; color: #fff; border-radius: 18px; font-weight: 800; border: none; margin-bottom: 10px;">SÍ, CONTINUAR</button>
+            <button onclick="confirmRecover(false)" style="width: 100%; padding: 15px; background: #eee; color: var(--red); border-radius: 18px; font-weight: 800; border: none;">DESCARTAR</button>
+        </div>
+    </div>
+
     <nav class="nav-bottom" id="main-nav">
         <button class="nav-btn" id="n-units" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
         <button class="nav-btn active" id="n-dash" onclick="go('page-dash')"><i class="ph-bold ph-clock-counter-clockwise"></i>HISTORIAL</button>
@@ -168,6 +180,7 @@
         let cur = { items: [] };
         let userAuth = JSON.parse(localStorage.getItem('twins_auth')) || null;
         let quickEditId = null;
+        window.pendingDraft = null;
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
@@ -182,25 +195,32 @@
             AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
             document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
             
-            // LÓGICA DE RECUPERACIÓN DE BORRADOR
+            // LÓGICA DE RECUPERACIÓN VISUAL
             const draft = localStorage.getItem('twins_draft');
             if(draft) {
                 const recover = JSON.parse(draft);
                 if(recover.items && recover.items.length > 0) {
-                    if(confirm("Tienes una carga pendiente de la placa " + recover.placa + ". ¿Deseas continuarla?")) {
-                        cur = recover;
-                        document.getElementById('load-placa-txt').innerText = cur.placa;
-                        refreshLoad();
-                        go('page-load');
-                    } else {
-                        localStorage.removeItem('twins_draft');
-                    }
+                    document.getElementById('recover-msg').innerText = `Se encontró una carga pendiente de la placa ${recover.placa} con ${recover.items.length} clientes.`;
+                    document.getElementById('modal-recover').style.display = 'flex';
+                    window.pendingDraft = recover;
                 }
             }
 
             if(userAuth) applyAuth();
             renderStats(); renderHistory();
         };
+
+        function confirmRecover(yes) {
+            if(yes && window.pendingDraft) {
+                cur = window.pendingDraft;
+                document.getElementById('load-placa-txt').innerText = cur.placa;
+                refreshLoad();
+                go('page-load');
+            } else {
+                localStorage.removeItem('twins_draft');
+            }
+            document.getElementById('modal-recover').style.display = 'none';
+        }
 
         function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
         function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
@@ -252,8 +272,7 @@
             const can = parseInt(document.getElementById('i-can').value); 
             if(cli && can) { 
                 cur.items.push({cli, can}); 
-                // GUARDAR BORRADOR
-                localStorage.setItem('twins_draft', JSON.stringify(cur));
+                localStorage.setItem('twins_draft', JSON.stringify(cur)); // GUARDAR BORRADOR
                 refreshLoad(); 
                 document.getElementById('i-cli').value=""; 
                 document.getElementById('i-can').value=""; 
@@ -262,8 +281,7 @@
 
         function removeItem(index) {
             cur.items.splice(index, 1);
-            // ACTUALIZAR BORRADOR TRAS ELIMINAR
-            localStorage.setItem('twins_draft', JSON.stringify(cur));
+            localStorage.setItem('twins_draft', JSON.stringify(cur)); // ACTUALIZAR BORRADOR
             refreshLoad();
         }
 
@@ -293,8 +311,7 @@
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
             fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
             
-            // ELIMINAR BORRADOR AL GUARDAR ÉXITO
-            localStorage.removeItem('twins_draft');
+            localStorage.removeItem('twins_draft'); // ELIMINAR BORRADOR AL GUARDAR ÉXITO
 
             cur = { items: [] }; renderStats(); renderHistory(); go('page-dash'); 
         }
@@ -336,7 +353,7 @@
                 localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
                 fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
                 renderHistory(); closeCrew(); 
-            } else { alert("Error: No se encontró la ruta."); }
+            }
         }
 
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
