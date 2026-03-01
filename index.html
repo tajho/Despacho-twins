@@ -218,18 +218,15 @@
             renderHistory();
         };
 
-        // --- LÓGICA DE FILTRADO MEJORADA ---
+        // --- LÓGICA DE FILTRADO ---
         function filterByQuick(type) {
             currentFilter = type;
             document.getElementById('search-date').value = "";
             document.getElementById('search-month').value = "";
             document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
             document.getElementById('btn-' + type).classList.add('active-filter');
-            
-            // Actualizar el título del panel
             const labelMap = {'hoy':'Hoy', 'ayer':'Ayer', 'manana':'Mañana', 'todos':'Todo'};
             document.getElementById('dynamic-stat-label').innerText = labelMap[type] || 'Filtrado';
-            
             renderHistory();
         }
 
@@ -255,19 +252,15 @@
             }, { cajas: 0, clientes: 0 });
 
             const stats = getTotals(filteredData);
-            
-            // Actualizar Panel Dinámico (Izquierdo)
             document.getElementById('stat-hoy-cajas').innerText = stats.cajas;
             document.getElementById('stat-hoy-sub').innerHTML = `<span>${filteredData.length} RUTAS</span><span>${stats.clientes} CLI.</span>`;
 
-            // Color azul si es mañana para no confundir
             const panel = document.getElementById('main-stat-card');
             if (currentFilter === 'manana') panel.className = "master-card blue";
             else panel.className = "master-card black";
 
-            // Panel Fijo de "Este Mes" (Derecho)
             const hoyStr = new Date().toLocaleDateString('en-CA');
-            const rMes = db.filter(r => r.fecha.toString().startsWith(hoyStr.substring(0,7)));
+            const rMes = db.filter(r => r.fecha && r.fecha.toString().startsWith(hoyStr.substring(0,7)));
             const statsMes = getTotals(rMes);
             document.getElementById('stat-mes-cajas').innerText = statsMes.cajas;
             document.getElementById('stat-mes-sub').innerHTML = `<span>${rMes.length} RUTAS</span><span>${statsMes.clientes} CLI.</span>`;
@@ -277,7 +270,6 @@
             const q = document.getElementById('smart-search').value.toLowerCase();
             const dateInput = document.getElementById('search-date').value;
             const monthInput = document.getElementById('search-month').value;
-            
             const hoyObj = new Date();
             const getStr = (d) => d.toLocaleDateString('en-CA');
             const ayerStr = getStr(new Date(new Date().setDate(hoyObj.getDate() - 1)));
@@ -285,9 +277,9 @@
             const mananaStr = getStr(new Date(new Date().setDate(hoyObj.getDate() + 1)));
 
             const filtered = db.filter(r => {
+                if(!r.fecha) return false;
                 const rFecha = r.fecha.toString().split('T')[0];
                 let matchTime = true;
-
                 if (currentFilter === 'hoy') matchTime = (rFecha === hoyStr);
                 else if (currentFilter === 'ayer') matchTime = (rFecha === ayerStr);
                 else if (currentFilter === 'manana') matchTime = (rFecha === mananaStr);
@@ -299,7 +291,6 @@
                                   r.placa.toLowerCase().includes(q) || 
                                   (r.usuario && r.usuario.toLowerCase().includes(q)) ||
                                   (r.items && r.items.some(it => it.cli.toLowerCase().includes(q)));
-
                 return matchTime && matchText;
             });
 
@@ -312,7 +303,7 @@
                 return `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
-                        <span>📅 ${cleanDate} | 🆔 ${r.usuario || '---'}</span>
+                        <span>📅 ${cleanDate} | 🆔 ${r.usuario || 'SISTEMA'}</span>
                         <span>${r.placa}</span>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
@@ -330,7 +321,7 @@
             }).join('');
         }
 
-        // --- FUNCIONES RESTANTES (Mantenidas de tu código original) ---
+        // --- AUTH ---
         function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
         function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
         function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
@@ -342,7 +333,7 @@
                 const cloud = await res.json();
                 if(cloud && Array.isArray(cloud)) { 
                     const uniqueMap = new Map();
-                    cloud.forEach(item => uniqueMap.set(item.id, item));
+                    cloud.forEach(item => uniqueMap.set(String(item.id), item));
                     db = Array.from(uniqueMap.values()).reverse(); 
                     localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
                     renderHistory(); 
@@ -362,7 +353,7 @@
 
         function initConf(p) { 
             const hoy = new Date().toLocaleDateString('en-CA'); 
-            cur = { id: null, placa: p, items: [], fecha: hoy, chofer: FLOTA[p], auxiliar: "POR ASIGNAR" }; 
+            cur = { id: null, placa: p, items: [], fecha: hoy, chofer: FLOTA[p], auxiliar: "POR ASIGNAR", usuario: userAuth ? userAuth.name : "SISTEMA" }; 
             document.getElementById('conf-placa').innerText = p; 
             document.getElementById('c-fecha').value = hoy; 
             go('page-config'); 
@@ -399,34 +390,79 @@
                 </div>`).reverse().join(''); 
         }
 
+        // --- GUARDADO MEJORADO CON USUARIO ---
         function save() { 
             if (!cur.id) cur.id = 'R' + Date.now(); 
+            
+            // Asegurar que el usuario siempre se registre
             cur.usuario = userAuth ? userAuth.name : "SISTEMA";
+
             const idx = db.findIndex(r => String(r.id) === String(cur.id)); 
             if (idx !== -1) db[idx] = JSON.parse(JSON.stringify(cur)); 
             else db.unshift(JSON.parse(JSON.stringify(cur)));
+
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
-            cur = { items: [] }; renderHistory(); go('page-dash'); 
+
+            fetch(CLOUD_URL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify(cur) 
+            });
+
+            cur = { items: [] }; 
+            renderHistory(); 
+            go('page-dash'); 
         }
 
-        function openCrew(id) { quickEditId = id; const r = db.find(x => x.id === id); document.getElementById('qe-chofer').value = r.chofer; document.getElementById('qe-aux').value = r.auxiliar; document.getElementById('modal-crew').style.display = 'flex'; }
+        function openCrew(id) { 
+            quickEditId = id; 
+            const r = db.find(x => String(x.id) === String(id)); 
+            document.getElementById('qe-chofer').value = r.chofer; 
+            document.getElementById('qe-aux').value = r.auxiliar; 
+            document.getElementById('modal-crew').style.display = 'flex'; 
+        }
+
+        // --- ACTUALIZACIÓN DE EQUIPO MEJORADA ---
         function saveQuickCrew() { 
             const idx = db.findIndex(x => String(x.id) === String(quickEditId)); 
             if (idx !== -1) { 
                 db[idx].chofer = document.getElementById('qe-chofer').value; 
                 db[idx].auxiliar = document.getElementById('qe-aux').value; 
+                
+                // Si la ruta no tenía usuario, le ponemos el actual
+                if(!db[idx].usuario) db[idx].usuario = userAuth ? userAuth.name : "SISTEMA";
+
                 localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-                fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
-                renderHistory(); closeCrew(); 
+                
+                fetch(CLOUD_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    body: JSON.stringify(db[idx]) 
+                });
+
+                renderHistory(); 
+                closeCrew(); 
             }
         }
+
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
-        function viewL(id) { const r = db.find(x => x.id === id); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
+        function viewL(id) { const r = db.find(x => String(x.id) === String(id)); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
-        function editR(id) { const r = db.find(x => x.id === id); if (r) { cur = JSON.parse(JSON.stringify(r)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); } }
+        
+        function editR(id) { 
+            const r = db.find(x => String(x.id) === String(id)); 
+            if (r) { 
+                cur = JSON.parse(JSON.stringify(r)); 
+                // Aseguramos que mantenga el usuario al editar
+                if(!cur.usuario) cur.usuario = userAuth ? userAuth.name : "SISTEMA";
+                document.getElementById('load-placa-txt').innerText = cur.placa; 
+                refreshLoad(); 
+                go('page-load'); 
+            } 
+        }
+
         function shareW(id) { 
-            const r = db.find(x => x.id === id); 
+            const r = db.find(x => String(x.id) === String(id)); 
             const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0; 
             let msg = `*TWINS ELITE*%0A%0A📅 *FECHA:* ${r.fecha.split('T')[0]}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A%0A*LISTA:*%0A`; 
             r.items.forEach(i => { msg += `• ${i.cli}: ${i.can}%0A`; }); 
