@@ -236,31 +236,33 @@
         }
 
         function save() { 
-    // Buscamos si el ID de la ruta actual ya existe en nuestra base de datos
+    if (!cur.id) return; // Seguridad: No guardar si no hay ID
+
     const index = db.findIndex(r => r.id === cur.id); 
     
-    if (index !== -1) {
-        // Si existe, actualizamos la posición exacta en el historial
+    if (index > -1) {
+        // ACTUALIZAR: Reemplaza la ruta existente
         db[index] = JSON.parse(JSON.stringify(cur)); 
     } else {
-        // Si es nueva, la añadimos al inicio
+        // CREAR: Solo si no existe el ID en el historial
         db.unshift(JSON.parse(JSON.stringify(cur)));
     }
     
-    // Persistencia y sincronización
+    // Guardar en LocalStorage
     localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-    fetch(CLOUD_URL, { 
-        method: 'POST', 
-        mode: 'no-cors', 
-        body: JSON.stringify(cur) 
-    });
+    
+    // Sincronizar con la nube
+    fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
 
-    // Reset y limpieza de vista
+    // REINICIO TOTAL DE VARIABLE
     cur = { items: [] }; 
+    
+    // Refrescar vistas
     renderStats(); 
     renderHistory(); 
     go('page-dash'); 
 }
+
 
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
