@@ -35,8 +35,32 @@
         
         .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 10px; padding: 12px; background: #f9fafb; border-radius: 12px; }
-        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 12px; }
-        .btn-card { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 10px; font-weight: 800; font-size: 10px; text-transform: uppercase; color: var(--text); }
+        
+        /* BOTONES LINEALES OPTIMIZADOS */
+        .card-actions { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 6px; 
+            margin-top: 12px; 
+            border-top: 1px solid #f3f4f6; 
+            padding-top: 12px; 
+        }
+        .btn-card { 
+            background: #fff; 
+            border: 1px solid #eee; 
+            padding: 8px 4px; 
+            border-radius: 10px; 
+            font-weight: 800; 
+            font-size: 9px; 
+            text-transform: uppercase; 
+            color: var(--text); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 4px;
+        }
+        .btn-card i { font-size: 16px; }
+        .btn-card.whatsapp { border-color: var(--green); color: var(--green); }
 
         /* Estilos de Data (Ranking) */
         .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
@@ -335,6 +359,8 @@
                 r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.toString().includes(q)
             ).map(r => {
                 const cleanDate = r.fecha.toString().split('T')[0];
+                const totalCjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
+                const totalCli = r.items ? r.items.length : 0;
                 return `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
@@ -342,15 +368,24 @@
                         <span>${r.placa}</span>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                        <b style="font-size:24px;">${r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0} CJS</b>
-                        <b>${r.items ? r.items.length : 0} CLI.</b>
+                        <b style="font-size:24px;">${totalCjs} <span style="font-size:12px; opacity:0.6;">CJS</span></b>
+                        <b style="font-size:16px;">${totalCli} <span style="font-size:12px; opacity:0.6;">CLI.</span></b>
                     </div>
                     <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
+                    
                     <div class="card-actions">
-                        <button onclick="viewL('${r.id}')" class="btn-card">Lista</button>
-                        <button onclick="openCrew('${r.id}')" class="btn-card">Equipo</button>
-                        <button onclick="editR('${r.id}')" class="btn-card">Editar</button>
-                        <button onclick="shareW('${r.id}')" class="btn-card" style="border-color:var(--green); color:var(--green);">Reporte</button>
+                        <button onclick="viewL('${r.id}')" class="btn-card">
+                            <i class="ph-bold ph-list-bullets"></i>Lista
+                        </button>
+                        <button onclick="openCrew('${r.id}')" class="btn-card">
+                            <i class="ph-bold ph-users"></i>Equipo
+                        </button>
+                        <button onclick="editR('${r.id}')" class="btn-card">
+                            <i class="ph-bold ph-pencil-simple"></i>Editar
+                        </button>
+                        <button onclick="shareW('${r.id}')" class="btn-card whatsapp">
+                            <i class="ph-bold ph-whatsapp-logo"></i>Reporte
+                        </button>
                     </div>
                 </div>`;
             }).join('');
@@ -391,7 +426,6 @@
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
-        // FUNCIÓN DE STATS MEJORADA CON CONTEO DE CLIENTES
         function renderStats() {
             const hoy = new Date().toLocaleDateString('en-CA');
             const rHoy = db.filter(r => r.fecha.toString().includes(hoy));
