@@ -29,35 +29,19 @@
         .stat-main { font-size: 28px; font-weight: 900; line-height: 1; display: block; }
         .stat-sub { font-size: 11px; font-weight: 800; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(150,150,150,0.2); display: block; }
 
-        .search-box { position: relative; margin-bottom: 20px; }
-        .search-box input { width: 100%; padding: 16px 20px 16px 50px; background: #fff; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; outline: none; }
+        /* Estilos de Buscador y Filtros */
+        .search-box { position: relative; margin-bottom: 15px; }
+        .search-box input { width: 100%; padding: 16px 20px 16px 50px; background: #fff; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; outline: none; font-size: 14px; }
         .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-dim); }
         
+        .btn-filter { padding: 10px 18px; border-radius: 12px; border: 1px solid var(--border); background: #fff; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap; color: var(--text-dim); transition: all 0.2s; }
+        .btn-filter.active-filter { background: #000; color: #fff; border-color: #000; }
+
         .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 10px; padding: 12px; background: #f9fafb; border-radius: 12px; }
         
-        .card-actions { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 6px; 
-            margin-top: 12px; 
-            border-top: 1px solid #f3f4f6; 
-            padding-top: 12px; 
-        }
-        .btn-card { 
-            background: #fff; 
-            border: 1px solid #eee; 
-            padding: 8px 4px; 
-            border-radius: 10px; 
-            font-weight: 800; 
-            font-size: 9px; 
-            text-transform: uppercase; 
-            color: var(--text); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 4px;
-        }
+        .card-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; border-top: 1px solid #f3f4f6; padding-top: 12px; }
+        .btn-card { background: #fff; border: 1px solid #eee; padding: 8px 4px; border-radius: 10px; font-weight: 800; font-size: 9px; text-transform: uppercase; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 4px; }
         .btn-card i { font-size: 16px; }
         .btn-card.whatsapp { border-color: var(--green); color: var(--green); }
 
@@ -135,10 +119,29 @@
             </div>
         </div>
 
+        <div style="display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;">
+            <button onclick="filterByQuick('ayer')" class="btn-filter" id="btn-ayer">Ayer</button>
+            <button onclick="filterByQuick('hoy')" class="btn-filter active-filter" id="btn-hoy">Hoy</button>
+            <button onclick="filterByQuick('manana')" class="btn-filter" id="btn-manana">Mañana</button>
+            <button onclick="filterByQuick('todos')" class="btn-filter" id="btn-todos">Todos</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div class="search-box" style="margin-bottom: 0;">
+                <i class="ph-bold ph-calendar"></i>
+                <input type="date" id="search-date" onchange="filterByDate()">
+            </div>
+            <div class="search-box" style="margin-bottom: 0;">
+                <i class="ph-bold ph-calendar-blank"></i>
+                <input type="month" id="search-month" onchange="filterByMonth()">
+            </div>
+        </div>
+
         <div class="search-box">
             <i class="ph-bold ph-magnifying-glass"></i>
-            <input type="text" id="smart-search" placeholder="Buscar cliente, chofer o placa..." onkeyup="renderHistory()">
+            <input type="text" id="smart-search" placeholder="Buscar cliente, chofer, placa o usuario..." onkeyup="renderHistory()">
         </div>
+
         <div id="hist-cont"></div>
     </div>
 
@@ -180,31 +183,9 @@
         <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:22px; background:var(--green); color:#fff; border-radius:22px; font-weight:900; border:none; margin-top:20px;">GUARDAR RUTA</button>
     </div>
 
-    <div id="modal-crew" class="modal">
-        <div class="modal-content">
-            <h3 style="font-weight:900; margin-bottom:20px;">Editar Equipo</h3>
-            <select id="qe-chofer" class="field"></select>
-            <select id="qe-aux" class="field"></select>
-            <button onclick="saveQuickCrew()" style="width:100%; margin-top:10px; padding:20px; border-radius:20px; background:#000; color:#fff; border:none; font-weight:800;">ACTUALIZAR</button>
-            <button onclick="closeCrew()" style="width:100%; margin-top:10px; padding:15px; border-radius:20px; background:#eee; border:none; font-weight:800;">CANCELAR</button>
-        </div>
-    </div>
-
-    <div id="modal-list" class="modal">
-        <div class="modal-content"><div id="m-items"></div><button onclick="closeM()" style="width:100%; margin-top:20px; padding:20px; border-radius:20px; background:#eee; border:none; font-weight:800;">CERRAR</button></div>
-    </div>
-
-    <div id="modal-recover" class="modal" style="display:none; align-items: center; justify-content: center; padding: 20px;">
-        <div class="modal-content" style="border-radius: 30px; text-align: center; max-width: 350px;">
-            <div style="background: #f3f4f6; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                <i class="ph-bold ph-arrow-counter-clockwise" style="font-size: 30px; color: var(--text);"></i>
-            </div>
-            <h3 style="font-weight: 900; margin-bottom: 10px;">¿Continuar Carga?</h3>
-            <p id="recover-msg" style="color: var(--text-dim); font-size: 14px; margin-bottom: 25px; line-height: 1.4;"></p>
-            <button onclick="confirmRecover(true)" style="width: 100%; padding: 18px; background: #000; color: #fff; border-radius: 18px; font-weight: 800; border: none; margin-bottom: 10px;">SÍ, CONTINUAR</button>
-            <button onclick="confirmRecover(false)" style="width: 100%; padding: 15px; background: #eee; color: var(--red); border-radius: 18px; font-weight: 800; border: none;">DESCARTAR</button>
-        </div>
-    </div>
+    <div id="modal-crew" class="modal"><div class="modal-content"><h3 style="font-weight:900; margin-bottom:20px;">Editar Equipo</h3><select id="qe-chofer" class="field"></select><select id="qe-aux" class="field"></select><button onclick="saveQuickCrew()" style="width:100%; margin-top:10px; padding:20px; border-radius:20px; background:#000; color:#fff; border:none; font-weight:800;">ACTUALIZAR</button><button onclick="closeCrew()" style="width:100%; margin-top:10px; padding:15px; border-radius:20px; background:#eee; border:none; font-weight:800;">CANCELAR</button></div></div>
+    <div id="modal-list" class="modal"><div class="modal-content"><div id="m-items"></div><button onclick="closeM()" style="width:100%; margin-top:20px; padding:20px; border-radius:20px; background:#eee; border:none; font-weight:800;">CERRAR</button></div></div>
+    <div id="modal-recover" class="modal" style="display:none; align-items: center; justify-content: center; padding: 20px;"><div class="modal-content" style="border-radius: 30px; text-align: center; max-width: 350px;"><div style="background: #f3f4f6; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;"><i class="ph-bold ph-arrow-counter-clockwise" style="font-size: 30px; color: var(--text);"></i></div><h3 style="font-weight: 900; margin-bottom: 10px;">¿Continuar Carga?</h3><p id="recover-msg" style="color: var(--text-dim); font-size: 14px; margin-bottom: 25px; line-height: 1.4;"></p><button onclick="confirmRecover(true)" style="width: 100%; padding: 18px; background: #000; color: #fff; border-radius: 18px; font-weight: 800; border: none; margin-bottom: 10px;">SÍ, CONTINUAR</button><button onclick="confirmRecover(false)" style="width: 100%; padding: 15px; background: #eee; color: var(--red); border-radius: 18px; font-weight: 800; border: none;">DESCARTAR</button></div></div>
 
     <nav class="nav-bottom" id="main-nav">
         <button class="nav-btn" id="n-units" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
@@ -218,7 +199,7 @@
         let cur = { items: [] };
         let userAuth = JSON.parse(localStorage.getItem('twins_auth')) || null;
         let quickEditId = null;
-        window.pendingDraft = null;
+        let currentFilter = 'hoy'; // Estado de filtro por defecto
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
@@ -231,34 +212,91 @@
             const qec = document.getElementById('qe-chofer'), qea = document.getElementById('qe-aux');
             CONDUCTORES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; qec.innerHTML += `<option value="${c}">${c}</option>`; });
             AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
-            document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
             
-            const draft = localStorage.getItem('twins_draft');
-            if(draft) {
-                const recover = JSON.parse(draft);
-                if(recover.items && recover.items.length > 0) {
-                    document.getElementById('recover-msg').innerText = `Se encontró una carga pendiente de la placa ${recover.placa} con ${recover.items.length} clientes.`;
-                    document.getElementById('modal-recover').style.display = 'flex';
-                    window.pendingDraft = recover;
-                }
-            }
-
             if(userAuth) applyAuth();
             renderStats(); renderHistory();
         };
 
-        function confirmRecover(yes) {
-            if(yes && window.pendingDraft) {
-                cur = window.pendingDraft;
-                document.getElementById('load-placa-txt').innerText = cur.placa;
-                refreshLoad();
-                go('page-load');
-            } else {
-                localStorage.removeItem('twins_draft');
-            }
-            document.getElementById('modal-recover').style.display = 'none';
+        // --- LÓGICA DE FILTRADO INTELIGENTE ---
+        function filterByQuick(type) {
+            currentFilter = type;
+            document.getElementById('search-date').value = "";
+            document.getElementById('search-month').value = "";
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
+            document.getElementById('btn-' + type).classList.add('active-filter');
+            renderHistory();
         }
 
+        function filterByDate() {
+            currentFilter = 'exact-date';
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
+            renderHistory();
+        }
+
+        function filterByMonth() {
+            currentFilter = 'month';
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const q = document.getElementById('smart-search').value.toLowerCase();
+            const dateInput = document.getElementById('search-date').value;
+            const monthInput = document.getElementById('search-month').value;
+            
+            const hoyObj = new Date();
+            const getStr = (d) => d.toLocaleDateString('en-CA');
+            const ayerStr = getStr(new Date(new Date().setDate(hoyObj.getDate() - 1)));
+            const hoyStr = getStr(hoyObj);
+            const mananaStr = getStr(new Date(new Date().setDate(hoyObj.getDate() + 1)));
+
+            const filtered = db.filter(r => {
+                const rFecha = r.fecha.toString().split('T')[0];
+                let matchTime = true;
+
+                if (currentFilter === 'hoy') matchTime = (rFecha === hoyStr);
+                else if (currentFilter === 'ayer') matchTime = (rFecha === ayerStr);
+                else if (currentFilter === 'manana') matchTime = (rFecha === mananaStr);
+                else if (currentFilter === 'exact-date') matchTime = (rFecha === dateInput);
+                else if (currentFilter === 'month') matchTime = (rFecha.startsWith(monthInput));
+                else if (currentFilter === 'todos') matchTime = true;
+
+                const matchText = r.chofer.toLowerCase().includes(q) || 
+                                  r.placa.toLowerCase().includes(q) || 
+                                  (r.usuario && r.usuario.toLowerCase().includes(q)) ||
+                                  (r.items && r.items.some(it => it.cli.toLowerCase().includes(q)));
+
+                return matchTime && matchText;
+            });
+
+            document.getElementById('hist-cont').innerHTML = filtered.map(r => {
+                const cleanDate = r.fecha.toString().split('T')[0];
+                const totalCjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
+                const totalCli = r.items ? r.items.length : 0;
+                const registradoPor = r.usuario || "---";
+
+                return `
+                <div class="route-card">
+                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
+                        <span>📅 ${cleanDate} | 🆔 ${registradoPor}</span>
+                        <span>${r.placa}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
+                        <b style="font-size:24px;">${totalCjs} <span style="font-size:12px; opacity:0.6;">CJS</span></b>
+                        <b style="font-size:16px;">${totalCli} <span style="font-size:12px; opacity:0.6;">CLI.</span></b>
+                    </div>
+                    <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
+                    <div class="card-actions">
+                        <button onclick="viewL('${r.id}')" class="btn-card"><i class="ph-bold ph-list-bullets"></i>Lista</button>
+                        <button onclick="openCrew('${r.id}')" class="btn-card"><i class="ph-bold ph-users"></i>Equipo</button>
+                        <button onclick="editR('${r.id}')" class="btn-card"><i class="ph-bold ph-pencil-simple"></i>Editar</button>
+                        <button onclick="shareW('${r.id}')" class="btn-card whatsapp"><i class="ph-bold ph-whatsapp-logo"></i>Reporte</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // --- FUNCIONES CORE (LOGIN, SAVE, ETC) ---
         function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
         function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
         function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
@@ -275,7 +313,7 @@
                     localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
                     renderStats(); renderHistory(); 
                 }
-            } catch(e){ console.error("Error al sincronizar:", e); }
+            } catch(e){ console.error("Sync Error:", e); }
         }
 
         function go(id) {
@@ -316,21 +354,15 @@
             } 
         }
 
-        function removeItem(index) {
-            cur.items.splice(index, 1);
-            localStorage.setItem('twins_draft', JSON.stringify(cur)); 
-            refreshLoad();
-        }
+        function removeItem(index) { cur.items.splice(index, 1); localStorage.setItem('twins_draft', JSON.stringify(cur)); refreshLoad(); }
 
         function refreshLoad() { 
             const total = cur.items.reduce((a, b) => a + b.can, 0); 
             const limite = (cur.placa === "CEP-929") ? 210 : 180;
             const porcentaje = Math.min((total / limite) * 100, 100);
-
             document.getElementById('load-bar').style.width = porcentaje + "%";
             document.getElementById('load-count').innerText = `${total} / ${limite} CJS`;
             document.getElementById('load-bar').style.background = (total > limite) ? "var(--red)" : "var(--green)";
-
             document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
             document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `
                 <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;">
@@ -341,65 +373,18 @@
 
         function save() { 
             if (!cur.id) cur.id = 'R' + Date.now(); 
-            
-            // REGISTRO DEL USUARIO QUE GENERA LA RUTA
             cur.usuario = userAuth ? userAuth.name : "SISTEMA";
-
             const idx = db.findIndex(r => String(r.id) === String(cur.id)); 
             if (idx !== -1) db[idx] = JSON.parse(JSON.stringify(cur)); 
             else db.unshift(JSON.parse(JSON.stringify(cur)));
-            
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
             fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
             localStorage.removeItem('twins_draft');
             cur = { items: [] }; renderStats(); renderHistory(); go('page-dash'); 
         }
 
-        function renderHistory() {
-            const q = document.getElementById('smart-search').value.toLowerCase();
-            document.getElementById('hist-cont').innerHTML = db.filter(r => 
-                r.chofer.toLowerCase().includes(q) || 
-                r.placa.toLowerCase().includes(q) || 
-                r.fecha.toString().includes(q) ||
-                (r.usuario && r.usuario.toLowerCase().includes(q))
-            ).map(r => {
-                const cleanDate = r.fecha.toString().split('T')[0];
-                const totalCjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
-                const totalCli = r.items ? r.items.length : 0;
-                const registradoPor = r.usuario || "---";
-
-                return `
-                <div class="route-card">
-                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
-                        <span>📅 ${cleanDate} | 🆔 ${registradoPor}</span>
-                        <span>${r.placa}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
-                        <b style="font-size:24px;">${totalCjs} <span style="font-size:12px; opacity:0.6;">CJS</span></b>
-                        <b style="font-size:16px;">${totalCli} <span style="font-size:12px; opacity:0.6;">CLI.</span></b>
-                    </div>
-                    <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
-                    
-                    <div class="card-actions">
-                        <button onclick="viewL('${r.id}')" class="btn-card">
-                            <i class="ph-bold ph-list-bullets"></i>Lista
-                        </button>
-                        <button onclick="openCrew('${r.id}')" class="btn-card">
-                            <i class="ph-bold ph-users"></i>Equipo
-                        </button>
-                        <button onclick="editR('${r.id}')" class="btn-card">
-                            <i class="ph-bold ph-pencil-simple"></i>Editar
-                        </button>
-                        <button onclick="shareW('${r.id}')" class="btn-card whatsapp">
-                            <i class="ph-bold ph-whatsapp-logo"></i>Reporte
-                        </button>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
+        // --- OTROS MÉTODOS ---
         function openCrew(id) { quickEditId = id; const r = db.find(x => x.id === id); document.getElementById('qe-chofer').value = r.chofer; document.getElementById('qe-aux').value = r.auxiliar; document.getElementById('modal-crew').style.display = 'flex'; }
-        
         function saveQuickCrew() { 
             const idx = db.findIndex(x => String(x.id) === String(quickEditId)); 
             if (idx !== -1) { 
@@ -410,19 +395,10 @@
                 renderHistory(); closeCrew(); 
             }
         }
-
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
         function viewL(id) { const r = db.find(x => x.id === id); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
-        function editR(id) { 
-            const r = db.find(x => x.id === id); 
-            if (r) { 
-                cur = JSON.parse(JSON.stringify(r)); 
-                document.getElementById('load-placa-txt').innerText = cur.placa; 
-                refreshLoad(); go('page-load'); 
-            } 
-        }
-
+        function editR(id) { const r = db.find(x => x.id === id); if (r) { cur = JSON.parse(JSON.stringify(r)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); } }
         function shareW(id) { 
             const r = db.find(x => x.id === id); 
             const cleanDate = r.fecha.toString().split('T')[0];
@@ -437,21 +413,15 @@
             const hoy = new Date().toLocaleDateString('en-CA');
             const rHoy = db.filter(r => r.fecha.toString().includes(hoy));
             const rMes = db.filter(r => r.fecha.toString().startsWith(hoy.substring(0,7)));
-
-            const getTotals = (data) => {
-                return data.reduce((acc, r) => {
-                    acc.cajas += (r.items ? r.items.reduce((sum, item) => sum + item.can, 0) : 0);
-                    acc.clientes += (r.items ? r.items.length : 0);
-                    return acc;
-                }, { cajas: 0, clientes: 0 });
-            };
-
+            const getTotals = (data) => data.reduce((acc, r) => {
+                acc.cajas += (r.items ? r.items.reduce((sum, item) => sum + item.can, 0) : 0);
+                acc.clientes += (r.items ? r.items.length : 0);
+                return acc;
+            }, { cajas: 0, clientes: 0 });
             const totalHoy = getTotals(rHoy);
             const totalMes = getTotals(rMes);
-
             document.getElementById('stat-hoy-cajas').innerText = totalHoy.cajas;
             document.getElementById('stat-hoy-sub').innerHTML = `<span>${rHoy.length} RUTAS</span><span>${totalHoy.clientes} CLI.</span>`;
-
             document.getElementById('stat-mes-cajas').innerText = totalMes.cajas;
             document.getElementById('stat-mes-sub').innerHTML = `<span>${rMes.length} RUTAS</span><span>${totalMes.clientes} CLI.</span>`;
         }
@@ -479,6 +449,15 @@
                     </div>`).join('');
             };
             draw(cS, 'rank-choferes-list'); draw(aS, 'rank-auxiliares-list');
+        }
+
+        function confirmRecover(yes) {
+            if(yes && window.pendingDraft) {
+                cur = window.pendingDraft;
+                document.getElementById('load-placa-txt').innerText = cur.placa;
+                refreshLoad(); go('page-load');
+            } else { localStorage.removeItem('twins_draft'); }
+            document.getElementById('modal-recover').style.display = 'none';
         }
     </script>
 </body>
