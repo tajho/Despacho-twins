@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - OFICIAL</title>
+    <title>TWINS ELITE - V65.9 OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -18,8 +18,9 @@
         #login-screen { position: fixed; inset: 0; background: #000; z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 25px; }
         .login-card { background: #fff; width: 100%; max-width: 400px; padding: 40px 25px; border-radius: 35px; text-align: center; }
 
-        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .page { display: none; padding: 20px; max-width: 600px; margin: 0 auto; animation: fade 0.2s ease; }
         .active { display: block; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
 
         .core-dash { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
         .master-card { background: #fff; padding: 18px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; height: 120px; }
@@ -35,13 +36,13 @@
         .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
         .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 10px; padding: 12px; background: #f9fafb; border-radius: 12px; }
         .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 12px; }
-        .btn-card { background: #fff; border: 1px solid #eee; padding: 12px; border-radius: 10px; font-weight: 800; font-size: 10px; text-transform: uppercase; color: var(--text); }
+        .btn-card { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 10px; font-weight: 800; font-size: 10px; text-transform: uppercase; color: var(--text); }
 
         .nav-bottom { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; height: 85px; display: none; border-top: 1px solid var(--border); z-index: 1000; }
         .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9ca3af; background: none; border: none; font-size: 10px; font-weight: 800; }
         .nav-btn.active { color: #000; }
-        
         .field { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 16px; width: 100%; font-size: 15px; font-weight: 700; outline: none; margin-bottom: 12px; }
+
         .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: none; align-items: flex-end; z-index: 2000; }
         .modal-content { background: #fff; width: 100%; border-radius: 35px 35px 0 0; padding: 30px 20px; max-height: 85vh; overflow-y: auto; }
     </style>
@@ -50,14 +51,15 @@
 
     <div id="login-screen">
         <div class="login-card">
-            <h2 style="font-weight:900;">Twins Elite</h2>
+            <h2 style="font-weight:900; margin-bottom:5px;">Twins Elite</h2>
+            <p style="color:var(--text-dim); font-size:12px; margin-bottom:25px;">CONTROL DE ACCESO</p>
             <select id="user-select" class="field" onchange="checkUserType()">
-                <option value="">Usuario</option>
+                <option value="">Seleccione Usuario</option>
                 <option value="TAJHO">TAJHO</option>
                 <option value="FRANCHESCO">FRANCHESCO</option>
             </select>
-            <input type="password" id="pass-field" class="field" placeholder="Password" style="display:none;">
-            <button onclick="login()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">ACCEDER</button>
+            <input type="password" id="pass-field" class="field" placeholder="Contraseña Admin" style="display:none;">
+            <button onclick="login()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none; margin-top:10px;">ACCEDER</button>
         </div>
     </div>
 
@@ -69,35 +71,37 @@
         <div class="core-dash">
             <div class="master-card black">
                 <div><span class="stat-label">Cajas Hoy</span><span id="stat-hoy-cajas" class="stat-main">0</span></div>
+                <span id="stat-hoy-envios" class="stat-sub">0 RUTAS</span>
             </div>
             <div class="master-card">
                 <div><span class="stat-label">Cajas Mes</span><span id="stat-mes-cajas" class="stat-main">0</span></div>
+                <span id="stat-mes-envios" class="stat-sub">0 RUTAS</span>
             </div>
         </div>
         <div class="search-box">
             <i class="ph-bold ph-magnifying-glass"></i>
-            <input type="text" id="smart-search" placeholder="Buscar..." onkeyup="renderHistory()">
+            <input type="text" id="smart-search" placeholder="Buscar cliente, chofer o placa..." onkeyup="renderHistory()">
         </div>
         <div id="hist-cont"></div>
     </div>
 
     <div id="page-units" class="page">
-        <h1 style="font-weight:900;">Nueva Ruta</h1>
-        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px;"></div>
+        <h1 style="font-weight:900; margin-bottom:20px;">Despacho</h1>
+        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
     </div>
 
     <div id="page-data" class="page">
-        <h1 style="font-weight:900;">Data / Rendimiento</h1>
-        <div id="data-content" style="margin-top:20px;"></div>
+        <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
+        <div id="data-render"></div>
     </div>
 
     <div id="modal-crew" class="modal">
         <div class="modal-content">
-            <h3 style="font-weight:900;">Editar Equipo</h3>
+            <h3 style="font-weight:900; margin-bottom:20px;">Editar Equipo</h3>
             <select id="qe-chofer" class="field"></select>
             <select id="qe-aux" class="field"></select>
-            <button onclick="saveQuickCrew()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">ACTUALIZAR</button>
-            <button onclick="closeCrew()" style="width:100%; margin-top:10px; background:none; border:none; width:100%; font-weight:800;">CANCELAR</button>
+            <button onclick="saveQuickCrew()" style="width:100%; margin-top:10px; padding:20px; border-radius:20px; background:#000; color:#fff; border:none; font-weight:800;">ACTUALIZAR</button>
+            <button onclick="closeCrew()" style="width:100%; margin-top:10px; padding:15px; border-radius:20px; background:#eee; border:none; font-weight:800;">CANCELAR</button>
         </div>
     </div>
 
@@ -111,7 +115,7 @@
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzkIqN5__aLRTfyeJSWAAB-pUmt54kGsv4Ex2KWz_dgAvrCT_Gty05uZelf6gbcL4p7/exec";
         let db = JSON.parse(localStorage.getItem('twins_v63_db')) || [];
         let userAuth = JSON.parse(localStorage.getItem('twins_auth')) || null;
-        let qid = null;
+        let quickEditId = null;
 
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
@@ -119,12 +123,14 @@
 
         window.onload = () => {
             const ug = document.getElementById('units-grid');
-            for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:25px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="alert('Iniciando carga...')"><b>${p}</b></div>`;
+            for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:25px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="alert('Iniciando carga de ${p}')"><b>${p}</b></div>`;
+            
             const qec = document.getElementById('qe-chofer'), qea = document.getElementById('qe-aux');
             CONDUCTORES.forEach(c => qec.innerHTML += `<option value="${c}">${c}</option>`);
             AUXILIARES.forEach(a => qea.innerHTML += `<option value="${a}">${a}</option>`);
+
             if(userAuth) applyAuth();
-            renderHistory();
+            renderHistory(); renderStats();
         };
 
         function checkUserType() { document.getElementById('pass-field').style.display = (document.getElementById('user-select').value === 'TAJHO') ? 'block' : 'none'; }
@@ -141,7 +147,7 @@
             try {
                 const res = await fetch(CLOUD_URL);
                 const cloud = await res.json();
-                if(cloud && Array.isArray(cloud)) { db = cloud; renderHistory(); }
+                if(cloud && Array.isArray(cloud)) { db = cloud; localStorage.setItem('twins_v63_db', JSON.stringify(db)); renderHistory(); renderStats(); }
             } catch(e){}
         }
 
@@ -152,27 +158,34 @@
             ).map(r => `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
-                        <span>📅 ${r.fecha.split('T')[0]}</span><span>${r.placa}</span>
+                        <span>📅 ${r.fecha.split('T')[0]}</span>
+                        <span>${r.placa}</span>
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
                         <b style="font-size:24px;">${r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0} CJS</b>
+                        <b style="font-size:12px;">${r.items ? r.items.length : 0} CLI</b>
                     </div>
                     <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                     <div class="card-actions">
                         <button class="btn-card" onclick="openCrew('${r.id}')">EQUIPO</button>
-                        <button class="btn-card" style="color:var(--green)" onclick="shareW('${r.id}')">REPORTE</button>
+                        <button class="btn-card" style="border-color:var(--green); color:var(--green);" onclick="shareW('${r.id}')">WHATSAPP</button>
                     </div>
                 </div>`).join('');
         }
 
-        function openCrew(id) { qid = id; const r = db.find(x => x.id === id); document.getElementById('qe-chofer').value = r.chofer; document.getElementById('qe-aux').value = r.auxiliar; document.getElementById('modal-crew').style.display = 'flex'; }
+        function openCrew(id) { 
+            quickEditId = id; 
+            const r = db.find(x => x.id === id); 
+            document.getElementById('qe-chofer').value = r.chofer; 
+            document.getElementById('qe-aux').value = r.auxiliar; 
+            document.getElementById('modal-crew').style.display = 'flex'; 
+        }
         
         function saveQuickCrew() { 
-            const idx = db.findIndex(x => x.id === qid); 
+            const idx = db.findIndex(x => x.id === quickEditId); 
             if(idx > -1) { 
                 db[idx].chofer = document.getElementById('qe-chofer').value; 
                 db[idx].auxiliar = document.getElementById('qe-aux').value; 
-                // Guardado limpio: actualiza la posición existente sin duplicar
                 localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
                 fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
                 closeCrew(); renderHistory(); 
@@ -184,8 +197,16 @@
         
         function shareW(id) { 
             const r = db.find(x => x.id === id); 
-            let msg = `*TWINS ELITE*%0A📅 *FECHA:* ${r.fecha.split('T')[0]}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}`; 
+            let msg = `*TWINS ELITE*%0A📅 *FECHA:* ${r.fecha.split('T')[0]}%0A🚛 *UNIDAD:* ${r.placa}%0A👤 *CHOFER:* ${r.chofer}%0A🤝 *AUX:* ${r.auxiliar}%0A📦 *TOTAL:* ${r.items.reduce((a,b)=>a+b.can,0)} Cjs`; 
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
+        }
+
+        function renderStats() {
+            const hoy = new Date().toLocaleDateString('en-CA');
+            const rHoy = db.filter(r => r.fecha.includes(hoy));
+            const sum = (a) => a.reduce((x,y) => x + (y.items ? y.items.reduce((z,w)=>z+w.can,0) : 0), 0);
+            document.getElementById('stat-hoy-cajas').innerText = sum(rHoy);
+            document.getElementById('stat-mes-cajas').innerText = sum(db);
         }
     </script>
 </body>
