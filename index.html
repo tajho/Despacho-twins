@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TWINS ELITE - V66.4 Oficial</title>
+    <title>TWINS ELITE - V66.5 OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -29,13 +29,28 @@
         .stat-main { font-size: 28px; font-weight: 900; line-height: 1; display: block; }
         .stat-sub { font-size: 11px; font-weight: 800; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(150,150,150,0.2); display: block; }
 
-        .route-card { background: #fff; border-radius: 24px; padding: 18px; margin-bottom: 15px; border: 1px solid var(--border); }
-        .card-crew { font-size: 10px; font-weight: 700; color: #4b5563; margin-top: 8px; padding: 10px; background: #f9fafb; border-radius: 12px; }
+        .rank-box { background: #fff; border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .rank-header { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; font-weight: 800; font-size: 13px; text-transform: uppercase; color: var(--text-dim); }
+        .rank-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; background: #eee; color: #aaa; flex-shrink: 0; }
+        .pos-1 { background: var(--gold); color: #000; }
+        .pos-2 { background: var(--silver); color: #000; }
+        .pos-3 { background: var(--bronze); color: #000; }
+        .rank-info { flex: 1; }
+        .rank-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .rank-bar-bg { background: #f3f4f6; height: 6px; border-radius: 10px; overflow: hidden; }
+        .rank-bar-fill { background: #000; height: 100%; border-radius: 10px; transition: width 0.8s ease; }
+        .rank-stats { font-size: 10px; font-weight: 800; color: var(--text-dim); margin-top: 4px; display: flex; gap: 10px; }
+        .rank-stats b { color: #000; }
+
+        .search-box { position: relative; margin-bottom: 20px; }
+        .search-box input { width: 100%; padding: 16px 20px 16px 50px; background: #fff; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; outline: none; }
+        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 20px; color: var(--text-dim); }
         
-        /* Botones distribuidos para ahorrar espacio */
-        .card-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; }
-        .btn-card { background: #fff; border: 1px solid #eee; padding: 8px 2px; border-radius: 8px; font-weight: 800; font-size: 9px; text-transform: uppercase; color: var(--text); display: flex; flex-direction: column; align-items: center; gap: 3px; }
-        .btn-card i { font-size: 14px; }
+        .route-card { background: #fff; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .card-crew { font-size: 11px; font-weight: 700; color: #4b5563; margin-top: 10px; padding: 12px; background: #f9fafb; border-radius: 12px; }
+        .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 12px; }
+        .btn-card { background: #fff; border: 1px solid #eee; padding: 10px; border-radius: 10px; font-weight: 800; font-size: 10px; text-transform: uppercase; color: var(--text); }
 
         .truck-load-header { background: #000; color: #fff; padding: 25px; border-radius: 28px; margin-bottom: 20px; }
         .truck-progress-bg { height: 8px; background: rgba(255,255,255,0.15); border-radius: 10px; margin-top: 15px; }
@@ -94,6 +109,13 @@
         <div id="hist-cont"></div>
     </div>
 
+    <div id="page-data" class="page">
+        <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
+        <input type="month" id="f-month" class="field" onchange="renderData()">
+        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Conductores</div><div id="rank-choferes-list"></div></div>
+        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares</div><div id="rank-auxiliares-list"></div></div>
+    </div>
+
     <div id="page-load" class="page">
         <div class="truck-load-header">
             <div style="display:flex; justify-content:space-between; align-items:center;"><span style="font-size:10px; font-weight:800; opacity:0.7;">CARGANDO</span><b id="load-perc-txt" style="font-size:12px; color:var(--green);">0%</b></div>
@@ -134,13 +156,13 @@
     <nav class="nav-bottom" id="main-nav">
         <button class="nav-btn" id="n-units" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
         <button class="nav-btn active" id="n-dash" onclick="go('page-dash')"><i class="ph-bold ph-clock-counter-clockwise"></i>HISTORIAL</button>
-        <button class="nav-btn" id="n-data" style="display:none;"><i class="ph-bold ph-chart-bar"></i>DATA</button>
+        <button class="nav-btn" id="n-data" onclick="go('page-data')"><i class="ph-bold ph-chart-bar"></i>DATA</button>
     </nav>
 
     <script>
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzkIqN5__aLRTfyeJSWAAB-pUmt54kGsv4Ex2KWz_dgAvrCT_Gty05uZelf6gbcL4p7/exec";
         let db = JSON.parse(localStorage.getItem('twins_v63_db')) || [];
-        let cur = JSON.parse(localStorage.getItem('twins_draft_save')) || { items: [] };
+        let cur = { items: [] };
         let userAuth = JSON.parse(localStorage.getItem('twins_auth')) || null;
         let isSyncing = false;
         let quickEditId = null;
@@ -152,34 +174,26 @@
         window.onload = () => {
             const ug = document.getElementById('units-grid');
             for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:25px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="initConf('${p}')"><i class="ph-bold ph-truck" style="font-size:28px;"></i><br><b>${p}</b></div>`;
-            
             const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
             const qec = document.getElementById('qe-chofer'), qea = document.getElementById('qe-aux');
-            
             CONDUCTORES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; qec.innerHTML += `<option value="${c}">${c}</option>`; });
             AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
-            
-            if(userAuth) {
-                applyAuth();
-                if(cur.items && cur.items.length > 0 || cur.placa) {
-                    document.getElementById('load-placa-txt').innerText = cur.placa || "---";
-                    refreshLoad(); go('page-load');
-                }
-            }
+            document.getElementById('f-month').value = new Date().toISOString().substring(0,7);
+            if(userAuth) applyAuth();
             renderStats(); renderHistory();
             setInterval(() => { if(userAuth) pullCloudData(true); }, 15000);
         };
 
         function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
         function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
-        function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; pullCloudData(); }
+        function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('n-data').style.display = userAuth.admin ? 'flex' : 'none'; pullCloudData(); }
 
         async function pullCloudData(silent = false) {
             if(isSyncing) return; isSyncing = true;
             try {
                 const res = await fetch(CLOUD_URL);
                 const cloud = await res.json();
-                if(cloud && JSON.stringify(cloud) !== JSON.stringify(db)) {
+                if(cloud && Array.isArray(cloud)) {
                     db = cloud; localStorage.setItem('twins_v63_db', JSON.stringify(db));
                     renderStats(); renderHistory();
                 }
@@ -192,6 +206,7 @@
             document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
             const btnId = 'n-' + id.split('-')[1];
             if(document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
+            if(id === 'page-data') renderData();
             if(id === 'page-dash') renderHistory();
         }
 
@@ -208,7 +223,6 @@
             cur.chofer = document.getElementById('c-chofer').value; 
             cur.auxiliar = document.getElementById('c-aux').value; 
             document.getElementById('load-placa-txt').innerText = cur.placa; 
-            localStorage.setItem('twins_draft_save', JSON.stringify(cur));
             refreshLoad(); go('page-load'); 
         }
 
@@ -219,7 +233,6 @@
         }
         
         function refreshLoad() { 
-            localStorage.setItem('twins_draft_save', JSON.stringify(cur));
             const total = cur.items.reduce((a,b)=>a+b.can, 0); 
             const perc = Math.min((total/150)*100, 100).toFixed(0);
             document.getElementById('load-total').innerText = total;
@@ -238,13 +251,12 @@
             if(idx > -1) db[idx] = JSON.parse(JSON.stringify(cur)); else db.unshift(JSON.parse(JSON.stringify(cur)));
             localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
             fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
-            localStorage.removeItem('twins_draft_save');
             cur = { items: [] }; renderStats(); renderHistory(); go('page-dash'); 
         }
 
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
-            let filt = db.filter(r => r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.includes(q));
+            let filt = db.filter(r => r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || r.fecha.toString().includes(q));
             document.getElementById('hist-cont').innerHTML = filt.map(r => `
                 <div class="route-card">
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
@@ -257,15 +269,16 @@
                     </div>
                     <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                     <div class="card-actions">
-                        <button onclick="viewL('${r.id}')" class="btn-card"><i class="ph-bold ph-list-bullets"></i>Lista</button>
-                        <button onclick="openCrew('${r.id}')" class="btn-card"><i class="ph-bold ph-steering-wheel"></i>Equipo</button>
-                        <button onclick="editR('${r.id}')" class="btn-card"><i class="ph-bold ph-pencil"></i>Editar</button>
-                        <button onclick="shareW('${r.id}')" class="btn-card" style="color:var(--green);"><i class="ph-bold ph-whatsapp-logo"></i>WhatsApp</button>
+                        <button onclick="viewL('${r.id}')" class="btn-card">Lista</button>
+                        <button onclick="openCrew('${r.id}')" class="btn-card">Equipo</button>
+                        <button onclick="editR('${r.id}')" class="btn-card">Editar</button>
+                        <button onclick="shareW('${r.id}')" class="btn-card" style="border-color:var(--green); color:var(--green);">Reporte</button>
                     </div>
                 </div>`).join('');
         }
 
         function openCrew(id) { quickEditId = id; const r = db.find(x => x.id === id); document.getElementById('qe-chofer').value = r.chofer; document.getElementById('qe-aux').value = r.auxiliar; document.getElementById('modal-crew').style.display = 'flex'; }
+        
         function saveQuickCrew() { 
             const idx = db.findIndex(x => x.id === quickEditId); 
             if(idx > -1) { 
@@ -276,10 +289,12 @@
                 renderHistory(); closeCrew(); 
             } 
         }
+
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
         function viewL(id) { const r = db.find(x => x.id === id); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
         function closeM() { document.getElementById('modal-list').style.display = 'none'; }
-        function editR(id) { const r = db.find(x => x.id === id); if(r) { cur = JSON.parse(JSON.stringify(r)); localStorage.setItem('twins_draft_save', JSON.stringify(cur)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); } }
+        function editR(id) { const r = db.find(x => x.id === id); if(r) { cur = JSON.parse(JSON.stringify(r)); document.getElementById('load-placa-txt').innerText = cur.placa; refreshLoad(); go('page-load'); } }
+        
         function shareW(id) { 
             const r = db.find(x => x.id === id); 
             const totalCajas = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0; 
@@ -292,12 +307,38 @@
         function renderStats() {
             const hoy = new Date().toLocaleDateString('en-CA');
             const rHoy = db.filter(r => r.fecha === hoy);
-            const rMes = db.filter(r => r.fecha.startsWith(hoy.substring(0,7)));
+            const rMes = db.filter(r => r.fecha && r.fecha.toString().startsWith(hoy.substring(0,7)));
             const sum = (a) => a.reduce((x,y) => x + (y.items ? y.items.reduce((z,w)=>z+w.can,0) : 0), 0);
             document.getElementById('stat-hoy-cajas').innerText = sum(rHoy);
             document.getElementById('stat-hoy-envios').innerText = rHoy.length + " RUTAS";
             document.getElementById('stat-mes-cajas').innerText = sum(rMes);
             document.getElementById('stat-mes-envios').innerText = rMes.length + " RUTAS";
+        }
+
+        function renderData() {
+            const m = document.getElementById('f-month').value;
+            let filt = db.filter(r => r.fecha && r.fecha.toString().startsWith(m));
+            let cS = {}, aS = {};
+            filt.forEach(r => { 
+                let cjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
+                cS[r.chofer] = cS[r.chofer] || {cjs:0, r:0}; cS[r.chofer].cjs += cjs; cS[r.chofer].r++;
+                aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0}; aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
+            });
+            const draw = (data, targetId) => {
+                let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
+                let max = sorted[0] ? sorted[0][1].cjs : 1;
+                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `
+                    <div class="rank-item">
+                        <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
+                        <div class="rank-info">
+                            <div class="rank-name"><span>${n}</span><span>${v.cjs} CJS</span></div>
+                            <div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div>
+                            <div class="rank-stats"><span>📦 <b>${v.cjs}</b> Cajas</span><span>🚚 <b>${v.r}</b> Rutas</span></div>
+                        </div>
+                    </div>`).join('');
+            };
+            draw(cS, 'rank-choferes-list'); 
+            draw(aS, 'rank-auxiliares-list');
         }
     </script>
 </body>
