@@ -498,7 +498,7 @@
             const r = db.find(x => String(x.id) === String(id)); 
             const totalCajas = r.items ? r.items.reduce((a, b) => a + b.can, 0) : 0; 
             const totalPuntos = r.items ? r.items.length : 0;
-            let msg = `*--- REPORTE DE DESPACHO ---*%0A`;
+            let msg = `*--- REPORTE DE DESPACHO TWINS ---*%0A`;
             msg += `🚛 *UNIDAD:* ${r.placa}%0A`;
             msg += `👤 *CHOFER:* ${r.chofer}%0A`;
             msg += `🤝 *AUX:* ${r.auxiliar}%0A%0A`;
