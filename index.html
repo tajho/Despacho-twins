@@ -87,7 +87,7 @@
                 <option value="OSCAR">OSCAR</option>
                 <option value="LUIS HERBER">LUIS HERBER</option>
             </select>
-            <input type="password" id="pass-field" class="field" placeholder="Contraseña Admin" style="display:none;">
+            <input type="password" id="pass-field" class="field" placeholder="Ingrese su Clave" style="display:none;">
             <button onclick="login()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none; margin-top:10px;">ACCEDER</button>
         </div>
     </div>
@@ -221,6 +221,14 @@
         let quickEditId = null;
         let currentFilter = 'hoy'; 
 
+        // CONFIGURACIÓN DE ACCESOS Y FLOTA
+        const ACCESS_KEYS = {
+            "TAJHO": "1994",
+            "FRANCHESCO": "3003",
+            "OSCAR": "0505",
+            "LUIS HERBER": "7676"
+        };
+
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["POR ASIGNAR", "CRISTOPHER", "PERCY", "PLACIDO", "DANIEL C.", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "NELSON"];
@@ -238,6 +246,41 @@
             checkEmergency();
         };
 
+        // --- SECCIÓN DE LOGIN MEJORADA ---
+        function checkUserType() { 
+            const u = document.getElementById('user-select').value; 
+            const passField = document.getElementById('pass-field');
+            if(u) {
+                passField.style.display = 'block';
+                passField.value = "";
+                passField.focus();
+            } else {
+                passField.style.display = 'none';
+            }
+        }
+
+        function login() { 
+            const u = document.getElementById('user-select').value; 
+            const p = document.getElementById('pass-field').value; 
+            if(!u) return; 
+
+            if(ACCESS_KEYS[u] && p === ACCESS_KEYS[u]) {
+                userAuth = { 
+                    name: u, 
+                    admin: (u === 'TAJHO') 
+                }; 
+                localStorage.setItem('twins_auth', JSON.stringify(userAuth)); 
+                applyAuth(); 
+            } else {
+                alert("Contraseña incorrecta para " + u);
+                document.getElementById('pass-field').value = "";
+            }
+        }
+
+        function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
+        function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('n-data').style.display = userAuth.admin ? 'flex' : 'none'; pullCloudData(); }
+
+        // --- RESTO DE FUNCIONES ---
         function filterByQuick(type) {
             currentFilter = type;
             document.getElementById('search-date').value = "";
@@ -282,7 +325,6 @@
             document.getElementById('stat-mes-sub').innerHTML = `<span>${rMes.length} RUTAS</span><span>${statsMes.clientes} CLI.</span>`;
         }
 
-        // --- FUNCIÓN ACTUALIZADA CON SELLO ROJO Y BLOQUEO 48H ---
         function renderHistory() {
             const q = document.getElementById('smart-search').value.toLowerCase();
             const dateInput = document.getElementById('search-date').value;
@@ -311,8 +353,6 @@
                 const cleanDate = r.fecha.toString().split('T')[0];
                 const totalCjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
                 const totalCli = r.items ? r.items.length : 0;
-
-                // LÓGICA DE 48 HORAS PARA EL SELLO ROJO
                 const fechaRuta = new Date(r.fecha);
                 const horasTranscurridas = (hoyObj - fechaRuta) / (1000 * 60 * 60);
                 const esAntigua = horasTranscurridas > 48;
@@ -327,7 +367,6 @@
                             ENTREGADO
                         </div>
                     ` : ''}
-
                     <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
                         <span>📅 ${cleanDate} | 🆔 ${r.usuario || 'SISTEMA'}</span>
                         <span>${r.placa}</span>
@@ -338,9 +377,7 @@
                     </div>
                     <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                     <div class="card-actions">
-                        <button onclick="viewL('${r.id}')" class="btn-card">
-                            <i class="ph-bold ph-list-bullets"></i>Lista
-                        </button>
+                        <button onclick="viewL('${r.id}')" class="btn-card"><i class="ph-bold ph-list-bullets"></i>Lista</button>
                         ${!esAntigua ? `
                             <button onclick="openCrew('${r.id}')" class="btn-card"><i class="ph-bold ph-users"></i>Equipo</button>
                             <button onclick="editR('${r.id}')" class="btn-card"><i class="ph-bold ph-pencil-simple"></i>Editar</button>
@@ -354,11 +391,6 @@
                 </div>`;
             }).join('');
         }
-
-        function checkUserType() { const u = document.getElementById('user-select').value; document.getElementById('pass-field').style.display = (u === 'TAJHO') ? 'block' : 'none'; }
-        function login() { const u = document.getElementById('user-select').value; const p = document.getElementById('pass-field').value; if(!u) return; if(u === 'TAJHO' && p !== '1994') { alert("Clave Incorrecta"); return; } userAuth = { name: u, admin: (u === 'TAJHO') }; localStorage.setItem('twins_auth', JSON.stringify(userAuth)); applyAuth(); }
-        function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
-        function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('n-data').style.display = userAuth.admin ? 'flex' : 'none'; pullCloudData(); }
 
         async function pullCloudData() {
             try {
