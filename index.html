@@ -4,16 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TWINS ELITE - V66.6 OFICIAL</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#000000">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/751/751172.png">
-
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    
     <style>
         :root {
             --bg: #f4f6f8; --surface: #ffffff; --accent: #000000; 
@@ -110,10 +104,356 @@
         </div>
     </div>
 
-    <script>
-        // ... (Tu lógica de negocio, bases de datos y funciones se mantienen) ...
+    <div id="page-dash" class="page active">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; position:relative;">
+            <h1 style="font-weight:900; margin:0;">Twins DESPACHO</h1>
+            <button class="btn-off" onclick="logout()"><i class="ph-bold ph-power"></i></button>
+        </div>
+        
+        <div class="core-dash">
+            <div id="main-stat-card" class="master-card black">
+                <div>
+                    <span class="stat-label" id="dynamic-stat-label">Hoy</span>
+                    <span id="stat-hoy-cajas" class="stat-main">0</span>
+                    <span style="font-size: 10px; font-weight: 800; opacity: 0.7;">CAJAS</span>
+                </div>
+                <div id="stat-hoy-sub" class="stat-sub" style="display: flex; justify-content: space-between;">
+                    <span>0 RUTAS</span>
+                    <span>0 CLI.</span>
+                </div>
+            </div>
+            <div class="master-card">
+                <div>
+                    <span class="stat-label">Este Mes</span>
+                    <span id="stat-mes-cajas" class="stat-main">0</span>
+                    <span style="font-size: 10px; font-weight: 800; color: var(--text-dim);">CAJAS</span>
+                </div>
+                <div id="stat-mes-sub" class="stat-sub" style="display: flex; justify-content: space-between;">
+                    <span>0 RUTAS</span>
+                    <span>0 CLI.</span>
+                </div>
+            </div>
+        </div>
 
-        // --- SISTEMA DE EMERGENCIA ---
+        <div style="display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px;">
+            <button onclick="filterByQuick('ayer')" class="btn-filter" id="btn-ayer">Ayer</button>
+            <button onclick="filterByQuick('hoy')" class="btn-filter active-filter" id="btn-hoy">Hoy</button>
+            <button onclick="filterByQuick('manana')" class="btn-filter" id="btn-manana">Mañana</button>
+            <button onclick="filterByQuick('todos')" class="btn-filter" id="btn-todos">Todos</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div class="search-box" style="margin-bottom: 0;">
+                <i class="ph-bold ph-calendar"></i>
+                <input type="date" id="search-date" onchange="filterByDate()">
+            </div>
+            <div class="search-box" style="margin-bottom: 0;">
+                <i class="ph-bold ph-calendar-blank"></i>
+                <input type="month" id="search-month" onchange="filterByMonth()">
+            </div>
+        </div>
+
+        <div class="search-box">
+            <i class="ph-bold ph-magnifying-glass"></i>
+            <input type="text" id="smart-search" placeholder="Buscar cliente, chofer, placa o usuario..." onkeyup="renderHistory()">
+        </div>
+
+        <div id="hist-cont"></div>
+    </div>
+
+    <div id="page-units" class="page">
+        <h1 style="font-weight:900; margin-bottom:20px;">Despacho</h1>
+        <div id="units-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;"></div>
+    </div>
+
+    <div id="page-data" class="page">
+        <h1 style="font-weight:900; margin-bottom:20px;">Rendimiento</h1>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="month" id="f-month" class="field" onchange="renderData()" style="margin:0; flex:1;">
+            <button onclick="exportPDF()" style="background:var(--red); color:#fff; border:none; border-radius:16px; padding:0 20px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                <i class="ph-bold ph-file-pdf" style="font-size:20px;"></i> PDF
+            </button>
+        </div>
+        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-steering-wheel"></i> Top Conductores</div><div id="rank-choferes-list"></div></div>
+        <div class="rank-box"><div class="rank-header"><i class="ph-bold ph-users-three"></i> Top Auxiliares</div><div id="rank-auxiliares-list"></div></div>
+    </div>
+
+    <div id="page-config" class="page">
+        <div style="background:#000; color:#fff; padding:30px; border-radius:30px; margin-bottom:25px; text-align:center;"><h2 id="conf-placa" style="margin:0; font-size:36px;">---</h2></div>
+        <input type="date" id="c-fecha" class="field">
+        <select id="c-chofer" class="field"></select>
+        <select id="c-aux" class="field"></select>
+        <button onclick="goLoad()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">INICIAR CARGA</button>
+    </div>
+
+    <div id="page-load" class="page">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:5px;">
+            <h2 id="load-placa-txt" style="font-size:32px; font-weight:900; margin:0;">---</h2>
+            <span id="load-count" style="font-weight:800; font-size:14px; color:var(--text-dim);">0 / 0 CJS</span>
+        </div>
+        <div style="background:#e5e7eb; height:12px; border-radius:10px; margin-bottom:20px; overflow:hidden;">
+            <div id="load-bar" style="background:var(--green); height:100%; width:0%; transition: width 0.3s ease;"></div>
+        </div>
+        
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="text" id="i-cli" placeholder="Cliente" class="field" style="flex:2; margin:0">
+            <input type="number" id="i-can" placeholder="Cjs" class="field" style="flex:1; margin:0">
+        </div>
+        <button onclick="addItem()" style="width:100%; padding:20px; background:#000; color:#fff; border-radius:20px; font-weight:800; border:none;">AGREGAR</button>
+        <div id="load-list" style="margin-top:20px;"></div>
+        <button id="btn-save" onclick="save()" style="display:none; width:100%; padding:22px; background:var(--green); color:#fff; border-radius:22px; font-weight:900; border:none; margin-top:20px;">GUARDAR RUTA</button>
+    </div>
+
+    <div id="modal-crew" class="modal"><div class="modal-content"><h3 style="font-weight:900; margin-bottom:20px;">Editar Equipo</h3><select id="qe-chofer" class="field"></select><select id="qe-aux" class="field"></select><button onclick="saveQuickCrew()" style="width:100%; margin-top:10px; padding:20px; border-radius:20px; background:#000; color:#fff; border:none; font-weight:800;">ACTUALIZAR</button><button onclick="closeCrew()" style="width:100%; margin-top:10px; padding:15px; border-radius:20px; background:#eee; border:none; font-weight:800;">CANCELAR</button></div></div>
+    <div id="modal-list" class="modal"><div class="modal-content"><div id="m-items"></div><button onclick="closeM()" style="width:100%; margin-top:20px; padding:20px; border-radius:20px; background:#eee; border:none; font-weight:800;">CERRAR</button></div></div>
+
+    <nav class="nav-bottom" id="main-nav">
+        <button class="nav-btn" id="n-units" onclick="go('page-units')"><i class="ph-bold ph-plus-circle"></i>NUEVA</button>
+        <button class="nav-btn active" id="n-dash" onclick="go('page-dash')"><i class="ph-bold ph-clock-counter-clockwise"></i>HISTORIAL</button>
+        <button class="nav-btn" id="n-data" onclick="go('page-data')"><i class="ph-bold ph-chart-bar"></i>DATA</button>
+    </nav>
+
+    <script>
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbyjs5qML_vaUe9vHj2rN4B0PLH3m0SxZEA4JoYKmhdnQ4Ub00BcM93vkVkF-gWRRdaO/exec";
+        let db = JSON.parse(localStorage.getItem('twins_v63_db')) || [];
+        let cur = { items: [] };
+        let userAuth = JSON.parse(localStorage.getItem('twins_auth')) || null;
+        let quickEditId = null;
+        let currentFilter = 'hoy'; 
+
+        // CONFIGURACIÓN DE ACCESOS Y FLOTA
+        const ACCESS_KEYS = {
+            "TAJHO": "1994",
+            "FRANCHESCO": "3003",
+            "OSCAR": "0505",
+            "LUIS HERBER": "7676"
+        };
+
+        const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
+        const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
+        const AUXILIARES = ["POR ASIGNAR", "CRISTOPHER", "PERCY", "PLACIDO", "DANIEL C.", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "JULIO", "NELSON"];
+
+        window.onload = () => {
+            const ug = document.getElementById('units-grid');
+            for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:25px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="initConf('${p}')"><i class="ph-bold ph-truck" style="font-size:28px;"></i><br><b>${p}</b></div>`;
+            const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
+            const qec = document.getElementById('qe-chofer'), qea = document.getElementById('qe-aux');
+            CONDUCTORES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; qec.innerHTML += `<option value="${c}">${c}</option>`; });
+            AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
+            
+            if(userAuth) applyAuth();
+            renderHistory();
+            checkEmergency();
+        };
+
+        // --- SECCIÓN DE LOGIN MEJORADA ---
+        function checkUserType() { 
+            const u = document.getElementById('user-select').value; 
+            const passField = document.getElementById('pass-field');
+            if(u) {
+                passField.style.display = 'block';
+                passField.value = "";
+                passField.focus();
+            } else {
+                passField.style.display = 'none';
+            }
+        }
+
+        function login() { 
+            const u = document.getElementById('user-select').value; 
+            const p = document.getElementById('pass-field').value; 
+            if(!u) return; 
+
+            if(ACCESS_KEYS[u] && p === ACCESS_KEYS[u]) {
+                userAuth = { 
+                    name: u, 
+                    admin: (u === 'TAJHO') 
+                }; 
+                localStorage.setItem('twins_auth', JSON.stringify(userAuth)); 
+                applyAuth(); 
+            } else {
+                alert("Contraseña incorrecta para " + u);
+                document.getElementById('pass-field').value = "";
+            }
+        }
+
+        function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
+        function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('n-data').style.display = userAuth.admin ? 'flex' : 'none'; pullCloudData(); }
+
+        // --- RESTO DE FUNCIONES ---
+        function filterByQuick(type) {
+            currentFilter = type;
+            document.getElementById('search-date').value = "";
+            document.getElementById('search-month').value = "";
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
+            document.getElementById('btn-' + type).classList.add('active-filter');
+            const labelMap = {'hoy':'Hoy', 'ayer':'Ayer', 'manana':'Mañana', 'todos':'Todo'};
+            document.getElementById('dynamic-stat-label').innerText = labelMap[type] || 'Filtrado';
+            renderHistory();
+        }
+
+        function filterByDate() {
+            currentFilter = 'exact-date';
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
+            document.getElementById('dynamic-stat-label').innerText = 'Fecha';
+            renderHistory();
+        }
+
+        function filterByMonth() {
+            currentFilter = 'month';
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
+            document.getElementById('dynamic-stat-label').innerText = 'Mes';
+            renderHistory();
+        }
+
+        function updateDynamicStats(filteredData) {
+            const getTotals = (data) => data.reduce((acc, r) => {
+                acc.cajas += (r.items ? r.items.reduce((sum, item) => sum + item.can, 0) : 0);
+                acc.clientes += (r.items ? r.items.length : 0);
+                return acc;
+            }, { cajas: 0, clientes: 0 });
+            const stats = getTotals(filteredData);
+            document.getElementById('stat-hoy-cajas').innerText = stats.cajas;
+            document.getElementById('stat-hoy-sub').innerHTML = `<span>${filteredData.length} RUTAS</span><span>${stats.clientes} CLI.</span>`;
+            const panel = document.getElementById('main-stat-card');
+            if (currentFilter === 'manana') panel.className = "master-card blue";
+            else panel.className = "master-card black";
+            const hoyStr = new Date().toLocaleDateString('en-CA');
+            const rMes = db.filter(r => r.fecha && r.fecha.toString().startsWith(hoyStr.substring(0,7)));
+            const statsMes = getTotals(rMes);
+            document.getElementById('stat-mes-cajas').innerText = statsMes.cajas;
+            document.getElementById('stat-mes-sub').innerHTML = `<span>${rMes.length} RUTAS</span><span>${statsMes.clientes} CLI.</span>`;
+        }
+
+        function renderHistory() {
+            const q = document.getElementById('smart-search').value.toLowerCase();
+            const dateInput = document.getElementById('search-date').value;
+            const monthInput = document.getElementById('search-month').value;
+            const hoyObj = new Date();
+            const getStr = (d) => d.toLocaleDateString('en-CA');
+            const ayerStr = getStr(new Date(new Date().setDate(hoyObj.getDate() - 1)));
+            const hoyStr = getStr(hoyObj);
+            const mananaStr = getStr(new Date(new Date().setDate(hoyObj.getDate() + 1)));
+            const filtered = db.filter(r => {
+                if(!r.fecha) return false;
+                const rFecha = r.fecha.toString().split('T')[0];
+                let matchTime = true;
+                if (currentFilter === 'hoy') matchTime = (rFecha === hoyStr);
+                else if (currentFilter === 'ayer') matchTime = (rFecha === ayerStr);
+                else if (currentFilter === 'manana') matchTime = (rFecha === mananaStr);
+                else if (currentFilter === 'exact-date') matchTime = (rFecha === dateInput);
+                else if (currentFilter === 'month') matchTime = (rFecha.startsWith(monthInput));
+                else if (currentFilter === 'todos') matchTime = true;
+                const matchText = r.chofer.toLowerCase().includes(q) || r.placa.toLowerCase().includes(q) || (r.usuario && r.usuario.toLowerCase().includes(q)) || (r.items && r.items.some(it => it.cli.toLowerCase().includes(q)));
+                return matchTime && matchText;
+            });
+            updateDynamicStats(filtered);
+
+            document.getElementById('hist-cont').innerHTML = filtered.map(r => {
+                const cleanDate = r.fecha.toString().split('T')[0];
+                const totalCjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
+                const totalCli = r.items ? r.items.length : 0;
+                const fechaRuta = new Date(r.fecha);
+                const horasTranscurridas = (hoyObj - fechaRuta) / (1000 * 60 * 60);
+                const esAntigua = horasTranscurridas > 48;
+
+                return `
+                <div class="route-card" style="position:relative; overflow:hidden; ${esAntigua ? 'border-color:#fecaca;' : ''}">
+                    ${esAntigua ? `
+                        <div style="position:absolute; right:10px; top:35px; border:4px solid var(--red); color:var(--red); 
+                                    padding:5px 15px; border-radius:10px; font-weight:900; font-size:18px; 
+                                    transform: rotate(-15deg); text-transform:uppercase; z-index:10; opacity:0.8;
+                                    font-family: 'Courier New', monospace; background: rgba(255,255,255,0.9);">
+                            ENTREGADO
+                        </div>
+                    ` : ''}
+                    <div style="display:flex; justify-content:space-between; font-size:10px; font-weight:800; color:var(--text-dim);">
+                        <span>📅 ${cleanDate} | 🆔 ${r.usuario || 'SISTEMA'}</span>
+                        <span>${r.placa}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:5px;">
+                        <b style="font-size:24px;">${totalCjs} <span style="font-size:12px; opacity:0.6;">CJS</span></b>
+                        <b style="font-size:16px;">${totalCli} <span style="font-size:12px; opacity:0.6;">CLI.</span></b>
+                    </div>
+                    <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
+                    <div class="card-actions">
+                        <button onclick="viewL('${r.id}')" class="btn-card"><i class="ph-bold ph-list-bullets"></i>Lista</button>
+                        ${!esAntigua ? `
+                            <button onclick="openCrew('${r.id}')" class="btn-card"><i class="ph-bold ph-users"></i>Equipo</button>
+                            <button onclick="editR('${r.id}')" class="btn-card"><i class="ph-bold ph-pencil-simple"></i>Editar</button>
+                            <button onclick="shareW('${r.id}')" class="btn-card whatsapp"><i class="ph-bold ph-whatsapp-logo"></i>Reporte</button>
+                        ` : `
+                            <div style="flex:1; text-align:right; font-size:9px; font-weight:800; color:var(--red); padding: 10px; letter-spacing:1px;">
+                                <i class="ph-bold ph-lock"></i> REGISTRO CERRADO
+                            </div>
+                        `}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function pullCloudData() {
+            try {
+                const res = await fetch(CLOUD_URL);
+                const cloud = await res.json();
+                if(cloud && Array.isArray(cloud)) { 
+                    const uniqueMap = new Map();
+                    cloud.forEach(item => uniqueMap.set(String(item.id), item));
+                    db = Array.from(uniqueMap.values()).reverse(); 
+                    localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+                    renderHistory(); 
+                }
+            } catch(e){ console.error("Sync Error:", e); }
+        }
+
+        function go(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+            const btnId = 'n-' + id.split('-')[1];
+            if(document.getElementById(btnId)) document.getElementById(btnId).classList.add('active');
+            if(id === 'page-data') renderData();
+            if(id === 'page-dash') renderHistory();
+        }
+
+        function initConf(p) { 
+            const hoy = new Date().toLocaleDateString('en-CA'); 
+            cur = { id: null, placa: p, items: [], fecha: hoy, chofer: FLOTA[p], auxiliar: "POR ASIGNAR", usuario: userAuth ? userAuth.name : "SISTEMA" }; 
+            document.getElementById('conf-placa').innerText = p; 
+            document.getElementById('c-fecha').value = hoy; 
+            document.getElementById('c-chofer').value = FLOTA[p] || "TAJHO";
+            document.getElementById('c-aux').value = "POR ASIGNAR";
+            go('page-config'); 
+        }
+
+        function goLoad() { 
+            cur.fecha = document.getElementById('c-fecha').value; 
+            cur.chofer = document.getElementById('c-chofer').value; 
+            cur.auxiliar = document.getElementById('c-aux').value; 
+            document.getElementById('load-placa-txt').innerText = cur.placa; 
+            refreshLoad(); go('page-load'); 
+        }
+
+        function addItem() { 
+            const cli = document.getElementById('i-cli').value.toUpperCase().trim(); 
+            const can = parseInt(document.getElementById('i-can').value); 
+            if(cli && can) { cur.items.push({cli, can}); refreshLoad(); document.getElementById('i-cli').value=""; document.getElementById('i-can').value=""; } 
+        }
+
+        function removeItem(index) { cur.items.splice(index, 1); refreshLoad(); }
+
+        function refreshLoad() { 
+            const total = cur.items.reduce((a, b) => a + b.can, 0); 
+            const limite = (cur.placa === "CEP-929") ? 210 : 180;
+            const porcentaje = Math.min((total / limite) * 100, 100);
+            document.getElementById('load-bar').style.width = porcentaje + "%";
+            document.getElementById('load-count').innerText = `${total} / ${limite} CJS`;
+            document.getElementById('load-bar').style.background = (total > limite) ? "var(--red)" : "var(--green)";
+            document.getElementById('btn-save').style.display = total > 0 ? 'block' : 'none';
+            document.getElementById('load-list').innerHTML = cur.items.map((it, i) => `<div style="display:flex; justify-content:space-between; padding:15px; background:#fff; border-radius:15px; border:1px solid #eee; margin-bottom:10px;"><span><i class="ph-bold ph-trash" style="color:var(--red); margin-right:12px;" onclick="removeItem(${i})"></i>${it.cli}</span><b>${it.can}</b></div>`).reverse().join(''); 
+            if(cur.items.length > 0) { localStorage.setItem('twins_emergency_backup', JSON.stringify(cur)); }
+        }
+
         function checkEmergency() {
             const backup = localStorage.getItem('twins_emergency_backup');
             if (backup) {
@@ -132,38 +472,112 @@
                 document.getElementById('load-placa-txt').innerText = cur.placa;
                 refreshLoad();
                 go('page-load');
-            } else { 
-                localStorage.removeItem('twins_emergency_backup'); 
-            }
+            } else { localStorage.removeItem('twins_emergency_backup'); }
             document.getElementById('modal-recover').style.display = 'none';
         }
 
-        function refreshLoad() { 
-            // ... (resto de tu función) ...
-            if(cur.items.length > 0) { 
-                localStorage.setItem('twins_emergency_backup', JSON.stringify(cur)); 
+        function save() { 
+            if (!cur.id) cur.id = 'R' + Date.now(); 
+            cur.usuario = userAuth ? userAuth.name : "SISTEMA";
+            const idx = db.findIndex(r => String(r.id) === String(cur.id)); 
+            if (idx !== -1) db[idx] = JSON.parse(JSON.stringify(cur)); 
+            else db.unshift(JSON.parse(JSON.stringify(cur)));
+            localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+            localStorage.removeItem('twins_emergency_backup');
+            fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(cur) });
+            cur = { items: [] }; 
+            renderHistory(); 
+            go('page-dash'); 
+        }
+
+        function openCrew(id) { 
+            quickEditId = id; 
+            const r = db.find(x => String(x.id) === String(id)); 
+            document.getElementById('qe-chofer').value = r.chofer; 
+            document.getElementById('qe-aux').value = r.auxiliar; 
+            document.getElementById('modal-crew').style.display = 'flex'; 
+        }
+
+        function saveQuickCrew() { 
+            const idx = db.findIndex(x => String(x.id) === String(quickEditId)); 
+            if (idx !== -1) { 
+                db[idx].chofer = document.getElementById('qe-chofer').value; 
+                db[idx].auxiliar = document.getElementById('qe-aux').value; 
+                if(!db[idx].usuario) db[idx].usuario = userAuth ? userAuth.name : "SISTEMA";
+                localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+                fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
+                renderHistory(); 
+                closeCrew(); 
             }
         }
 
-        function save() { 
-            // ... (lógica de guardado) ...
-            localStorage.removeItem('twins_emergency_backup');
-            // ...
+        function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
+        function viewL(id) { const r = db.find(x => String(x.id) === String(id)); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
+        function closeM() { document.getElementById('modal-list').style.display = 'none'; }
+        
+        function editR(id) { 
+            const r = db.find(x => String(x.id) === String(id)); 
+            if (r) { 
+                cur = JSON.parse(JSON.stringify(r)); 
+                if(!cur.usuario) cur.usuario = userAuth ? userAuth.name : "SISTEMA";
+                document.getElementById('load-placa-txt').innerText = cur.placa; 
+                refreshLoad(); 
+                go('page-load'); 
+            } 
         }
 
-        // --- INICIALIZACIÓN PWA ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('PWA: Activa'))
-                    .catch(err => console.error('PWA: Error', err));
+        function shareW(id) { 
+            const r = db.find(x => String(x.id) === String(id)); 
+            const totalCajas = r.items ? r.items.reduce((a, b) => a + b.can, 0) : 0; 
+            const totalPuntos = r.items ? r.items.length : 0;
+            let msg = `*--- REPORTE DE DESPACHO TWINS ---*%0A`;
+            msg += `🚛 *UNIDAD:* ${r.placa}%0A`;
+            msg += `👤 *CHOFER:* ${r.chofer}%0A`;
+            msg += `🤝 *AUX:* ${r.auxiliar}%0A%0A`;
+            msg += `*RESUMEN DE CARGA:*%0A`;
+            msg += `📦 *TOTAL:* ${totalCajas} Cajas%0A`;
+            msg += `📍 *PUNTOS:* ${totalPuntos} Clientes%0A%0A`;
+            msg += `*DETALLE DE RUTA:*%0A`;
+            if (r.items && r.items.length > 0) { r.items.forEach(i => { msg += `🔹 ${i.cli} → *${i.can}*%0A`; }); } 
+            window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
+        }
+
+        function renderData() {
+            const m = document.getElementById('f-month').value;
+            let filt = db.filter(r => r.fecha && r.fecha.toString().startsWith(m));
+            let cS = {}, aS = {};
+            filt.forEach(r => { 
+                let cjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
+                cS[r.chofer] = cS[r.chofer] || {cjs:0, r:0}; cS[r.chofer].cjs += cjs; cS[r.chofer].r++;
+                aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0}; aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
             });
+            const draw = (data, targetId) => {
+                let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
+                let max = sorted[0] ? sorted[0][1].cjs : 1;
+                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `<div class="rank-item"><div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div><div class="rank-info"><div class="rank-name"><span>${n}</span><span>${v.cjs} CJS</span></div><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div><div class="rank-stats"><span>📦 <b>${v.cjs}</b> Cjs</span><span>🚚 <b>${v.r}</b> Rutas</span></div></div></div>`).join('');
+            };
+            draw(cS, 'rank-choferes-list'); draw(aS, 'rank-auxiliares-list');
         }
 
-        window.onload = () => {
-            // ... (tus funciones de inicio) ...
-            checkEmergency();
-        };
+        async function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const mesSeleccionado = document.getElementById('f-month').value;
+            if(!mesSeleccionado) return alert("Selecciona un mes primero");
+            const filt = db.filter(r => r.fecha && r.fecha.toString().startsWith(mesSeleccionado));
+            if(filt.length === 0) return alert("No hay datos para este mes");
+            const tCjs = filt.reduce((acc, r) => acc + (r.items ? r.items.reduce((s, i) => s + i.can, 0) : 0), 0);
+            const tPts = filt.reduce((acc, r) => acc + (r.items ? r.items.length : 0), 0);
+            doc.setFontSize(20); doc.text("REPORTE MENSUAL DESPACHO", 15, 20);
+            doc.setFontSize(10); doc.text(`Mes: ${mesSeleccionado} | Generado por: ${userAuth ? userAuth.name : 'SISTEMA'}`, 15, 28);
+            doc.setDrawColor(230); doc.rect(15, 35, 180, 20);
+            doc.setFont(undefined, 'bold');
+            doc.text(`TOTAL CAJAS: ${tCjs}`, 25, 47); doc.text(`TOTAL RUTAS: ${filt.length}`, 85, 47); doc.text(`TOTAL CLIENTES: ${tPts}`, 145, 47);
+            const rows = filt.map(r => [r.fecha.split('T')[0], r.placa, r.chofer, r.auxiliar, r.items ? r.items.reduce((s, i) => s + i.can, 0) : 0, r.items ? r.items.length : 0]);
+            doc.autoTable({ startY: 65, head: [['Fecha', 'Placa', 'Conductor', 'Auxiliar', 'Cjs', 'Pts']], body: rows, theme: 'striped', headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] }, styles: { fontSize: 8 } });
+            doc.save(`Reporte_Twins_${mesSeleccionado}.pdf`);
+        }
     </script>
 </body>
 </html>
+Este es mi código puedes reemplazar con los códigos que me diste
