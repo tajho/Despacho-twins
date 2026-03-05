@@ -3,17 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/713/713337.png">
-    
     <title>TWINS ELITE - V66.6 OFICIAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
-    
     <style>
         :root {
             --bg: #f4f6f8; --surface: #ffffff; --accent: #000000; 
@@ -81,29 +75,6 @@
     </style>
 </head>
 <body>
-
-    <script>
-        const manifest = {
-            "name": "TWINS ELITE - DESPACHO",
-            "short_name": "TwinsElite",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#f4f6f8",
-            "theme_color": "#000000",
-            "icons": [{
-                "src": "https://cdn-icons-png.flaticon.com/512/713/713337.png",
-                "sizes": "512x512",
-                "type": "image/png"
-            }]
-        };
-        const stringManifest = JSON.stringify(manifest);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        const link = document.createElement('link');
-        link.rel = 'manifest';
-        link.href = manifestURL;
-        document.head.appendChild(link);
-    </script>
 
     <div id="login-screen">
         <div class="login-card">
@@ -250,7 +221,14 @@
         let quickEditId = null;
         let currentFilter = 'hoy'; 
 
-        const ACCESS_KEYS = { "TAJHO": "1994", "FRANCHESCO": "3003", "OSCAR": "0505", "LUIS HERBER": "7676" };
+        // CONFIGURACIÓN DE ACCESOS Y FLOTA
+        const ACCESS_KEYS = {
+            "TAJHO": "1994",
+            "FRANCHESCO": "3003",
+            "OSCAR": "0505",
+            "LUIS HERBER": "7676"
+        };
+
         const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["POR ASIGNAR", "CRISTOPHER", "PERCY", "PLACIDO", "DANIEL C.", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "JULIO", "NELSON"];
@@ -268,27 +246,41 @@
             checkEmergency();
         };
 
+        // --- SECCIÓN DE LOGIN MEJORADA ---
         function checkUserType() { 
             const u = document.getElementById('user-select').value; 
             const passField = document.getElementById('pass-field');
-            if(u) { passField.style.display = 'block'; passField.value = ""; passField.focus(); } 
-            else { passField.style.display = 'none'; }
+            if(u) {
+                passField.style.display = 'block';
+                passField.value = "";
+                passField.focus();
+            } else {
+                passField.style.display = 'none';
+            }
         }
 
         function login() { 
             const u = document.getElementById('user-select').value; 
             const p = document.getElementById('pass-field').value; 
             if(!u) return; 
+
             if(ACCESS_KEYS[u] && p === ACCESS_KEYS[u]) {
-                userAuth = { name: u, admin: (u === 'TAJHO') }; 
+                userAuth = { 
+                    name: u, 
+                    admin: (u === 'TAJHO') 
+                }; 
                 localStorage.setItem('twins_auth', JSON.stringify(userAuth)); 
                 applyAuth(); 
-            } else { alert("Contraseña incorrecta para " + u); document.getElementById('pass-field').value = ""; }
+            } else {
+                alert("Contraseña incorrecta para " + u);
+                document.getElementById('pass-field').value = "";
+            }
         }
 
         function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
         function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('n-data').style.display = userAuth.admin ? 'flex' : 'none'; pullCloudData(); }
 
+        // --- RESTO DE FUNCIONES ---
         function filterByQuick(type) {
             currentFilter = type;
             document.getElementById('search-date').value = "";
@@ -300,8 +292,19 @@
             renderHistory();
         }
 
-        function filterByDate() { currentFilter = 'exact-date'; document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter')); document.getElementById('dynamic-stat-label').innerText = 'Fecha'; renderHistory(); }
-        function filterByMonth() { currentFilter = 'month'; document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter')); document.getElementById('dynamic-stat-label').innerText = 'Mes'; renderHistory(); }
+        function filterByDate() {
+            currentFilter = 'exact-date';
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
+            document.getElementById('dynamic-stat-label').innerText = 'Fecha';
+            renderHistory();
+        }
+
+        function filterByMonth() {
+            currentFilter = 'month';
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active-filter'));
+            document.getElementById('dynamic-stat-label').innerText = 'Mes';
+            renderHistory();
+        }
 
         function updateDynamicStats(filteredData) {
             const getTotals = (data) => data.reduce((acc, r) => {
@@ -536,7 +539,6 @@
             msg += `📍 *PUNTOS:* ${totalPuntos} Clientes%0A%0A`;
             msg += `*DETALLE DE RUTA:*%0A`;
             if (r.items && r.items.length > 0) { r.items.forEach(i => { msg += `🔹 ${i.cli} → *${i.can}*%0A`; }); } 
-            msg += `%0A_Revisión autorizada por J. Angelo Nuñez Durand Asist. Inventario Logístico._`;
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
@@ -573,31 +575,7 @@
             doc.text(`TOTAL CAJAS: ${tCjs}`, 25, 47); doc.text(`TOTAL RUTAS: ${filt.length}`, 85, 47); doc.text(`TOTAL CLIENTES: ${tPts}`, 145, 47);
             const rows = filt.map(r => [r.fecha.split('T')[0], r.placa, r.chofer, r.auxiliar, r.items ? r.items.reduce((s, i) => s + i.can, 0) : 0, r.items ? r.items.length : 0]);
             doc.autoTable({ startY: 65, head: [['Fecha', 'Placa', 'Conductor', 'Auxiliar', 'Cjs', 'Pts']], body: rows, theme: 'striped', headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] }, styles: { fontSize: 8 } });
-            
-            // PIE DE PÁGINA AUTORIZADO
-            const pageCount = doc.internal.getNumberOfPages();
-            for(let i = 1; i <= pageCount; i++) {
-                doc.setPage(i);
-                doc.setFontSize(8);
-                doc.text("Revisión autorizada por J. Angelo Nuñez Durand Asist. Inventario Logístico.", 15, 285);
-            }
-            
             doc.save(`Reporte_Twins_${mesSeleccionado}.pdf`);
-        }
-
-        // SERVICE WORKER PARA FUNCIONAMIENTO OFFLINE
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'twins-v66-cache';
-                    const urlsToCache = [location.href];
-                    self.addEventListener('install', e => e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(urlsToCache))));
-                    self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-                `;
-                const blob = new Blob([swCode], {type: 'text/javascript'});
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl);
-            });
         }
     </script>
 </body>
