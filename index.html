@@ -542,36 +542,66 @@
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
                 function renderData() {
-            const m = document.getElementById('f-month').value;
-            if (!m) return;
-            
-            let filt = db.filter(r => r.fecha && r.fecha.toString().startsWith(m));
-            let cS = {}, aS = {};
+    const m = document.getElementById('f-month').value;
+    if (!m) return;
+    
+    let filt = db.filter(r => r.fecha && r.fecha.toString().startsWith(m));
+    let cS = {}, aS = {};
 
-            filt.forEach(r => { 
-                // SEGURIDAD: Google Sheets a veces manda los items como String
-                let listaItems = [];
-                try {
-                    listaItems = typeof r.items === 'string' ? JSON.parse(r.items) : (r.items || []);
-                } catch(e) { 
-                    listaItems = []; 
-                }
+    filt.forEach(r => { 
+        let listaItems = [];
+        // Intentamos procesar los items si vienen de Google Sheets
+        if (r.items) {
+            try {
+                listaItems = typeof r.items === 'string' ? JSON.parse(r.items) : r.items;
+            } catch(e) { listaItems = []; }
+        }
 
-                let cjs = listaItems.reduce((a, b) => a + (b.can || 0), 0);
-                let pts = listaItems.length; // Aquí contamos los clientes de la lista
-                
-                // Acumular Choferes
-                if (!cS[r.chofer]) cS[r.chofer] = {cjs:0, r:0, pts:0};
-                cS[r.chofer].cjs += cjs; 
-                cS[r.chofer].r++;
-                cS[r.chofer].pts += pts;
+        let cjs = listaItems.reduce((a, b) => a + (Number(b.can) || 0), 0);
+        let pts = listaItems.length; 
+        
+        // Acumular Choferes
+        let c = r.chofer || "SIN NOMBRE";
+        if (!cS[c]) cS[c] = {cjs:0, r:0, pts:0};
+        cS[c].cjs += cjs; 
+        cS[c].r++;
+        cS[c].pts += pts;
 
-                // Acumular Auxiliares
-                if (!aS[r.auxiliar]) aS[r.auxiliar] = {cjs:0, r:0, pts:0};
-                aS[r.auxiliar].cjs += cjs; 
-                aS[r.auxiliar].r++;
-                aS[r.auxiliar].pts += pts;
-            });
+        // Acumular Auxiliares
+        let a = r.auxiliar || "POR ASIGNAR";
+        if (!aS[a]) aS[a] = {cjs:0, r:0, pts:0};
+        aS[a].cjs += cjs; 
+        aS[a].r++;
+        aS[a].pts += pts;
+    });
+
+    const draw = (data, targetId) => {
+        let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
+        let max = sorted[0] ? sorted[0][1].cjs : 1;
+        
+        document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `
+            <div class="rank-item">
+                <div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div>
+                <div class="rank-info">
+                    <div class="rank-name">
+                        <span>${n}</span>
+                        <span>${v.cjs} CJS</span>
+                    </div>
+                    <div class="rank-bar-bg">
+                        <div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div>
+                    </div>
+                    <div class="rank-stats">
+                        <span>📦 <b>${v.cjs}</b> Cjs</span>
+                        <span>📍 <b>${v.pts}</b> Cli.</span>
+                        <span>🚚 <b>${v.r}</b> Rutas</span>
+                    </div>
+                </div>
+            </div>`).join('');
+    };
+    draw(cS, 'rank-choferes-list'); 
+    draw(aS, 'rank-auxiliares-list');
+}
+
 
             const draw = (data, targetId) => {
                 let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
