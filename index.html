@@ -573,21 +573,56 @@
         }
 
         function renderData() {
-            const m = document.getElementById('f-month').value;
-            let filt = db.filter(r => r.fecha && r.fecha.toString().startsWith(m));
-            let cS = {}, aS = {};
-            filt.forEach(r => { 
-                let cjs = r.items ? r.items.reduce((a,b)=>a+b.can,0) : 0;
-                cS[r.chofer] = cS[r.chofer] || {cjs:0, r:0}; cS[r.chofer].cjs += cjs; cS[r.chofer].r++;
-                aS[r.auxiliar] = aS[r.auxiliar] || {cjs:0, r:0}; aS[r.auxiliar].cjs += cjs; aS[r.auxiliar].r++;
-            });
-            const draw = (data, targetId) => {
-                let sorted = Object.entries(data).sort((a,b)=>b[1].cjs - a[1].cjs).slice(0,5);
-                let max = sorted[0] ? sorted[0][1].cjs : 1;
-                document.getElementById(targetId).innerHTML = sorted.map(([n,v], i) => `<div class="rank-item"><div class="rank-pos ${i<3 ? 'pos-'+(i+1) : ''}">${i+1}</div><div class="rank-info"><div class="rank-name"><span>${n}</span><span>${v.cjs} CJS</span></div><div class="rank-bar-bg"><div class="rank-bar-fill" style="width:${(v.cjs/max)*100}%"></div></div><div class="rank-stats"><span>📦 <b>${v.cjs}</b> Cjs</span><span>🚚 <b>${v.r}</b> Rutas</span></div></div></div>`).join('');
-            };
-            draw(cS, 'rank-choferes-list'); draw(aS, 'rank-auxiliares-list');
-        }
+    const m = document.getElementById('f-month').value;
+    if (!m) return;
+
+    let filt = db.filter(r => r.fecha && r.fecha.toString().startsWith(m));
+    let cS = {}, aS = {};
+
+    filt.forEach(r => {
+        let cjs = r.items ? r.items.reduce((a, b) => a + b.can, 0) : 0;
+        let cls = r.items ? r.items.length : 0; // Conteo de clientes
+
+        // Data Choferes
+        cS[r.chofer] = cS[r.chofer] || { cjs: 0, r: 0, cls: 0 };
+        cS[r.chofer].cjs += cjs;
+        cS[r.chofer].r++;
+        cS[r.chofer].cls += cls;
+
+        // Data Auxiliares
+        aS[r.auxiliar] = aS[r.auxiliar] || { cjs: 0, r: 0, cls: 0 };
+        aS[r.auxiliar].cjs += cjs;
+        aS[r.auxiliar].r++;
+        aS[r.auxiliar].cls += cls;
+    });
+
+    const draw = (data, targetId) => {
+        let sorted = Object.entries(data).sort((a, b) => b[1].cjs - a[1].cjs).slice(0, 5);
+        let maxCjs = sorted[0] ? sorted[0][1].cjs : 1;
+
+        document.getElementById(targetId).innerHTML = sorted.map(([n, v], i) => `
+            <div class="rank-item">
+                <div class="rank-pos ${i < 3 ? 'pos-' + (i + 1) : ''}">${i + 1}</div>
+                <div class="rank-info">
+                    <div class="rank-name">
+                        <span>${n}</span>
+                        <span>${v.cjs} CJS</span>
+                    </div>
+                    <div class="rank-bar-bg">
+                        <div class="rank-bar-fill" style="width:${(v.cjs / maxCjs) * 100}%"></div>
+                    </div>
+                    <div class="rank-stats">
+                        <span>📦 <b>${v.cjs}</b> Cjs</span>
+                        <span>📍 <b>${v.cls}</b> Clientes</span>
+                        <span>🚚 <b>${v.r}</b> Rutas</span>
+                    </div>
+                </div>
+            </div>`).join('');
+    };
+
+    draw(cS, 'rank-choferes-list');
+    draw(aS, 'rank-auxiliares-list');
+}
 
         async function exportPDF() {
             const { jsPDF } = window.jspdf;
