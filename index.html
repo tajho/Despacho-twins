@@ -229,51 +229,58 @@
             "LUIS HERBER": "7676"
         };
 
-        // Estructura mejorada para incluir SOAT
-        const FLOTA = { 
-            "CEP-929": { chofer: "ROMARIO", soat: "2026-06-22" }, 
-            "BPN-711": { chofer: "CESAR C.", soat: "2026-07-10" }, 
-            "BVN-704": { chofer: "LUIS H.", soat: "2026-06-02" }, 
-            "BUL-742": { chofer: "WALDIR", soat: "2026-04-02" }, 
-            "BVN-930": { chofer: "MARCELO", soat: "2026-06-02" } 
-        };
+       const FLOTA = { 
+    "CEP-929": { chofer: "ROMARIO", soat: "2026-06-22", licencia: "2031-12-09" }, 
+    "BPN-711": { chofer: "CESAR C.", soat: "2026-07-10", licencia: "2027-10-10" }, 
+    "BVN-704": { chofer: "LUIS H.", soat: "2026-06-02", licencia: "2027-12-29" }, 
+    "BUL-742": { chofer: "WALDIR", soat: "2026-04-02", licencia: "2033-04-13" }, 
+    "BVN-930": { chofer: "MARCELO", soat: "2026-06-02", licencia: "2028-10-16" } 
+};
 
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["POR ASIGNAR", "CRISTOPHER", "PERCY", "PLACIDO", "DANIEL C.", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "JULIO", "NELSON"];
 
-        window.onload = () => {
-            const ug = document.getElementById('units-grid');
-            const hoy = new Date(); //
+      window.onload = () => {
+    const ug = document.getElementById('units-grid');
+    const hoy = new Date();
 
-            // Renderizado de unidades con alerta de SOAT
-            for(let p in FLOTA) {
-                const fechaSoat = new Date(FLOTA[p].soat);
-                const diasDif = (fechaSoat - hoy) / (1000 * 60 * 60 * 24);
-                
-                // Color de alerta según vencimiento
-                let colorSoat = diasDif < 0 ? 'var(--red)' : (diasDif < 7 ? '#f59e0b' : 'var(--text-dim)');
-                let aviso = diasDif < 0 ? 'VENCIDO' : `Vence: ${FLOTA[p].soat}`;
+    for(let p in FLOTA) {
+        // Cálculo SOAT
+        const fSoat = new Date(FLOTA[p].soat);
+        const dSoat = (fSoat - hoy) / (1000 * 60 * 60 * 24);
+        let cSoat = dSoat < 0 ? 'var(--red)' : (dSoat < 15 ? '#f59e0b' : 'var(--text-dim)');
+        let txtSoat = dSoat < 0 ? 'SOAT VENCIDO' : `SOAT: ${FLOTA[p].soat}`;
 
-                ug.innerHTML += `
-                    <div style="background:#fff; padding:20px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="initConf('${p}')">
-                        <i class="ph-bold ph-truck" style="font-size:28px;"></i><br>
-                        <b style="font-size:16px;">${p}</b><br>
-                        <span style="font-size:10px; font-weight:800; color:${colorSoat};">
-                            <i class="ph-bold ph-shield-check"></i> ${aviso}
-                        </span>
-                    </div>`;
-            }
+        // Cálculo Licencia
+        const fLic = new Date(FLOTA[p].licencia);
+        const dLic = (fLic - hoy) / (1000 * 60 * 60 * 24);
+        let cLic = dLic < 0 ? 'var(--red)' : (dLic < 30 ? '#f59e0b' : 'var(--text-dim)');
+        let txtLic = dLic < 0 ? 'BREVETE VENCIDO' : `Brevete: ${FLOTA[p].licencia}`;
 
-            const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
-            const qec = document.getElementById('qe-chofer'), qea = document.getElementById('qe-aux');
-            CONDUCTORES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; qec.innerHTML += `<option value="${c}">${c}</option>`; });
-            AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; qea.innerHTML += `<option value="${a}">${a}</option>`; });
-            
-            if(userAuth) applyAuth();
-            renderHistory();
-            checkEmergency();
-        };
+        ug.innerHTML += `
+            <div style="background:#fff; padding:15px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="initConf('${p}')">
+                <i class="ph-bold ph-truck" style="font-size:24px;"></i><br>
+                <b style="font-size:16px;">${p}</b><br>
+                <div style="margin-top:5px; line-height:1.3;">
+                    <span style="font-size:9px; font-weight:800; color:${cSoat}; display:block;">
+                        <i class="ph-bold ph-calendar-check"></i> ${txtSoat}
+                    </span>
+                    <span style="font-size:9px; font-weight:800; color:${cLic}; display:block; border-top: 1px solid #f3f4f6; margin-top:3px; padding-top:3px;">
+                        <i class="ph-bold ph-identification-card"></i> ${txtLic}
+                    </span>
+                </div>
+            </div>`;
+    }
 
+    // Configuración de Selects (Choferes y Auxiliares)
+    const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
+    CONDUCTORES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; });
+    AUXILIARES.forEach(a => { sa.innerHTML += `<option value="${a}">${a}</option>`; });
+    
+    if(userAuth) applyAuth();
+    renderHistory();
+    checkEmergency();
+};
         // --- SECCIÓN DE LOGIN MEJORADA ---
         function checkUserType() { 
             const u = document.getElementById('user-select').value; 
