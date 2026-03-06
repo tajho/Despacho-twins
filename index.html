@@ -221,7 +221,7 @@
         let quickEditId = null;
         let currentFilter = 'hoy'; 
 
-        // CONFIGURACIÓN DE ACCESOS Y FLOTA
+        // CONFIGURACIÓN DE ACCESOS Y FLOTA CON VENCIMIENTO DE SOAT
         const ACCESS_KEYS = {
             "TAJHO": "1994",
             "FRANCHESCO": "3003",
@@ -229,13 +229,41 @@
             "LUIS HERBER": "7676"
         };
 
-        const FLOTA = { "CEP-929": "ROMARIO", "BPN-711": "CESAR C.", "BVN-704": "LUIS H.", "BUL-742": "WALDIR", "BVN-930": "MARCELO" };
+        // Estructura mejorada para incluir SOAT
+        const FLOTA = { 
+            "CEP-929": { chofer: "ROMARIO", soat: "2026-05-15" }, 
+            "BPN-711": { chofer: "CESAR C.", soat: "2026-03-10" }, 
+            "BVN-704": { chofer: "LUIS H.", soat: "2026-08-20" }, 
+            "BUL-742": { chofer: "WALDIR", soat: "2026-01-12" }, 
+            "BVN-930": { chofer: "MARCELO", soat: "2026-11-05" } 
+        };
+
         const CONDUCTORES = ["TAJHO", "ROMARIO", "CESAR C.", "LUIS H.", "WALDIR", "MARCELO"];
         const AUXILIARES = ["POR ASIGNAR", "CRISTOPHER", "PERCY", "PLACIDO", "DANIEL C.", "RODOLFO", "RICARDO", "ELIO", "JOFER", "MARTIN", "JULIO", "NELSON"];
 
         window.onload = () => {
             const ug = document.getElementById('units-grid');
-            for(let p in FLOTA) ug.innerHTML += `<div style="background:#fff; padding:25px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="initConf('${p}')"><i class="ph-bold ph-truck" style="font-size:28px;"></i><br><b>${p}</b></div>`;
+            const hoy = new Date(); //
+
+            // Renderizado de unidades con alerta de SOAT
+            for(let p in FLOTA) {
+                const fechaSoat = new Date(FLOTA[p].soat);
+                const diasDif = (fechaSoat - hoy) / (1000 * 60 * 60 * 24);
+                
+                // Color de alerta según vencimiento
+                let colorSoat = diasDif < 0 ? 'var(--red)' : (diasDif < 7 ? '#f59e0b' : 'var(--text-dim)');
+                let aviso = diasDif < 0 ? 'VENCIDO' : `Vence: ${FLOTA[p].soat}`;
+
+                ug.innerHTML += `
+                    <div style="background:#fff; padding:20px; border-radius:24px; text-align:center; border:1px solid var(--border);" onclick="initConf('${p}')">
+                        <i class="ph-bold ph-truck" style="font-size:28px;"></i><br>
+                        <b style="font-size:16px;">${p}</b><br>
+                        <span style="font-size:10px; font-weight:800; color:${colorSoat};">
+                            <i class="ph-bold ph-shield-check"></i> ${aviso}
+                        </span>
+                    </div>`;
+            }
+
             const sc = document.getElementById('c-chofer'), sa = document.getElementById('c-aux');
             const qec = document.getElementById('qe-chofer'), qea = document.getElementById('qe-aux');
             CONDUCTORES.forEach(c => { sc.innerHTML += `<option value="${c}">${c}</option>`; qec.innerHTML += `<option value="${c}">${c}</option>`; });
@@ -416,12 +444,13 @@
             if(id === 'page-dash') renderHistory();
         }
 
+        // Función initConf actualizada para la nueva estructura de FLOTA
         function initConf(p) { 
             const hoy = new Date().toLocaleDateString('en-CA'); 
-            cur = { id: null, placa: p, items: [], fecha: hoy, chofer: FLOTA[p], auxiliar: "POR ASIGNAR", usuario: userAuth ? userAuth.name : "SISTEMA" }; 
+            cur = { id: null, placa: p, items: [], fecha: hoy, chofer: FLOTA[p].chofer, auxiliar: "POR ASIGNAR", usuario: userAuth ? userAuth.name : "SISTEMA" }; 
             document.getElementById('conf-placa').innerText = p; 
             document.getElementById('c-fecha').value = hoy; 
-            document.getElementById('c-chofer').value = FLOTA[p] || "TAJHO";
+            document.getElementById('c-chofer').value = FLOTA[p].chofer || "TAJHO";
             document.getElementById('c-aux').value = "POR ASIGNAR";
             go('page-config'); 
         }
@@ -539,6 +568,7 @@
             msg += `📍 *PUNTOS:* ${totalPuntos} Clientes%0A%0A`;
             msg += `*DETALLE DE RUTA:*%0A`;
             if (r.items && r.items.length > 0) { r.items.forEach(i => { msg += `🔹 ${i.cli} → *${i.can}*%0A`; }); } 
+            msg += `%0A*Revisión autorizada por J. Angelo Nuñez Durand Asist. Inventario Logístico.*`; //
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
@@ -575,6 +605,12 @@
             doc.text(`TOTAL CAJAS: ${tCjs}`, 25, 47); doc.text(`TOTAL RUTAS: ${filt.length}`, 85, 47); doc.text(`TOTAL CLIENTES: ${tPts}`, 145, 47);
             const rows = filt.map(r => [r.fecha.split('T')[0], r.placa, r.chofer, r.auxiliar, r.items ? r.items.reduce((s, i) => s + i.can, 0) : 0, r.items ? r.items.length : 0]);
             doc.autoTable({ startY: 65, head: [['Fecha', 'Placa', 'Conductor', 'Auxiliar', 'Cjs', 'Pts']], body: rows, theme: 'striped', headStyles: { fillColor: [0, 0, 0], textColor: [255, 255, 255] }, styles: { fontSize: 8 } });
+            
+            // Pie de página oficial
+            const finalY = doc.lastAutoTable.finalY + 10;
+            doc.setFontSize(8);
+            doc.text("Revisión autorizada por J. Angelo Nuñez Durand Asist. Inventario Logístico.", 15, finalY);
+            
             doc.save(`Reporte_Twins_${mesSeleccionado}.pdf`);
         }
     </script>
