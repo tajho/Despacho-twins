@@ -84,11 +84,9 @@
 
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js?v=3')
-        .then(reg => console.log('Twins PWA Activa'))
-        .catch(err => console.log('Error PWA:', err));
-    });
+    navigator.serviceWorker.register('./sw.js')
+      .then(() => console.log("Twins: Sistema de instalación listo"))
+      .catch(err => console.log("Error de PWA:", err));
   }
 </script>
 <body>
