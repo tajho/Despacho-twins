@@ -1,12 +1,10 @@
 {
   "name": "Twins Despachos",
   "short_name": "Twins",
-  "description": "Sistema de Gestión de Inventario y Despacho Twins",
   "start_url": "index.html?v=2",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.png?v=2",
