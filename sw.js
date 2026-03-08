@@ -1,7 +1,8 @@
-const CACHE_NAME = 'twins-cache-v1';
+const CACHE_NAME = 'twins-cache-v66'; // He subido la versión para forzar la actualización
 const urlsToCache = [
   './',
   './index.html',
+  './icon.png', // Tu nueva imagen de Twins Despachos
   'https://unpkg.com/@phosphor-icons/web',
   'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap'
 ];
