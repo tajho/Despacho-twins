@@ -74,6 +74,24 @@
         .btn-off { position: absolute; right: 20px; top: 25px; background: #fff; border: 1px solid #eee; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--red); }
     </style>
 </head>
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Twins">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/713/713337.png">
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Twins PWA Activa'))
+        .catch(err => console.log('Error en registro', err));
+    });
+  }
+</script>
+
 <body>
 
     <div id="login-screen">
