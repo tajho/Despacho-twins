@@ -77,20 +77,22 @@
     <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
 
+<link rel="icon" type="image/png" href="icon.png">
+
+<link rel="apple-touch-icon" href="icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Twins">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/713/713337.png">
-
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Twins PWA Activa'))
-        .catch(err => console.log('Error en registro', err));
+        .then(reg => console.log('PWA Twins Lista'))
+        .catch(err => console.log('Error de registro', err));
     });
   }
 </script>
+
 
 <body>
 
