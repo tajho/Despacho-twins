@@ -74,19 +74,21 @@
         .btn-off { position: absolute; right: 20px; top: 25px; background: #fff; border: 1px solid #eee; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--red); }
     </style>
 </head>
-    <link rel="manifest" href="./manifest.json">
+    <link rel="manifest" href="./manifest.json?v=4">
 <meta name="theme-color" content="#000000">
 
-<link rel="icon" type="image/png" href="icon.png?v=3">
-<link rel="apple-touch-icon" href="icon.png?v=3">
+<link rel="icon" type="image/png" href="./icon.png?v=4">
+<link rel="apple-touch-icon" href="./icon.png?v=4">
 <meta name="apple-mobile-web-app-title" content="Twins">
 <meta name="apple-mobile-web-app-capable" content="yes">
 
 <script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log("Twins: Sistema de instalación listo"))
-      .catch(err => console.log("Error de PWA:", err));
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js?v=4')
+        .then(reg => console.log('Twins PWA v4: Lista para instalar'))
+        .catch(err => console.log('Error de PWA:', err));
+    });
   }
 </script>
 <body>
