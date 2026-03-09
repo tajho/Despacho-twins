@@ -1,9 +1,9 @@
-const CACHE_NAME = 'twins-cache-v4'; // Cambiamos a v4
+const CACHE_NAME = 'twins-cache-v11'; // Cambiamos a v11
 const urlsToCache = [
   './',
-  './index.html?v=4',
-  './manifest.json?v=4',
-  './icon.png?v=4' // Forzamos la descarga del nuevo logo
+  './index.html?v=11',
+  './manifest.json?v=11',
+  './icon.png?v=11' // Forzamos la descarga del nuevo logo
 ];
 
 self.addEventListener('install', event => {
