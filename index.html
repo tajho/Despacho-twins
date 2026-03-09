@@ -307,23 +307,22 @@
             }
         }
 
-        function login() { 
-            const u = document.getElementById('user-select').value; 
-            const p = document.getElementById('pass-field').value; 
-            if(!u) return; 
+        function login() {
+    const u = document.getElementById('user-sel').value;
+    const p = document.getElementById('pass-in').value.trim().toUpperCase();
 
-            if(ACCESS_KEYS[u] && p === ACCESS_KEYS[u]) {
-                userAuth = { 
-                    name: u, 
-                    admin: (u === 'TAJHO') 
-                }; 
-                localStorage.setItem('twins_auth', JSON.stringify(userAuth)); 
-                applyAuth(); 
-            } else {
-                alert("Contraseña incorrecta para " + u);
-                document.getElementById('pass-field').value = "";
-            }
-        }
+    if (!u) return alert("Selecciona un usuario");
+    
+    // Tu lógica de siempre: TAJHO con clave 1994
+    if (u === 'TAJHO' && p === '1994') {
+        userAuth = { name: 'TAJHO', role: 'admin' };
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        renderHistory();
+    } else {
+        alert("Contraseña incorrecta para " + u);
+    }
+}
 
         function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
         function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('n-data').style.display = userAuth.admin ? 'flex' : 'none'; pullCloudData(); }
@@ -539,28 +538,32 @@
             go('page-dash'); 
         }
 
-        function openCrew(id) {
+       // Para abrir la ventana de cambio de personal
+function openCrew(id) {
     const r = db.find(x => String(x.id) === String(id));
     if(r) {
-        document.getElementById('edit-driver').value = r.chofer;
-        document.getElementById('edit-auxiliar').value = r.auxiliar;
+        document.getElementById('modal-crew').setAttribute('data-id', id);
+        document.getElementById('edit-driver').value = r.chofer || '';
+        document.getElementById('edit-asist').value = r.auxiliar || '';
         document.getElementById('modal-crew').style.display = 'flex';
-        // Guarda el ID para saber cuál editar luego
-        document.getElementById('modal-crew').dataset.id = id;
     }
+}
 
-        function saveQuickCrew() { 
-            const idx = db.findIndex(x => String(x.id) === String(quickEditId)); 
-            if (idx !== -1) { 
-                db[idx].chofer = document.getElementById('qe-chofer').value; 
-                db[idx].auxiliar = document.getElementById('qe-aux').value; 
-                if(!db[idx].usuario) db[idx].usuario = userAuth ? userAuth.name : "SISTEMA";
-                localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
-                fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
-                renderHistory(); 
-                closeCrew(); 
-            }
-        }
+// Para guardar el cambio de personal
+function saveCrew() {
+    const mid = document.getElementById('modal-crew').getAttribute('data-id');
+    const d = document.getElementById('edit-driver').value.trim();
+    const a = document.getElementById('edit-asist').value.trim();
+    
+    const idx = db.findIndex(x => String(x.id) === String(mid));
+    if(idx !== -1) {
+        db[idx].chofer = d;
+        db[idx].auxiliar = a;
+        saveDB(); // Tu función de guardar local
+        renderHistory();
+        closeM('modal-crew');
+    }
+}
 
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
         function viewL(id) { const r = db.find(x => String(x.id) === String(id)); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
