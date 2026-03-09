@@ -1,8 +1,8 @@
-const CACHE_NAME = 'twins-cache-v11'; // Cambiamos a v11
+const CACHE_NAME = 'twins-cache-v12'; // Cambiamos a v12
 const urlsToCache = [
   './',
-  './index.html?v=11',
-  './manifest.json?v=11',
+  './index.html?v=12',
+  './manifest.json?v=12',
   './icon.png?v=11' // Forzamos la descarga del nuevo logo
 ];
 
