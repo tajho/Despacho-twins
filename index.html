@@ -74,14 +74,14 @@
         .btn-off { position: absolute; right: 20px; top: 25px; background: #fff; border: 1px solid #eee; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--red); }
     </style>
 </head>
-   <link rel="manifest" href="./manifest.json?v=15">
-<link rel="icon" type="image/png" href="./icon.png?v=15">
-<link rel="apple-touch-icon" href="./icon.png?v=15">
+   <link rel="manifest" href="./manifest.json?v=16">
+<link rel="icon" type="image/png" href="./icon.png?v=16">
+<link rel="apple-touch-icon" href="./icon.png?v=16">
 
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=13').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=10').then(reg => {
         reg.update(); // Obliga a la app a buscar el nuevo icono de inmediato
       });
     });
@@ -307,22 +307,23 @@
             }
         }
 
-        function login() {
-    const u = document.getElementById('user-sel').value;
-    const p = document.getElementById('pass-in').value.trim().toUpperCase();
+        function login() { 
+            const u = document.getElementById('user-select').value; 
+            const p = document.getElementById('pass-field').value; 
+            if(!u) return; 
 
-    if (!u) return alert("Selecciona un usuario");
-    
-    // Tu lógica de siempre: TAJHO con clave 1994
-    if (u === 'TAJHO' && p === '1994') {
-        userAuth = { name: 'TAJHO', role: 'admin' };
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('main-app').style.display = 'block';
-        renderHistory();
-    } else {
-        alert("Contraseña incorrecta para " + u);
-    }
-}
+            if(ACCESS_KEYS[u] && p === ACCESS_KEYS[u]) {
+                userAuth = { 
+                    name: u, 
+                    admin: (u === 'TAJHO') 
+                }; 
+                localStorage.setItem('twins_auth', JSON.stringify(userAuth)); 
+                applyAuth(); 
+            } else {
+                alert("Contraseña incorrecta para " + u);
+                document.getElementById('pass-field').value = "";
+            }
+        }
 
         function logout() { localStorage.removeItem('twins_auth'); location.reload(); }
         function applyAuth() { document.getElementById('login-screen').style.display = 'none'; document.getElementById('main-nav').style.display = 'flex'; document.getElementById('n-data').style.display = userAuth.admin ? 'flex' : 'none'; pullCloudData(); }
@@ -422,7 +423,7 @@
                         <b style="font-size:24px;">${totalCjs} <span style="font-size:12px; opacity:0.6;">CJS</span></b>
                         <b style="font-size:16px;">${totalCli} <span style="font-size:12px; opacity:0.6;">CLI.</span></b>
                     </div>
-                    <div class="card-crew">👤 ${r.chofer || '---'} | 👥 ${r.auxiliar || '---'}</div>
+                    <div class="card-crew">👤 ${r.chofer} | 👥 ${r.auxiliar}</div>
                     <div class="card-actions">
                         <button onclick="viewL('${r.id}')" class="btn-card"><i class="ph-bold ph-list-bullets"></i>Lista</button>
                         ${!esAntigua ? `
@@ -538,32 +539,26 @@
             go('page-dash'); 
         }
 
-       // Para abrir la ventana de cambio de personal
-function openCrew(id) {
-    const r = db.find(x => String(x.id) === String(id));
-    if(r) {
-        document.getElementById('modal-crew').setAttribute('data-id', id);
-        document.getElementById('edit-driver').value = r.chofer || '';
-        document.getElementById('edit-asist').value = r.auxiliar || '';
-        document.getElementById('modal-crew').style.display = 'flex';
-    }
-}
+        function openCrew(id) { 
+            quickEditId = id; 
+            const r = db.find(x => String(x.id) === String(id)); 
+            document.getElementById('qe-chofer').value = r.chofer; 
+            document.getElementById('qe-aux').value = r.auxiliar; 
+            document.getElementById('modal-crew').style.display = 'flex'; 
+        }
 
-// Para guardar el cambio de personal
-function saveCrew() {
-    const mid = document.getElementById('modal-crew').getAttribute('data-id');
-    const d = document.getElementById('edit-driver').value.trim();
-    const a = document.getElementById('edit-asist').value.trim();
-    
-    const idx = db.findIndex(x => String(x.id) === String(mid));
-    if(idx !== -1) {
-        db[idx].chofer = d;
-        db[idx].auxiliar = a;
-        saveDB(); // Tu función de guardar local
-        renderHistory();
-        closeM('modal-crew');
-    }
-}
+        function saveQuickCrew() { 
+            const idx = db.findIndex(x => String(x.id) === String(quickEditId)); 
+            if (idx !== -1) { 
+                db[idx].chofer = document.getElementById('qe-chofer').value; 
+                db[idx].auxiliar = document.getElementById('qe-aux').value; 
+                if(!db[idx].usuario) db[idx].usuario = userAuth ? userAuth.name : "SISTEMA";
+                localStorage.setItem('twins_v63_db', JSON.stringify(db)); 
+                fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(db[idx]) });
+                renderHistory(); 
+                closeCrew(); 
+            }
+        }
 
         function closeCrew() { document.getElementById('modal-crew').style.display = 'none'; }
         function viewL(id) { const r = db.find(x => String(x.id) === String(id)); document.getElementById('m-items').innerHTML = r.items.map(i => `<div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; font-weight:800;"><span>${i.cli}</span><span>${i.can} CJS</span></div>`).join(''); document.getElementById('modal-list').style.display = 'flex'; }
@@ -593,7 +588,7 @@ function saveCrew() {
             msg += `📍 *PUNTOS:* ${totalPuntos} Clientes%0A%0A`;
             msg += `*DETALLE DE RUTA:*%0A`;
             if (r.items && r.items.length > 0) { r.items.forEach(i => { msg += `🔹 ${i.cli} → *${i.can}*%0A`; }); } 
-            msg += ``; //
+            msg += `%0A*Revisión autorizada por J. Angelo Nuñez Durand Asist. Inventario Logístico.*`; //
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
