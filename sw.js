@@ -1,11 +1,9 @@
-const CACHE_NAME = 'twins-cache-v3';
+const CACHE_NAME = 'twins-cache-v4'; // Cambiamos a v4
 const urlsToCache = [
   './',
-  './index.html?v=3',
-  './manifest.json?v=3',
-  './icon.png?v=3',
-  'https://unpkg.com/@phosphor-icons/web',
-  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap'
+  './index.html?v=4',
+  './manifest.json?v=4',
+  './icon.png?v=4' // Forzamos la descarga del nuevo logo
 ];
 
 self.addEventListener('install', event => {
