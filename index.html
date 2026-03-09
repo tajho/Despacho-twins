@@ -588,7 +588,7 @@
             msg += `📍 *PUNTOS:* ${totalPuntos} Clientes%0A%0A`;
             msg += `*DETALLE DE RUTA:*%0A`;
             if (r.items && r.items.length > 0) { r.items.forEach(i => { msg += `🔹 ${i.cli} → *${i.can}*%0A`; }); } 
-            msg += `%0A*Revisión autorizada por J. Angelo Nuñez Durand Asist. Inventario Logístico.*`; //
+            msg += ``; //
             window.location.href = "https://api.whatsapp.com/send?text=" + msg; 
         }
 
