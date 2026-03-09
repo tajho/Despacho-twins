@@ -74,14 +74,14 @@
         .btn-off { position: absolute; right: 20px; top: 25px; background: #fff; border: 1px solid #eee; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--red); }
     </style>
 </head>
-   <link rel="manifest" href="./manifest.json?v=12">
-<link rel="icon" type="image/png" href="./icon.png?v=12">
-<link rel="apple-touch-icon" href="./icon.png?v=12">
+   <link rel="manifest" href="./manifest.json?v=13">
+<link rel="icon" type="image/png" href="./icon.png?v=13">
+<link rel="apple-touch-icon" href="./icon.png?v=13">
 
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js?v=10').then(reg => {
+      navigator.serviceWorker.register('./sw.js?v=13').then(reg => {
         reg.update(); // Obliga a la app a buscar el nuevo icono de inmediato
       });
     });
